@@ -1,0 +1,2 @@
+dweeves = Sebastien Bracquemont  <dweeves@gmail.com>
+pablopla = Unknown <pablopla@sourceforge.net> 

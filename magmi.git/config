@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+[remote "bare"]
+	url = /home/seb/magmi-conversion/magmi.git
+	fetch = +refs/heads/*:refs/remotes/bare/*
+	push = refs/remotes/*:refs/heads/*
+[remote "origin"]
+	url = ssh://d_pocock@magmi.git.sourceforge.net/gitroot/magmi/magmi
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master

@@ -1,0 +1,21 @@
+
+[DATABASE]
+;magento database name
+dbname=magento
+;magento database host
+host=localhost
+;database user
+user=<<YOUR USERNAME>>
+;database password
+password=<<YOUR PASSWORD>>
+;---- Uncomment following line if you have a table prefix
+;table_prefix=<<SET YOUR MAGENTO TABLE PREFIX HERE>> 
+[MAGENTO]
+;magento base directory on host : ie : /media/Data/magento
+basedir="../.."
+;change this if you are using localized "Enabled" status in non english languages
+;enabled_status_label="Enabled"
+[GLOBAL]
+;---- Uncomment the following line to have a custom import report step, defaults to 100 
+step=100
+

@@ -1,0 +1,100 @@
+-------------------------------------------------
+-     RELEASE NOTES FOR MAGMI 0.7.12            -
+-------------------------------------------------
+
+
+##########
+#Bugfix
+#########
+- fixed attribute scanning conditions (typo was setting always true)
+
+
+
+##########
+#Core
+##########
+
+
+* ProductImportEngine
+
+- added relative category affectation. 
+- added store column check warnings
+- added support for no store column, defaulting to "admin"
+- getAttrInfo can now perform DB lookup if not cached instead of returning empty
+- added support for explicit relative values in qty column for stock updates
+
+* Magmi_utils
+- added utility functions trimarray & getRelative
+
+############
+# UI
+############
+
+- Added parameter change detection, if no plugin have changed, profiles can be run using new parameters without saving.
+- Better ajax callback for progress check.
+- Utilities UI totally revamped, more coherent with lma
+
+###############
+# Integration
+###############
+
+- added new sample for configurable trough Datapump
+
+
+#########
+#Plugins
+#########
+
+Base:
+------
+
+* CSV Datasource:
+-  CSV download now takes live value for csv combo.
+-  Now allows truncated CSVs (where some lines ends before the end of declared header columns), added related UI option
+
+* Configurables:
+- Updated related simples visibility modification policy (now all values are possible)
+- Better management of unknown options_container if forgot to use generic mapper for translated values, now cleanly defaults to "Block After Item Info"
+- fixed compatibility bug with custom options that was also manipulating options_container value 
+- Added warning if no configurable attributes are defined on the configurable line or could not be deduced from attribute set
+
+* Product Deleter:
+- new plugin that enable to delete products, just add a magmi:delete column & put 1 on each product line to delete
+
+* Product relater & cross/upsell:
+- autoclean double relations that might have cause related to not show up.
+
+
+Extra
+----- 
+
+* Categories
+ - added support for custom tree branch separator
+ - added support for relative add/delete of categories assignment of item
+* Image Processor
+ -  added support for "per store" labels for gallery
+ -  added support for https urls
+ -  bugfix for file kept open on remote urls
+ * On the fly indexer
+ - fix problem when reindexing item that was "logically cancelled" by processing.
+ 
+ * Value Replacer
+  - added support for {meta.xxx} value that will get some info on item status (new,same,product_id)
+  
+  
+ 
+* Value Replacer
+
+Utilities
+---------
+
+CleanEAV:
+ - EAV status check now an action ,not performed on loading
+
+Clear Products:
+ - added link tables clear
+
+Custom SQL:
+- added page layout cleaning if wrong values imported
+- added orphan options removal
+
