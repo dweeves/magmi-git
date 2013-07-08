@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     15 sept. 2010 15:13:44                                                        
+
+     magmi    
+     Magmi project
+                   
+     seb                                                                
+     ====================================================================== -->
+<project name="magmi" default="default">
+    <description>
+            Magmi project
+    </description>
+	
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="depends" description="Magmi project">
+    	
+
+    	<zip destfile="magmi_${target_version}.zip" update="no">
+        	<zipfileset dir=".." excludes="**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project"  prefix="magmi"/>
+           	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/plugins/inc/**" prefix="magmi" dirmode="777"/>
+        	<zipfileset dir=".." includes="**/plugins/base/**" prefix="magmi" dirmode="777"/>
+        </zip>
+    	
+
+    </target>
+	 <tstamp>
+	    <format property="RLSDATE" pattern="yyyyMMdd" />
+	  </tstamp>
+
+	<target name="buildplugin_package">
+		<input message="Plugin package base dir" addproperty="package_base_dir"/>
+	 	<zip destfile="magmi_${package_base_dir}_plugins_${RLSDATE}.zip" update="no">
+	    		<zipfileset dir="../plugins" includes="${package_base_dir}/**"/>
+	  	</zip>
+	 </target>
+
+	<target name="build_singleplugin">
+		<input message="Plugin  base dir" addproperty="plugin_base_dir"/>
+		<input message="Plugin name" addproperty="plugin_name"/>
+		<input message="Plugin version" addproperty="plugin_version"/>
+	 	<zip destfile="magmi_plugin_${plugin_name}_${plugin_version}_${RLSDATE}.zip" update="no">
+	    	<zipfileset dir="../plugins" includes="${plugin_base_dir}/**"/>
+	  	</zip>
+	</target>
+
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="depends">
+    	<input message="target version" addproperty="target_version"/>
+    	<echo file="../inc/magmi_version.php">&lt;?php
+    	class Magmi_Version
+    	{
+    		 public static $version="${target_version}";
+    	}</echo>
+    </target>
+
+</project>
