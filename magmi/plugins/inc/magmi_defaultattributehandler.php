@@ -17,7 +17,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Standard Attribute Import",
             "author" => "Dweeves",
-            "version" => "1.0.4"
+            "version" => "1.0.5"
             );
 	}
 	
@@ -98,16 +98,17 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	{
 		$ovalue=deleteifempty(trim($ivalue));
 		//Handle european date format or other common separators
-		if(preg_match("|([0-9]){1,2}\D([0-9]){1,2}\D([0-9]){4}|",$ovalue,$matches))
+		if(preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|",$ovalue,$matches))
 		{
-			$ovalue=sprintf("%4d-%2d-%2d",$matches[3],$matches[2],$matches[1]);
+			$hms=count($matches)>4?$matches[4]:"";
+			$ovalue=trim(sprintf("%4d-%2d-%2d %s",$matches[3],$matches[2],$matches[1],$hms));
 		}
 		return $ovalue;
 	}
 
 	public function handleTextAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
-		$ovalue=(empty($ivalue)?'':$ivalue);
+		$ovalue=deleteifempty($ivalue);
 		return $ovalue;	
 	}
 	
