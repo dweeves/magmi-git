@@ -1012,7 +1012,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		}
 		
 		//get all "real ids"
-		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values(array_keys($cdata)).")",$cdata);
+		$scatids=array_keys($cdata);
+		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($scatids).")",array_keys($scatids));
 		$vcatids=array();
 		foreach($rcatids as $rcatrow)
 		{
