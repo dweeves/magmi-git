@@ -7,4 +7,4 @@ set_include_path(ini_get("include_path").
 	PATH_SEPARATOR.MAGMI_INCDIR.
 	PATH_SEPARATOR.MAGMI_INTEGRATION_INCDIR.
 	PATH_SEPARATOR.MAGMI_ENGINE_DIR);
-	
+require_once('magmi_loggers.php');

@@ -88,7 +88,7 @@ Zip library not available, Upgrade/Upload function are not enabled
 <?php }?>
 </div>
 </div>
-<form method="POST" id="runmagmi" action="magmi.php" <?php if(!$conf_ok){?>style="display:none"<?php }?>>
+<form method="POST" id="runmagmi" action="magmi.php?ts=<?php echo time() ?>" <?php if(!$conf_ok){?>style="display:none"<?php }?>>
 	<input type="hidden" name="run" value="import"></input>
 	<input type="hidden" name="logfile" value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
 	<div class="container_12">

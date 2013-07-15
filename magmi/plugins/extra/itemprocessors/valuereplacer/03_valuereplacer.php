@@ -15,125 +15,13 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
         return array(
             "name" => "Value Replacer",
             "author" => "Dweeves",
-            "version" => "0.0.7a",
+            "version" => "0.0.8a",
 					 "url"=>$this->pluginDocUrl("Value_Replacer")
         );
     }
 	
 	
-    public function parseval($pvalue,$item,$params)
-	{
-		$matches=array();
-		$ik=array_keys($item);
-		$rep="";
-		/* TODO : FINISH dbitem syntax
-		//do we have , db item reference in formula
-		if(preg_match("|\{dbitem\.(.*?)\}|",$pvalue))
-		{
-			//step 1, list wanted field values
-			while(preg_match("|\{dbitem\.(.*?)\}|",$pvalue,$matches))
-			{
-					if($match!=$matches[0])
-					{
-						$fields[$match]=$match;
-					}
-			}
-			//step 2, build select
-			foreach($fields as $attcode=>$dummy)
-			{
-				$attrinfo=$this->getAttrInfo($attcode);
-				if($attrinfo)
-			}
-		
-		}*/
-		
-		
-		
-		
-		
-		while(preg_match("|\{item\.(.*?)\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$ik))
-					{
-						$rep='$item["'.$match.'"]';
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		unset($matches);
-		$meta=$params;
-		
-		while(preg_match("|\{meta\.(.*?)\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$ik))
-					{
-						$rep='$meta["'.$match.'"]';
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		unset($matches);
-	
-		//replacing expr values
-		while(preg_match("|\{\{\s*(.*?)\s*\}\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					$code=trim($match);
-					$rep=eval("return ($code);");
-					//escape potential "{{xxx}}" values in interpreted target
-					//so that they won't be reparsed in next round
-					$rep=preg_replace("|\{\{\s*(.*?)\s*\}\}|", "____$1____", $rep);
-					$pvalue=str_replace($matches[0],$rep,$pvalue);							
-				}				
-			}
-		}
-		
-		//unsecape matches
-		$pvalue=preg_replace("|____(.*?)____|",'{{$1}}',$pvalue);
-		//replacing single values not in complex values
-		while(preg_match('|\$item\["(.*?)"\]|',$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$ik))
-					{
-						$rep=$item[$match];
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		
-		unset($matches);
-		return $pvalue;
-	}
+   
 	
 	public function processItemBeforeId(&$item,$params=null)
 	{
@@ -143,7 +31,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 			$attname=$this->_before[$i];
 			if(isset($this->_rvals[$attname]))
 			{
-				$item[$attname]=$this->parseval($this->_rvals[$attname],$item,$params);
+				$item[$attname]=$this->parseCalculatedValue($this->_rvals[$attname],$item,$params);
 			}
 		}	
 		return true;
@@ -156,10 +44,20 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 			//do not reparse "before" fields
 			if(!in_array($attname,$this->_before))
 			{
-				$item[$attname]=$this->parseval($pvalue,$item,$params);
+				$item[$attname]=$this->parseCalculatedValue($pvalue,$item,$params);
 			}
 		}
 		return true;
+	}
+	
+	public function initHelpers()
+	{
+		$helperdir=dirname(__FILE__)."/helper";
+		$files=glob($helperdir."/*.php");
+		foreach($files as $f)
+		{
+			require_once($f);
+		}
 	}
 	
 	public function initialize($params)
@@ -172,6 +70,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 				$this->_rvals[$colname]=$params[$k];
 			}
 		}
+		$this->initHelpers();
 	}
 	
 	//auto add columns if not set 

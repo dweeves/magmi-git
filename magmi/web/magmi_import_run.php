@@ -84,11 +84,14 @@
 	cancelImport=function()
 	{
 		var rq=new Ajax.Request("magmi_cancel.php",{method:'get'});
-		if(window._sr!=null)
+		/*if(window._sr!=null)
 		{
 			window._sr.transport.abort();
 			window._sr=null;
-		}
+		}*/
+				new Ajax.Updater("runlog","magmi_progress.php",{evalScripts:true,
+					parameters:{logfile:imp_params['logfile']}
+				});;
 	};
 
 	if(imp_params.mode!==null)

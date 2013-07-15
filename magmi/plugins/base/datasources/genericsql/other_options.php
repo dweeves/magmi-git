@@ -10,6 +10,6 @@
 <ul class="formline">
 <li class="label">PDO Connection String</li>
 <li class="value"><input type="text" size="80" name="SQL:pdostr" value="<?echo $this->getParam("SQL:pdostr","")?>"/>
-<div class="fieldinfo">you must have correct PDO driver installed & also know PDO connection string syntax</div></li>
+<div class="fieldinfo">you must have correct PDO driver installed &amp; also know PDO connection string syntax</div></li>
 </ul>
 </div>

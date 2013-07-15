@@ -38,6 +38,12 @@ This plugin enables magmi import from csv files (using Dataflow format + magmi e
  <input type="text" name="CSV:remoteurl" id="CSV:remoteurl" value="<?php echo $this->getParam("CSV:remoteurl","")?>" style="width:400px"></input>
  </li>
  </ul>
+ <div id="remotecookie" >
+ 	<ul class="formline">
+ 		<li class="label">HTTP Cookie</li>
+ 	    <li class="value"><input type="text" name="CSV:remotecookie" id="CSV:remotecookie" value="<?php echo $this->getParam("CSV:remotecookie","")?>" style="width:400px"></li>
+	</ul>
+ </div>
  <input type="checkbox" id="CSV:remoteauth" name="CSV:remoteauth" <?php  if($this->getParam("CSV:remoteauth",false)==true){?>checked="checked"<?php }?>>authentication needed
  <div id="remoteauth" <?php  if($this->getParam("CSV:remoteauth",false)==false){?>style="display:none"<?php }?>>
  
@@ -53,8 +59,8 @@ This plugin enables magmi import from csv files (using Dataflow format + magmi e
  	</ul> 
  	</div>
 
-
 </div>
+
 </div>
 
 

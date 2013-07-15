@@ -120,21 +120,13 @@ div.title
 	font-size:12pt;
 }
 
-.title .license .hover
-{
- display:none;
-}
-
-
-.title .license a:hover .hover
-{
- font-family:monospace;
- display:block;
- z-index:200;
- background:#ffffcc;
- border:1px solid #000000;
- color:#000000;
-
+#m_license {
+ 	font-family:monospace;
+ 	display:block;
+	 z-index:200;
+ 	background:#ffffcc;
+ 	border:1px solid #000000;
+ 	color:#000000;
 }
 
 
@@ -399,6 +391,11 @@ div.plugininfo
 {
 }
 
+span.pluginname.sponsored
+{
+ background:#eeeeff;
+}
+
 div.plugininfo div.plugininfohover
 {
 	position:absolute;
@@ -443,6 +440,18 @@ div.plugininfo:hover div.plugininfohover
  top:0px;
  left:100%;
  z-index:200;
+}
+
+div.plugindata .ul
+{
+	
+}
+div.plugindata .minidoc
+{
+	background:#ffffff;
+	border-top:1px solid #cccccc;
+	padding-top:3px;
+	padding-bottom:3px;
 }
 
 div.pluginconfpanel

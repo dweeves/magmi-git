@@ -15,11 +15,13 @@
   				Provided to the community by <b><i><a href="mailto:dweeves@gmail.com">Dweeves</a></i></b>
  			</div>
  			<div class="license">
- 			Released under <a href="javascript:;">MIT OSL License
- 			<span class="hover">
+ 			Released under <a href="javascript:togglelicense();">MIT OSL License</a>
+ 			</div>
+ 				<div id="m_license" style="display:none">
  			<?php echo nl2br(file_get_contents("../inc/license.txt"))?>
- 			</span>
- 			</a>
+ 			</div>
+ 			<div>
+ 			Online Help : see <a href="http://sourceforge.net/apps/mediawiki/magmi/" target="wiki">Wiki</a> or plugin panels documentation link
  			</div>
  		</div>
 		<div class="info" style="float:right;width:180px">
@@ -28,5 +30,11 @@
 		</div>
  	</div>
 </div>
+<script type="text/javascript">
+togglelicense=function()
+{
+ $('m_license').toggle();
+}
+</script>
 
 

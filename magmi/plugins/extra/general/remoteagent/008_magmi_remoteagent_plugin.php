@@ -18,6 +18,7 @@
             "name" => "Remote Agent Plugin",
             "author" => "Dweeves",
             "version" => "0.0.1",
+        	"sponsorinfo"=>array("name"=>"Eydun Lamhauge","url"=>"http://www.admind.fo/"),
         	"url"=>$this->pluginDocUrl("Remote_Agent")
         );
     }
@@ -47,7 +48,7 @@
     	{
     		$this->log("Remote Agent v$pv found at ".$this->_raproxy->getRemoteAgentUrl(),"startup");
     	}
-    	$cv=MRA\Magmi_RemoteAgent::getStaticVersion();
+    	$cv=Magmi_RemoteAgent::getStaticVersion();
 		if($pv<$cv)
 		{
 			$this->log("Deploying latest v$cv");

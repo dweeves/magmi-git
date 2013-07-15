@@ -69,16 +69,28 @@ function abspath($path,$basepath="",$resolve=true)
 	{
 		$basepath=dirname(dirname(__FILE__));
 	}
-	$cpath=$basepath."/".$path;
+	$cpath=str_replace('//','/',$basepath."/".$path);
 	if($resolve && !is_remote_path($cpath))
 	{
 		$abs=realpath($cpath);
 	}
 	else
 	{
-		$abs=preg_replace('|\w+/\.\.\/|', '',$cpath );
-		$abs=preg_replace('|\./|','',$abs);
-	
+		$inparts=explode("/",$cpath);
+		$outparts=array();
+		for($i=0;$i<count($inparts);$i++)
+		{
+			if($inparts[$i]=='..')
+			{
+				array_pop($outparts)	;
+			}
+			else
+			if($inparts[$i]!='.')
+			{
+				$outparts[]=$inparts[$i];
+			}
+		}
+		$abs=implode("/",$outparts);
 	}
 	return $abs;
 }
@@ -147,3 +159,4 @@ class Slugger
       return $str;
 	}
 }
+

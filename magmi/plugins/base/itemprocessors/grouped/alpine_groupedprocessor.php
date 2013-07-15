@@ -34,7 +34,7 @@
 class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 {
 
-    public static $_VERSION = '1.1';
+    public static $_VERSION = '1.2';
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentgrouped = array();
@@ -67,23 +67,26 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * @param type $cond
      * @param type $conddata
      */
-    public function dolink($pid, $cond, $conddata = array())
+    public function dolink($pid, $cond, $gr=true,$conddata = array())
     {
         $cpl = $this->tablename("catalog_product_link");
         $cpsl = $this->tablename("catalog_product_super_link");
         $cpr = $this->tablename("catalog_product_relation");
         $cpe = $this->tablename("catalog_product_entity");
         $cplt = $this->tablename("catalog_product_link_type");
-
-        $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
-            JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
-            WHERE cpsl.parent_id=?";
-        $this->delete($sql, array($pid));
-        $sql = "DELETE FROM $cpl
-            WHERE product_id=?";
-        $this->delete($sql, array($pid));
+		//if group reset
+		if($gr)
+		{
+        	$sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
+            	JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
+            	WHERE cpsl.parent_id=?";
+        	$this->delete($sql, array($pid));
+        	$sql = "DELETE FROM $cpl
+            	WHERE product_id=?";
+        	$this->delete($sql, array($pid));
+		}
         //recreate associations
-        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) 
+        $sql = "INSERT IGNORE INTO $cpsl (`parent_id`,`product_id`) 
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
@@ -94,13 +97,13 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
        		 $sql = "select link_type_id from $cplt where code=?";
        	 	 $this->_linktype = $this->selectone($sql, 'super', 'link_type_id');
         }
-        $sql = "INSERT INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`) 
+        $sql = "INSERT IGNORE INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`) 
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id, ?
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
             WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge(array($this->_linktype),$conddata, array($pid)));
-        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) 
+        $sql = "INSERT IGNORE INTO $cpr (`parent_id`,`child_id`) 
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
@@ -115,9 +118,9 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * @see dolink($pid, $cond, $conddata = array())
      * @param type $pid
      */
-    public function autoLink($pid)
+    public function autoLink($pid,$gr=true)
     {
-        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')");
+        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')",$gr);
     }
 
     public function updSimpleVisibility($pid)
@@ -141,9 +144,9 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * @param type $pid
      * @param type $skulist
      */
-    public function fixedLink($pid, $skulist)
+    public function fixedLink($pid, $skulist,$gr=true)
     {
-        $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $skulist);
+        $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")",$gr, $skulist);
     }
 
     /**
@@ -179,6 +182,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         }
 
         $pid = $params["product_id"];
+        $groupreset=!isset($item['group_reset']) || $item['group_reset']==1;
         $matchmode = $this->getMatchMode($item);
         switch ($matchmode)
         {
@@ -186,17 +190,17 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             break;
         case "auto":
             //destroy old associations
-            $this->autoLink($pid);
+            $this->autoLink($pid,$groupreset);
             $this->updSimpleVisibility($pid);
             break;
         case "cursimples":
-            $this->fixedLink($pid, $this->_currentgrouped);
+            $this->fixedLink($pid, $this->_currentgrouped,$groupreset);
             $this->updSimpleVisibility($pid);
             break;
         case "fixed":
             $sskus = explode(",", $item["grouped_skus"]);
             $this->trimarray($sskus);
-            $this->fixedLink($pid, $sskus);
+            $this->fixedLink($pid, $sskus,$groupreset);
             $this->updSimpleVisibility($pid);
             unset($item["simples_skus"]);
             break;

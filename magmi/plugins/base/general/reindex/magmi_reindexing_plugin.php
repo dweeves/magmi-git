@@ -2,13 +2,14 @@
 class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 {
 	protected $_reindex;
-	protected $_indexlist="catalog_product_attribute,catalog_product_price,catalog_product_flat,catalog_category_flat,catalog_category_product,cataloginventory_stock,catalog_url,catalogsearch_fulltext";
+	protected $_indexlist="catalog_product_attribute,catalog_product_price,catalog_product_flat,catalog_category_flat,catalog_category_product,cataloginventory_stock,catalog_url,catalogsearch_fulltext,tag_summary";
+	protected $_mdh;
 	
 	public function getPluginInfo()
 	{
 		return array("name"=>"Magmi Magento Reindexer",
 					 "author"=>"Dweeves",
-					 "version"=>"1.0.7",
+					 "version"=>"1.0.2",
 					 "url"=>$this->pluginDocUrl("Magmi_Magento_Reindexer"));
 	}
 	
@@ -75,8 +76,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 		{
 			session_write_close();
 		}
-		$magdir=Magmi_Config::getInstance()->getMagentoDir();
-		$cl=$this->getParam("REINDEX:phpcli")." $magdir/shell/indexer.php";
+		$cl=$this->getParam("REINDEX:phpcli")." shell/indexer.php";
 		$idxlstr=$this->getParam("REINDEX:indexes","");
 		$idxlist=explode(",",$idxlstr);
 		if(count($idxlist)==0)
@@ -88,7 +88,9 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 		{
 			$tstart=microtime(true);
 			$this->log("Reindexing $idx....","info");
-			$out = shell_exec("$cl --reindex $idx");
+			
+			// Execute Reindex command, and specify that it should be ran from Magento directory
+			$out = $this->_mdh->exec_cmd($cl,"--reindex $idx", $this->_mdh->getMagentoDir());
 			$this->log($out,"info");
 			$tend=microtime(true);
 			$this->log("done in ".round($tend-$tstart,2). " secs","info");
@@ -108,6 +110,8 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 	
 	public function initialize($params)
 	{
-		
+		$magdir=Magmi_Config::getInstance()->getMagentoDir();
+		$this->_mdh=MagentoDirHandlerFactory::getInstance()->getHandler($magdir);
+			
 	}
 }

@@ -101,16 +101,29 @@ class Magmi_CSVReader extends Magmi_Mixin
 	
 	public function openCSV()
 	{
-	
+		$utf8bom=chr(0xEF).chr(0xBB).chr(0xBF);
 		//open csv file
 		$this->_fh=fopen($this->_filename,"rb");
+		//check for UTF8 BOM
+		$bomtest=fread($this->_fh,3);
+		//if 3 first bytes of file are not utf8 bom
+		if($bomtest!=$utf8bom)
+		{
+			//rewind to first byte;
+			$this->log("No BOM detected, assuming File is UTF8 without BOM...","startup");
+			fseek($this->_fh,0,SEEK_SET);
+		}
+		else
+		{
+			$this->log("File is UTF8 (BOM Detected)","startup");
+		}
 	}
 	
 	public function getColumnNames($prescan=false)
 	{
 		if($prescan==true)
 		{
-			$this->_fh=fopen($this->getParam("CSV:filename"),"rb");
+			$this->openCSV();
 			$this->_csep=$this->getParam("CSV:separator",",");
 			$this->_dcsep=$this->_csep;
 		
@@ -129,7 +142,7 @@ class Magmi_CSVReader extends Magmi_Mixin
 		{
 			$line++;
 			$dummy=fgetcsv($this->_fh,$this->_buffersize,$this->_csep,$this->_cenc);
-			$this->log("skip line $line:$dummy","info");
+			$this->log("skip line $line:".implode($this->_csep,$dummy),"info");
 		}
 		$cols=fgetcsv($this->_fh,$this->_buffersize,$this->_csep,$this->_cenc);
 		//if csv has no headers,use column number as column name

@@ -55,7 +55,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	{
 		return array("name"=>"CSV Datasource",
 					 "author"=>"Dweeves",
-					 "version"=>"1.2");
+					 "version"=>"1.3");
 	}
 	
 	public function getRecordsCount()
@@ -68,7 +68,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		
 	}
 	
-  public function getRemoteFile($url,$creds=null,$authmode=null)
+  public function getRemoteFile($url,$creds=null,$authmode=null,$cookies=null)
   {
 	$ch = curl_init($url);
 	$this->log("Fetching CSV: $url","startup");
@@ -81,7 +81,12 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	}
 	
 		$outname=$csvdldir."/".basename($url);
-  //open file for writing
+		$ext = substr(strrchr($outname, '.'), 1);
+  		if($ext!=".txt" && $ext!=".csv")
+  		{
+  			$outname=$outname.".csv";
+  		}
+		//open file for writing
 		if(file_exists($outname))
 		{
 			unlink($outname);
@@ -120,6 +125,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		}
 	}
 	
+	
 	if($creds!="")
 	{
 	if($lookup!=0)
@@ -131,12 +137,30 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		}
 	   $lookup_opts[CURLOPT_USERPWD]="$creds";
 	}
+
+	
 	if(substr($url,0,4)=="http")
 	{
 		$dl_opts[CURLOPT_HTTPAUTH]=CURLAUTH_ANY;
 	  	$dl_opts[CURLOPT_UNRESTRICTED_AUTH]=true;
 	}
 	$dl_opts[CURLOPT_USERPWD]="$creds";
+	}
+	
+	if($cookies)
+	{
+		if($lookup!=0)
+		{
+			if(substr($url,0,4)=="http")
+			{
+				$lookup_opts[CURLOPT_COOKIE]=$cookies;
+			}
+		}
+		
+		if(substr($url,0,4)=="http")
+		{
+				$dl_opts[CURLOPT_COOKIE]=$cookies;
+		}
 	}
 	
 	if($lookup)
@@ -157,7 +181,8 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		}
 		else
 		{
-			throw Exception("Cannot fetch $url");
+			$lm=curl_getinfo($ch);
+			throw new  Exception("Cannot fetch $url");
 		}
 
 	}
@@ -207,10 +232,12 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 			{
 				$user=$this->getParam("CSV:remoteuser");
 				$pass=$this->getParam("CSV:remotepass");
+				
 				$authmode=$this->getParam("CSV:authmode");
 				$creds="$user:$pass";
 			}
-			$outname=$this->getRemoteFile($url,$creds,$authmode);
+			$cookies=$this->getParam("CSV:remotecookie");
+			$outname=$this->getRemoteFile($url,$creds,$authmode,$cookies);
 			$this->setParam("CSV:filename", $outname);
 			$this->_csvreader->initialize();
 		}

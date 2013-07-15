@@ -112,6 +112,10 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
 		$this->persistParams($params);
 		$rqfile=$params["UTCSQL:queryfile"];
 		unset($params["UTCSQL:queryfile"]);
+		if(!isabspath($rqfile))
+		{
+			$rqfile=dirname(__FILE__)."/prequests/$rqfile";
+		}
 		$sql=file_get_contents($rqfile);
 		$rparams=array();
 		foreach($params as $pname=>$pval)

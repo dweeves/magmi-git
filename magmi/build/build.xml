@@ -19,14 +19,14 @@
     	
 
     	<zip destfile="magmi_${target_version}.zip" update="no">
-        	<zipfileset dir=".." excludes="**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project"  prefix="magmi"/>
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project"  prefix="magmi"/>
            	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
     		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
     		<zipfileset dir=".." includes="**/plugins/inc/**" prefix="magmi" dirmode="777"/>
-        	<zipfileset dir=".." includes="**/plugins/base/**" prefix="magmi" dirmode="777"/>
+        	<zipfileset dir=".." includes="**/plugins/base/**" excludes="**/plugins/base/datasources/csv/downloads/**" prefix="magmi" dirmode="777"/>
         </zip>
     	
 

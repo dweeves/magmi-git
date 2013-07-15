@@ -1,27 +1,14 @@
 
 <div class="plugin_description">
-This utility enable remapping of select values
+This utility enable mass creation/translation of select/multiselect attribute values
 </div>
-
-
 <div>
-
-<ul class="formline">
-<li class="label" >attribute code to remap (must be select):</li>
-<li class="value">
-<input type="text" name="SREMAP:attrcode" id="SREMAP:attrcode" value="<?php echo $this->getParam("SREMAP:attrcode")?>"></input>
-</li>
-</ul>
-
 <ul class="formline">
 <li class="label">CSVs base directory</li>
 <li class="value">
 <input type="text" name="CSV:basedir" id="CSV:basedir" value="<?php echo $this->getParam("CSV:basedir","var/import")?>"></input>
 <div class="fieldinfo">Relative paths are relative to magento base directory , absolute paths will be used as is</div></li>
 </ul>
-
-
-
 <ul class="formline">
 <li class="label" >File to import:</li>
 <li class="value" id="csvds_filelist">

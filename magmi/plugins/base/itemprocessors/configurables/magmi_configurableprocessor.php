@@ -259,11 +259,13 @@ public function getConfigurableOptsFromAsId($asid)
 				$data[] = $attrinfo['frontend_label'];
 				$ins[]="(?,?,1,?)";
 			}
-			//insert/update attribute value for association
-			$sql="INSERT INTO `$cpsal` (`product_super_attribute_id`,`store_id`,`use_default`,`value`) VALUES ".implode(",",$ins).
-			"ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
-			$this->insert($sql,$data);
-			
+			if(count($ins)>0)
+			{
+				//insert/update attribute value for association
+				$sql="INSERT INTO `$cpsal` (`product_super_attribute_id`,`store_id`,`use_default`,`value`) VALUES ".implode(",",$ins).
+				"ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
+				$this->insert($sql,$data);
+			}
 			//if we have price info for this attribute
 			if(isset($this->_optpriceinfo[$confopt]))
 			{

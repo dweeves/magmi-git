@@ -15,46 +15,7 @@
 	{
 		die("ERROR");
 	}
-	class FileLogger
-	{
-		protected $_fname;
-		
-		public function __construct($fname)
-		{
-			$this->_fname=$fname;
-			$f=fopen($this->_fname,"w");
-			if($f==false)
-			{
-				throw new Exception("CANNOT WRITE PROGRESS FILE ");
-			}
-			fclose($f);
-		}
-
-		public function log($data,$type)
-		{
-			
-			$f=fopen($this->_fname,"a");
-			if($f==false)
-			{
-				throw new Exception("CANNOT WRITE PROGRESS FILE ");
-			}
-			$data=preg_replace ("/(\r|\n|\r\n)/", "<br>", $data);
-			fwrite($f,"$type:$data\n");
-			fclose($f);
-		}
-		
-	}
 	
-	class EchoLogger
-	{
-		public function log($data,$type)
-		{
-			$info=explode(";",$type);
-			$type=$info[0];
-			echo('<p class="logentry log_'.$type.'">'.$data."</p>");
-		}
-		
-	}
 	if(Magmi_StateManager::getState()!=="running")
 	{
 		Magmi_StateManager::setState("idle");

@@ -15,7 +15,7 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
         return array(
             "name" => "Column mapper",
             "author" => "Dweeves",
-            "version" => "0.0.3",
+            "version" => "0.0.3a",
         	"url"=>$this->pluginDocUrl("Column_mapper")
         );
     }
@@ -37,7 +37,6 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
 		$scols=array();
 		foreach($icols as $cname)
 		{
-
 			if(isset($this->_dcols[$cname]))
 			{
 				$mlist=array_unique(explode(",",$this->_dcols[$cname]));

@@ -38,7 +38,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.24",
+            "version" => "1.0.26",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
 	}
@@ -52,7 +52,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		}
 		//use ";" as image separator
 		$images=explode(";",$ivalue);
-		
+		$imageindex=0;
 		//for each image
 		foreach($images as $imagefile)
 		{
@@ -69,13 +69,14 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			}
 			unset($infolist);
 			//copy it from source dir to product media dir
-			$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
+			$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex==0?"":$imageindex));
 			if($imagefile!==false)
 			{
 				//add to gallery
 				$targetsids=$this->getStoreIdsForStoreScope($item["store"]);
 				$vid=$this->addImageToGallery($pid,$storeid,$attrdesc,$imagefile,$targetsids,$label,$exclude);
 			}
+			$imageindex++;
 		}
 		unset($images);
 		//we don't want to insert after that
@@ -119,19 +120,20 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			return $ivalue;
 		}
 		
-		$imgfile=NULL;
-		$bi=basename($ivalue);
-		
-		if($ivalue[0]=="/" && substr($ivalue, 1)==$bi)
-		{
-			$ivalue=$bi;
-		}
-		//we have an image name with / before
+		//ok , so it's a relative path
+		$imgfile=false;
 		$scandirs=explode(";",$this->getParam("IMG:sourcedir"));
-		$found=false;
-		for($i=0;$i<count($scandirs) && !$imgfile;$i++)
+		
+		//iterate on image sourcedirs, trying to resolve file name based on input value and current source dir
+		for($i=0;$i<count($scandirs) && $imgfile===false;$i++)
 		{
-			$imgfile=abspath($ivalue,$scandirs[$i]);
+			$sd=$scandirs[$i];
+			//scandir is relative, use mdh
+			if($sd[0]!="/")
+			{
+				$sd=$this->_mdh->getMagentoDir()."/".$sd;
+			}
+			$imgfile=abspath($ivalue,$sd);
 		}
 		return $imgfile;
 	}
@@ -287,7 +289,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				$sql="INSERT INTO $tgv
 					(value_id,store_id,position,disabled,label)
 					VALUES ".implode(",",$vinserts)." 
-					ON DUPLICATE KEY UPDATE label=VALUES(`label`)";
+					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
 				$this->insert($sql,$data);
 			}
 			unset($vinserts);
@@ -297,44 +299,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
 	public function parsename($info,$item,$extra)
 	{
-		$matches=array();
-		while(preg_match("|\{item\.(.*?)\}|",$info,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(isset($item[$match]))
-					{
-						$rep=$item[$match];
-					}
-					else
-					{
-						$rep="";
-					}
-					$info=str_replace($matches[0],$rep,$info);
-				}
-			}
-		}
-		while(preg_match("|\{magmi\.(.*?)\}|",$info,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(isset($extra[$match]))
-					{
-						$rep=$extra[$match];
-					}
-					else
-					{
-						$rep="";
-					}
-					$info=str_replace($matches[0],$rep,$info);
-				}
-			}
-		}
-		unset($matches);
+		$info=$this->parseCalculatedValue($info,$item,$extra);
 		return $info;
 	}
 	
@@ -359,26 +324,42 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			$item[$k]=$v;
 		}
 	}
+	
+	
+	public function getImagenameComponents($fname,$formula,$extra)
+	{
+		$matches=array();
+		$xname=$fname;
+		if(preg_match("|re::(.*)::(.*)|",$formula,$matches))
+		{
+			$rep=$matches[2];
+			$xname=preg_replace("|".$matches[1]."|",$rep,$xname);
+			$extra['parsed']=true;
+		}
+		$xname=basename($xname);
+		$m=preg_match("/(.*)\.(jpg|png|gif)$/i",$xname,$matches);
+		if($m)
+		{
+			$extra["imagename"]=$xname;
+			$extra["imagename.ext"]=$matches[2];
+			$extra["imagename.noext"]=$matches[1];
+		}
+		else
+		{
+			$uid=uniqid("img",true);
+			$extra=array_merge($extra,array("imagename"=>"$uid.jpg","imagename.ext"=>"jpg","imagename.noext"=>$uid));
+		}
+			
+		return $extra;
+	}
 	public function getTargetName($fname,$item,$extra)
 	{
-		$cname=$fname;
+		$cname=basename($fname);
 		if(isset($this->forcename) && $this->forcename!="")
 		{
-			$matches=array();
-			$m=preg_match("/(.*)\.(jpg|png|gif)$/i",$cname,$matches);	
-			if($m)
- 			{			
-				$extra["imagename"]=$cname;
-				$extra["imagename.ext"]=$matches[2];
-				$extra["imagename.noext"]=$matches[1];
-			}
-			else
-			{
-			 $uid=uniqid("img",true);
-			 $extra=array("imagename"=>"$uid.jpg","imagename.ext"=>"jpg","imagename.noext"=>$uid);
-			}			
-			$cname=$this->parsename($this->forcename,$item,$extra);
-			unset($matches);
+			$extra=$this->getImagenameComponents($fname,$this->forcename,$extra);
+			$pname=($extra['parsed']?$extra['imagename']:$this->forcename);
+			$cname=$this->parsename($pname,$item,$extra);
 		}
 		$cname=strtolower(preg_replace("/%[0-9][0-9|A-F]/","_",rawurlencode($cname)));
 		
@@ -418,7 +399,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		$imgfile=$source;
 		$checkexist= ($this->getParam("IMG:existingonly")=="yes");
 		$curlh=false;
-		$bimgfile=$this->getTargetName(basename($imgfile),$item,$extra);
+		$bimgfile=$this->getTargetName($imgfile,$item,$extra);
 		//source file exists
 		$i1=$bimgfile[0];
 		$i2=$bimgfile[1];

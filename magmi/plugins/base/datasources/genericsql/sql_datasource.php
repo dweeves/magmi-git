@@ -33,7 +33,7 @@ class SQL_Datasource extends Magmi_Datasource
 		{
 			$cdbpdostr=$this->getParam("SQL:pdostr","");
 			
-			$this->dbh->initDBPDOStr($cdbuser,$cdbpass,$cdbpdostr);
+			$this->dbh->initDBPDOStr($cdbusr,$cdbpass,$cdbpdostr);
 		}
 		else
 		{
@@ -63,7 +63,7 @@ class SQL_Datasource extends Magmi_Datasource
 	{
 		return array("name"=>"Generic SQL Datasource",
 					 "author"=>"Dweeves",
-					 "version"=>"1.0.2");
+					 "version"=>"1.0.3");
 	}
 	
 	public function getPluginParamNames()
