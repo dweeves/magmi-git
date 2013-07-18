@@ -34,7 +34,7 @@
 class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 {
 
-    public static $_VERSION = '1.2';
+    public static $_VERSION = '1.2.1';
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentgrouped = array();
@@ -202,7 +202,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             $this->trimarray($sskus);
             $this->fixedLink($pid, $sskus,$groupreset);
             $this->updSimpleVisibility($pid);
-            unset($item["simples_skus"]);
+            unset($item["grouped_skus"]);
+            unset($sskus);
             break;
         default:
             break;
