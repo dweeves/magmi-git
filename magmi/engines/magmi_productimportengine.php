@@ -79,7 +79,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getEngineInfo()
 	{
-		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.3","author"=>"dweeves");
+		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.4","author"=>"dweeves");
 	}
 
 	/**
@@ -924,10 +924,15 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			if(isset($item["qty"]))
 			{
 				$relqty=NULL;
-				//test for relative qty
-				if($item["qty"][0]=="+" || $item["qty"][0]=="-")
+				
+				//if magmi_qty_absolute flag is not set, then use standard "relative" qty parsing.
+				if(!isset($item["magmi_qty_absolute"]) || $item["magmi_qty_absolute"]==0)
 				{
-					$relqty=getRelative($item["qty"]);
+					//test for relative qty
+					if($item["qty"][0]=="+" || $item["qty"][0]=="-")
+					{
+						$relqty=getRelative($item["qty"]);
+					}
 				}
 				//if relative qty
 				if($relqty!=NULL)
@@ -1013,7 +1018,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		
 		//get all "real ids"
 		$scatids=array_keys($cdata);
-		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($scatids).")",array_keys($scatids));
+		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($scatids).")",$scatids);
 		$vcatids=array();
 		foreach($rcatids as $rcatrow)
 		{
