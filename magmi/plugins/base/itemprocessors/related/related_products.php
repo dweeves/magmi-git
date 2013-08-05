@@ -266,7 +266,7 @@ class RelatedProducts extends Magmi_ItemProcessor
  	 	$addcond="OR ".$joininfo["join"]["cpe.sku"];
  	 	$data=array_merge($data,$joininfo["data"]["cpe.sku"]);
  	 } 	 
- 	//this enable to mass add 
+ 	//this enable to mass add forcing posution to 0 
  	$bsql="SELECT cpl.link_id,cpla.product_link_attribute_id,0 as value
 	   	   FROM ".$this->tablename("catalog_product_entity")." AS cpe
 		   JOIN ".$this->tablename("catalog_product_entity")." AS cpe2 ON cpe2.entity_id!=cpe.entity_id

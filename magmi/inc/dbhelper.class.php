@@ -396,6 +396,20 @@ class DBHelper
 	}
 	
 	/**
+	 * transform associative array into CASE sub statement
+	 */
+	
+	public function arr2case($arr,$casevar)
+	{
+		$sql="(CASE ";
+		foreach($arr as $k=>$v)
+		{
+			$sql.="WHEN $casevar='$k' THEN '$v'\n";
+		}
+		$sql.="END)";
+		return $sql;
+	}
+	/**
 	 * 
 	 * transform a associative array into a list of update prepared placeholders
 	 * @param array $arr associative array to prepare for update , array keys used as column to update

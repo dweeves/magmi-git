@@ -34,11 +34,22 @@
 class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 {
 
-    public static $_VERSION = '1.2.1';
+    public static $_VERSION = '1.3';
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentgrouped = array();
 	private $_linktype=null;
+	private $_link_type_id;
+	private $_super_pos_attr_id;
+	
+	
+	public function initialize($params)
+	{
+		$sql="SELECT link_type_id FROM ".$this->tablename("catalog_product_link_type")." WHERE code=?";
+		$this->_link_type_id=$this->selectone($sql,array("super"),"link_type_id");
+		$sql="SELECT product_link_attribute_id FROM ".$this->tablename("catalog_product_link_attribute")." WHERE link_type_id=? AND product_link_attribute_code=?";
+		$this->_super_pos_attr_id=$this->selectone($sql,array($this->_link_type_id,'position'),'product_link_attribute_id');
+	}
 	
     public function getPluginUrl()
     {
@@ -74,6 +85,16 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $cpr = $this->tablename("catalog_product_relation");
         $cpe = $this->tablename("catalog_product_entity");
         $cplt = $this->tablename("catalog_product_link_type");
+        $cplai=$this->tablename("catalog_product_link_attribute_int");
+        //create association table for sku/positions
+        $sskus=array();
+        for($i=0;$i<count($conddata);$i++)
+        {
+        $skuinfo=explode("::",$conddata[$i]);
+        $sskus[$skuinfo[0]]=count($skuinfo)>1?$skuinfo[1]:$i;
+        $conddata[$i]=$skuinfo [0];
+        }
+        
 		//if group reset
 		if($gr)
 		{
@@ -109,6 +130,15 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             JOIN $cpe as cpes ON cpes.sku $cond
             WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
+        //positions
+        $cw=$this->arr2case($sskus,'cpes.sku');
+        $sql="INSERT INTO $cplai (product_link_attribute_id,link_id,value) SELECT ?,cpl.link_id,$cw as value
+        FROM $cpl as cpl
+        JOIN $cpe as cpes ON cpes.sku $cond
+        WHERE cpl.linked_product_id=cpes.entity_id AND cpl.product_id=?";
+        $this->insert($sql,array_merge(array($this->_super_pos_attr_id),$conddata,array($pid)));
+        unset($sskus);
+        
         unset($conddata);
     }
 
@@ -120,7 +150,20 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      */
     public function autoLink($pid,$gr=true)
     {
-        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')",$gr);
+    	$cpe=$this->tablename("catalog_product_entity");
+    	$sql="SELECT cpes.sku
+    	 FROM $cpe as cpec
+    	JOIN $cpe as cpes  ON cpes.sku LIKE CONCAT(cpec.sku,'%') AND cpes.sku!=cpec.sku
+    	WHERE cpec.entity_id=?";
+    	$res=$this->selectAll($sql,array($pid));
+    	$sskus=array();
+    	for($i=0;$i<count($res);$i++)
+    	{
+    		$sskus[$i]=$res[$i]["sku"];
+    	}
+    	unset($res);
+        $this->fixedlink($pid,$sskus,$gr);
+    	unset($sskus);
     }
 
     public function updSimpleVisibility($pid)

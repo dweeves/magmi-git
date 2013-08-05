@@ -921,7 +921,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
 			#fill with values
 			$svstr=$this->arr2update($stockvals);
-			if(isset($item["qty"]))
+			if(isset($item["qty"]) && $item["qty"]!="")
 			{
 				$relqty=NULL;
 				
@@ -1564,6 +1564,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		//counter
 		$res=array("ok"=>0,"last"=>0);
+		$canceled=false;
 		$this->_current_row++;
 		if($this->_current_row%$rstep==0)
 		{
