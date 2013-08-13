@@ -18,7 +18,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Custom Options",
             "author" => "Pablo & Dweeves",
-            "version" => "0.0.7",
+            "version" => "0.0.7a",
 			"url"=>$this->pluginDocUrl("Custom_Options")
             );
 	}
@@ -30,7 +30,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 
 	public function getOptId($field)
 	{
-		return $this->_optids[$field];
+		return isset($this->_optids[$field])?$this->_optids[$field]:null;
 	}
 	
 	public function setOptId($field,$val)
@@ -40,7 +40,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 	
 	public function getOptTypeIds($field)
 	{
-		return $this->_opttypeids[$field];
+		return isset($this->_opttypeids[$field])?$this->_opttypeids[$field]:null;
 	}
 	
 	public function setOptTypeIds($field,$arr)
@@ -85,11 +85,15 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 			$tvals[]=$optionId;
 			$tvals[]=$sid;
 			$tvals[]=$opt["title"];
-			$pins[]="(?,?,?,?)";
-			$pvals[]=$optionId;
-			$pvals[]=$sid;
-			$pvals[]=$opt["price"];
-			$pvals[]=$opt["price_type"];
+			//price inserts only if option can have price
+			if(isset($opt['price']))
+			{
+				$pins[]="(?,?,?,?)";
+				$pvals[]=$optionId;
+				$pvals[]=$sid;
+				$pvals[]=$opt["price"];
+				$pvals[]=$opt["price_type"];
+			}
 			//here we set admin values, so no more value needed since all other stores will share it
 			if($sid==0)
 			{
@@ -100,7 +104,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 		$sql="INSERT IGNORE INTO $t2 (option_id, store_id, title) VALUES ".implode(",",$tins);
 		$this->insert($sql,$tvals);
 
-		if(isset($opt['price']))
+		if(count($pins)>0)
 		{
 			$sql = "INSERT IGNORE INTO $t3 (option_id, store_id, price, price_type) VALUES ".implode(",",$pins);
 			$this->insert($sql,$pvals);
