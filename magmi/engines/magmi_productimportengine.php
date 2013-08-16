@@ -248,7 +248,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			{
 				$extra=$this->tablename("catalog_eav_attribute");
 				//SQL for selecting attribute properties for all wanted attributes
-				$sql="SELECT `$tname`.*,$extra.is_global FROM `$tname`
+				$sql="SELECT `$tname`.*,$extra.is_global,$extra.apply_to FROM `$tname`
 				LEFT JOIN $extra ON $tname.attribute_id=$extra.attribute_id
 				WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";		
 			}
@@ -368,7 +368,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		$tname=$this->tablename("catalog_product_entity");
 		$result=$this->selectAll(
-		"SELECT sku,entity_id as pid,attribute_set_id as asid FROM $tname WHERE sku=?",
+		"SELECT sku,entity_id as pid,attribute_set_id  as asid,type_id as type FROM $tname WHERE sku=?",
 		$sku);
 		if(count($result)>0)
 		{
@@ -704,7 +704,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 * @param $pid : product id to create attribute values for
 	 * @param $item : attribute values in an array indexed by attribute_code
 	 */
-	public function createAttributes($pid,&$item,$attmap,$isnew)
+	public function createAttributes($pid,&$item,$attmap,$isnew,$itemids)
 	{
 		/**
 		 * get all store ids
@@ -734,6 +734,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			//iterate on all attribute descriptions for the given backend type
 			foreach($a["data"] as $attrdesc)
 			{
+				//check item type is compatible with attribute apply_to
+				if($attrdesc["apply_to"]!=null && strpos($attrdesc["apply_to"],$itemids["type"])===false)
+				{
+					//do not handle attribute if it does not apply to the product type
+					continue;
+				}			
 				//get attribute id
 				$attid=$attrdesc["attribute_id"];
 				//get attribute value in the item to insert based on code
@@ -1191,7 +1197,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			else
 			{
 				//only sku & attribute set id from datasource otherwise.
-				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid);
+				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid,"type"=>isset($item["type"])?$item["type"]:"Simple");
 			}
 			//do not reset values for existing if non admin	
 			$this->onNewSku($sku,($cids!==false));
@@ -1374,7 +1380,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$attrmap=$this->attrbytype;
 			do
 			{
-				$attrmap=$this->createAttributes($pid,$item,$attrmap,$isnew);
+				$attrmap=$this->createAttributes($pid,$item,$attrmap,$isnew,$itemids);
 			}
 			while(count($attrmap)>0);
 
