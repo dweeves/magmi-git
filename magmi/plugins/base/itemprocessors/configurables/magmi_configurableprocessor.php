@@ -12,7 +12,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 	{
 			
 	}
-	
+	/* Plugin info declaration */
 	public function getPluginInfo()
 	{
 		return array(
