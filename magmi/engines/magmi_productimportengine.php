@@ -59,7 +59,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function __construct()
 	{
-	
+	  parent::__construct();
 		$this->setBuiltinPluginClasses("itemprocessors",dirname(dirname(__FILE__))."/plugins/inc/magmi_defaultattributehandler.php::Magmi_DefaultAttributeItemProcessor");
 	}
 
@@ -1492,7 +1492,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		//create an instance of local magento directory handler
 		//this instance will autoregister in factory
 		$mdh=new LocalMagentoDirHandler(Magmi_Config::getInstance()->getMagentoDir());
-		$this->addTimedPhases(array("beforeImport","startImport","endImport","afterImport"));	
+		$this->_timecounter->initTimingCats(array("global","line"));
+		$this->_timecounter->addTimedPhases(array("beforeImport","startImport","endImport","afterImport"));	
 		$this->initPlugins($this->_profile);
 		$this->mode=$this->getParam($params,"mode","update");
 	
@@ -1681,6 +1682,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$lastdbtime=0;
 			while(($item=$this->datasource->getNextRecord())!==false)
 			{
+				 $this->_timecounter->initTimingCats(array("line"));
 				 $res=$this->processDataSourceLine($item, $rstep,$tstart,$tdiff,$lastdbtime,$lastrec);
 				 //break on "forced" last
 				 if($res["last"]==1)
@@ -1702,7 +1704,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$this->log("No Records returned by datasource","warning");
 		}
 		$this->callPlugins("datasources,general,itemprocessors","afterImport");
-		foreach($this->_phasetimes as $phase=>$info)
+		$gtc=$this->_timecounter->getTimingCategory("global");
+		foreach($gtc as $phase=>$info)
 		{
 			$rep="Phase:$phase\n";
 			foreach($info as $plugin=>$data)

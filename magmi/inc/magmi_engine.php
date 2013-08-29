@@ -26,8 +26,7 @@ abstract class Magmi_Engine extends DbHelper
 	protected $_ploop_callbacks=array();
 	private $_excid=0;
 	public $logger=null;
-	protected $_phasetimes=array();
-	protected $_timedphases=array();
+	protected $_timingcats=array();
 	
 	public function getEngineInfo()
 	{
@@ -36,6 +35,7 @@ abstract class Magmi_Engine extends DbHelper
 	
 	public function __construct()
 	{
+		parent::__construct();
 		//force PHP internal encoding as UTF 8
 		mb_internal_encoding("UTF-8");
 	}
@@ -213,41 +213,7 @@ abstract class Magmi_Engine extends DbHelper
 		return $this->_activeplugins[$family][$order];	
 	}
 	
-	public function addTimedPhases($tfarr)
-	{
-		if(!is_array($tfarr))
-		{
-			$tfarr=array($tfarr);
-		}
-		$this->_timedphases=array_unique(array_merge($this->_timedphases,$tfarr));
-	}
-	
-	
-	public function initTime($phase,$src="Engine")
-	{
-		$t=microtime(true);
-		if(!isset($this->_phasetimes[$phase]))
-		{
-			$this->_phasetimes[$phase]=array();
-		}
-		if(!isset($this->_phasetimes[$phase][$src]))
-		{
-			$this->_phasetimes[$phase][$src]=array("init"=>$t,"dur"=>0);
-		}
-		$this->_phasetimes[$phase][$src]["start"]=$t;
-	}
-	
-	public function exitTime($phase,$src="Engine")
-	{
-		$end=microtime(true);
-		$this->_phasetimes[$phase][$src]["end"]=$end;
-		$this->_phasetimes[$phase][$src]["dur"]+=$end-$this->_phasetimes[$phase][$src]["start"];
-	}
-	
-	public function getPhaseTimes()
-	{
-		return $this->_phasetimes;
-	}
+
 	
 	public function callPlugins($types,$callback,&$data=null,$params=null,$break=true)
 	{
@@ -264,7 +230,7 @@ abstract class Magmi_Engine extends DbHelper
 			}
 		}
 		
-		$this->initTime($callback,get_class($this));
+		$this->_timecounter->initTime($callback,get_class($this));
 		
 		foreach($types as $ptype)
 		{
@@ -274,9 +240,9 @@ abstract class Magmi_Engine extends DbHelper
 				{
 					if(method_exists($pinst,$callback))
 					{
-						$this->initTime($callback,get_class($pinst));
+						$this->_timecounter->initTime($callback,get_class($pinst));
 						$callres=($data==null?($params==null?$pinst->$callback():$pinst->$callback($params)):$pinst->$callback($data,$params));
-						$this->exitTime($callback,get_class($pinst));
+						$this->_timecounter->exitTime($callback,get_class($pinst));
 						
 						if($callres===false && $data!=null)
 						{
@@ -287,21 +253,21 @@ abstract class Magmi_Engine extends DbHelper
 						if(isset($this->_ploop_callbacks[$callback]))
 						{
 							$cb=$this->_ploop_callbacks[$callback];
-							$this->initTime($callback,get_class($pinst));
+							$this->_timecounter->initTime($callback,get_class($pinst));
 							$this->$cb($pinst,$data,$result);
-							$this->exitTime($callback,get_class($pinst));
+							$this->_timecounter->exitTime($callback,get_class($pinst));
 							
 						}
 						if($result===false && $break)
 						{
-						$this->exitTime($callback,get_class($this));
+						$this->_timecounter->exitTime($callback,get_class($this));
 							return $result;
 						}					
 					}
 				}
 			}
 		}
-		$this->exitTime($callback,get_class($this));
+		$this->_timecounter->exitTime($callback,get_class($this));
 		return $result;
 	}
 	
