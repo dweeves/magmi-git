@@ -209,7 +209,17 @@ class CategoryImporter extends Magmi_ItemProcessor
 		}
 		//remove explicit root 
 		$pcatdef=str_replace($srp.$this->_tsep,"",$pcatdef);
-		$pcatparts=explode($this->_tsep,$pcatdef);
+		$zcatparts=explode($this->_tsep,$pcatdef);
+		//cleaning parts (trimming, removing empty)
+		$pcatparts=array();
+		for($i=0;$i<count($zcatparts);$i++)
+		{
+			$cp=trim($zcatparts[$i]);
+			if($cp!="")
+			{
+				$pcatparts[]=$cp;
+			}
+		}
 		$catparts=array();
 		$catpos=array();
 		//build a position table to restore after cat ids will be created

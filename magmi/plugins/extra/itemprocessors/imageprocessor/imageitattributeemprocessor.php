@@ -38,7 +38,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.26",
+            "version" => "1.0.26a",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
 	}
@@ -149,10 +149,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		
 		//add support for explicit exclude
 		$exclude=$this->getExclude($ivalue,true); 
-		
+		$imagefile=trim($ivalue);
 	
 		//else copy image file
-		$imagefile=$this->copyImageFile($ivalue,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
+		$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
 		$ovalue=$imagefile;
 		//add to gallery as excluded
 		if($imagefile!==false)
