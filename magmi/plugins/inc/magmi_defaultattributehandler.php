@@ -181,12 +181,33 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		$cpev=$this->tablename("catalog_product_entity_varchar");
 		//find conflicting url keys
 		$urlk=trim($ivalue);
-		if($urlk=="" && $this->currentItemExists())
+		$exists=$this->currentItemExists();
+		if($urlk=="" && $exists)
 		{
 			return "__MAGMI_DELETE__";
 		}
-		$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=? and value REGEXP ?";
-		$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$urlk."(-\d+)?"));
+		//for existing product, check if we have already a value matching the current pattern
+		if($exists)
+		{
+			$sql="SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND value REGEXP ?";
+			$eurl=$this->selectone($sql,array($attrdesc["attribute_id"],$pid,$urlk."(-\d+)?"),"value");
+			//we match wanted pattern, try finding conflicts with our current one
+			if($eurl)
+			{
+				$urlk=$eurl;
+				$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value=?";
+				$umatch=$urlk;
+			}
+			//no current value, so try inserting into target pattern list
+			else
+			{
+				
+				$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value REGEXP ?";
+				$umatch=$urlk."(-\d+)?";
+			}
+		}
+		$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$umatch));
+		//all conflicting url keys
 		if(count($lst)>0)
 		{
 			$urlk=$urlk."-".count($lst);
