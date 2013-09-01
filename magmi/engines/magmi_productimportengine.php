@@ -70,10 +70,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		return $this->_skustats;
 	}
 
-	public function getImportMode()
-	{
-		return $this->mode;
-	}
 	/**
 	 * (non-PHPdoc)
 	 * @see Magmi_Engine::getEngineInfo()
