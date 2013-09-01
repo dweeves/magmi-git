@@ -161,7 +161,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 					//get option id for value, create it if does not already exist
 					//do not insert if empty
 				default:
-					if($ivalue=="" && $this->getMode()=="update")
+					if($ivalue=="" && $this->currentItemExists())
 					{
 						return "__MAGMI_DELETE__";
 					}
@@ -223,11 +223,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleVarcharAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 
-		if($storeid!==0 && empty($ivalue) && $this->getImportMode()=="create")
+		$exists=$this->currentItemExists();
+		if($storeid!==0 && empty($ivalue) && !$exists)
 		{
 			return false;
 		}
-		if($ivalue=="" && $this->currentItemExists())
+		if($ivalue=="" && $exists)
 		{
 			return "__MAGMI_DELETE__";
 		}
