@@ -17,7 +17,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Standard Attribute Import",
             "author" => "Dweeves",
-            "version" => "1.0.5"
+            "version" => "1.0.6"
             );
 	}
 	
@@ -175,6 +175,24 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	}
 
 
+	public function handleUrl_keyAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
+	{
+		
+		$cpev=$this->tablename("catalog_product_entity_varchar");
+		//find conflicting url keys
+		$urlk=trim($ivalue);
+		if($urlk=="" && $this->currentItemExists())
+		{
+			return "__MAGMI_DELETE__";
+		}
+		$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=? and value=?";
+		$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$urlk));
+		if(count($lst)>0)
+		{
+			$urlk=$urlk."-".count($lst);
+		}
+		return $urlk;
+	}
 	/**
 	 * attribute handler for varchar based attributes
 	 * @param int $pid : product id
@@ -188,7 +206,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		{
 			return false;
 		}
-		if($ivalue=="" && $this->getImportMode()=="update")
+		if($ivalue=="" && $this->currentItemExists())
 		{
 			return "__MAGMI_DELETE__";
 		}
@@ -213,6 +231,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 			$ovalue=implode(",",$oids);
 			unset($oids);
 		}
+	
+		
 		return $ovalue;
 	}
 
