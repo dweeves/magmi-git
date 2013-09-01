@@ -375,6 +375,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		{
 			$pids= $result[0];
 			$pids["__new"]=false;
+			return $pids;
 		}
 		else
 		{
