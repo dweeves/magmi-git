@@ -45,6 +45,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	private $_prodcols=array();
 	private $_stockcols=array();
 	private $_skustats=array();
+	private $_item_meta;
 	
 
 	public function addExtraAttribute($attr)
@@ -372,7 +373,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$sku);
 		if(count($result)>0)
 		{
-			return $result[0];
+			$pids= $result[0];
+			$pids["__new"]=false;
 		}
 		else
 		{
@@ -1182,6 +1184,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	}
 
 	
+	public function currentItemExists()
+	{
+		return $this->_curitemids["__new"]==true;
+	}
+	
+	
 	public function getItemIds($item)
 	{
 		$sku=$item["sku"];
@@ -1197,7 +1205,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			else
 			{
 				//only sku & attribute set id from datasource otherwise.
-				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid,"type"=>isset($item["type"])?$item["type"]:"Simple");
+				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid,"type"=>isset($item["type"])?$item["type"]:"Simple","__new"=>true);
 			}
 			//do not reset values for existing if non admin	
 			$this->onNewSku($sku,($cids!==false));
