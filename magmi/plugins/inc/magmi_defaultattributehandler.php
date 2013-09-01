@@ -185,7 +185,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		{
 			return "__MAGMI_DELETE__";
 		}
-		$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=? and value REGEX ?";
+		$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=? and value REGEXP ?";
 		$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$urlk."(-\d+)?"));
 		if(count($lst)>0)
 		{
