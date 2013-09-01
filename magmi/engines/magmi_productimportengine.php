@@ -382,6 +382,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			return false;
 		}
 	}
+	
+	
 
 	/**
 	 * creates a product in magento database
@@ -1187,7 +1189,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	
 	public function currentItemExists()
 	{
-		return $this->_curitemids["__new"]==true;
+		return $this->_curitemids["__new"]==false;
 	}
 	
 	
