@@ -1,6 +1,6 @@
 <?php
  header('Pragma: public');   // required
-  header('Expires: 0');    // no cache
+  header('Expires: -1');    // no cache
   header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
   header('Last-Modified: '.gmdate ('D, d M Y H:i:s').' GMT');
   header('Cache-Control: private',false);
