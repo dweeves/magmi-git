@@ -1712,22 +1712,29 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$this->log("No Records returned by datasource","warning");
 		}
 		$this->callPlugins("datasources,general,itemprocessors","afterImport");
-		$gtc=$this->_timecounter->getTimingCategory("global");
-		foreach($gtc as $phase=>$info)
-		{
-			$rep="Phase:$phase\n";
-			foreach($info as $plugin=>$data)
-			{
-				$rdur=round($data["dur"],4);
-				if($rdur>0)
-				{
-					$rep.="- Class:$plugin :$rdur ";
-				}
-			}
-			$this->log($rep,"info");
-		}
 		$this->log("Import Ended","end");
 		Magmi_StateManager::setState("idle");
+		
+		$timers=$this->_timecounter->getTimers();
+	   $f=fopen(Magmi_StateManager::getStateDir()."/timings.txt","w");
+		foreach($timers as $cat=>$info)
+		{
+			$rep="\nTIMING CATEGORY:$cat\n--------------------------------";
+			foreach($info as $phase=>$pinfo)
+			{
+				$rep.="\nPhase:$phase\n";
+				foreach($pinfo as $plugin=>$data)
+				{
+					$rdur=round($data["dur"],4);
+					if($rdur>0)
+					{
+						$rep.="- Class:$plugin :$rdur ";
+					}
+				}
+			}
+			fwrite($f,$rep);
+		}
+		fclose($f);
 	}
 
 	public function onEngineException($e)

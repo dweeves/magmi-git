@@ -19,11 +19,13 @@ class DBHelper
 	protected $_intrans=false;
 	protected $prepared=array();
 	protected $_timecounter=null;
+	protected $_tcats;
 	
 	public function __construct()
 	{
 		$this->_timecounter=new TimeCounter(get_class($this));
-		$this->_timecounter->initTimingCats(array("db"));
+		$this->_tcats="db";
+		$this->_timecounter->initTimingCats(array($this->_tcats));
 		$this->_timecounter->addCounter("requests");
 		
 	}
@@ -194,7 +196,7 @@ class DBHelper
 	public function exec_stmt($sql,$params=null,$close=true)
 	{
 		$this->_nreq++;
-		$this->_timecounter->initTime("indb");
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
 		$this->_timecounter->incCounter("requests");
 		$t0=microtime(true);
 		if($this->_use_stmt_cache && strpos($sql,"'")==false)
@@ -250,7 +252,7 @@ class DBHelper
 		{
 			$stmt->closeCursor();
 		}
-		$this->_timecounter->exitTime("indb");
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
 		$t1=microtime(true);
 		$this->_indbtime+=$t1-$t0;
 		$this->logdebug("$sql\n".print_r($params,true));
@@ -312,12 +314,12 @@ class DBHelper
 	public function selectone($sql,$params,$col)
 	{
 		$stmt=$this->select($sql,$params);
-		$this->_timecounter->initTime("indb");
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
 		$t0=microtime(true);
 
 		$r=$stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
-		$this->_timecounter->exitTime("indb");
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
 		
 		$t1=microtime(true);
 		
@@ -335,13 +337,13 @@ class DBHelper
 	public function selectAll($sql,$params=null)
 	{
 		$stmt=$this->select($sql,$params);
-		$this->_timecounter->initTime("indb");
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
 		
 		$t0=microtime(true);
 
 		$r=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
-		$this->_timecounter->exitTime("indb");
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
 		
 		$t1=microtime(true);
 		$this->_indbtime+=$t1-$t0;
