@@ -123,9 +123,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		//ok , so it's a relative path
 		$imgfile=false;
 		$scandirs=explode(";",$this->getParam("IMG:sourcedir"));
-		
+		$cscandirs=count($scandirs);
 		//iterate on image sourcedirs, trying to resolve file name based on input value and current source dir
-		for($i=0;$i<count($scandirs) && $imgfile===false;$i++)
+		for($i=0;$i<$cscandirs && $imgfile===false;$i++)
 		{
 			$sd=$scandirs[$i];
 			//scandir is relative, use mdh

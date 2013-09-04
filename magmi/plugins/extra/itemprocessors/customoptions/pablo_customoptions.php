@@ -130,7 +130,8 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 		
 		$optionTypeIds=$this->getOptTypeIds($field);
 		$optionTypeId=null;
-		for($i=0;$i<count($valarr);$i++)
+		$cvalarr=count($valarr);
+		for($i=0;$i<$cvalarr;$i++)
 		{
 			$val=$valarr[$i];
 			if($i<count($optionTypeIds))

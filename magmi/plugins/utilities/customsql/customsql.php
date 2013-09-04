@@ -128,13 +128,15 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
 		$results=$this->multipleParamRequests($sql,$rparams,true);
 		foreach($results as $rq=>$res)
 		{
-			if(count($res)==0)
+			$cres=count($res);
+			if($cres==0)
 			{
 				$this->log("No records found","info");
 			}
 			else
 			{
-			for($i=0;$i<count($res);$i++)
+				
+			for($i=0;$i<$cres;$i++)
 			{
 				$str="";
 				foreach($res[$i] as $k=>$v)

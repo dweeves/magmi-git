@@ -2,6 +2,7 @@
 	set_include_path(get_include_path().PATH_SEPARATOR."../inc");
 	ini_set("display_errors",1);
 	ini_set("error_reporting",E_ALL);
+	ini_set("magic_quotes_gpc",0);
 	require_once("magmi_version.php");
 	session_start();
 ?>
@@ -17,7 +18,7 @@
 <script type="text/javascript" src="js/magmi_utils.js"></script>
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Cache-control" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="0">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
 </head>
 <body>
 
