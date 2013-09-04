@@ -10,8 +10,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 
 	protected $_rvals=array();
 	protected $_before=array("sku","attribute_set","type");
-	protected $_cbefore=count($this->_before);
-    
+	
     public function getPluginInfo()
     {
         return array(
@@ -27,8 +26,11 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 	
 	public function processItemBeforeId(&$item,$params=null)
 	{
+		$cbefore=count($this->_before);
+		
 		//only check for "before" compatible fields
-		for($i=0;$i<$this->_cbefore;$i++)
+
+		for($i=0;$i<$cbefore;$i++)
 		{	
 			$attname=$this->_before[$i];
 			if(isset($this->_rvals[$attname]))
