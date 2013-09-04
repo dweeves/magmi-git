@@ -11,9 +11,9 @@ class TimeCounter
 	}
 	public function initTimingCats($tcats)
 	{
-		foreach($tcats as $tcat)
+		foreach($tcats as $tcat=>$opts)
 		{
-			$this->_timingcats[$tcat]=array("_counters"=>array(),"global"=>array());
+			$this->_timingcats[$tcat]=array("_counters"=>array(),"_timers"=>array());
 		}
 	}
 
@@ -32,36 +32,13 @@ class TimeCounter
 		{
 			if(!isset($this->_timingcats[$tcat]))
 			{
-				$this->_timingcats[$tcat]=array("_counters"=>array());
+				$this->_timingcats[$tcat]=array("_counters"=>array(),"_timers"=>array());
 			}
 			$this->_timingcats[$tcat]["_counters"][$cname]=0;
 		}
 	}
 	
 	
-	public function addTimedPhases($tfarr,$tcats=null)
-	{
-		if(!is_array($tfarr))
-		{
-			$tfarr=array($tfarr);
-		}
-
-		if($tcats==null)
-		{
-			$tcats=array_keys($this->_timingcats);
-		}
-
-		foreach($tcats as $tcat)
-		{
-			foreach($tfarr as $tp)
-			{
-				if(!isset($this->_timingcats[$tcat][$tp]))
-				{
-					$this->_timingcats[$tcat][$tp]=array();
-				}
-			}
-		}	
-}
 
 	public function initCounter($cname,$tcats=null)
 	{
@@ -100,15 +77,15 @@ class TimeCounter
 		$t=microtime(true);
 		foreach($this->_timingcats as $tcat=>$dummy)
 		{
-			if(!isset($this->_timingcats[$tcat][$phase]))
+			if(!isset($this->_timingcats[$tcat]["_timers"][$phase]))
 			{
-				$this->_timingcats[$tcat][$phase]=array();
+				$this->_timingcats[$tcat]["_timers"][$phase]=array();
 			}
-			if(!isset($this->_timingcats[$tcat][$phase][$src]))
+			if(!isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
 			{
-				$this->_timingcats[$tcat][$phase][$src]=array("init"=>$t,"dur"=>0);
+				$this->_timingcats[$tcat]["_timers"][$phase][$src]=array("init"=>$t,"dur"=>0);
 			}
-			$this->_timingcats[$tcat][$phase][$src]["start"]=$t;
+			$this->_timingcats[$tcat]["_timers"][$phase][$src]["start"]=$t;
 		}
 }
 
@@ -121,15 +98,9 @@ class TimeCounter
 		$end=microtime(true);
 		foreach($this->_timingcats as $tcat=>$phasetimes)
 		{
-			$this->_timingcats[$tcat][$phase][$src]["end"]=$end;
-			$this->_timingcats[$tcat][$phase][$src]["dur"]+=$end-$phasetimes[$phase][$src]["start"];
+			$this->_timingcats[$tcat]["_timers"][$phase][$src]["end"]=$end;
+			$this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"]+=$end-$phasetimes[$phase][$src]["start"];
 		}
 	}
 
-	public function getPhaseTimes($tcat=null)
-	{
-		if($cat==null)
-			return $this->_timingcats;
-			return $this->_timingcats[$tcat];
-	}
 }

@@ -25,7 +25,8 @@ function deleteifempty($val)
 function csl2arr($cslarr,$sep=",")
 {
 	$arr=explode($sep,$cslarr);
-	for($i=0;$i<count($arr);$i++)
+	$carr=count($arr);
+	for($i=0;$i<$carr;$i++)
 	{
 		$arr[$i]=trim($arr[$i]);		
 	}
@@ -34,7 +35,8 @@ function csl2arr($cslarr,$sep=",")
 
 function trimarray(&$arr)
 {
-	for($i=0;$i<count($arr);$i++)
+	$carr=count($arr);
+	for($i=0;$i<$carr;$i++)
 	{
 		$arr[$i]=trim($arr[$i]);		
 	}
@@ -78,7 +80,8 @@ function abspath($path,$basepath="",$resolve=true)
 	{
 		$inparts=explode("/",$cpath);
 		$outparts=array();
-		for($i=0;$i<count($inparts);$i++)
+		$cinparts=count($inparts);
+		for($i=0;$i<$cinparts;$i++)
 		{
 			if($inparts[$i]=='..')
 			{

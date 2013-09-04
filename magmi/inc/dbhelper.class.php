@@ -534,7 +534,8 @@ class DBHelper
 			$params=$matches[1];
 			
 		}
-		for($i=0;$i<count($params);$i++)
+		$cparams=count($params);
+		for($i=0;$i<$cparams;$i++)
 		{
 			$param=$params[$i];
 			$pdef=$pdefs[$i];
@@ -550,7 +551,7 @@ class DBHelper
 				$stmt=str_replace($pdef,":$pname",$stmt);
 			}
 		}
-		for($i=0;$i<count($params);$i++)
+		for($i=0;$i<$cparams;$i++)
 		{
 			$param=$params[$i];
 			$pinfo=explode("/",$param);

@@ -183,7 +183,8 @@ public function getConfigurableOptsFromAsId($asid)
 		if(isset($item["configurable_attributes"]))
 		{
 			$confopts=explode(",",$item["configurable_attributes"]);
-			for($i=0;$i<count($confopts);$i++)
+			$copts=count($confopts);
+			for($i=0;$i<$copts;$i++)
 			{
 				$confopts[$i]=trim($confopts[$i]);
 			}

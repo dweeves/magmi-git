@@ -515,7 +515,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			{
 				array_shift($brows);
 			}
-			for($i=0;$i<count($new);$i++)
+			$cnew=count($new);
+			for($i=0;$i<$cnew;$i++)
 			{
 				$row=$brows[$i];
 				if(!isset($row["opvs"]))
@@ -1033,12 +1034,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		}
 		//now get the diff
 		$diff=array_diff(array_keys($cdata),$vcatids);
+		$cdiff=count($diff);
 		//if there are some, warning
-		if(count($diff)>0)
+		if($cdiff>0)
 		{
 			$this->log('Invalid category ids found for sku '.$item['sku'].":".implode(",",$diff),"warning");
 			//remove invalid category entries
-			for($i=0;$i<count($diff);$i++)
+			for($i=0;$i<$cdiff;$i++)
 			{
 				unset($cdata[$diff[$i]]);
 			}
@@ -1500,7 +1502,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		//this instance will autoregister in factory
 		$mdh=new LocalMagentoDirHandler(Magmi_Config::getInstance()->getMagentoDir());
 		$this->_timecounter->initTimingCats(array("global","line"));
-		$this->_timecounter->addTimedPhases(array("beforeImport","startImport","endImport","afterImport"));	
 		$this->initPlugins($this->_profile);
 		$this->mode=$this->getParam($params,"mode","update");
 	

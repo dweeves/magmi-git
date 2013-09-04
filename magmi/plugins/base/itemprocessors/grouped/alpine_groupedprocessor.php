@@ -88,7 +88,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $cplai=$this->tablename("catalog_product_link_attribute_int");
         //create association table for sku/positions
         $sskus=array();
-        for($i=0;$i<count($conddata);$i++)
+        $ccond=count($conddata);
+        for($i=0;$i<$ccond;$i++)
         {
         $skuinfo=explode("::",$conddata[$i]);
         $sskus[$skuinfo[0]]=count($skuinfo)>1?$skuinfo[1]:$i;
@@ -157,7 +158,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     	WHERE cpec.entity_id=?";
     	$res=$this->selectAll($sql,array($pid));
     	$sskus=array();
-    	for($i=0;$i<count($res);$i++)
+    	$cres=count($res);
+    	for($i=0;$i<$cres;$i++)
     	{
     		$sskus[$i]=$res[$i]["sku"];
     	}
@@ -268,7 +270,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     }
 
     private function trimarray(&$arr) {
-        for ($i=0;$i<count($arr);$i++) {
+    	$carr=count($arr);
+        for ($i=0;$i<$carr;$i++) {
             $arr[$i]=trim($arr[$i]);
         }
     }
