@@ -300,7 +300,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 			
 			}
 		}
-		
+		$ccatparts=count($catparts);
 		//added position handling
 		for($i=0;$i<$ccatparts;$i++)
 		{

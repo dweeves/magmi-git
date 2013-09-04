@@ -11,7 +11,7 @@ class TimeCounter
 	}
 	public function initTimingCats($tcats)
 	{
-		foreach($tcats as $tcat=>$opts)
+		foreach($tcats as $tcat)
 		{
 			$this->_timingcats[$tcat]=array("_counters"=>array(),"_timers"=>array());
 		}
@@ -98,8 +98,15 @@ class TimeCounter
 		$end=microtime(true);
 		foreach($this->_timingcats as $tcat=>$phasetimes)
 		{
-			$this->_timingcats[$tcat]["_timers"][$phase][$src]["end"]=$end;
-			$this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"]+=$end-$phasetimes[$phase][$src]["start"];
+			if(isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
+			{
+				$this->_timingcats[$tcat]["_timers"][$phase][$src]["end"]=$end;
+				$this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"]+=$end-$this->_timingcats[$tcat]["_timers"][$phase][$src]["start"];
+			}
+			else
+			{
+				echo "Invalid timing source : $src";
+			}
 		}
 	}
 
