@@ -1149,7 +1149,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$cpst=$this->tablename("catalog_product_website");
 		$cws=$this->tablename("core_website");
 		//associate product with all websites in a single multi insert (use ignore to avoid duplicates)
-		$sql="INSERT IGNORE INTO `$cpst` (`product_id`, `website_id`) SELECT ?,website_id FROM $cws WHERE website_id IN ($qcolstr)";
+		$sql="REPLACE INTO `$cpst` (`product_id`, `website_id`) SELECT ?,website_id FROM $cws WHERE website_id IN ($qcolstr)";
 		$this->insert($sql,array_merge(array($pid),$wsids));
 	}
 
@@ -1399,12 +1399,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				$this->assignCategories($pid,$item);
 			}
 
-			//update websites
-			if($this->mode!="update")
-			{
+		   //update websites if column is set
+		   if(isset($item["websites"]) || $isnew)
+		   {
 				$this->updateWebSites($pid,$item);
-			}
-
+		   }
+		   
 			if(!$this->_same)
 			{
 				//update stock
