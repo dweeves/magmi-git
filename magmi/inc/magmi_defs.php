@@ -7,4 +7,9 @@ set_include_path(ini_get("include_path").
 	PATH_SEPARATOR.MAGMI_INCDIR.
 	PATH_SEPARATOR.MAGMI_INTEGRATION_INCDIR.
 	PATH_SEPARATOR.MAGMI_ENGINE_DIR);
+$dtz=date_default_timezone_get();
+if($dtz=="")
+{
+	date_default_timezone_set("UTC");
+}
 require_once('magmi_loggers.php');
