@@ -563,8 +563,16 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getTaxClassId($tcvalue)
 	{
-		$t=$this->tablename('tax_class');
-		$txid=$this->selectone("SELECT class_id FROM $t WHERE class_name=?",array($tcvalue),"class_id");
+		//allow for ids in tax_class_id column , extending support
+		if(is_numeric($tcvalue))
+		{
+			$txid=$tcvalue;
+		}
+		else
+		{
+			$t=$this->tablename('tax_class');
+			$txid=$this->selectone("SELECT class_id FROM $t WHERE class_name=?",array($tcvalue),"class_id");
+		}
 		//bugfix for tax class id, if not found set it to none
 		if(!isset($txid))
 		{
