@@ -972,12 +972,30 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$stock_status=(isset($cssvals["stock_status"])?$cssvals["stock_status"]:1);
 		//new auto synchro on lat inserted stock item values for stock status.
 		//also works for multiple stock ids.
+
+        // [start] exanto.de - this does not work inside a DB transaction bc cataloginventory_stock_item is not written yet on fresh imports
+        /* :ORG:
 		$sql="INSERT INTO `$css` SELECT csit.product_id,ws.website_id,cis.stock_id,csit.qty,? as stock_status
 				FROM `$csit` as csit 
 				JOIN ".$this->tablename("core_website")." as ws ON ws.website_id IN (".$this->arr2values($wsids).") 
 				JOIN ".$this->tablename("cataloginventory_stock")." as cis ON cis.stock_id=?
 				WHERE product_id=?
 				ON DUPLICATE KEY UPDATE stock_status=VALUES(`stock_status`),qty=VALUES(`qty`)";
+        */
+        // Fixed version
+        $cpe=$this->tablename("catalog_product_entity");
+        $qty=isset($stockvals['qty'])? $stockvals['qty'] : $item['qty'];
+        if (!$qty) {
+            $qty = 0;
+        }
+        $sql="INSERT INTO `$css` SELECT '$pid' as product_id,ws.website_id,cis.stock_id,'$qty' as qty,? as stock_status
+				FROM `$cpe` as cpe
+				JOIN ".$this->tablename("core_website")." as ws ON ws.website_id IN (".$this->arr2values($wsids).")
+				JOIN ".$this->tablename("cataloginventory_stock")." as cis ON cis.stock_id=?
+				WHERE cpe.entity_id=?
+				ON DUPLICATE KEY UPDATE stock_status=VALUES(`stock_status`),qty=VALUES(`qty`)";
+        // [ end ] exanto.de - this does not work inside a DB transaction bc cataloginventory_stock_item is not written yet on fresh imports
+
 		$data[]=$stock_status;
 		$data=array_merge($data,$wsids);
 		$data[]=$stock_id;
