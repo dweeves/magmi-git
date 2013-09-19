@@ -1250,7 +1250,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		//filter __MAGMI_IGNORE__ COLUMNS
 		foreach($item as $k=>$v)
 		{
-			if($v=="__MAGMI_IGNORE__")
+			if($v==="__MAGMI_IGNORE__")
 			{
 				unset($item[$k]);
 			}
