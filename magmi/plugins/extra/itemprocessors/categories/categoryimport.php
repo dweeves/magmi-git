@@ -405,7 +405,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 				{	
 					if(trim($catlist[$i])!="")
 					{
-						$catlist[$i]=$root.$this->_tsep.$icats;
+						$catlist[$i]=$root.$this->_tsep.$catlist[$i];
 					}
 				}
 			//recompose rooted categories
