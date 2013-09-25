@@ -1051,41 +1051,39 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		}
 		
 		//get all "real ids"
-		$scatids=array_keys($cdata);
-		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($scatids).")",$scatids);
-		$vcatids=array();
-		foreach($rcatids as $rcatrow)
+		if(count($cdata)>0)
 		{
-			$vcatids[]=$rcatrow['id'];
-		}
-		//now get the diff
-		$diff=array_diff(array_keys($cdata),$vcatids);
-		$cdiff=count($diff);
-		//if there are some, warning
-		if($cdiff>0)
-		{
-			$this->log('Invalid category ids found for sku '.$item['sku'].":".implode(",",$diff),"warning");
-			//remove invalid category entries
-			for($i=0;$i<$cdiff;$i++)
+			$scatids=array_keys($cdata);
+			$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($scatids).")",$scatids);
+			$vcatids=array();
+			foreach($rcatids as $rcatrow)
 			{
-				unset($cdata[$diff[$i]]);
+				$vcatids[]=$rcatrow['id'];
+			}
+			//now get the diff
+			$diff=array_diff(array_keys($cdata),$vcatids);
+			$cdiff=count($diff);
+			//if there are some, warning
+			if($cdiff>0)
+			{
+				$this->log('Invalid category ids found for sku '.$item['sku'].":".implode(",",$diff),"warning");
+				//remove invalid category entries
+				for($i=0;$i<$cdiff;$i++)
+				{
+					unset($cdata[$diff[$i]]);
+				}
+			}
+			
+			#now we have verified ids
+			foreach($cdata as $catid=>$catpos)
+			{
+					$inserts[]="(?,?,?)";
+					$data[]=$catid;
+					$data[]=$pid;
+					$data[]=$catpos;
 			}
 		}
 		
-		if(count($cdata)==0)
-		{
-			$this->log('No valid categories found, skip category assingment for sku '.$item['sku'],"warning");
-		}
-		
-		#now we have verified ids
-		foreach($cdata as $catid=>$catpos)
-		{
-				$inserts[]="(?,?,?)";
-				$data[]=$catid;
-				$data[]=$pid;
-				$data[]=$catpos;
-		}
-			
 		#peform deletion of removed category affectation
 		if(count($ddata)>0)
 		{
@@ -1419,7 +1417,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			}
 			while(count($attrmap)>0);
 
-			if(!testempty($item,"category_ids"))
+			if(!testempty($item,"category_ids") ||  (isset($item["category_reset"]) && $item["category_reset"]==1) )
 			{
 				//assign categories
 				$this->assignCategories($pid,$item);
