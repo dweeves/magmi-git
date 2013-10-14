@@ -76,7 +76,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getEngineInfo()
 	{
-		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.5","author"=>"dweeves");
+		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.6","author"=>"dweeves");
 	}
 
 	/**
@@ -617,7 +617,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			{
 				if($match!=$matches[0])
 				{
-					if(in_array($match,$ik))
+					if(in_array($match,$params))
 					{
 						$rep='$meta["'.$match.'"]';
 					}
@@ -1218,7 +1218,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	public function getItemIds($item)
 	{
 		$sku=$item["sku"];
-		if($sku!=$this->_curitemids["sku"])
+		if(strcmp($sku,$this->_curitemids["sku"])!=0)
 		{
 			//try to find item ids in db
 			$cids=$this->getProductIds($sku);
