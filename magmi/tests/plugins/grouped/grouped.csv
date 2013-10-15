@@ -1,0 +1,5 @@
+sku,name,description,short_description,price,type,category_ids,grouped_skus
+gr_simple_001,grouped simple 001,x,x,10,simple,2,
+gr_simple_002,grouped simple 002,y,y,12,simple,2,
+gr_simple_003,grouped simple 003,z,z,14,simple,2,
+grouped_001,group container,t,t,,grouped,2,"gr_simple_001,gr_simple_002::3,gr_simple_003::2::4"
