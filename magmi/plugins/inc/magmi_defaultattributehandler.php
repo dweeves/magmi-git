@@ -2,7 +2,7 @@
 class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 {
 	protected $_basecols=array("store"=>"admin","type"=>"simple");
-	protected $_baseattrs=array("status"=>1,"visibility"=>4,"page_layout"=>"");
+	protected $_baseattrs=array("status"=>1,"visibility"=>4,"page_layout"=>"","tax_class_id"=>"Taxable Goods");
 	protected $_forcedefault=array("store"=>"admin");
 	protected $_missingcols=array();
 	protected $_missingattrs=array();
@@ -23,6 +23,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	
 	public function processColumnList(&$cols)
 	{	
+		//This will not change the column list
+		//this will only log the list of columns that will be added to newly created items
 		$this->_missingcols=array_diff(array_keys($this->_basecols),$cols);
 		$this->_missingattrs=array_diff(array_keys($this->_baseattrs),$cols);
 		$m=$this->getMode();
