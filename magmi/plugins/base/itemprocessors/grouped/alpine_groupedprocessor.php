@@ -34,7 +34,7 @@
 class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 {
 
-    public static $_VERSION = '1.3';
+    public static $_VERSION = '1.4';
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentgrouped = array();
@@ -49,6 +49,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 		$this->_link_type_id=$this->selectone($sql,array("super"),"link_type_id");
 		$sql="SELECT product_link_attribute_id FROM ".$this->tablename("catalog_product_link_attribute")." WHERE link_type_id=? AND product_link_attribute_code=?";
 		$this->_super_pos_attr_id=$this->selectone($sql,array($this->_link_type_id,'position'),'product_link_attribute_id');
+		$sql="SELECT product_link_attribute_id FROM ".$this->tablename("catalog_product_link_attribute")." WHERE link_type_id=? AND product_link_attribute_code=?";
+		$this->_super_qty_attr_id=$this->selectone($sql,array($this->_link_type_id,'qty'),'product_link_attribute_id');		
 	}
 	
     public function getPluginUrl()
@@ -88,12 +90,17 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $cplai=$this->tablename("catalog_product_link_attribute_int");
         //create association table for sku/positions
         $sskus=array();
+        $qtys=array();
         $ccond=count($conddata);
         for($i=0;$i<$ccond;$i++)
         {
-        $skuinfo=explode("::",$conddata[$i]);
-        $sskus[$skuinfo[0]]=count($skuinfo)>1?$skuinfo[1]:$i;
-        $conddata[$i]=$skuinfo [0];
+        	$skuinfo=explode("::",$conddata[$i]);
+        	if(count($skuinfo)>2)
+        	{
+        		$qtys[$skuinfo[0]]=$skuinfo[2];
+        	}
+        	$sskus[$skuinfo[0]]=count($skuinfo)>1?$skuinfo[1]:$i;
+        	$conddata[$i]=$skuinfo [0];
         }
         
 		//if group reset
@@ -136,10 +143,23 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $sql="INSERT INTO $cplai (product_link_attribute_id,link_id,value) SELECT ?,cpl.link_id,$cw as value
         FROM $cpl as cpl
         JOIN $cpe as cpes ON cpes.sku $cond
-        WHERE cpl.linked_product_id=cpes.entity_id AND cpl.product_id=?";
+        WHERE cpl.linked_product_id=cpes.entity_id AND cpl.product_id=?
+        ON DUPLICATE KEY UPDATE `value`=values(`value`)";
         $this->insert($sql,array_merge(array($this->_super_pos_attr_id),$conddata,array($pid)));
         unset($sskus);
-        
+        //qties
+        if(count($qtys)>0)
+        {
+        	$qw=$this->arr2case($qtys,'cpes.sku');
+        	$cplad=$this->tablename('catalog_product_link_attribute_decimal');
+        	$sql="INSERT INTO $cplad (product_link_attribute_id,link_id,value) SELECT ?,cpl.link_id,$qw as value
+        	FROM $cpl as cpl
+        	JOIN $cpe as cpes ON cpes.sku $cond
+        	WHERE cpl.linked_product_id=cpes.entity_id AND cpl.product_id=?
+        	ON DUPLICATE KEY UPDATE `value`=values(`value`)";
+        	$this->insert($sql,array_merge(array($this->_super_qty_attr_id),$conddata,array($pid)));	 
+        }
+        unset($qtys);
         unset($conddata);
     }
 
