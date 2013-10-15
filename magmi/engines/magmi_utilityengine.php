@@ -24,6 +24,7 @@ class Magmi_UtilityEngine extends Magmi_Engine
 	 */
 	public function __construct()
 	{
+			parent::__construct();
 	}
 
 	public function getEnabledPluginClasses($profile)
