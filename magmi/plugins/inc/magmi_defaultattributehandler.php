@@ -176,7 +176,6 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return $ovalue;
 	}
 
-
 	public function handleUrl_keyAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		
