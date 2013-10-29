@@ -184,6 +184,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		//find conflicting url keys
 		$urlk=trim($ivalue);
 		$exists=$this->currentItemExists();
+		$lst=array();
 		if($urlk=="" && $exists)
 		{
 			return "__MAGMI_DELETE__";
@@ -207,8 +208,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 				$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value REGEXP ?";
 				$umatch=$urlk."(-\d+)?";
 			}
+			$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$umatch));
 		}
-		$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$umatch));
+		
 		//all conflicting url keys
 		if(count($lst)>0)
 		{
