@@ -4,7 +4,7 @@ class ClearOrdersUtility extends Magmi_UtilityPlugin
     public function getPluginInfo()
     {
         return array("name"=>"Clear Orders",
-                     "author"=>"www.magentogofaster.com",
+                     "author"=>"www.blinkdata.com",
                      "version"=>"1.0.1");
     }
     
