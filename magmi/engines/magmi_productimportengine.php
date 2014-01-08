@@ -811,14 +811,24 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 					{
 						$ovalue=false;
 					}
+                    
+                    // force null value
+                    if ($ovalue==".NULL.") {
+                        $ovalue=null;
+                    }
+                    
 					//if handled value is a "DELETE"
 					if($ovalue=="__MAGMI_DELETE__")
 					{
 						$deletes[]=$attid;
 					}
-					else
+					else                               
+                    if ($ovalue==null) {
+                        $sql="DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id=? AND store_id=? AND entity_id=?";
+                        $this->delete($sql,array($this->prod_etype, $attid, $store_id, $pid));
+                    }  
 					//if we have something to do with this value
-					if($ovalue!==false)
+					if($ovalue!==false && $ovalue!=null)
 					{
 
 						$data[]=$this->prod_etype;
