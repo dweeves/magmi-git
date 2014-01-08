@@ -1,7 +1,7 @@
 <?php
-if(!defined("DS"))
+if(!defined("DIRSEP"))
 {
-	define("DS",DIRECTORY_SEPARATOR);
+	define("DIRSEP",DIRECTORY_SEPARATOR);
 }
 class FileNotFoundException extends Exception
 {

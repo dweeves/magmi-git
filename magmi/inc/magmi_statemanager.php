@@ -1,7 +1,7 @@
 <?php
-if(!defined("DS"))
+if(!defined("DIRSEP"))
 {
-	define("DS",DIRECTORY_SEPARATOR);
+	define("DIRSEP",DIRECTORY_SEPARATOR);
 }
 class Magmi_StateManager
 {
@@ -12,23 +12,23 @@ class Magmi_StateManager
 	
 	public static function getStateFile()
 	{
-		return self::getStateDir().DS."magmistate";
+		return self::getStateDir().DIRSEP."magmistate";
 	}
 
 	public static function getTraceFile()
 	{
-		return self::getStateDir().DS."trace.txt";
+		return self::getStateDir().DIRSEP."trace.txt";
 		
 	}
 	
 	public static function getStateDir()
 	{
-		return dirname(dirname(self::$_script)).DS."state";
+		return dirname(dirname(self::$_script)).DIRSEP."state";
 	}
 	
 	public static function getProgressFile($full=false)
 	{
-		$fullname=self::getStateDir().DS."progress.txt";
+		$fullname=self::getStateDir().DIRSEP."progress.txt";
 		$pfname=($full?$fullname:"progress.txt");
 		return $pfname;
 	}

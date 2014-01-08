@@ -19,7 +19,7 @@ class Magmi_PluginHelper
 	{
 		$this->_profile=$profile;
 		$this->base_dir=dirname(__FILE__);
-		$this->plugin_dir=realpath(dirname(dirname(__FILE__)).DS."plugins");
+		$this->plugin_dir=realpath(dirname(dirname(__FILE__)).DIRSEP."plugins");
 		//set include path to inclue plugins inc & base dir
 		set_include_path(ini_get("include_path").PATH_SEPARATOR."$this->plugin_dir/inc".PATH_SEPARATOR."$this->base_dir");
 		//add base classes in context
@@ -179,18 +179,18 @@ class Magmi_PluginHelper
      	$packages=glob("$this->plugin_dir/*");
      	foreach($packages as $pdir)
      	{
-     		if(file_exists($pdir.DS."obsolete.txt"))
+     		if(file_exists($pdir.DIRSEP."obsolete.txt"))
      		{
-     			$content=file_get_contents($pdir.DS."obsolete.txt");
+     			$content=file_get_contents($pdir.DIRSEP."obsolete.txt");
      			$obsolete=explode("\n",$content);
      			foreach($obsolete as $todelete)
      			{
      				if($todelete!="")
      				{
-     					@unlink($pdir.DS.$todelete);
+     					@unlink($pdir.DIRSEP.$todelete);
      				}
      			}
-     			unlink($pdir.DS."obsolete.txt");
+     			unlink($pdir.DIRSEP."obsolete.txt");
      		}
      	}		
 	}

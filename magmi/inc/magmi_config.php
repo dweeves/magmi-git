@@ -10,7 +10,7 @@ class DirbasedConfig extends Properties
 	public function __construct($basedir,$confname)
 	{
 		$this->_basedir=$basedir;
-		$this->_confname=$basedir.DS.$confname;
+		$this->_confname=$basedir.DIRSEP.$confname;
 	}
 	
 	public function get($secname,$pname,$default=null)
@@ -62,9 +62,9 @@ class DirbasedConfig extends Properties
 		{
 			mkdir($newdir,Magmi_Config::getInstance()->getDirMask());
 		}	
-		$val=parent::save($newdir.DS.basename($this->_confname));
+		$val=parent::save($newdir.DIRSEP.basename($this->_confname));
 		$this->_basedir=$newdir;
-		$this->_confname=$newdir.DS.basename($this->_confname);
+		$this->_confname=$newdir.DIRSEP.basename($this->_confname);
 		return $val;
 	}
 	
@@ -81,8 +81,8 @@ class ProfileBasedConfig extends DirbasedConfig
 	
 	public function getProfileDir()
 	{
-		$subdir=($this->_profile=="default"?"":DS.$this->_profile);
-		$confdir=dirname(dirname(self::$_script)).DS."conf$subdir";
+		$subdir=($this->_profile=="default"?"":DIRSEP.$this->_profile);
+		$confdir=dirname(dirname(self::$_script)).DIRSEP."conf$subdir";
 		if(!file_exists($confdir))
 		{
 			@mkdir($confdir,Magmi_Config::getInstance()->getDirMask());
@@ -114,7 +114,7 @@ class Magmi_Config extends DirbasedConfig
 		
 	public function getConfDir()
 	{
-		$confdir=realpath(dirname(dirname(self::$_script)).DS."conf");
+		$confdir=realpath(dirname(dirname(self::$_script)).DIRSEP."conf");
 		return $confdir;
 	}
 	
@@ -222,7 +222,7 @@ class Magmi_Config extends DirbasedConfig
 		$candidates=scandir($this->getConfDir());
 		foreach($candidates as $candidate)
 		{
-			if(is_dir($this->getConfDir().DS.$candidate) && $candidate[0]!="." && substr($candidate,0,2)!="__")
+			if(is_dir($this->getConfDir().DIRSEP.$candidate) && $candidate[0]!="." && substr($candidate,0,2)!="__")
 			{
 				$proflist[]=$candidate;
 			}

@@ -9,7 +9,7 @@ class Magmi_DataPumpFactory
 		if(self::$_factoryprops==null)
 		{
 			self::$_factoryprops=new Properties();
-			self::$_factoryprops->load(dirname(__FILE__).DS."pumpfactory.ini");
+			self::$_factoryprops->load(dirname(__FILE__).DIRSEP."pumpfactory.ini");
 		}
 		$pumpinfo=self::$_factoryprops->get("DATAPUMPS",$pumptype,"");
 		$arr=explode("::",$pumpinfo);
@@ -20,7 +20,7 @@ class Magmi_DataPumpFactory
 		
 			try
 			{
-				require_once(dirname(__FILE__).DS."$pumpfile.php");
+				require_once(dirname(__FILE__).DIRSEP."$pumpfile.php");
 				$pumpinst=new $pumpclass();
 			}
 			catch(Exception $e)
