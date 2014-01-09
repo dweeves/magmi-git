@@ -29,7 +29,7 @@
 		$logfile=isset($params["logfile"])?$params["logfile"]:null;
 		if(isset($logfile) && $logfile!="")
 		{
-			$fname=Magmi_StateManager::getStateDir().DS.$logfile;			
+			$fname=Magmi_StateManager::getStateDir().DIRSEP.$logfile;			
 			if(file_exists($fname))
 			{
 				@unlink($fname);

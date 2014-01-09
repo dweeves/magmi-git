@@ -7,7 +7,7 @@ if(!isset($logfile))
 {
 	$logfile=Magmi_StateManager::getProgressFile();
 }
-$logfile=Magmi_StateManager::getStateDir().DS.$logfile;
+$logfile=Magmi_StateManager::getStateDir().DIRSEP.$logfile;
 if(file_exists($logfile))
 {
 	$parser=new DefaultProgressParser();

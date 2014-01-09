@@ -133,7 +133,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$sd=$this->_mdh->getMagentoDir()."/".$sd;
 			}
-			$imgfile=abspath($ivalue,$sd);
+			$imgfile=abspath($ivalue,$sd,false);
 		}
 		return $imgfile;
 	}
@@ -141,7 +141,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleImageTypeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		//remove attribute value if empty
-		if($ivalue=="")
+		if($ivalue=="" || $ivalue==".NULL.")
 		{
 			$this->removeImageFromGallery($pid,$storeid,$attrdesc);
 			return "__MAGMI_DELETE__";
@@ -382,6 +382,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	 */
 	public function copyImageFile($imgfile,&$item,$extra)
 	{
+        if ($imgfile==".NULL." || $imgfile==null) {
+            return false;
+        }
 		if($imgfile==$this->_lastnotfound)
 		{
 			if($this->_newitem){

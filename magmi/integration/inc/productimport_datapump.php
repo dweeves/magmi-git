@@ -18,7 +18,7 @@ class Magmi_ProductImport_DataPump
 	public function __construct()
 	{
 		$this->_engine=new Magmi_ProductImportEngine();
- 		$this->_engine->setBuiltinPluginClasses("*datasources",dirname(__FILE__).DS."magmi_datapumpdatasource.php::Magmi_DatapumpDS");
+ 		$this->_engine->setBuiltinPluginClasses("*datasources",dirname(__FILE__).DIRSEP."magmi_datapumpdatasource.php::Magmi_DatapumpDIRSEP");
 		
 			$this->_stats["tstart"]=microtime(true);
 			//differential

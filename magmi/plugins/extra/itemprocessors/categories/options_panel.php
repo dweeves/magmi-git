@@ -17,7 +17,7 @@ multiple categories supported :)
 </div>
 <div class="formline">
 <?php $lastonly=$this->getParam("CAT:lastonly",0)?>
-<span>Assing product to :</span><select name="CAT:lastonly">
+<span>Assign product to :</span><select name="CAT:lastonly">
 	<option value="0" <?php if($lastonly==0){?>selected="selected"<?php }?>>all categories in tree</option>
 	<option value="1" <?php if($lastonly==1){?>selected="selected"<?php }?>>last category of each branch</option>
 </select>

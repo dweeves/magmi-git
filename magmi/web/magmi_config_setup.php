@@ -199,7 +199,7 @@ $cansock=true;
 	<ul class="formline">
 		<li class="label">Version:</li>
 		<li class="value"><select name="MAGENTO:version">
-			<?php foreach(array("1.7.x","1.6.x","1.5.x","1.4.x","1.3.x") as $ver){?>
+			<?php foreach(array("1.8.x","1.7.x","1.6.x","1.5.x","1.4.x","1.3.x") as $ver){?>
 				<option value="<?php echo $ver?>" <?php if($conf->get("MAGENTO","version")==$ver){?>selected=selected<?php }?>><?php echo $ver?></option>
 			<?php }?>
 		</select></li>

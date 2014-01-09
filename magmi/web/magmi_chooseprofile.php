@@ -11,7 +11,7 @@ if($newprofile!="")
 
 	$bcfg=new EnabledPlugins_Config($currentprofile);
 	$confdir=Magmi_Config::getInstance()->getConfDir();
-	$npdir=$confdir.DS.$newprofile;
+	$npdir=$confdir.DIRSEP.$newprofile;
 	mkdir($npdir,Magmi_Config::getInstance()->getDirMask());
 	$cpdir=$bcfg->getProfileDir();
 	$filelist=scandir($cpdir);
@@ -19,7 +19,7 @@ if($newprofile!="")
 	{
 		if(substr($fname,-5)==".conf")
 		{
-			copy($cpdir.DS.$fname,$npdir.DS.$fname);
+			copy($cpdir.DIRSEP.$fname,$npdir.DIRSEP.$fname);
 		}
 	}
 }
