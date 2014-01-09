@@ -460,7 +460,7 @@ class DBHelper
 		$out=array();
 		foreach($keys as $k)
 		{                             
-			$out[$k]=(isset($kvarr[$k]) && $kvarr[$k]!='NULL')?$kvarr[$k]:null;
+			$out[$k]=(isset($kvarr[$k]) && $kvarr[$k]!='__NULL__')?$kvarr[$k]:null;
 		}
 		return $out;
 	}
