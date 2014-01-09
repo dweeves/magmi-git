@@ -141,7 +141,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleImageTypeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		//remove attribute value if empty
-		if($ivalue=="" || $ivalue==".NULL.")
+		if($ivalue=="" || $ivalue=="__NULL__")
 		{
 			$this->removeImageFromGallery($pid,$storeid,$attrdesc);
 			return "__MAGMI_DELETE__";
@@ -382,7 +382,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	 */
 	public function copyImageFile($imgfile,&$item,$extra)
 	{
-        if ($imgfile==".NULL." || $imgfile==null) {
+        if ($imgfile=="__NULL__" || $imgfile==null) {
             return false;
         }
 		if($imgfile==$this->_lastnotfound)

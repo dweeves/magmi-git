@@ -813,7 +813,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 					}
                     
                     // force null value
-                    if ($ovalue==".NULL.") {
+                    if ($ovalue=="__NULL__") {
                         $ovalue=null;
                     }
                     
