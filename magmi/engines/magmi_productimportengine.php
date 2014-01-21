@@ -1186,7 +1186,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$ddata=array($pid);
 		$sql="DELETE FROM `$cpst` WHERE product_id=?";
 		$this->delete($sql,$ddata);
-		$sql="INSERT IGNORE INTO `$cpst` (`product_id`, `website_id`) SELECT ?,website_id FROM $cws WHERE website_id IN ($qcolstr)";
+		$sql="INSERT INTO `$cpst` (`product_id`, `website_id`) SELECT ?,website_id FROM $cws WHERE website_id IN ($qcolstr)";
 		$this->insert($sql,array_merge(array($pid),$wsids));
 	}
 
