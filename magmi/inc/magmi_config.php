@@ -82,7 +82,7 @@ class ProfileBasedConfig extends DirbasedConfig
 	public function getProfileDir()
 	{
 		$subdir=($this->_profile=="default"?"":DIRSEP.$this->_profile);
-		$confdir=dirname(dirname(self::$_script)).DIRSEP."conf$subdir";
+		$confdir=dirname(dirname(__FILE__)).DIRSEP."conf$subdir";
 		if(!file_exists($confdir))
 		{
 			@mkdir($confdir,Magmi_Config::getInstance()->getDirMask());
@@ -108,13 +108,12 @@ class Magmi_Config extends DirbasedConfig
 {
 	private static $_instance=null;
 	private $_defaultconfigname=null;
-	public static $conffile=null;
-	private static $_script=__FILE__;
+	public static $conffile=null;	
 	
 		
 	public function getConfDir()
 	{
-		$confdir=realpath(dirname(dirname(self::$_script)).DIRSEP."conf");
+		$confdir=realpath(dirname(dirname(__FILE__)).DIRSEP."conf");
 		return $confdir;
 	}
 	
