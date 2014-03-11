@@ -46,6 +46,10 @@ class Magmi_ProductImport_DataPump
 	
 	}
 	
+	public function getEngine()
+	{
+	 return $this->_engine;
+	}
 	
 	public function setDefaultValues($dv=array())
 	{
