@@ -38,7 +38,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.26a",
+            "version" => "1.0.27",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
 	}
@@ -133,7 +133,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$sd=$this->_mdh->getMagentoDir()."/".$sd;
 			}
-			$imgfile=abspath($ivalue,$sd,false);
+			$imgfile=abspath($ivalue,$sd,true);
 		}
 		return $imgfile;
 	}
@@ -397,6 +397,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		if($source==false)
 		{
 			$this->log("$imgfile cannot be found in images path","warning");
+			//fixing last not found flag (to avoid redundant searches & logs)
+			$this->_lastnotfound=true;
 			return false;
 		}
 		$imgfile=$source;
