@@ -28,11 +28,17 @@ abstract class Magmi_Engine extends DbHelper
 	public $logger=null;
 	protected $_timingcats=array();
 	
+	/*
+	 * Engine Metadata Table access
+	 */
 	public function getEngineInfo()
 	{
 		return array("name"=>"Generic Magmi Engine","version"=>"1.1","author"=>"dweeves");
 	}
 	
+	/*
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -40,14 +46,18 @@ abstract class Magmi_Engine extends DbHelper
 		mb_internal_encoding("UTF-8");
 	}
 	
-	
+	/*
+	 * Engine initialization
+	 * @param params : key/value array of initialization parameters
+	 */
 	public final  function initialize($params=array())
 	{
 		try
 		{
+		   //Retrieving master config file
 			$this->_conf=Magmi_Config::getInstance();
 			$this->_conf->load();
-			
+			//Intializing members
 			$this->tprefix=$this->_conf->get("DATABASE","table_prefix");
 			$this->_excid=0;
 			$this->_initialized=true;
@@ -60,34 +70,53 @@ abstract class Magmi_Engine extends DbHelper
 		
 	}
 	
-	/**
+	/*
 	 * Returns magento directory
 	 */
 	public function getMagentoDir()
 	{
 		return $this->_conf->getMagentoDir();
 	}
+	
+	/*
+	 * returns magento version
+	 */
+	
 	public function getMagentoVersion()
 	{
 		return $this->_conf->get("MAGENTO","version");
 	}
 	
+	/*
+	 * Plugin loop callback registration
+	 */
 	protected function _registerPluginLoopCallback($cbtype,$cb)
 	{
 	  	$this->_ploop_callbacks[$cbtype]=$cb;
 	}
+	
+	/*
+	 * Plugin loop callback deregistration
+	*/
 	
 	protected function _unregisterPluginLoopCallback($cbtype)
 	{
 		unset($this->_ploop_callbacks[$cbtype]);
 	}
 	
+	/*
+	 * Generic implementation of plugin families, empty for this mother class
+	*/
+	
 	public function getPluginFamilies()
 	{
 		return array();
 	}
 	
-	
+	/*
+	 * return the list of enabled plugin classes for a given profile
+	 * @param $profile : profile name to check
+	 */
 	public function getEnabledPluginClasses($profile)
 	{
 		$enabledplugins=new EnabledPlugins_Config($profile);
@@ -95,6 +124,10 @@ abstract class Magmi_Engine extends DbHelper
 		return $enabledplugins->getEnabledPluginFamilies($this->getPluginFamilies());
 	}
 	
+	/*
+	 * initializes Plugin instances for a given profile
+	 * @param $profile : profile to initialize plugins for , defaults to null (Default Profile)
+	 */
 	public function initPlugins($profile=null)
 	{
 	    //reset _active plugins in case of Engine reuse
@@ -102,6 +135,9 @@ abstract class Magmi_Engine extends DbHelper
 		$this->_pluginclasses=$this->getEnabledPluginClasses($profile);
 	}
 	
+	/*
+	 * Returns a list of class names for "Builtin" plugins
+	 */
 	public function getBuiltinPluginClasses()
 	{
 		$bplarr=array();
@@ -121,30 +157,51 @@ abstract class Magmi_Engine extends DbHelper
 		return $bplarr;
 	}
 	
+	/*
+	 * Return the list of enabled plugin classes
+	 */
 	public function getPluginClasses()
 	{
 		return $this->_pluginclasses;
 	}
 	
+	/*
+	 * Return the list of active plugin instances for a given plugin family
+	 * 
+	 * @param $family : plugin family to get instances from, defaults to null (all plugins)
+	 */
 	public function getPluginInstances($family=null)
 	{
 		$pil=null;
+		//if no family set, return all active plugins
 		if($family==null)
 		{
 			$pil=$this->_activeplugins();
 		}
 		else
+		 //filter active plugins by family
 		{
 			$pil=(isset($this->_activeplugins[$family])?$this->_activeplugins[$family]:array());
 		}
 		return $pil;
 	}
 	
+	/*
+	 * Force Builtin plugin classes list with a list of classes for a given plugin family
+	 * 
+	 * @param $family : family of builtin plugins to set
+	 * @param $pclasses : array of plugin class names to set as buitin for this engine
+	 */
 	public function setBuiltinPluginClasses($pfamily,$pclasses)
 	{
 		$this->_builtinplugins[$pfamily]=$pclasses;
 	}
 	
+	/*
+	 * Plugin sorting callback for call order in the same execution step.
+	 * 
+	 * Sorts by filename
+	 */
 	public function sortPlugins($p1,$p2)
 	{
 		
@@ -160,34 +217,58 @@ abstract class Magmi_Engine extends DbHelper
 		}
 		return strcmp($m1["file"],$m2["file"]);
 	}
+	
+	/*
+	 * Create plugin instances for a given profile
+	 * 
+	 * @param $profile : profile name to create plugins for
+	 * @param $params : configuration parameters for the profile (all plugins)
+	 */
 	public function createPlugins($profile,$params)
 	{
+	    //Get Plugin Helper instance
 		$plhelper=Magmi_PluginHelper::getInstance($profile);
+		// Merge Builtin Plugin classes with current plugin classes
 		$this->_pluginclasses = array_merge_recursive($this->_pluginclasses,$this->getBuiltinPluginClasses());
+		//Iterate on plugin classes by family
 		foreach($this->_pluginclasses as $pfamily=>$pclasses)
 		{
+		    //If family name starts with *
 			if($pfamily[0]=="*")
 			{
+			    // use the real family name (after *) 
 				$this->_pluginclasses[substr($pfamily,1)]=$pclasses;
+				// clear the * pseudo family
 				unset($this->_pluginclasses[$pfamily]);
 			}
 		}
+		
+		//Iterate on final plugin classes list
 		foreach($this->_pluginclasses as $pfamily=>$pclasses)
 		{
-			if(!isset($this->_activeplugins[$pfamily]))
+            //If there is no active plugins in the current family 
+		    if(!isset($this->_activeplugins[$pfamily]))
 			{
+			    //initialize active plugins for plugin family
 				$this->_activeplugins[$pfamily]=array();
 			}
+			//For all plugin classes in current family
 			foreach($pclasses as $pclass)
 			{
+			    //Create a new instance of plugin with parameters
+			    //Add it to the list of active plugins in the current family
 				$this->_activeplugins[$pfamily][]=$plhelper->createInstance($pfamily,$pclass,$params,$this);
 				
 			}
+			//Sort family plugins with plugin sorting callback
 			usort($this->_activeplugins[$pfamily],array(&$this,"sortPlugins"));
 		}
 		
 	}
 	
+	/*
+	 * Retrieve all active plugins instances for a give plugin class name
+	 */
 	public function getPluginInstanceByClassName($pfamily,$pclassname)
 	{
 		$inst=null;
@@ -205,6 +286,9 @@ abstract class Magmi_Engine extends DbHelper
 		return $inst;
 	}
 	
+	/*
+	 * Get a plugin instance in a family based on it's execution order
+	 */
 	public function getPluginInstance($family,$order=-1)
 	{
 		if($order<0)
@@ -215,62 +299,92 @@ abstract class Magmi_Engine extends DbHelper
 	}
 	
 
-	
+	/*
+	 * Plugin call generic callback for engine
+	 * 
+	 * @param $types : plugin types to call
+	 * @param $callback : processing step to call
+	 * @param $data : (reference) , data to pass to plugin processing
+	 * @param $params : extra parameters for processing step
+	 * @param $break : flag to stop calling chain at first plugin returning false (defaults to true)
+	 */
 	public function callPlugins($types,$callback,&$data=null,$params=null,$break=true)
 	{
 		$result=true;
+
+		//If plugin type list is not an array , process it as string
 		if(!is_array($types))
 		{
+		    //If plugin is not wildcard , build array of types based on comma separated string
 			if($types!="*")
 			{
 				$types=explode(",",$types);
 			}
 			else
+			//else return all active plugins
 			{
 				$types=array_keys($this->_activeplugins);
 			}
 		}
 		
+		//Timing initialization (global processing step)
 		$this->_timecounter->initTime($callback,get_class($this));
 		
+		//Iterate on plugin types (families)
 		foreach($types as $ptype)
 		{
+		    //If there is at least one active plugin in this family 
 			if(isset($this->_activeplugins[$ptype]))
 			{
+			    //For all instances in the family
 				foreach($this->_activeplugins[$ptype] as $pinst)
 				{
+				    //If the plugin has a hook for the defined processing step
 					if(method_exists($pinst,$callback))
 					{
+					   //Timing initialization for current plugin in processing step
 						$this->_timecounter->initTime($callback,get_class($pinst));
+						//Perform plugin call
+						// either with or without parameters,or parameters & data
+						//store execution result  
 						$callres=($data==null?($params==null?$pinst->$callback():$pinst->$callback($params)):$pinst->$callback($data,$params));
+						//End Timing for current plugin in current step
 						$this->_timecounter->exitTime($callback,get_class($pinst));
-						
+						//if plugin call result is false with data set
 						if($callres===false && $data!=null)
 						{
-						
+						   //final result is false
 						  $result=false;
 								
 						}
+						//If there is a register callback for the plugin processing loop
 						if(isset($this->_ploop_callbacks[$callback]))
 						{
 							$cb=$this->_ploop_callbacks[$callback];
+							//Call the plugin processing loop callback , time it
 							$this->_timecounter->initTime($callback,get_class($pinst));
 							$this->$cb($pinst,$data,$result);
 							$this->_timecounter->exitTime($callback,get_class($pinst));
 							
 						}
+						//if last result plugin is false & break flag
 						if($result===false && $break)
 						{
-						$this->_timecounter->exitTime($callback,get_class($this));
+						   //End timing
+						    $this->_timecounter->exitTime($callback,get_class($this));
+						    //return false
 							return $result;
 						}					
 					}
 				}
 			}
 		}
+		//Nothing broke, end timing
 		$this->_timecounter->exitTime($callback,get_class($this));
+		//Return plugin call result
 		return $result;
 	}
+	
 	
 	public function getParam($params,$pname,$default=null)
 	{
