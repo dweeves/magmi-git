@@ -9,3 +9,15 @@ be kept in sync.
 
 Magmi Wiki is still hosted at sourceforge.
 
+Magento CE 1.8.x  Support
+==========================
+
+Magmi needs you to test it against Magento CE 1.8.x.
+
+It should work for most of it, and maybe it's already working well.
+
+But devil is in the details and i don't have much time doing an extensive test session.
+
+So , if you are using Magento CE 1.8.x , please provide bug reports for any found defects or any incompatibility you might have noticed.
+
+
