@@ -97,7 +97,8 @@ abstract class Magmi_Engine extends DbHelper
 	
 	public function initPlugins($profile=null)
 	{
-		
+	    //reset _active plugins in case of Engine reuse
+		$this->_activeplugins=array();
 		$this->_pluginclasses=$this->getEnabledPluginClasses($profile);
 	}
 	
