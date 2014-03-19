@@ -745,7 +745,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			foreach($a["data"] as $attrdesc)
 			{
 				//check item type is compatible with attribute apply_to
-				if($attrdesc["apply_to"]!=null && strpos($attrdesc["apply_to"],$itemids["type"])===false)
+				if($attrdesc["apply_to"]!=null && strpos($attrdesc["apply_to"],strtolower($itemids["type"]))===false)
 				{
 					//do not handle attribute if it does not apply to the product type
 					continue;
@@ -1243,7 +1243,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			else
 			{
 				//only sku & attribute set id from datasource otherwise.
-				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid,"type"=>isset($item["type"])?$item["type"]:"Simple","__new"=>true);
+				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):$this->default_asid,"type"=>isset($item["type"])?$item["type"]:"simple","__new"=>true);
 			}
 			//do not reset values for existing if non admin	
 			$this->onNewSku($sku,($cids!==false));
