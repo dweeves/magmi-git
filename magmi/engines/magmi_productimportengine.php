@@ -994,7 +994,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         */
         // Fixed version
         $cpe=$this->tablename("catalog_product_entity");
-        $qty=isset($stockvals['qty'])? $stockvals['qty'] : $item['qty'];
+        //Fix , $stockvals is already a mix between item keys & stock table keys.
+        $qty=isset($stockvals['qty'])? $stockvals['qty'] :0;
         if (!$qty) {
             $qty = 0;
         }
