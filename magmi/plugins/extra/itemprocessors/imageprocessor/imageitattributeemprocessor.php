@@ -43,6 +43,24 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             );
 	}
 	
+	//Image removal feature
+	public function handleRemoveImages($pid,&$item,$ivalue)
+	{
+		$gal_attinfo=$this->getAttrInfo("media_gallery");
+		$t=$this->tablename('catalog_product_entity_media_gallery');
+		$tv=$this->tablename('catalog_product_entity_media_gallery_value');
+		$rimgs=explode(";",$ivalue);
+		$rivals=array();
+		foreach($rimgs as $rimg)
+		{
+			$rivals[]='/'.implode('/',array($rimg[0],$rimg[1],$rimg));
+		}
+		
+		$sql="DELETE $t.* FROM $t
+		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (".$this->arr2values($rivals).")";
+		$this->delete($sql,array_merge(array($pid,$gal_attinfo["attribute_id"]),$rivals));
+	}
+	
 	public function handleGalleryTypeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		//do nothing if empty
@@ -496,6 +514,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$this->resetGallery($pid,$sid,$gattrdesc["attribute_id"]);
 			}
+		}
+		if(isset($item["image_remove"]))
+		{
+			$this->handleRemoveImages($pid, $item,$item["image_remove"]);
 		}
 		return true;
 			
