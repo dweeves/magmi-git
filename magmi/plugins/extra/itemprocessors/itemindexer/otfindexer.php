@@ -13,7 +13,7 @@ class ItemIndexer extends Magmi_ItemProcessor
 		return array(
             "name" => "On the fly indexer",
             "author" => "Dweeves",
-            "version" => "0.1.5",
+            "version" => "0.1.6",
             "url"=>$this->pluginDocUrl("On_the_fly_indexer")
             );
 	}
@@ -179,7 +179,10 @@ class ItemIndexer extends Magmi_ItemProcessor
 					$names=array();
 					foreach($cpids as $cpid)
 					{
-						$names[]=$cnames[$cpid];
+					    if(isset($cnames[$cpid]))
+					    {
+						    $names[]=$cnames[$cpid];
+						}
 					}
 					//make string with that
 					$namestr=implode("/",$names);
@@ -223,15 +226,18 @@ class ItemIndexer extends Magmi_ItemProcessor
 				$names=array();			
 				foreach($cpids as $cpid)
 				{
-					$names[]=$cnames[$cpid];
-					//make string with that
-					$namestr=implode("/",$names);
-					$urlend=$this->getParam("OTFI:urlending",".html");
-					//build category url key (allow / in slugging)
-					$curlk=Slugger::slug($namestr,true).$urlend;
-					$cdata=array($storeid,$cpid,"category/$cpid","catalog/category/view/id/$cpid","$curlk",1);
-					$vstr[]="(".$this->arr2values($cdata).")";
-					$data=array_merge($data,$cdata);
+				    if(isset($cnames[$cpid]))
+					{
+						$names[]=$cnames[$cpid];
+					    //make string with that
+					    $namestr=implode("/",$names);
+					    $urlend=$this->getParam("OTFI:urlending",".html");
+					    //build category url key (allow / in slugging)
+					    $curlk=Slugger::slug($namestr,true).$urlend;
+					    $cdata=array($storeid,$cpid,"category/$cpid","catalog/category/view/id/$cpid","$curlk",1);
+					    $vstr[]="(".$this->arr2values($cdata).")";
+					    $data=array_merge($data,$cdata);
+				    }
 				}	
 			}
 		}	
