@@ -351,9 +351,18 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 			}
 		}
 		$full_cmd = $precmd. $full_cmd;
-
-		$out=@shell_exec($full_cmd);
-
+		
+		$x=popen($full_cmd,"r");
+		$out="";
+		while(!feof($x))
+		{
+			$data=fread($x, 1024);
+			$out.=$data;
+			usleep(100000);
+		}
+		fclose($x);
+		
+		/* $out=shell_exec($full_cmd);*/
 		//restore old directory if changed
 		if($curdir)
 		{
