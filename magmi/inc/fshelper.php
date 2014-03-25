@@ -243,6 +243,10 @@ abstract class MagentoDirHandler
 	{
 		return $this->_magdir;
 	}
+	public function getexecmode()
+	{
+		return $this->_exec_mode;
+	}
 	
 	public abstract function canhandle($url);
 	public abstract function file_exists($filepath);
@@ -277,10 +281,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		return file_exists($mp);
 	}
 	
-	public function getexecmode()
-	{
-		if
-	}
+	
 
 	public function mkdir($path,$mask=null,$rec=false)
 	{
