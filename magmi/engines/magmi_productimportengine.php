@@ -3,7 +3,7 @@
 /**
  * MAGENTO MASS IMPORTER CLASS
  *
- * version : 0.6
+ * version : 1.7.8
  * author : S.BRACQUEMONT aka dweeves
  * updated : 2010-10-09
  *
@@ -11,7 +11,7 @@
 
 /* use external file for db helper */
 require_once("magmi_engine.php");
-
+require_once("magmi_valueparser.php");
 /**
  *
  * Magmi Product Import engine class
@@ -76,7 +76,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getEngineInfo()
 	{
-		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.7","author"=>"dweeves");
+		return array("name"=>"Magmi Product Import Engine","version"=>"1.7.8","author"=>"dweeves");
 	}
 
 	/**
@@ -583,97 +583,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
 	public function parseCalculatedValue($pvalue,$item,$params)
 	{
-		$matches=array();
-		$ik=array_keys($item);
-		$rep="";
-		
-		//replace base item values
-		while(preg_match("|\{item\.(.*?)\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$ik))
-					{
-						$rep='$item["'.$match.'"]';
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		unset($matches);
-		//replac meta
-		$meta=$params;
-		
-		
-		while(preg_match("|\{meta\.(.*?)\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$params))
-					{
-						$rep='$meta["'.$match.'"]';
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		unset($matches);
-	
-	
-		//replacing expr values
-		while(preg_match("|\{\{\s*(.*?)\s*\}\}|",$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					$code=trim($match);
-					//settiing meta values
-					$meta=$params;
-					$rep=eval("return ($code);");
-					//escape potential "{{xxx}}" values in interpreted target
-					//so that they won't be reparsed in next round
-					$rep=preg_replace("|\{\{\s*(.*?)\s*\}\}|", "____$1____", $rep);
-					$pvalue=str_replace($matches[0],$rep,$pvalue);							
-				}				
-			}
-		}
-		
-		//unescape matches
-		$pvalue=preg_replace("|____(.*?)____|",'{{$1}}',$pvalue);
-		//replacing single values not in complex values
-		while(preg_match('|\$item\["(.*?)"\]|',$pvalue,$matches))
-		{
-			foreach($matches as $match)
-			{
-				if($match!=$matches[0])
-				{
-					if(in_array($match,$ik))
-					{
-						$rep=$item[$match];
-					}
-					else
-					{
-						$rep="";
-					}
-					$pvalue=str_replace($matches[0],$rep,$pvalue);
-				}
-			}
-		}
-		
-		unset($matches);
+		$pvalue=Magmi_ValueParser::parseValue($pvalue, array("item"=>$item,"meta"=>$params));
 		return $pvalue;
 	}
 
