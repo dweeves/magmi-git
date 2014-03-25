@@ -15,6 +15,23 @@ class FSHelper
 		}
 		return true;
 	}
+	
+	public static function getExecMode() {
+		
+		$is_disabled=array();
+		$disabled = explode(',', ini_get('disable_functions'));
+		foreach ($disabled as $disableFunction) {
+			$is_disabled[] = trim($disableFunction);
+		}
+		foreach(array("popen","shell_exec") as $func)
+		{
+			if(!in_array($func, $is_disabled))
+			{
+				return $func;
+			}
+		}
+		return null;
+	}
 
 }
 
@@ -214,21 +231,29 @@ abstract class MagentoDirHandler
 {
 	protected $_magdir;
 	protected $_lasterror;
+	protected $_exec_mode;
 	public function __construct($magurl)
 	{
 		$this->_magdir=$magurl;
 		$this->_lasterror=array();
+		$this->_exec_mode=FSHelper::getExecMode();
 	}
+	
 	public function getMagentoDir()
 	{
 		return $this->_magdir;
 	}
+	
 	public abstract function canhandle($url);
 	public abstract function file_exists($filepath);
 	public abstract function mkdir($path,$mask=null,$rec=false);
 	public abstract function copy($srcpath,$destpath);
 	public abstract function unlink($path);
 	public abstract function chmod($path,$mask);
+	public function isExecEnabled()
+	{
+		return $this->_exec_mode!=null;
+	}
 	public abstract function exec_cmd($cmd,$params,$workingdir = null);
 }
 
@@ -250,6 +275,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $filename));
 
 		return file_exists($mp);
+	}
+	
+	public function getexecmode()
+	{
+		if
 	}
 
 	public function mkdir($path,$mask=null,$rec=false)
@@ -351,18 +381,26 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 			}
 		}
 		$full_cmd = $precmd. $full_cmd;
-		
-		$x=popen($full_cmd,"r");
-		$out="";
-		while(!feof($x))
+		//Handle Execution
+		$emode=$this->getexecmode();
+		switch($emode)
 		{
-			$data=fread($x, 1024);
-			$out.=$data;
-			usleep(100000);
+			case "popen":
+				$x=popen($full_cmd,"r");
+				$out="";
+				while(!feof($x))
+				{
+					$data=fread($x, 1024);
+					$out.=$data;
+					usleep(100000);
+				}
+				fclose($x);
+				break;
+			case "shell_exec":
+				$out=shell_exec($full_cmd);
+				break;
 		}
-		fclose($x);
-		
-		/* $out=shell_exec($full_cmd);*/
+		 
 		//restore old directory if changed
 		if($curdir)
 		{
