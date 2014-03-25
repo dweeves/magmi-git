@@ -19,6 +19,23 @@ class MRA_FSHelper
 			}
 			return true;
 	 }
+	 
+	 public static function getExecMode() {
+	 
+	 	$is_disabled=array();
+	 	$disabled = explode(',', ini_get('disable_functions'));
+	 	foreach ($disabled as $disableFunction) {
+	 		$is_disabled[] = trim($disableFunction);
+	 	}
+	 	foreach(array("popen","shell_exec") as $func)
+	 	{
+	 		if(!in_array($func, $is_disabled))
+	 		{
+	 			return $func;
+	 		}
+	 	}
+	 	return null;
+	 }
 
 }
 
@@ -218,10 +235,13 @@ abstract class MRA_MagentoDirHandler
 {
 	protected $_magdir;
 	protected $_lasterror;
+	protected $_exec_mode;
+	
 	public function __construct($magurl)
 	{
 		$this->_magdir=$magurl;
 		$this->_lasterror=array();
+		$this->_exec_mode=MRA_FSHelper::getExecMode();
 	}
 	public abstract function canhandle($url);
 	public abstract function file_exists($filepath);
@@ -230,6 +250,11 @@ abstract class MRA_MagentoDirHandler
 	public abstract function unlink($filepath);
 	public abstract function chmod($filepath,$mask);
 	public abstract function exec_cmd($cmd,$params);
+	public function isExecEnabled()
+	{
+		return $this->_exec_mode!=null;
+	}
+	
 }
 
 class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
@@ -329,7 +354,24 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 	public function exec_cmd($cmd,$params)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $cmd));
-		$out=@shell_exec($cmd." ".$params);
+		$full_cmd=$cmd." ".$params;
+		switch($this->_exec_mode)
+		{
+			case "popen":
+				$x=popen($full_cmd,"r");
+				$out="";
+				while(!feof($x))
+				{
+					$data=fread($x, 1024);
+					$out.=$data;
+					usleep(100000);
+				}
+				fclose($x);
+				break;
+			case "shell_exec":
+				$out=@shell_exec($full_cmd);
+				break;
+		}
 		if($out===false || $out==null)
 		{
 			$this->_lasterror=error_get_last();
