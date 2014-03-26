@@ -6,11 +6,18 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 	protected $_indexlist="catalog_product_attribute,catalog_product_price,catalog_product_flat,catalog_category_flat,catalog_category_product,cataloginventory_stock,catalog_url,catalogsearch_fulltext,tag_summary";
 	protected $_mdh;
 	
+	public function __construct()
+	{
+		$magdir=Magmi_Config::getInstance()->getMagentoDir();
+		$this->_mdh=MagentoDirHandlerFactory::getInstance()->getHandler($magdir);
+
+	}
+	
 	public function getPluginInfo()
 	{
 		return array("name"=>"Magmi Magento Reindexer",
 					 "author"=>"Dweeves",
-					 "version"=>"1.0.3",
+					 "version"=>"1.0.3a",
 					 "url"=>$this->pluginDocUrl("Magmi_Magento_Reindexer"));
 	}
 	
@@ -107,13 +114,11 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 	public function isRunnable()
 	{
 				
-		return $this->_mdh->isExecEnabled();
+		return array(FSHelper::getExecMode()!=null,"");
 	}
 	
 	public function initialize($params)
 	{
-		$magdir=Magmi_Config::getInstance()->getMagentoDir();
-		$this->_mdh=MagentoDirHandlerFactory::getInstance()->getHandler($magdir);
 		$this->log("Using execution mode :".$this->_mdh->getexecmode(),"startup");
 	}
 }
