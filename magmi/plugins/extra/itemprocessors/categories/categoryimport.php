@@ -420,8 +420,8 @@ class CategoryImporter extends Magmi_ItemProcessor
 			}
 			//unset error if empty
 			unset($rootpaths["__error__"]);
-			//categories may have been changed
-			$catlist=explode(";;",$item["categories"]);
+			//categories may have been changed , use escaping
+			$catlist=explode(";;",$icats);
 			$catids=array();
 			foreach($catlist as $catdef)
 			{
