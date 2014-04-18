@@ -410,6 +410,9 @@ class CategoryImporter extends Magmi_ItemProcessor
 				}
 			//recompose rooted categories
 				$item["categories"]=implode(";;",$catlist);
+			//process escaping if categories were recomposed
+				$icats = $this->processEscaping($item["categories"]);
+				
 			}
 			//get store root category paths
 			$rootpaths=$this->getStoreRootPaths($item);
