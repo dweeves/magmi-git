@@ -23,10 +23,11 @@ public function getPluginInfo()
 		$headers .= "Reply-To: ".$from_name."<".$from.">\n";
 		$headers .= "Return-Path: ".$from_name."<".$from.">\n";
 		$headers .= "Message-ID: <".time()."-".$from.">\n";
+		$headers .= "Date: ".date('r', time())."\n"; //Wed, 15 Jan 2014 11:00:13 +0000
 		$headers .= "X-Mailer: PHP v".phpversion();
 
 		$msg_txt="";
-		$email_txt = $message;
+		$email_txt = $message."\n";
 
 		$semi_rand = md5(time());
 		$mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
