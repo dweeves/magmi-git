@@ -371,9 +371,8 @@ span.version
 
 .pluginselect input[type=checkbox]
 {
-	margin:0px;
+	margin-left:4px;
 	padding:0px;
-	height:20px;
 	margin-top:3px;
 }
 
@@ -702,4 +701,17 @@ div.changedesc
  padding-top:5px;
  padding-bottom:5px;
 	
+}
+
+div.group
+{
+	margin-bottom:5px;
+	margin-left:0px;
+	margin-right:0px;
+}
+
+div.group h1
+{
+	margin-top:2px;
+	margin-bottom:3px;
 }

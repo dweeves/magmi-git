@@ -87,7 +87,7 @@ else{?>
 	<?php foreach($order as $k)
 	{?>
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>" value="<?php echo implode(",",$eplconf->getEnabledPluginClasses($k))?>" name="PLUGINS_<?php echo strtoupper($k)?>:classes"></input>
-	<div class="grid_12 col <?php if($k==$order[count($order)-1]){?>omega<?php }?>">
+	<div class="grid_12 col">
 		<h3><?php echo ucfirst($k)?></h3>
 		<?php if($k=="datasources")
 		{?>
@@ -152,7 +152,7 @@ else{?>
 					else
 					{?>
 						<?php if(!$catopen){$catopen=true?>
-						<div class="grid_12 omega"><h1><?php echo $pcat?></h1>
+						<div class="grid_12 group"><h1><?php echo $pcat?></h1>
 						<?php }?>
 						<ul>
 						<?php
