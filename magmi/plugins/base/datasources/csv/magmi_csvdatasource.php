@@ -89,7 +89,14 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		//open file for writing
 		if(file_exists($outname))
 		{
-			unlink($outname);
+			if($this->getParam("CSV:forcedl",false)==true)
+			{
+				unlink($outname);
+			}
+			else
+			{
+				return $outname;
+			}
 		}
 		$fp = fopen($outname, "w");
 		if($fp==false)
