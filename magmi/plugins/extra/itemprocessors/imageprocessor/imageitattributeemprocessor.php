@@ -13,6 +13,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	protected $_active=false;
 	protected $_newitem;
 	protected $_mdh;
+	protected $_remoteroot="";
 	protected $debug;
 	
 	public function initialize($params)
@@ -21,7 +22,15 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		$this->registerAttributeHandler($this,array("frontend_input:(media_image|gallery)"));
 		$this->magdir=Magmi_Config::getInstance()->getMagentoDir();
 		$this->_mdh=MagentoDirHandlerFactory::getInstance()->getHandler($this->magdir);
-		
+		//remote root
+		if($this->getParam("IMG:remoteroot",""))
+		{
+			if($this->getParam("IMG:remoteauth",false)==true)
+			{
+				$this->_mdh->setRemoteCredentials($this->getParam("IMG:remoteuser"),$this->getParam("IMG:remotepass"));
+			}
+			$this->_remoteroot=$this->getParam("IMG:remoteroot");
+		}
 		$this->forcename=$this->getParam("IMG:renaming");
 		foreach($params as $k=>$v)
 		{
@@ -189,11 +198,20 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
 	public function handleVarcharAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
-
+		if(trim($ivalue)=="")
+		{
+			return trim($ivalue);
+		}
+		//If not already a remote image & force remote root, set it & set authentication
+		if(!is_remote_path($ivalue) && $this->_remoteroot!="")
+		{
+			$ivalue=$this->_remoteroot.str_replace("//","/","/$ivalue");
+		}
 		//if it's a gallery
 		switch($attrdesc["frontend_input"])
 		{
 			case "gallery":
+				
 				$ovalue=$this->handleGalleryTypeAttribute($pid,$item,$storeid,$attrcode,$attrdesc,$ivalue);
 				break;
 			case "media_image":
