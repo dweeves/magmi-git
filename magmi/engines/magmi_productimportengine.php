@@ -269,11 +269,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			//since eav_ model for attributes has one table per backend type
 			foreach($attrinfs as $k=>$a)
 			{
-				//do not index attributes that are not in header (media_gallery may have been inserted for other purposes)
-				if(!in_array($k,$cols))
-				{
-					continue;
-				}
 				$bt=$a["backend_type"];
 				if(!isset($this->attrbytype[$bt]))
 				{
@@ -284,14 +279,15 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			//now add a fast index in the attrbytype array to store id list in a comma separated form
 			foreach($this->attrbytype as $bt=>$test)
 			{
-				$idlist;
+				$idlist=array();
 				foreach($test["data"] as $it)
 				{
 					$idlist[]=$it["attribute_id"];
 				}
 				$this->attrbytype[$bt]["ids"]=implode(",",$idlist);
 			}
-			$this->attrinfo=array_merge($this->attrinfo,$attrinfs);
+			//Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
+			$this->attrinfo=array_merge_recursive($this->attrinfo,$attrinfs);
 		}
 		$notattribs=array_diff($cols,array_keys($this->attrinfo));
 		foreach($notattribs as $k)
@@ -1333,6 +1329,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				$this->log("invalid store value, skipping item sku:".$item["sku"]);
 				return false;
 			}
+			//if column list has been modified by callback, update attribute info cache.
+			$this->initAttrInfos(array_keys($item));
 			//create new ones
 			$attrmap=$this->attrbytype;
 			do
