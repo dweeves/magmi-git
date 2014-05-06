@@ -81,8 +81,17 @@ class MagentoDirHandlerFactory
 abstract class RemoteFileGetter
 {
 	protected $_errors;
+	protected $_user;
+	protected $_password;
+	
 	public abstract function urlExists($url);
 	public abstract function copyRemoteFile($url,$dest);
+	//using credentials
+	public function setCredentials($user=null,$passwd=null)
+	{
+		$this->_user=$user;
+		$this->_password=$password;
+	}
 	public function getErrors()
 	{
 		return $this->_errors;
@@ -92,7 +101,12 @@ abstract class RemoteFileGetter
 class CURL_RemoteFileGetter extends RemoteFileGetter
 {
 	protected $_curlh;
-
+	protected $_cookie;
+	protected $_lookup_opts;
+	protected $_dl_opts;
+	protected $_lookup;
+	protected $_protocol;
+	
 	public function createContext($url)
 	{
 		if($this->_curlh==NULL)
@@ -101,6 +115,41 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			$context = curl_init($curl_url);
 			$this->_curlh=$context;
 		}
+		curl_setopt($this->_curlh, CURLOPT_URL, $url);
+		if(substr($url,0,4)=="http")
+		{
+			$this->_lookup=1;
+			$this->_protocol="http";
+			$this->_lookup_opts= array(CURLOPT_RETURNTRANSFER=>true,
+					CURLOPT_HEADER=>true,
+					CURLOPT_NOBODY=>true,
+					CURLOPT_FOLLOWLOCATION=>true,
+					CURLOPT_FILETIME=>true,
+					CURLOPT_CUSTOMREQUEST=>"HEAD");
+		
+			$this->_dl_opts=array(
+					CURLOPT_CUSTOMREQUEST=>"GET",
+					CURLOPT_HEADER=>false,
+					CURLOPT_NOBODY=>false,
+					CURLOPT_FOLLOWLOCATION=>true,
+					CURLOPT_UNRESTRICTED_AUTH=>true,
+					CURLOPT_HTTPHEADER=> array('Expect:'));
+		
+		}
+		else
+		{
+			if(substr($url,0,3)=="ftp")
+			{
+				$this->_protocol="ftp";
+				$this->_lookup=0;
+				$this->_dl_opts=array(
+						CURLOPT_TIMEOUT=> 300,
+						CURLOPT_FTP_USE_EPSV=>0);
+					
+			}
+		}
+		
+		
 		return $this->_curlh;
 	}
 
@@ -116,36 +165,63 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 
 	public function urlExists($remoteurl)
 	{
+		
 		$context=$this->createContext($remoteurl);
+		//assume existing urls
+		if(!$this->_lookup)
+		{
+			return true;
+		}
 		//optimized lookup through curl
-		/* head */
-		curl_setopt($context,  CURLOPT_HEADER, TRUE);
-		curl_setopt( $context, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'HEAD' );
-		curl_setopt( $context, CURLOPT_NOBODY, true );
-
+		curl_setopt_array($context, $this->_lookup_opts);
+		
 		/* Get the HTML or whatever is linked in $url. */
 		$response = curl_exec($context);
-
-		/* Check for 404 (file not found). */
-		$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
-		$exists = ($httpCode<400);
-		/* retry on error */
-			
-		if($httpCode==503 or $httpCode==403)
+		if($this->_protocol=="http")
 		{
-			/* wait for a half second */
-			usleep(500000);
-			$response = curl_exec($context);
+			/* Check for 404 (file not found). */
 			$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
 			$exists = ($httpCode<400);
+			/* retry on error */
+			
+			if($httpCode==503 or $httpCode==403)
+			{
+				/* wait for a half second */
+				usleep(500000);
+				$response = curl_exec($context);
+				$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
+				$exists = ($httpCode<400);
+			}
 		}
 		return $exists;
 	}
 
+	//using credentials
+	public function setCredentials($user=null,$passwd=null)
+	{
+		$this->_user=$user;
+		$this->_password=$passwd;	
+	}
+	
+	//using  cookie
+	public function setCookie($cookie=null)
+	{
+		$this->_cookie=$cookie;	
+	}
+	
 	public function copyRemoteFile($url,$dest)
 	{
-		$this->_errors=array();
+		if($this->_user!=null)
+		{
+			$creds=$this->_user;
+		}
+		if($this->_password!=null)
+		{
+			$creds.=":".$this->_password;
+		}
+		return	$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
+		
+	/*	$this->_errors=array();
 		$ret=true;
 		$context=$this->createContext($url);
 		if(!$this->urlExists($url))
@@ -172,9 +248,116 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			$this->_errors=array("type"=>"download error","message"=>curl_error($context));
 			$ret=false;
 		}
-		fclose($fp);
+		fclose($fp);*/
 		return $ret;
 	}
+
+	public function getRemoteFile($url,$dest,$creds=null,$authmode=null,$cookies=null)
+	{
+		$ch=$this->createContext($url);
+		$dl_opts=$this->_dl_opts;
+		$lookup_opts=$this->_lookup_opts;
+		$lookup=$this->_lookup;
+		$outname=$dest;
+		$fp = fopen($outname, "w");
+		$dl_opts[CURLOPT_FILE]=$fp;	
+		if($fp==false)
+		{
+			throw new Exception("Cannot write file:$outname");
+		}
+		
+		if($creds!="")
+		{
+			if($lookup!=0)
+			{
+				if(substr($url,0,4)=="http")
+				{
+					$lookup_opts[CURLOPT_HTTPAUTH]=CURLAUTH_ANY;
+					$lookup_opts[CURLOPT_UNRESTRICTED_AUTH]=true;
+				}
+				$lookup_opts[CURLOPT_USERPWD]="$creds";
+			}
+	
+	
+			if(substr($url,0,4)=="http")
+			{
+				$dl_opts[CURLOPT_HTTPAUTH]=CURLAUTH_ANY;
+				$dl_opts[CURLOPT_UNRESTRICTED_AUTH]=true;
+			}
+			$dl_opts[CURLOPT_USERPWD]="$creds";
+		}
+	
+		if($cookies)
+		{
+			if($lookup!=0)
+			{
+				if(substr($url,0,4)=="http")
+				{
+					$lookup_opts[CURLOPT_COOKIE]=$cookies;
+				}
+			}
+	
+			if(substr($url,0,4)=="http")
+			{
+				$dl_opts[CURLOPT_COOKIE]=$cookies;
+			}
+		}
+	
+		if($lookup)
+		{
+			//lookup , using HEAD request
+			$ok=curl_setopt_array($ch,$lookup_opts);
+			$res=curl_exec($ch);
+			if($res!==false)
+			{
+				$lm=curl_getinfo($ch);
+				if(curl_getinfo($ch,CURLINFO_HTTP_CODE)>400)
+				{
+					$resp = explode("\n\r\n", $res);
+					throw new Exception("Cannot fetch $url :".curl_error($ch));
+	
+				}
+			}
+			else
+			{
+				$lm=curl_getinfo($ch);
+				throw new  Exception("Cannot fetch $url : ".curl_error($ch));
+			}
+	
+		}
+	
+		$res=array("should_dl"=>true,"reason"=>"");
+	
+		if($res["should_dl"])
+		{
+			//clear url options
+			$ok=curl_setopt_array($ch, array());
+	
+			//Download the file , force expect to nothing to avoid buffer save problem
+			curl_setopt_array($ch,$dl_opts);
+			curl_exec($ch);
+			if(curl_error($ch)!="")
+			{
+				throw new Exception("Cannot fetch $url :".curl_error($ch));
+			}
+			else
+			{
+				$lm=curl_getinfo($ch);
+					
+			}
+			fclose($fp);
+	
+		}
+		else
+		{
+			$this->destroyContext($url);
+			//bad file or bad hour, no download this time
+			$this->log("No dowload , ".$res["reason"],"info");
+		}
+		//return the csv filename
+		return $outname;
+	}
+	
 }
 
 class URLFopen_RemoteFileGetter extends RemoteFileGetter
@@ -210,19 +393,22 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
 
 class RemoteFileGetterFactory
 {
-
+	private static $__fginst=NULL;
+	
 	public static function getFGInstance()
 	{
-		$fginst=NULL;
-		if(function_exists("curl_init"))
+		if(self::$__fginst==NULL)
 		{
-			$fginst=new CURL_RemoteFileGetter();
+			if(function_exists("curl_init"))
+			{
+				self::$__fginst=new CURL_RemoteFileGetter();
+			}
+			else
+			{
+				self::$__fginst=new URLFopen_RemoteFileGetter();
+			}
 		}
-		else
-		{
-			$fginst=new URLFopen_RemoteFileGetter();
-		}
-		return $fginst;
+		return self::$__fginst;
 	}
 
 }
@@ -274,6 +460,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		return (preg_match("|^.*?://.*$|",$url)==false);
 	}
 
+	
 	public function file_exists($filename)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $filename));
@@ -282,7 +469,12 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 	}
 	
 	
-
+	public function setRemoteCredentials($user,$passwd)
+	{
+		$fginst=RemoteFileGetterFactory::getFGInstance();
+		$fginst->setCredentials($user,$passwd);
+	}
+	
 	public function mkdir($path,$mask=null,$rec=false)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
