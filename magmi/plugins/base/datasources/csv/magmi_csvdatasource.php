@@ -55,7 +55,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	{
 		return array("name"=>"CSV Datasource",
 					 "author"=>"Dweeves",
-					 "version"=>"1.3");
+					 "version"=>"1.3.1");
 	}
 	
 	public function getRecordsCount()
@@ -82,7 +82,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	
 		$outname=$csvdldir."/".basename($url);
 		$ext = substr(strrchr($outname, '.'), 1);
-  		if($ext!=".txt" && $ext!=".csv")
+  		if($ext!="txt" && $ext!="csv")
   		{
   			$outname=$outname.".csv";
   		}
@@ -121,7 +121,10 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 		if(substr($url,0,3)=="ftp")
 		{
 			$lookup=0;
-			$dl_opts=array(CURLOPT_FILE=>$fp);
+			$dl_opts=array(CURLOPT_FILE=>$fp,
+			CURLOPT_TIMEOUT=> 300,
+			CURLOPT_FTP_USE_EPSV=>0);
+			
 		}
 	}
 	
