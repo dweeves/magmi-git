@@ -1596,6 +1596,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$this->log("step:".$this->getProp("GLOBAL","step",0.5)."%","step");
 		$this->createPlugins($this->_profile,$params);
 		$this->datasource=$this->getDataSource();
+		$this->callPlugins("datasources,general","beforeImport");
 		$nitems=$this->lookup();
 		Magmi_StateManager::setState("running");
 		//if some rows found
