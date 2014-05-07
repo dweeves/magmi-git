@@ -83,6 +83,20 @@ abstract class RemoteFileGetter
 	protected $_errors;
 	protected $_user;
 	protected $_password;
+	protected $_logger=null;
+	
+	public function setLogger($logger)
+	{
+		$this->_logger=$logger;
+	}
+	
+	public function log($data)
+	{
+		if($this->_logger!=null)
+		{
+			$this->_logger->log($data);
+		}
+	}
 	
 	public abstract function urlExists($url);
 	public abstract function copyRemoteFile($url,$dest);
@@ -100,22 +114,50 @@ abstract class RemoteFileGetter
 
 class CURL_RemoteFileGetter extends RemoteFileGetter
 {
-	protected $_curlh;
 	protected $_cookie;
 	protected $_lookup_opts;
 	protected $_dl_opts;
 	protected $_lookup;
 	protected $_protocol;
+	protected $_contexts;
 	
+	public function __construct()
+	{
+		$this->_contexts=array();
+	}
+	
+	public function getContextKey($url)
+	{
+		$urlparts=parse_url($url);
+		//remove path , context will be common for each host/user
+		
+		unset($urlparts["path"]);
+		unset($urlparts["query"]);
+		unset($urlparts["fragment"]);
+		$key="";
+		if($this->_user)
+		{
+			$key.=$this->_user.":".$this->_password."@";
+		}
+		$key.=implode(":",array_values($urlparts));
+		return $key;
+	}
+	
+	/*
+	 * Creating a CURL context with adequate options from an URL
+	 * For a given URL host/port/user , the same context is reused for optimizing performance
+	 */
 	public function createContext($url)
 	{
-		if($this->_curlh==NULL)
+		$curl_url=str_replace(" ","%20",$url);
+		$ckey=$this->getContextKey($url);
+		
+		if(!isset($this->_contexts[$ckey]))
 		{
-			$curl_url=str_replace(" ","%20",$url);
-			$context = curl_init($curl_url);
-			$this->_curlh=$context;
+			$context = curl_init();
+			$this->_contexts[$ckey]=$context;
 		}
-		curl_setopt($this->_curlh, CURLOPT_URL, $url);
+		
 		if(substr($url,0,4)=="http")
 		{
 			$this->_lookup=1;
@@ -134,7 +176,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 					CURLOPT_FOLLOWLOCATION=>true,
 					CURLOPT_UNRESTRICTED_AUTH=>true,
 					CURLOPT_HTTPHEADER=> array('Expect:'));
-		
+			
 		}
 		else
 		{
@@ -143,26 +185,34 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 				$this->_protocol="ftp";
 				$this->_lookup=0;
 				$this->_dl_opts=array(
-						CURLOPT_TIMEOUT=> 300,
+						CURLOPT_TIMEOUT=> 40,
 						CURLOPT_FTP_USE_EPSV=>0);
 					
 			}
 		}
 		
-		
-		return $this->_curlh;
+		return $this->_contexts[$ckey];
 	}
 
 	public function destroyContext($url)
 	{
-		if($this->_curlh!=NULL)
+		$ckey=$this->getContextKey($url);
+		if(isset($this->_contexts[$ckey]))
 		{
-			curl_close($this->_curlh);
-			$this->_curlh=NULL;
+			curl_close($this->_contexts[$ckey]);
+		
+			unset($this->_contexts[$ckey]);
 		}
 	}
 
-
+	public function __destruct()
+	{
+		foreach($this->_contexts as $k=>$ctx)
+		{
+			curl_close($this->_contexts[$k]);
+		}
+	}
+	
 	public function urlExists($remoteurl)
 	{
 		
@@ -221,37 +271,14 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		}
 		return	$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
 		
-	/*	$this->_errors=array();
-		$ret=true;
-		$context=$this->createContext($url);
-		if(!$this->urlExists($url))
-		{
-			$this->_errors=array("type"=>"download error","message"=>"URL $url is unreachable");
-			return false;
-		}
-		$fp=fopen($dest,"w");
-		//add support for https urls
-		curl_setopt($context, CURLOPT_SSL_VERIFYPEER ,false);
-		curl_setopt($context, CURLOPT_RETURNTRANSFER, false);
-		curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'GET' );
-		curl_setopt( $context, CURLOPT_NOBODY, false);
-		curl_setopt($context, CURLOPT_FILE, $fp);
-		curl_setopt($context, CURLOPT_HEADER, 0);
-		curl_setopt($context,CURLOPT_FAILONERROR,true);
-		if(!ini_get('safe_mode'))
-		{
-			curl_setopt($context, CURLOPT_FOLLOWLOCATION, 1);
-		}
-		curl_exec($context);
-		if(curl_getinfo($context,CURLINFO_HTTP_CODE)>=400)
-		{
-			$this->_errors=array("type"=>"download error","message"=>curl_error($context));
-			$ret=false;
-		}
-		fclose($fp);*/
-		return $ret;
 	}
 
+	public function setURLOptions($url,&$optab)
+	{
+			$optab[CURLOPT_URL]=$url;
+	}
+	
+	
 	public function getRemoteFile($url,$dest,$creds=null,$authmode=null,$cookies=null)
 	{
 		$ch=$this->createContext($url);
@@ -259,12 +286,6 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		$lookup_opts=$this->_lookup_opts;
 		$lookup=$this->_lookup;
 		$outname=$dest;
-		$fp = fopen($outname, "w");
-		$dl_opts[CURLOPT_FILE]=$fp;	
-		if($fp==false)
-		{
-			throw new Exception("Cannot write file:$outname");
-		}
 		
 		if($creds!="")
 		{
@@ -305,6 +326,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 	
 		if($lookup)
 		{
+			setURLOptions($url,$lookup_opts);
 			//lookup , using HEAD request
 			$ok=curl_setopt_array($ch,$lookup_opts);
 			$res=curl_exec($ch);
@@ -331,29 +353,39 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		if($res["should_dl"])
 		{
 			//clear url options
+			$fp = fopen($outname, "w");
+			if($fp==false)
+			{
+				throw new Exception("Cannot write file:$outname");
+			}
+			$dl_opts[CURLOPT_FILE]=$fp;	
 			$ok=curl_setopt_array($ch, array());
-	
+			$this->setURLOptions($url,$dl_opts);
+			
 			//Download the file , force expect to nothing to avoid buffer save problem
 			curl_setopt_array($ch,$dl_opts);
-			curl_exec($ch);
-			if(curl_error($ch)!="")
+			$inf=curl_getinfo($ch);
+			if(!curl_exec($ch))
 			{
-				throw new Exception("Cannot fetch $url :".curl_error($ch));
+				if(curl_error($ch)!="")
+				{
+						$err="Cannot fetch $url :".curl_error($ch);
+				}
+				else {
+						$err="CURL Error downloading $url";
+				}
+				$this->destroyContext($url);
+				fclose($fp);
+				unlink($dest);
+				throw new Exception($err);
 			}
-			else
-			{
-				$lm=curl_getinfo($ch);
-					
-			}
+			
 			fclose($fp);
 	
 		}
-		else
-		{
-			$this->destroyContext($url);
-			//bad file or bad hour, no download this time
-			$this->log("No dowload , ".$res["reason"],"info");
-		}
+
+		$this->destroyContext($url);
+		
 		//return the csv filename
 		return $outname;
 	}
@@ -393,22 +425,22 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
 
 class RemoteFileGetterFactory
 {
-	private static $__fginst=NULL;
+	private static $__fginsts=array();
 	
-	public static function getFGInstance()
+	public static function getFGInstance($id="default")
 	{
-		if(self::$__fginst==NULL)
+		if(!isset(self::$__fginsts[$id]))
 		{
 			if(function_exists("curl_init"))
 			{
-				self::$__fginst=new CURL_RemoteFileGetter();
+				self::$__fginsts[$id]=new CURL_RemoteFileGetter();
 			}
 			else
 			{
-				self::$__fginst=new URLFopen_RemoteFileGetter();
+				self::$__fginsts[$id]=new URLFopen_RemoteFileGetter();
 			}
 		}
-		return self::$__fginst;
+		return self::$__fginsts[$id];
 	}
 
 }
@@ -449,11 +481,15 @@ abstract class MagentoDirHandler
 
 class LocalMagentoDirHandler extends MagentoDirHandler
 {
+	protected $_rfgid;
+	
 	public function __construct($magdir)
 	{
 		parent::__construct($magdir);
 		MagentoDirHandlerFactory::getInstance()->registerHandler($this);
+		$this->_rfgid="default";
 	}
+	
 
 	public function canHandle($url)
 	{
@@ -471,10 +507,14 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 	
 	public function setRemoteCredentials($user,$passwd)
 	{
-		$fginst=RemoteFileGetterFactory::getFGInstance();
+		$fginst=RemoteFileGetterFactory::getFGInstance($this->_rfgid);
 		$fginst->setCredentials($user,$passwd);
 	}
 	
+	public function setRemoteGetterId($rfgid)
+	{
+		$this->_rfgid=$rfgid;
+	}
 	public function mkdir($path,$mask=null,$rec=false)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
@@ -520,14 +560,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
 	public function copyFromRemote($remoteurl,$destpath)
 	{
-		$rfg=RemoteFileGetterFactory::getFGInstance();
+		$rfg=RemoteFileGetterFactory::getFGInstance($this->_rfgid);
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $destpath));
 		$ok=$rfg->copyRemoteFile($remoteurl,$mp);
 		if(!$ok)
 		{
 			$this->_lasterror=$rfg->getErrors();
 		}
-		unset($rfg);
 		return $ok;
 	}
 
