@@ -22,6 +22,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		$this->registerAttributeHandler($this,array("frontend_input:(media_image|gallery)"));
 		$this->magdir=Magmi_Config::getInstance()->getMagentoDir();
 		$this->_mdh=MagentoDirHandlerFactory::getInstance()->getHandler($this->magdir);
+		$this->_mdh->setRemoteGetterId("image");
 		//remote root
 		if($this->getParam("IMG:remoteroot",""))
 		{
