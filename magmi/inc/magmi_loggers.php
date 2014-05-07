@@ -1,6 +1,12 @@
 <?php 
-class FileLogger
-	{
+
+abstract class Magmi_Logger
+{
+	public abstract function log($data,$type=null);
+}
+
+class FileLogger extends Magmi_Logger
+{
 		protected $_fname;
 		
 		public function __construct($fname=null)
@@ -18,7 +24,7 @@ class FileLogger
 			fclose($f);
 		}
 
-		public function log($data,$type)
+		public function log($data,$type=null)
 		{
 			
 			$f=fopen($this->_fname,"a");
@@ -27,27 +33,37 @@ class FileLogger
 				throw new Exception("CANNOT WRITE PROGRESS FILE ");
 			}
 			$data=preg_replace ("/(\r|\n|\r\n)/", "<br>", $data);
+			if($type==null)
+			{
+				$type="default";
+			}
 			fwrite($f,"$type:$data\n");
 			fclose($f);
 		}
 		
-	}
+}
 	
-	class EchoLogger
+class EchoLogger extends Magmi_Logger
+{
+	public function log($data,$type=null)
 	{
-		public function log($data,$type)
-		{
-			$info=explode(";",$type);
-			$type=$info[0];
+			if($type!=null)
+			{
+				$info=explode(";",$type);
+				$type=$info[0];
+			}
+			else {
+				$type="default";
+			}
 			echo('<p class="logentry log_'.$type.'">'.$data."</p>");
-		}
-		
 	}
-	class CLILogger
+}
+
+class CLILogger extends Magmi_Logger
+{
+	public function log($data,$type=null)
 	{
-		public function log($data,$type)
-		{
-			echo("$type:$data\n");
-		}
+		echo("$type:$data\n");
 	}
+}
 ?>
