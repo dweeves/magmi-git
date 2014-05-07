@@ -23,6 +23,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 {
 
 	public $attrinfo=array();
+	
 	public $attrbytype=array();
 	public $store_ids=array();
 	public $status_id=array();
@@ -31,6 +32,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	public $default_asid;
 	public $sidcache=array();
 	public $mode="update";
+	private $_notattribs=array();
 	private $_attributehandlers;
 	private $_current_row;
 	private $_optidcache=null;
@@ -76,7 +78,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getEngineInfo()
 	{
-		return array("name"=>"Magmi Product Import Engine","version"=>"1.8","author"=>"dweeves");
+		return array("name"=>"Magmi Product Import Engine","version"=>"1.8.1","author"=>"dweeves");
 	}
 
 	/**
@@ -233,8 +235,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$tname=$this->tablename("eav_entity_type");
 			$this->prod_etype=$this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?","catalog_product","entity_type_id");
 		}
-
-		$toscan=array_values(array_diff($cols,array_keys($this->attrinfo)));
+		
+		//remove from candidates, those which we already know are not attributes
+		$candidates=array_diff($cols,$this->_notattribs);
+		// remove from candidates already known attributes
+		$candidates=array_diff($candidates,array_keys($this->attrinfo));
+		//now we have a count of "unknown columns" that are potential attributes
+		$toscan=array_values($candidates);
 		if(count($toscan)>0)
 		{
 			//create statement parameter string ?,?,?.....
@@ -288,11 +295,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			}
 			//Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
 			$this->attrinfo=array_merge_recursive($this->attrinfo,$attrinfs);
-		}
-		$notattribs=array_diff($cols,array_keys($this->attrinfo));
-		foreach($notattribs as $k)
-		{
-			$this->attrinfo[$k]=null;
+			$this->_notattribs=array_diff($cols,array_keys($this->attrinfo));
+				
 		}
 		/*now we have 2 index arrays
 		 1. $this->attrinfo  which has the following structure:
@@ -1367,7 +1371,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		catch(Exception $e)
 		{
 			$this->callPlugins(array("itemprocessors"),"processItemException",$item,array("exception"=>$e));
-			$this->logException($e,$this->_laststmt->queryString);
+			$this->logException($e);
 			throw $e;
 		}
 		return true;
