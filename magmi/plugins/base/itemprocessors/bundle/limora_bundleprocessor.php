@@ -46,7 +46,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             'required' => '1',
             'position' => '0',
         ),
-        'sku'      => array(
+        'sku'    => array(
             'selection_qty'            => '1',
             'selection_can_change_qty' => '1',
             'position'                 => '0',
@@ -180,10 +180,10 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 } else {
                     $sql = "INSERT INTO $opt (parent_id, required, position, type) VALUES(:parent_id, :required, :position, :type)";
                     $bind = array(
-                        'parent_id'          => $option['parent_id'],
-                        'required'           => $option['required'],
-                        'position'           => $option['position'],
-                        'type'               => $option['type'],
+                        'parent_id' => $option['parent_id'],
+                        'required'  => $option['required'],
+                        'position'  => $option['position'],
+                        'type'      => $option['type'],
                     );
                     $optionId = $this->insert($sql, $bind);
                     $option['option_id'] = $optionId;
@@ -301,15 +301,17 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         if (!empty($item['bundle_skus'])) {
             $bundleSkus = explode(';', $item['bundle_skus']);
             foreach ($bundleSkus as $sku) {
-                $code = current(explode(':', $sku, 2));
-                if (empty($options[$code])) {
-                    $options[$code] = array(
-                        'code'     => $code,
-                        'title'    => null,
-                        'type'     => $this->getConfiguredDefault('option', 'type'),
-                        'required' => $this->getConfiguredDefault('option', 'required'),
-                        'position' => $this->getConfiguredDefault('option', 'position'),
-                    );
+                if (!empty($sku)) {
+                    $code = current(explode(':', $sku, 2));
+                    if (empty($options[$code])) {
+                        $options[$code] = array(
+                            'code'     => $code,
+                            'title'    => null,
+                            'type'     => $this->getConfiguredDefault('option', 'type'),
+                            'required' => $this->getConfiguredDefault('option', 'required'),
+                            'position' => $this->getConfiguredDefault('option', 'position'),
+                        );
+                    }
                 }
             }
         }
@@ -341,9 +343,9 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         ";
 
         $bind = array(
-            'parent_id'      => $productId,
-            'code'           => $code,
-            'store_id'       => $storeId,
+            'parent_id' => $productId,
+            'code'      => $code,
+            'store_id'  => $storeId,
         );
         $existingOptions = $this->selectAll($sql, $bind);
 
@@ -466,8 +468,8 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         ";
 
         $bind = array(
-            'option_id'   => $option_id,
-            'product_id'  => $product_id,
+            'option_id'  => $option_id,
+            'product_id' => $product_id,
         );
         $existingSkus = $this->selectAll($sql, $bind);
 
