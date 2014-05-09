@@ -48,7 +48,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.27",
+            "version" => "1.0.28",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
 	}
@@ -203,11 +203,22 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		{
 			return trim($ivalue);
 		}
+		//trimming
+		$ivalue=trim($ivalue);
 		//If not already a remote image & force remote root, set it & set authentication
 		if(!is_remote_path($ivalue) && $this->_remoteroot!="")
 		{
-			$ivalue=$this->_remoteroot.str_replace("//","/","/$ivalue");
+			if($this->_remoteroot!="")
+			{
+				$ivalue=$this->_remoteroot.str_replace("//","/","/$ivalue");
+			}
+			//Amazon images patch , remove SLXXXX part
+			if (strpos($ivalue,'amazon.com/images/I') !== false) {
+				$pattern = '/\bSL[0-9]+\./i';
+				$ivalue = preg_replace( $pattern, '', $ivalue );
+			}
 		}
+		
 		//if it's a gallery
 		switch($attrdesc["frontend_input"])
 		{
