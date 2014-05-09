@@ -184,9 +184,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			{
 				$this->_protocol="ftp";
 				$this->_lookup=0;
-				$this->_dl_opts=array(
-						CURLOPT_TIMEOUT=> 40,
-						CURLOPT_FTP_USE_EPSV=>0);
+				$this->_dl_opts=array(CURLOPT_FTP_USE_EPSV=>0);
 					
 			}
 		}
