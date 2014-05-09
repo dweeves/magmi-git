@@ -267,8 +267,14 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		{
 			$creds.=":".$this->_password;
 		}
-		return	$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
-		
+		try {
+			$outname=$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
+		}
+		catch(Exception $e)
+		{
+			$this->_errors=array("type"=>"source error","message"=>$e->getMessage());
+		}
+		return $outname;
 	}
 
 	public function setURLOptions($url,&$optab)
@@ -574,7 +580,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		$destpath=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $destpath));
 		if(preg_match('|^.*?://.*$|', $srcpath))
 		{
-			$result=$this->copyFromRemote($srcpath,$destpath);
+				$result=$this->copyFromRemote($srcpath,$destpath);
 		}
 		else
 		{
