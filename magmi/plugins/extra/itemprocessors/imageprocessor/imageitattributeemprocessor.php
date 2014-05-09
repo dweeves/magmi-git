@@ -212,6 +212,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$ivalue=$this->_remoteroot.str_replace("//","/","/$ivalue");
 			}
+		}
+		if(is_remote_path($ivalue))
+		{
 			//Amazon images patch , remove SLXXXX part
 			if (strpos($ivalue,'amazon.com/images/I') !== false) {
 				$pattern = '/\bSL[0-9]+\./i';
