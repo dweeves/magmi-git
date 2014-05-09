@@ -206,7 +206,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		//trimming
 		$ivalue=trim($ivalue);
 		//If not already a remote image & force remote root, set it & set authentication
-		if(!is_remote_path($ivalue) && $this->_remoteroot!="")
+		if(!is_remote_path($ivalue))
 		{
 			if($this->_remoteroot!="")
 			{
