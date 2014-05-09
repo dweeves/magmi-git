@@ -259,6 +259,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 	
 	public function copyRemoteFile($url,$dest)
 	{
+		$result=false;
 		if($this->_user!=null)
 		{
 			$creds=$this->_user;
@@ -268,13 +269,13 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			$creds.=":".$this->_password;
 		}
 		try {
-			$outname=$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
+			$result=$this->getRemoteFile($url,$dest,$creds,$this->_cookie);
 		}
 		catch(Exception $e)
 		{
 			$this->_errors=array("type"=>"source error","message"=>$e->getMessage());
 		}
-		return $outname;
+		return $result;
 	}
 
 	public function setURLOptions($url,&$optab)
@@ -391,7 +392,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		$this->destroyContext($url);
 		
 		//return the csv filename
-		return $outname;
+		return true;
 	}
 	
 }
