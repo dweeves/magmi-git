@@ -78,7 +78,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function getEngineInfo()
 	{
-		return array("name"=>"Magmi Product Import Engine","version"=>"1.8.1","author"=>"dweeves");
+		return array("name"=>"Magmi Product Import Engine","version"=>"1.8.2","author"=>"dweeves");
 	}
 
 	/**
@@ -166,7 +166,73 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		return $this->_sid_sscope[$scodes];
 	}
 
-
+	/*
+	 * Return magento data from given item
+	 */
+	public function getMagentoData($item,$params,$cols=null)
+	{
+		//out data 
+		$out=array();
+		//if no specific columns set, use all item keys as base
+		if($cols==null)
+		{
+			$cols=array_keys($item);
+		}
+		$this->initAttrInfos($cols);
+		//cross with defined attributes
+		$attrkeys=array_intersect($cols,array_keys($this->attrinfo));
+		//Create several maps:
+		// 1 per backend type => 1 request per backend type
+		// 1 to retrieve attribute code from attribute id (avoid a join since we already have the map)
+		$bta=array();
+		$idcodemap=array();
+		
+		//Handle atribute retrieval
+		
+		foreach($attrkeys as $k)
+		{
+			$attrdata=$this->attrinfo[$k];
+			$bt="".$attrdata["backend_type"];
+			if($bt!="static")
+			{
+				$attid=$attrdata["attribute_id"];
+				if(!isset($bta[$bt]))
+				{
+					$bta[$bt]=array();
+				}
+				$bta[$bt][]=$attid;
+				$idcodemap[$attid]=$k;
+			}
+		}		
+		
+		//Peform SQL "by type" 
+		foreach(array_keys($bta) as $bt)
+		{
+			$cpet=$this->tablename("catalog_product_entity_$bt");
+			$storeids=$this->getItemStoreIds($item);
+			$sid=$storeids[0];
+			$sql="SELECT attribute_id,value FROM $cpet WHERE entity_id=? AND store_id=? AND attribute_id IN (".$this->arr2values($bta[$bt]).")";
+			$tdata=$this->selectAll($sql,array_merge(array($params["product_id"],$sid),$bta[$bt]));
+			foreach($tdata as $row)
+			{
+				$out[$idcodemap[$row["attribute_id"]]]=$row["value"];
+			}
+			unset($tdata);		
+		}
+		
+		//Check for qty attributes
+		$scols=array_intersect($cols, $this->getStockCols());
+		$sql="SELECT ".implode(",",$scols)." FROM ".$this->tablename("cataloginventory_stock_item")." WHERE product_id=?";
+		$tdata=$this->selectAll($sql,array($params["product_id"]));
+		if(count($tdata)>0)
+		{
+			$out=array_merge($out,$tdata[0]);
+		}
+		
+		unset($idcodemap);
+		unset($bta);
+		return $out;
+	}
 	/**
 	 * returns mode
 	 */
@@ -274,14 +340,19 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			//create a backend_type based array for the wanted columns
 			//this will greatly help for optimizing inserts when creating attributes
 			//since eav_ model for attributes has one table per backend type
+			//skip already in attrinfo
 			foreach($attrinfs as $k=>$a)
 			{
-				$bt=$a["backend_type"];
-				if(!isset($this->attrbytype[$bt]))
+				if(!in_array($k,array_keys($this->attrinfo)))
 				{
-					$this->attrbytype[$bt]=array("data"=>array());
+					$bt=$a["backend_type"];
+					if(!isset($this->attrbytype[$bt]))
+					{
+						$this->attrbytype[$bt]=array("data"=>array());
+					}
+					$this->attrbytype[$bt]["data"][]=$a;
+					$this->attrinfo[$k]=$a;
 				}
-				$this->attrbytype[$bt]["data"][]=$a;
 			}
 			//now add a fast index in the attrbytype array to store id list in a comma separated form
 			foreach($this->attrbytype as $bt=>$test)
@@ -294,7 +365,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				$this->attrbytype[$bt]["ids"]=implode(",",$idlist);
 			}
 			//Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
-			$this->attrinfo=array_merge_recursive($this->attrinfo,$attrinfs);
 			$this->_notattribs=array_diff($cols,array_keys($this->attrinfo));
 				
 		}
@@ -323,15 +393,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		if($attrinf==null && $lookup)
 		{
 			$this->initAttrInfos(array($attcode));
-
 		}
-		if(count($this->attrinfo[$attcode])==0)
-		{
-
-			$attrinf=null;
-			unset($this->attrinfo[$attcode]);
-		}
-		else
+		if(isset($this->attrinfo[$attcode]))
 		{
 			$attrinf=$this->attrinfo[$attcode];
 		}
