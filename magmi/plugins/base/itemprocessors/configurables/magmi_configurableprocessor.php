@@ -83,9 +83,15 @@ public function getConfigurableOptsFromAsId($asid)
 	}
 	
 	
-	public function autoLink($pid)
+	public function autoLink($pid, $skulist=array())
 	{
-		$this->dolink($pid,"LIKE CONCAT(cpec.sku,'%')");
+		if($this->getParam("CFGR:restrictskus")==1){
+			if(!empty($skulist)){
+				$this->dolink($pid,"LIKE CONCAT(cpec.sku,'%') AND cpes.sku IN (".$this->arr2values($skulist).")", $skulist);
+			}
+		}else{
+			$this->dolink($pid,"LIKE CONCAT(cpec.sku,'%')");
+		}
 	}
 	
 	public function updSimpleVisibility($pid)
@@ -172,7 +178,7 @@ public function getConfigurableOptsFromAsId($asid)
 		//if item is not configurable, nothing to do
 		if($item["type"]!=="configurable")
 		{
-			if($this->getParam("CFGR:simplesbeforeconf")==1)
+			if($this->getParam("CFGR:simplesbeforeconf")==1 || $this->getParam("CFGR:restrictskus")==1))
 			{
 				$this->_currentsimples[]=$item["sku"];
 			}
@@ -319,7 +325,7 @@ public function getConfigurableOptsFromAsId($asid)
 				break;
 			case "auto":
 				//destroy old associations
-				$this->autoLink($pid);
+				$this->autoLink($pid,$this->_currentsimples);	
 				$this->updSimpleVisibility($pid);
 				break;
 			case "cursimples":
@@ -360,7 +366,7 @@ public function getConfigurableOptsFromAsId($asid)
 	
 	public function getPluginParamNames()
 	{
-		return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink");
+		return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:restrictskus");
 	}
 	
 	static public function getCategory()
