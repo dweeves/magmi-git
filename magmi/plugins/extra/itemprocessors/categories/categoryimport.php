@@ -410,12 +410,15 @@ class CategoryImporter extends Magmi_ItemProcessor
 				}
 			//recompose rooted categories
 				$item["categories"]=implode(";;",$catlist);
-			//process escaping if categories were recomposed
-				$icats = $this->processEscaping($item["categories"]);
+		
 				
 			}
-			//get store root category paths
+			//get store root category paths, this may modify categories !!!!!
 			$rootpaths=$this->getStoreRootPaths($item);
+
+			//process escaping at the end
+			$icats = $this->processEscaping($item["categories"]);
+				
 			if(count($rootpaths["__error__"])>0)
 			{
 					$this->log("Cannot find site root with names : ".implode(",",$rootpaths["__error__"]),"error");
