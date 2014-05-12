@@ -178,7 +178,7 @@ public function getConfigurableOptsFromAsId($asid)
 		//if item is not configurable, nothing to do
 		if($item["type"]!=="configurable")
 		{
-			if($this->getParam("CFGR:simplesbeforeconf")==1 || $this->getParam("CFGR:restrictskus")==1))
+			if($this->getParam("CFGR:simplesbeforeconf")==1 || $this->getParam("CFGR:restrictskus")==1)
 			{
 				$this->_currentsimples[]=$item["sku"];
 			}
