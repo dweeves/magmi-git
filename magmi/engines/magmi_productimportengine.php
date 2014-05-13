@@ -1083,7 +1083,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$sql="INSERT INTO $ccpt (`category_id`,`product_id`,`position`)
 				 VALUES	 ";
 			$sql.=implode(",",$inserts);
-			$sql.="ON DUPLICATE KEY UPDATE position=VALUES(`position`)";
+			$sql.=" ON DUPLICATE KEY UPDATE position=VALUES(`position`)";
 			$this->insert($sql,$data);
 			unset($data);
 		}
