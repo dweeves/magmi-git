@@ -452,7 +452,7 @@ abstract class Magmi_Engine extends DbHelper
 			$this->_exceptions[$tk]=array(0,$this->_excid);
 		}
 		$this->_exceptions[$tk][0]++;
-		$trstr="************************************\n$trstr";
+		$trstr="************************************\n$tk\n*************************************\n$trstr";
 		return array($trstr,$this->_exceptions[$tk][0]==1,$this->_exceptions[$tk][1]);
 	}
 	
@@ -463,6 +463,7 @@ abstract class Magmi_Engine extends DbHelper
 		$traceinfo=$this->getExceptionTrace($tk,$traces);
 		$f=fopen(Magmi_StateManager::getTraceFile(),"a");	
 		fwrite($f,"---- TRACE : $this->_excid -----\n");
+		fwrite($f,"---- DATE : ".date('Y-m-d H:i:s')." ------\n");
 		try
 		{
 			if($traceinfo[1]==true)
