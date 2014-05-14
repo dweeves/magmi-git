@@ -12,6 +12,15 @@ This plugins handles configurable import
 	</li>
 </ul>
 <ul class="formline">
+	<li class="label" style="width:360px">Only autolink simples from current import.</li>
+	<li class="value">
+	<select name="CFGR:restrictskus">
+	<option value="0" <?php if ($this->getParam("CFGR:restrictskus",0)==0){?>selected="selected"<?php }?>>No</option>
+	<option value="1" <?php if ($this->getParam("CFGR:restrictskus",0)==1){?>selected="selected"<?php }?>>Yes</option>
+	</select>
+	</li>
+</ul>
+<ul class="formline">
 	<li class="label" style="width:360px">auto match simples skus before configurable</li>
 	<li class="value"><select name="CFGR:simplesbeforeconf">
 	<option value="0" <?php if ($this->getParam("CFGR:simplesbeforeconf")==0){?>selected="selected"<?php }?>>No</option>
