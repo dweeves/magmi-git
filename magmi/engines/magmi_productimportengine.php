@@ -1374,7 +1374,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		
 		try
 		{
-			if(!$this->callPlugins("itemprocessors","processItemAfterId",$item,array("product_id"=>$pid,"new"=>$isnew,"same"=>$this->_same,"asid"=>$asid)))
+			$basemeta=array("product_id"=>$pid,"new"=>$isnew,"same"=>$this->_same,"asid"=>$asid);
+			$fullmeta=array_merge($basemeta,$itemids);
+			if(!$this->callPlugins("itemprocessors","processItemAfterId",$item,$fullmeta))
 			{
 				return false;
 			}
@@ -1423,7 +1425,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
 			$this->touchProduct($pid);
 			//ok,we're done
-			if(!$this->callPlugins("itemprocessors","processItemAfterImport",$item,array("product_id"=>$pid,"new"=>$isnew,"same"=>$this->_same)))
+			if(!$this->callPlugins("itemprocessors","processItemAfterImport",$item,$fullmeta))
 			{
 				return false;
 			}
