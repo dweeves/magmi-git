@@ -126,23 +126,6 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		$this->_contexts=array();
 	}
 	
-	public function getContextKey($url)
-	{
-		$urlparts=parse_url($url);
-		//remove path , context will be common for each host/user
-		
-		unset($urlparts["path"]);
-		unset($urlparts["query"]);
-		unset($urlparts["fragment"]);
-		$key="";
-		if($this->_user)
-		{
-			$key.=$this->_user.":".$this->_password."@";
-		}
-		$key.=implode(":",array_values($urlparts));
-		return $key;
-	}
-	
 	/*
 	 * Creating a CURL context with adequate options from an URL
 	 * For a given URL host/port/user , the same context is reused for optimizing performance
@@ -150,13 +133,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 	public function createContext($url)
 	{
 		$curl_url=str_replace(" ","%20",$url);
-		$ckey=$this->getContextKey($url);
-		
-		if(!isset($this->_contexts[$ckey]))
-		{
-			$context = curl_init();
-			$this->_contexts[$ckey]=$context;
-		}
+		$context = curl_init();
 		
 		if(substr($url,0,4)=="http")
 		{
@@ -189,18 +166,12 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			}
 		}
 		
-		return $this->_contexts[$ckey];
+		return $context;
 	}
 
-	public function destroyContext($url)
+	public function destroyContext($context)
 	{
-		$ckey=$this->getContextKey($url);
-		if(isset($this->_contexts[$ckey]))
-		{
-			curl_close($this->_contexts[$ckey]);
-		
-			unset($this->_contexts[$ckey]);
-		}
+		curl_close($context);
 	}
 
 	public function __destruct()
@@ -241,6 +212,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 				$exists = ($httpCode<400);
 			}
 		}
+		curl_close($context);
 		return $exists;
 	}
 
@@ -341,14 +313,17 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 				if(curl_getinfo($ch,CURLINFO_HTTP_CODE)>400)
 				{
 					$resp = explode("\n\r\n", $res);
-					throw new Exception("Cannot fetch $url :".curl_error($ch));
+					$this->destroyContext($ch);
+					throw new Exception("Cannot fetch $url :".$err);
 	
 				}
 			}
 			else
 			{
 				$lm=curl_getinfo($ch);
-				throw new  Exception("Cannot fetch $url : ".curl_error($ch));
+				$err=curl_error($ch);
+				$this->destroyContext($ch);
+				throw new  Exception("Cannot fetch $url : ".$err);
 			}
 	
 		}
@@ -361,6 +336,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			$fp = fopen($outname, "w");
 			if($fp==false)
 			{
+				$this->destroyContext($ch);
 				throw new Exception("Cannot write file:$outname");
 			}
 			$dl_opts[CURLOPT_FILE]=$fp;	
@@ -379,7 +355,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 				else {
 						$err="CURL Error downloading $url";
 				}
-				$this->destroyContext($url);
+				$this->destroyContext($ch);
 				fclose($fp);
 				unlink($dest);
 				throw new Exception($err);
@@ -389,7 +365,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 	
 		}
 
-		$this->destroyContext($url);
+		$this->destroyContext($ch);
 		
 		//return the csv filename
 		return true;
