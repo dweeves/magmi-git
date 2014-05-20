@@ -6,7 +6,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	protected $magdir=null;
 	protected $imgsourcedirs=array();
 	protected $errattrs=array();
-	protected $_lastnotfound="";
+	protected $_errorimgs=array();
 	protected $_lastimage="";
     protected $_handled_attributes=array();
 	protected $_img_baseattrs=array("image","small_image","thumbnail");
@@ -48,9 +48,32 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.28",
+            "version" => "1.0.29",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
+	}
+	
+	public function isErrorImage($img)
+	{
+	 return isset($this->_errorimgs[$k]);
+	}
+	
+	public function cachesort($v1,$v2)
+	{
+		return $v2-$v1;
+	}
+	
+	public function setErrorImg($img)
+	{
+		$mxerrcache=$this->getParam("IMG:maxerrorcache",100);
+		//remove limit => 10%
+		$removelimit=int($mxerrcache/10);
+		if(count($this->_errorimgs)>$mxerrcache)
+		{
+			uasort($this->prepared,array($this,"cachesort"));
+			array_splice($this->prepared,$removelimit,count($this->_errorimgs));
+		}
+		$this->_errorimgs[$k]=date();
 	}
 	
 	//Image removal feature
@@ -436,7 +459,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         if ($imgfile=="__NULL__" || $imgfile==null) {
             return false;
         }
-		if($imgfile==$this->_lastnotfound)
+        
+        //check for source image in error
+		if($this->isErrorImage($imgfile))
 		{
 			if($this->_newitem){
 				$this->fillErrorAttributes($item);
@@ -448,8 +473,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		if($source==false)
 		{
 			$this->log("$imgfile cannot be found in images path","warning");
-			//fixing last not found flag (to avoid redundant searches & logs)
-			$this->_lastnotfound=true;
+			//last image in error,add it to error cache
+			$this->setErrorImg($imgfile);
 			return false;
 		}
 		$imgfile=$source;
@@ -459,36 +484,49 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		//source file exists
 		$i1=$bimgfile[0];
 		$i2=$bimgfile[1];
+		//magento image value (relative to media catalog)
+		$impath="/$i1/$i2/$bimgfile";
+		//target directory;
 		$l2d="media/catalog/product/$i1/$i2";
-		$te="$l2d/$bimgfile";
-		$result="/$i1/$i2/$bimgfile";
-		/* test for same image */
-		if($result==$this->_lastimage)
+		//test for existence
+		$targetpath="$l2d/$bimgfile";
+		/* test for same image (without problem) */
+		if($impath==$this->_lastimage)
 		{
-			return $result;
+			return $impath;
 		}
 		/* test if imagefile comes from export */
-		if(!$this->_mdh->file_exists("$te") || $this->getParam("IMG:writemode")=="override")
+		if(!$this->_mdh->file_exists($targetpath) || $this->getParam("IMG:writemode")=="override")
 		{
-			/* try to recursively create target dir */
-			if(!$this->_mdh->file_exists("$l2d"))
+			//if we already had problems with this target,assume we'll get others.
+			if($this->isErrorImage($impath))
 			{
+				return false;
+			}
+				
+			/* try to recursively create target dir */
+			if(!$this->_mdh->file_exists($l2d))
+			{
+				
 				$tst=$this->_mdh->mkdir($l2d,Magmi_Config::getInstance()->getDirMask(),true);
 				if(!$tst)
 				{
+					//if we had problem creating target directory,add target to error cache
 					$errors=$this->_mdh->getLastError();
 					$this->log("error creating $l2d: {$errors["type"]},{$errors["message"]}","warning");
 					unset($errors);
+					$this->setErrorImg($impath);
 					return false;
 				}
 			}
 
-			if(!$this->saveImage($imgfile,"$l2d/$bimgfile"))
+			if(!$this->saveImage($imgfile,$targetpath))
 			{
 				$errors=$this->_mdh->getLastError();
 				$this->fillErrorAttributes($item);
 				$this->log("error copying $l2d/$bimgfile : {$errors["type"]},{$errors["message"]}","warning");
 				unset($errors);
+				$this->setErrorImg($impath);
 				return false;
 			}
 			else
@@ -496,9 +534,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				@$this->_mdh->chmod("$l2d/$bimgfile",Magmi_Config::getInstance()->getFileMask());			
 			}
 		}
-		$this->_lastimage=$result;
+		$this->_lastimage=$impath;
 		/* return image file name relative to media dir (with leading / ) */
-		return $result;
+		return $impath;
 	}
 
 	
