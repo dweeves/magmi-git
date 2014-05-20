@@ -55,7 +55,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	
 	public function isErrorImage($img)
 	{
-	 return isset($this->_errorimgs[$k]);
+	 return isset($this->_errorimgs[$img]);
 	}
 	
 	public function cachesort($v1,$v2)
