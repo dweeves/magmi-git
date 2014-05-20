@@ -67,13 +67,13 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	{
 		$mxerrcache=$this->getParam("IMG:maxerrorcache",100);
 		//remove limit => 10%
-		$removelimit=int($mxerrcache/10);
+		$removelimit=intval($mxerrcache/10);
 		if(count($this->_errorimgs)>$mxerrcache)
 		{
 			uasort($this->prepared,array($this,"cachesort"));
-			array_splice($this->prepared,$removelimit,count($this->_errorimgs));
+			array_splice($this->_errorimgs,$removelimit,count($this->_errorimgs));
 		}
-		$this->_errorimgs[$k]=date();
+		$this->_errorimgs[$img]=microtime(true);
 	}
 	
 	//Image removal feature
