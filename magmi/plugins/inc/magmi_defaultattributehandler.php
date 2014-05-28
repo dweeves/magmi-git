@@ -7,11 +7,19 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	protected $_missingcols=array();
 	protected $_missingattrs=array();
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see Magmi_Plugin::initialize()
+	 */
 	public function initialize($params)
 	{
 		$this->registerAttributeHandler($this,array("attribute_code:.*"));
 	}
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see Magmi_Plugin::getPluginInfo()
+	 */
 	public function getPluginInfo()
 	{
 		return array(
@@ -21,6 +29,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             );
 	}
 	
+	/**
+	 * callback for column list processing
+	 * @param unknown $cols
+	 */
 	public function processColumnList(&$cols)
 	{	
 		//This will not change the column list
@@ -36,6 +48,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	}
 	
 	
+	/**
+	 * initializes extra columns if needed
+	 * @param unknown $item
+	 */
 	public function initializeBaseCols(&$item)
 	{
 		foreach($this->_missingcols as $missing)
@@ -44,6 +60,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		}
 	}
 	
+	/**
+	 * Initialized base attributes to retrieve from a given item description
+	 * @param unknown $item
+	 */
 	public function initializeBaseAttrs(&$item)
 	{
 		foreach($this->_missingattrs as $missing)
@@ -53,7 +73,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	}
 	
 	
-
+	/**
+	 * (non-PHPdoc)
+	 * @see Magmi_ItemProcessor::processItemAfterId()
+	 */
 	public function processItemAfterId(&$item,$params=null)
 	{
 		if($params["new"]==true)
@@ -73,31 +96,66 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	}
 	
 	/**
-	 * attribute handler for decimal attributes
-	 * @param int $pid	: product id
-	 * @param int $ivalue : initial value of attribute
-	 * @param array $attrdesc : attribute description
-	 * @return mixed : false if no further processing is needed,
-	 * 					string (magento value) for the decimal attribute otherwise
+	 * returns magento default value if applicable
+	 *  - item should not exist yet
+	 *  - default value should be set in magento
+	 *  - ivalue should be empty
+	 * @param array $attrdesc : attribute description table
+	 * @param mixed $ivalue : input value
+	 * @return magento default value or NULL if not applicable
+	 */
+	public function getDefaultValue($attrdesc,$ivalue)
+	{
+		$exists=$this->currentItemExists();
+		//check for new item default value in DB for new items
+		if(!$exists && isset($attrdesc["default_value"]) && !empty($attrdesc["default_value"]) && empty($ivalue))
+		{
+			return $attrdesc["default_value"];
+		}
+		return null;
+	}
+
+	/**
+	 * attribute handler for Decimal attributes
+	 * @param int $pid : product id
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new decimal value to set
 	 */
 	public function handleDecimalAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
+		$dval=$this->getDefaultValue($attrdesc, $ivalue);
+		if($dval!==null)
+		{
+			return $dval;
+		}
 		//force convert decimal separator to dot
 		$ivalue=str_replace(",",".",$ivalue);
 		$ovalue=deleteifempty($ivalue);
 		return $ovalue;
 	}
 
+	
 	/**
-	 * attribute handler for datetime attributes
-	 * @param int $pid	: product id
-	 * @param int $ivalue : initial value of attribute
-	 * @param array $attrdesc : attribute description
-	 * @return mixed : false if no further processing is needed,
-	 * 					string (magento value) for the datetime attribute otherwise
+	 * attribute handler for DateTime attributes
+	 * @param int $pid : product id
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new datetime value to set
 	 */
 	public function handleDatetimeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
+		$dval=$this->getDefaultValue($attrdesc, $ivalue);
+		if($dval!==null)
+		{
+			return $dval;
+		}
 		$ovalue=deleteifempty(trim($ivalue));
 		//Handle european date format or other common separators
 		if(preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|",$ovalue,$matches))
@@ -108,27 +166,64 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return $ovalue;
 	}
 
+	/**
+	 * attribute handler for Text attributes
+	 * @param int $pid : product id
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new text value to set
+	 */
 	public function handleTextAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
+		$dval=$this->getDefaultValue($attrdesc, $ivalue);
+		if($dval!==null)
+		{
+			return $dval;
+		}
 		$ovalue=deleteifempty($ivalue);
 		return $ovalue;	
 	}
 	
+	/**
+	 * check if a value is integer
+	 * @param mixed $value
+	 * @return true if integer, false if not
+	 */
 	public function checkInt($value)
 	{
 		return is_int($value) || (is_string($value) && is_numeric($value) && (int)$value==$value);
 	}
+
 	/**
-	 * attribute handler for int typed attributes
-	 * @param int $pid	: product id
-	 * @param int $ivalue : initial value of attribute
-	 * @param array $attrdesc : attribute description
-	 * @return mixed : false if no further processing is needed,
-	 * 					int (magento value) for the int attribute otherwise
+	 * attribute handler for Int typed attributes
+	 * @param int $pid : product id
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new int value to set
+	 * 
+	 * Many attributes are int typed, so we need to handle all cases like :
+	 *  - select
+	 *  - tax id
+	 *  - boolean
+	 *  - status
+	 *  - visibility
 	 */
 	public function handleIntAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		$ovalue=$ivalue;
+		//default value exists, return it
+		$dval=$this->getDefaultValue($attrdesc, $ivalue);
+		if($dval!==null)
+		{
+			return intval($dval);
+		}
+		
 		$attid=$attrdesc["attribute_id"];
 		//if we've got a select type value
 		if($attrdesc["frontend_input"]=="select")
@@ -163,7 +258,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 					//get option id for value, create it if does not already exist
 					//do not insert if empty
 				default:
-					if($ivalue=="" && $this->currentItemExists())
+					$exists=$this->currentItemExists();
+					if($ivalue=="" && $exists)
 					{
 						return "__MAGMI_DELETE__";
 					}
@@ -176,6 +272,18 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return $ovalue;
 	}
 
+	/**
+	 * attribute handler for "url_key" attribute
+	 * @param int $pid : product id
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new int value to set
+	 *
+	 */
+	
 	public function handleUrl_keyAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		
@@ -217,24 +325,41 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		}
 		return $urlk;
 	}
+	
+
 	/**
-	 * attribute handler for varchar based attributes
+	 * attribute handler for Varchar typed attributes
 	 * @param int $pid : product id
-	 * @param string $ivalue : attribute value
-	 * @param array $attrdesc : attribute description
+	 * @param array $item : item to inges
+	 * @param int $storeid : store for attribute value storage
+	 * @param int $attrcode : attribute code
+	 * @param array $attrdesc : attribute metadata
+	 * @param mixed $ivalue : input value to import
+	 * @return new int value to set
+	 *
+	 *  Special case for multiselect
 	 */
+	
 	public function handleVarcharAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
-
 		$exists=$this->currentItemExists();
+		//Check store specific value & empty & new item => ignore
 		if($storeid!==0 && empty($ivalue) && !$exists)
 		{
 			return false;
 		}
+		//item exists , empty value, remove value, back to admin
 		if($ivalue=="" && $exists)
 		{
 			return "__MAGMI_DELETE__";
 		}
+		//default value exists, return it
+		$dval=$this->getDefaultValue($attrdesc, $ivalue);
+		if($dval!==null)
+		{
+			return $dval;
+		}
+		
 		
 		$ovalue=$ivalue;
 		$attid=$attrdesc["attribute_id"];
