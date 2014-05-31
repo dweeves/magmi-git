@@ -11,6 +11,8 @@ require_once ("magmi_pluginhelper.php");
  *
  *
  *
+ *
+ *
  * This class is the mother class for magmi engines
  * A magmi engine is a class that performs operations on DB
  *
@@ -37,7 +39,7 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function getEngineInfo()
     {
-        return array("name" => "Generic Magmi Engine","version" => "1.1","author" => "dweeves");
+        return array("name"=>"Generic Magmi Engine","version"=>"1.1","author"=>"dweeves");
     }
     
     /*
@@ -323,7 +325,8 @@ abstract class Magmi_Engine extends DbHelper
                         // Perform plugin call
                         // either with or without parameters,or parameters & data
                         // store execution result
-                        $callres = ($data == null ? ($params == null ? $pinst->$callback() : $pinst->$callback($params)) : $pinst->$callback($data, $params));
+                        $callres = ($data == null ? ($params == null ? $pinst->$callback() : $pinst->$callback($params)) : $pinst->$callback(
+                            $data, $params));
                         // End Timing for current plugin in current step
                         $this->_timecounter->exitTime($callback, get_class($pinst));
                         // if plugin call result is false with data set
@@ -379,7 +382,7 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function microDateTime()
     {
-        list ($microSec, $timeStamp) = explode(" ", microtime());
+        list($microSec,$timeStamp) = explode(" ", microtime());
         return date('Y-m-d h:i:', $timeStamp) . (date('s', $timeStamp) + $microSec);
     }
 

@@ -5,24 +5,40 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Clear Catalog, Categories and Reviews","author" => "www.blinkdata.com","version" => "1.0.1");
+        return array("name"=>"Clear Catalog, Categories and Reviews","author"=>"www.blinkdata.com","version"=>"1.0.1");
     }
 
     public function runUtility()
     {
         $sql = "SET FOREIGN_KEY_CHECKS = 0";
         $this->exec_stmt($sql);
-        $tables = array("catalog_product_bundle_option","catalog_product_bundle_option_value","catalog_product_bundle_selection","catalog_product_entity_datetime","catalog_product_entity_decimal","catalog_product_entity_gallery","catalog_product_entity_int","catalog_product_entity_media_gallery","catalog_product_entity_media_gallery_value","catalog_product_entity_text","catalog_product_entity_tier_price","catalog_product_entity_varchar","catalog_product_link","catalog_product_link_attribute_decimal","catalog_product_link_attribute_int","catalog_product_link_attribute_varchar",
+        $tables = array("catalog_product_bundle_option","catalog_product_bundle_option_value",
+            "catalog_product_bundle_selection","catalog_product_entity_datetime","catalog_product_entity_decimal",
+            "catalog_product_entity_gallery","catalog_product_entity_int","catalog_product_entity_media_gallery",
+            "catalog_product_entity_media_gallery_value","catalog_product_entity_text",
+            "catalog_product_entity_tier_price","catalog_product_entity_varchar","catalog_product_link",
+            "catalog_product_link_attribute_decimal","catalog_product_link_attribute_int",
+            "catalog_product_link_attribute_varchar",
             
             // "catalog_product_link_attribute",
             // "catalog_product_link_type",
-            "catalog_product_option","catalog_product_option_price","catalog_product_option_title","catalog_product_option_type_price","catalog_product_option_type_title","catalog_product_option_type_value","catalog_product_super_attribute","catalog_product_super_attribute_label","catalog_product_super_attribute_pricing","catalog_product_super_link","catalog_product_enabled_index","catalog_product_website","catalog_product_entity","catalog_product_relation","cataloginventory_stock","cataloginventory_stock_item","cataloginventory_stock_status",
+            "catalog_product_option","catalog_product_option_price","catalog_product_option_title",
+            "catalog_product_option_type_price","catalog_product_option_type_title","catalog_product_option_type_value",
+            "catalog_product_super_attribute","catalog_product_super_attribute_label",
+            "catalog_product_super_attribute_pricing","catalog_product_super_link","catalog_product_enabled_index",
+            "catalog_product_website","catalog_product_entity","catalog_product_relation","cataloginventory_stock",
+            "cataloginventory_stock_item","cataloginventory_stock_status",
 
-            "catalog_category_product_index","catalog_category_product","catalog_category_entity","catalog_category_entity_datetime","catalog_category_entity_decimal","catalog_category_entity_int","catalog_category_entity_text","catalog_category_entity_varchar",
+            "catalog_category_product_index","catalog_category_product","catalog_category_entity",
+            "catalog_category_entity_datetime","catalog_category_entity_decimal","catalog_category_entity_int",
+            "catalog_category_entity_text","catalog_category_entity_varchar",
 
-            "catalogrule_affected_product","catalogrule_product","catalogrule_product_price","catalogsearch_fulltext","catalogsearch_query","catalogsearch_result","product_alert_price","product_alert_stock","tag","tag_properties","tag_relation","tag_summary",
+            "catalogrule_affected_product","catalogrule_product","catalogrule_product_price","catalogsearch_fulltext",
+            "catalogsearch_query","catalogsearch_result","product_alert_price","product_alert_stock","tag",
+            "tag_properties","tag_relation","tag_summary",
 
-            "sales_bestsellers_aggregated_daily","sales_bestsellers_aggregated_monthly","sales_bestsellers_aggregated_yearly","report_viewed_product_index",
+            "sales_bestsellers_aggregated_daily","sales_bestsellers_aggregated_monthly",
+            "sales_bestsellers_aggregated_yearly","report_viewed_product_index",
 
             "review","review_detail","review_entity_summary","review_store");
         

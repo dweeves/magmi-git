@@ -11,7 +11,7 @@ class WeeetaxItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Weee Tax importer","author" => "Garbocom & Dweeves","version" => "0.0.5");
+        return array("name"=>"Weee Tax importer","author"=>"Garbocom & Dweeves","version"=>"0.0.5");
     }
 
     /**
@@ -61,14 +61,17 @@ class WeeetaxItemProcessor extends Magmi_ItemProcessor
                     foreach ($wsids as $wsid)
                     {
                         $inserts[] = "(?,?,?,?,?,?,?)";
-                        $data = array_merge($data, array($wsid,$pid,$country,$item[$wattr],'*',$attrinfo["attribute_id"],$this->getProductEntityType()));
+                        $data = array_merge($data, 
+                            array($wsid,$pid,$country,$item[$wattr],'*',$attrinfo["attribute_id"],
+                                $this->getProductEntityType()));
                     }
                 }
             }
         }
         if (count($data) > 0)
         {
-            $sql = "INSERT IGNORE INTO $tname (website_id,entity_id,country,value,state,attribute_id,entity_type_id) VALUES " . implode(",", $inserts);
+            $sql = "INSERT IGNORE INTO $tname (website_id,entity_id,country,value,state,attribute_id,entity_type_id) VALUES " .
+                 implode(",", $inserts);
             $this->insert($sql, $data);
         }
         else

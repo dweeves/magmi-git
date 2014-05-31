@@ -16,7 +16,7 @@ class Properties
 {
     protected $_props;
     public $inifile;
-    protected $_specialchars = array('"' => ":DQUOTE:","'" => ":SQUOTE:",'\\t' => "TAB");
+    protected $_specialchars = array('"'=>":DQUOTE:","'"=>":SQUOTE:",'\\t'=>"TAB");
 
     public function __construct()
     {
@@ -72,7 +72,7 @@ class Properties
         $conf = array();
         foreach ($arr as $k => $v)
         {
-            list ($section, $value) = explode(":", $k, 2);
+            list($section,$value) = explode(":", $k, 2);
             if (!isset($conf[$section]))
             {
                 $conf[$section] = array();

@@ -11,7 +11,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array('name' => 'Group Price Importer','author' => 'Tim Bezhashvyly','version' => '0.0.1');
+        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly','version'=>'0.0.1');
     }
 
     public function processItemAfterId(&$item, $params = null)
@@ -35,8 +35,10 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
             {
                 $sql = 'DELETE FROM ' . $table_name . '
                               WHERE entity_id=?
-                                AND customer_group_id IN (' . implode(', ', $group_ids) . ')
-                                AND website_id IN (' . implode(', ', $website_ids) . ')';
+                                AND customer_group_id IN (' . implode(', ', 
+                    $group_ids) . ')
+                                AND website_id IN (' . implode(', ', $website_ids) .
+                     ')';
                 $this->delete($sql, array($params['product_id']));
             }
             
@@ -45,7 +47,8 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                 if ($price = (float) $item[$key])
                 {
                     $group_id = $this->_groups[$key]['id'];
-                    $sql = 'INSERT INTO ' . $table_name . ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
+                    $sql = 'INSERT INTO ' . $table_name .
+                         ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
                     $inserts = array();
                     $data = array();
                     
@@ -85,10 +88,11 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
         {
             if (preg_match("|group_price:(.*)|", $col, $matches))
             {
-                $sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") . ' WHERE customer_group_code = ?';
+                $sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") .
+                     ' WHERE customer_group_code = ?';
                 if ($id = $this->selectone($sql, $matches[1], "customer_group_id"))
                 {
-                    $this->_groups[$col] = array('name' => $matches[1],'id' => $id);
+                    $this->_groups[$col] = array('name'=>$matches[1],'id'=>$id);
                 }
                 else
                 {
@@ -108,7 +112,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                         
                         if ($id = $this->selectone($sql, $matches[1], "customer_group_id"))
                         {
-                            $this->_groups[$col] = array('name' => $matches[1],'id' => $id);
+                            $this->_groups[$col] = array('name'=>$matches[1],'id'=>$id);
                         }
                     }
                 }

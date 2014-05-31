@@ -50,7 +50,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 
     public function getPluginInfo()
     {
-        return array("name" => "CSV Datasource","author" => "Dweeves","version" => "1.3.1");
+        return array("name"=>"CSV Datasource","author"=>"Dweeves","version"=>"1.3.1");
     }
 
     public function getRecordsCount()

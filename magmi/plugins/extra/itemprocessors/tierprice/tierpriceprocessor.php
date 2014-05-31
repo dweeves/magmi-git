@@ -14,7 +14,8 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Tier price importer","author" => "Dweeves,bepixeld","version" => "0.0.9a","url" => $this->pluginDocUrl("Tier_price_importer"));
+        return array("name"=>"Tier price importer","author"=>"Dweeves,bepixeld","version"=>"0.0.9a",
+            "url"=>$this->pluginDocUrl("Tier_price_importer"));
     }
 
     /**
@@ -168,13 +169,14 @@ class TierpriceProcessor extends Magmi_ItemProcessor
         {
             if (preg_match("|tier_price:(.*)|", $col, $matches))
             {
-                $tpinf = array("name" => $matches[1],"id" => null);
+                $tpinf = array("name"=>$matches[1],"id"=>null);
                 
                 // if specific tier price
                 if ($tpinf["name"] !== "_all_")
                 {
                     // get tier price customer group id
-                    $sql = "SELECT customer_group_id from " . $this->tablename("customer_group") . " WHERE customer_group_code=?";
+                    $sql = "SELECT customer_group_id from " . $this->tablename("customer_group") .
+                         " WHERE customer_group_code=?";
                     $cgid = $this->selectone($sql, $tpinf["name"], "customer_group_id");
                     $tpinf["id"] = $cgid;
                 }

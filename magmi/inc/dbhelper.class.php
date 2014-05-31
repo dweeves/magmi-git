@@ -56,7 +56,7 @@ class DBHelper
             $pdostr = "mysql:unix_socket=$socket;dbname=$dbname;charset=utf8";
         }
         
-        $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"));
         // use exception error mode
         $this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->_db->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_NATURAL);
@@ -68,6 +68,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -93,6 +95,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * Sets or unsets the usage of internal prepared statement cache for reuse
      *
      * @param boolean $uc
@@ -113,6 +117,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -174,6 +180,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * Enter description here ...
      *
      * @param unknown_type $nbreq            
@@ -197,6 +205,8 @@ class DBHelper
     /**
      * Garbages statement cache if above 500 , removes less used statements
      * Enter description here .
+     *
+     *
      *
      *
      * ..
@@ -304,6 +314,8 @@ class DBHelper
     /**
      * Performs an update statement
      * Enter description here .
+     *
+     *
      *
      *
      * ..
@@ -422,6 +434,8 @@ class DBHelper
      * Enter description here .
      *
      *
+     *
+     *
      * ..
      *
      * @param array $arr
@@ -438,6 +452,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -464,6 +480,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * transform an array of values into equivalent comma separated list of unnamed placeholders.
      *
      * @param array $arr            
@@ -475,6 +493,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -512,6 +532,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * transform a associative array into a list of update prepared placeholders
      *
      * @param array $arr
@@ -530,6 +552,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -587,6 +611,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * Sets debug management
      *
      * @param bool $debug
@@ -601,6 +627,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *
@@ -659,6 +687,8 @@ class DBHelper
      *
      *
      *
+     *
+     *
      * Checks wether an array is associative
      *
      * @param mixed $var
@@ -670,6 +700,8 @@ class DBHelper
     }
 
     /**
+     *
+     *
      *
      *
      *

@@ -9,7 +9,8 @@ class ImportLimiter extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Magmi Import Limiter","author" => "Dweeves","version" => "0.0.6","url" => $this->pluginDocUrl("Magmi_Import_Limiter"));
+        return array("name"=>"Magmi Import Limiter","author"=>"Dweeves","version"=>"0.0.6",
+            "url"=>$this->pluginDocUrl("Magmi_Import_Limiter"));
     }
 
     public function filtermatch($item, $fltdef)

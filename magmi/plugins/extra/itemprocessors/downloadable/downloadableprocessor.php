@@ -6,12 +6,14 @@ class DownloadableProcessor extends Magmi_ItemProcessor
 
     public function initialize($params)
     {
-        $this->_filePath = $this->getMagentoDir() . DIRSEP . "media" . DIRSEP . "downloadable" . DIRSEP . "files" . DIRSEP . "links" . DIRSEP;
+        $this->_filePath = $this->getMagentoDir() . DIRSEP . "media" . DIRSEP . "downloadable" . DIRSEP . "files" .
+             DIRSEP . "links" . DIRSEP;
     }
 
     public function getPluginInfo()
     {
-        return array("name" => "Downloadable products importer","author" => "Tangkoko SARL","version" => "1.0.0.1","url" => "http://store.tangkoko.com/fr/extensions-magento/magmi-downloadable-products-importer-plugin.html");
+        return array("name"=>"Downloadable products importer","author"=>"Tangkoko SARL","version"=>"1.0.0.1",
+            "url"=>"http://store.tangkoko.com/fr/extensions-magento/magmi-downloadable-products-importer-plugin.html");
     }
 
     public function processItemBeforeId(&$item, $params = null)

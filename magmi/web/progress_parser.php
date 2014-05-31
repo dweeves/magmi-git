@@ -36,7 +36,7 @@ class ProgressParser
         {
             if ($line != "")
             {
-                list ($type, $info) = explode(":", $line, 2);
+                list($type,$info) = explode(":", $line, 2);
                 foreach ($this->_complexparsers as $cp)
                 {
                     if ($cp->logTypeIsHandled($type))
@@ -109,8 +109,8 @@ class DefaultProgressLineParser extends ProgressLineParser
         switch ($type)
         {
             case "pluginhello":
-                list ($name, $ver, $auth) = explode("-", $info);
-                $this->storeData("plugins", array("name" => $name,"ver" => $ver,"auth" => $auth));
+                list($name,$ver,$auth) = explode("-", $info);
+                $this->storeData("plugins", array("name"=>$name,"ver"=>$ver,"auth"=>$auth));
                 break;
             case "lookup":
                 $this->setData("lookup", array_combine(array("nlines","time"), explode(":", $info)));
@@ -121,7 +121,7 @@ class DefaultProgressLineParser extends ProgressLineParser
             case "dbtime":
             case "itime":
                 $parts = explode("-", $info);
-                list ($dcount, $delapsed, $dlastinc) = array(trim($parts[0]),trim($parts[1]),trim($parts[2]));
+                list($dcount,$delapsed,$dlastinc) = array(trim($parts[0]),trim($parts[1]),trim($parts[2]));
                 if (count($parts) > 3)
                 {
                     $this->setData("$type:lastcount", trim($parts[3]));

@@ -5,7 +5,7 @@ class CleanEav extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Clean EAV tables","author" => "Dweeves","version" => "1.0.0");
+        return array("name"=>"Clean EAV tables","author"=>"Dweeves","version"=>"1.0.0");
     }
 
     public function runUtility()

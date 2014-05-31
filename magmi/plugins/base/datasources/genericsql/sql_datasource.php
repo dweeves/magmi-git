@@ -60,12 +60,13 @@ class SQL_Datasource extends Magmi_Datasource
 
     public function getPluginInfo()
     {
-        return array("name" => "Generic SQL Datasource","author" => "Dweeves","version" => "1.0.3");
+        return array("name"=>"Generic SQL Datasource","author"=>"Dweeves","version"=>"1.0.3");
     }
 
     public function getPluginParamNames()
     {
-        return array("SQL:dbtype","SQL:dbname","SQL:dbhost","SQL:dbuser","SQL:dbpass","SQL:dbextra","SQL:queryfile","SQL:pdostr");
+        return array("SQL:dbtype","SQL:dbname","SQL:dbhost","SQL:dbuser","SQL:dbpass","SQL:dbextra","SQL:queryfile",
+            "SQL:pdostr");
     }
 
     public function startImport()

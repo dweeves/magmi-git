@@ -5,7 +5,8 @@ class ProductDeleter extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Product Deleter","author" => "Dweeves","version" => "0.0.2","url" => $this->pluginDocUrl("Product_Deleter"));
+        return array("name"=>"Product Deleter","author"=>"Dweeves","version"=>"0.0.2",
+            "url"=>$this->pluginDocUrl("Product_Deleter"));
     }
 
     public function getPluginParamNames()
@@ -39,9 +40,13 @@ class ProductDeleter extends Magmi_ItemProcessor
             // delete simple products if flag set
             if ($this->getParam("PDEL:delsimples", false) == true)
             {
-                $childrensel = "SELECT entity_id FROM " . $this->tablename("catalog_product_entity") . " as cpe
-				JOIN " . $this->tablename("catalog_product_super_link") . " as cpl ON cpl.parent_id=? AND cpe.entity_id=cpl.product_id";
-                $sql = "DELETE cpe.* FROM " . $this->tablename("catalog_product_entity") . " cpe WHERE cpe.entity_id IN (SELECT s1.entity_id FROM ($childrensel) as s1)";
+                $childrensel = "SELECT entity_id FROM " . $this->tablename("catalog_product_entity") .
+                     " as cpe
+				JOIN " .
+                     $this->tablename("catalog_product_super_link") .
+                     " as cpl ON cpl.parent_id=? AND cpe.entity_id=cpl.product_id";
+                $sql = "DELETE cpe.* FROM " . $this->tablename("catalog_product_entity") .
+                     " cpe WHERE cpe.entity_id IN (SELECT s1.entity_id FROM ($childrensel) as s1)";
                 
                 $this->delete($sql, $pid);
             }

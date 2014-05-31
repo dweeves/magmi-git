@@ -9,7 +9,8 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Mass Select/Multiselect Attribute value translater","author" => "Dweeves","version" => "1.0.1");
+        return array("name"=>"Mass Select/Multiselect Attribute value translater","author"=>"Dweeves",
+            "version"=>"1.0.1");
     }
 
     public function getStoreId($sc)
@@ -125,7 +126,8 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 
     public function getPluginParamNames()
     {
-        return array('CSV:filename','CSV:enclosure','CSV:separator','CSV:basedir','CSV:headerline','CSV:noheader','CSV:allowtrunc');
+        return array('CSV:filename','CSV:enclosure','CSV:separator','CSV:basedir','CSV:headerline','CSV:noheader',
+            'CSV:allowtrunc');
     }
 
     public function createOption($attid, $pos = 0)
@@ -177,7 +179,8 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
         
         $valstr = $this->arr2values($values);
         $sql = "INSERT INTO $eaov (option_id,store_id,value)
-		VALUES " . join(",", $ins) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
+		VALUES " . join(",", $ins) .
+             " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
         $this->insert($sql, $values);
     }
 

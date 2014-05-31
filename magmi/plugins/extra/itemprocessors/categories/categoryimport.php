@@ -15,7 +15,8 @@ class CategoryImporter extends Magmi_ItemProcessor
     public function initialize($params)
     {
         $this->initCats();
-        $this->_cattrinfos = array("varchar" => array("name" => array(),"url_key" => array(),"url_path" => array()),"int" => array("is_active" => array(),"is_anchor" => array(),"include_in_menu" => array()));
+        $this->_cattrinfos = array("varchar"=>array("name"=>array(),"url_key"=>array(),"url_path"=>array()),
+            "int"=>array("is_active"=>array(),"is_anchor"=>array(),"include_in_menu"=>array()));
         foreach ($this->_cattrinfos as $catype => $attrlist)
         {
             foreach (array_keys($attrlist) as $catatt)
@@ -34,7 +35,8 @@ class CategoryImporter extends Magmi_ItemProcessor
         $cs = $this->tablename("core_store");
         $ccev = $t . "_varchar";
         $ea = $this->tablename("eav_attribute");
-        $result = $this->selectAll("SELECT cs.store_id,csg.website_id,cce.entity_type_id,cce.path,ccev.value as name
+        $result = $this->selectAll(
+            "SELECT cs.store_id,csg.website_id,cce.entity_type_id,cce.path,ccev.value as name
 								FROM $cs as cs 
 								JOIN $csg as csg on csg.group_id=cs.group_id
 								JOIN $t as cce ON cce.entity_id=csg.root_category_id
@@ -43,7 +45,8 @@ class CategoryImporter extends Magmi_ItemProcessor
 		 ");
         foreach ($result as $row)
         {
-            $rootinfo = array("path" => $row["path"],"etid" => $row["entity_type_id"],"name" => $row["name"],"rootarr" => explode("/", $row["path"]));
+            $rootinfo = array("path"=>$row["path"],"etid"=>$row["entity_type_id"],"name"=>$row["name"],
+                "rootarr"=>explode("/", $row["path"]));
             $this->_catroots[$row["store_id"]] = $rootinfo;
             $this->_catrootw[$row["website_id"]][] = $row["store_id"];
             if ($this->_cat_eid == null)
@@ -81,7 +84,8 @@ class CategoryImporter extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "On the fly category creator/importer","author" => "Dweeves","version" => "0.2.4","url" => "http://sourceforge.net/apps/mediawiki/magmi/index.php?title=On_the_fly_category_creator/importer");
+        return array("name"=>"On the fly category creator/importer","author"=>"Dweeves","version"=>"0.2.4",
+            "url"=>"http://sourceforge.net/apps/mediawiki/magmi/index.php?title=On_the_fly_category_creator/importer");
     }
 
     public function getExistingCategory($parentpath, $cattr)
@@ -92,7 +96,8 @@ class CategoryImporter extends Magmi_ItemProcessor
         $sql = "SELECT cet.entity_id FROM $cet as cet
 			  JOIN $cetv as cetv ON cetv.entity_id=cet.entity_id AND cetv.attribute_id=? AND cetv.value=?
 			  WHERE cet.parent_id=? ";
-        $catid = $this->selectone($sql, array($this->_cattrinfos["varchar"]["name"]["attribute_id"],$cattr["name"],$parentid), "entity_id");
+        $catid = $this->selectone($sql, 
+            array($this->_cattrinfos["varchar"]["name"]["attribute_id"],$cattr["name"],$parentid), "entity_id");
         return $catid;
     }
 
@@ -151,7 +156,8 @@ class CategoryImporter extends Magmi_ItemProcessor
                 }
             }
             
-            $sql = "INSERT INTO $tb (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " . implode(",", $inserts) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
+            $sql = "INSERT INTO $tb (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " .
+                 implode(",", $inserts) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
             $this->insert($sql, $data);
             unset($data);
             unset($inserts);
@@ -172,7 +178,9 @@ class CategoryImporter extends Magmi_ItemProcessor
             $cp = count($parts);
             $cname = trim($parts[0]);
             $odefs[] = $cname;
-            $attrs = array("name" => $cname,"is_active" => ($cp > 1) ? $parts[1] : 1,"is_anchor" => ($cp > 2) ? $parts[2] : 1,"include_in_menu" => $cp > 3 ? $parts[3] : 1,"url_key" => Slugger::slug($cname),"url_path" => Slugger::slug(implode("/", $odefs), true) . $this->getParam("CAT:urlending", ".html"));
+            $attrs = array("name"=>$cname,"is_active"=>($cp > 1) ? $parts[1] : 1,"is_anchor"=>($cp > 2) ? $parts[2] : 1,
+                "include_in_menu"=>$cp > 3 ? $parts[3] : 1,"url_key"=>Slugger::slug($cname),
+                "url_path"=>Slugger::slug(implode("/", $odefs), true) . $this->getParam("CAT:urlending", ".html"));
             $clist[] = $attrs;
         }
         $catdef = implode($this->_tsep, $odefs);
@@ -338,7 +346,7 @@ class CategoryImporter extends Magmi_ItemProcessor
                         // set a specific store key
                         $k = "%RP:$sid%";
                         // store root path definitions
-                        $rootpaths[$k] = array("path" => $srp["path"],"rootarr" => $srp["rootarr"]);
+                        $rootpaths[$k] = array("path"=>$srp["path"],"rootarr"=>$srp["rootarr"]);
                         $trimroot = trim($rname);
                         // replace root name with store root key
                         $item["categories"] = str_replace($matches[0][$i], $k, $item["categories"]);
@@ -359,7 +367,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         }
         $sids = array_keys($this->_catroots);
         $srp = $this->_catroots[$sids[0]];
-        $rootpaths["%RP:base%"] = array("path" => $srp["path"],"rootarr" => $srp["rootarr"]);
+        $rootpaths["%RP:base%"] = array("path"=>$srp["path"],"rootarr"=>$srp["rootarr"]);
         
         return $rootpaths;
     }

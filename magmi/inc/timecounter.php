@@ -15,7 +15,7 @@ class TimeCounter
     {
         foreach ($tcats as $tcat)
         {
-            $this->_timingcats[$tcat] = array("_counters" => array(),"_timers" => array());
+            $this->_timingcats[$tcat] = array("_counters"=>array(),"_timers"=>array());
         }
     }
 
@@ -54,7 +54,7 @@ class TimeCounter
         {
             if (!isset($this->_timingcats[$tcat]))
             {
-                $this->_timingcats[$tcat] = array("_counters" => array(),"_timers" => array());
+                $this->_timingcats[$tcat] = array("_counters"=>array(),"_timers"=>array());
             }
             $this->_timingcats[$tcat]["_counters"][$cname] = 0;
         }
@@ -104,7 +104,7 @@ class TimeCounter
         }
         else
         {
-            $tcats = array($tcat => $this->_timingcats[$tcat]);
+            $tcats = array($tcat=>$this->_timingcats[$tcat]);
         }
         $t = microtime(true);
         
@@ -120,7 +120,7 @@ class TimeCounter
                 $src = $this->_timingcontext[$i];
                 if (!isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
                 {
-                    $this->_timingcats[$tcat]["_timers"][$phase][$src] = array("init" => $t,"dur" => 0);
+                    $this->_timingcats[$tcat]["_timers"][$phase][$src] = array("init"=>$t,"dur"=>0);
                 }
                 $this->_timingcats[$tcat]["_timers"][$phase][$src]["start"] = $t;
             }
@@ -149,7 +149,7 @@ class TimeCounter
         }
         else
         {
-            $tcats = array($tcat => $this->_timingcats[$tcat]);
+            $tcats = array($tcat=>$this->_timingcats[$tcat]);
         }
         $end = microtime(true);
         foreach ($tcats as $tcat => $phasetimes)
@@ -160,7 +160,8 @@ class TimeCounter
                 if (isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
                 {
                     $this->_timingcats[$tcat]["_timers"][$phase][$src]["end"] = $end;
-                    $this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"] += $end - $this->_timingcats[$tcat]["_timers"][$phase][$src]["start"];
+                    $this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"] += $end -
+                         $this->_timingcats[$tcat]["_timers"][$phase][$src]["start"];
                 }
                 else
                 {

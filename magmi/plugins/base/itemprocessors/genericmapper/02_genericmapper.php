@@ -12,7 +12,8 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Generic mapper","author" => "Dweeves","version" => "0.0.6a","url" => $this->pluginDocUrl("Generic_mapper"));
+        return array("name"=>"Generic mapper","author"=>"Dweeves","version"=>"0.0.6a",
+            "url"=>$this->pluginDocUrl("Generic_mapper"));
     }
 
     /**
@@ -89,7 +90,7 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
             $idx = basename($fname);
             if (!isset($this->_mapping[$idx]))
             {
-                $this->_mapping[$idx] = array("DIRECT" => array(),"RE" => array());
+                $this->_mapping[$idx] = array("DIRECT"=>array(),"RE"=>array());
             }
             $mf = fopen("$fname", "r");
             while (($data = fgetcsv($mf, 1000, ",")) !== FALSE)

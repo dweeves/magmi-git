@@ -85,7 +85,8 @@ class Magmi_CSVReader extends Magmi_Mixin
         {
             throw new Magmi_CSVException("{$this->_filename} not found");
         }
-        $this->log("Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]", "startup");
+        $this->log("Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]", 
+            "startup");
     }
 
     public function openCSV()
@@ -195,7 +196,9 @@ class Magmi_CSVReader extends Magmi_Mixin
                 if (!$allowtrunc && $rcols != $this->_nhcols)
                 {
                     // if strict matching, warning & continue
-                    $this->log("warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped", "warning");
+                    $this->log(
+                        "warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped", 
+                        "warning");
                     continue;
                 }
                 break;

@@ -12,7 +12,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     /* Plugin info declaration */
     public function getPluginInfo()
     {
-        return array("name" => "Configurable Item processor","author" => "Dweeves","version" => "1.3.7a","url" => $this->pluginDocUrl("Configurable_Item_processor"));
+        return array("name"=>"Configurable Item processor","author"=>"Dweeves","version"=>"1.3.7a",
+            "url"=>$this->pluginDocUrl("Configurable_Item_processor"));
     }
 
     /**
@@ -90,8 +91,10 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         {
             $attinfo = $this->getAttrInfo("visibility");
             $sql = "UPDATE " . $this->tablename("catalog_product_entity_int") . " as cpei
-			JOIN " . $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
-			JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id 
+			JOIN " .
+                 $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
+			JOIN " .
+                 $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id 
 			SET cpei.value=?
 			WHERE cpei.entity_id=cpe.entity_id AND attribute_id=?";
             $this->update($sql, array($pid,$vis,$attinfo["attribute_id"]));
@@ -127,7 +130,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         {
             return true;
         }
-        if ($this->_use_defaultopc || ($item["options_container"] != "container1" && $item["options_container"] != "container2"))
+        if ($this->_use_defaultopc ||
+             ($item["options_container"] != "container1" && $item["options_container"] != "container2"))
         {
             $item["options_container"] = "container2";
         }
@@ -201,7 +205,9 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         // if no configurable attributes, nothing to do
         if (count($confopts) == 0)
         {
-            $this->log("No configurable attributes found for configurable sku: " . $item["sku"] . " cannot link simples.", "warning");
+            $this->log(
+                "No configurable attributes found for configurable sku: " . $item["sku"] . " cannot link simples.", 
+                "warning");
             return true;
         }
         // set product to have options & required
@@ -256,7 +262,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             if (count($ins) > 0)
             {
                 // insert/update attribute value for association
-                $sql = "INSERT INTO `$cpsal` (`product_super_attribute_id`,`store_id`,`use_default`,`value`) VALUES " . implode(",", $ins) . "ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
+                $sql = "INSERT INTO `$cpsal` (`product_super_attribute_id`,`store_id`,`use_default`,`value`) VALUES " .
+                     implode(",", $ins) . "ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
                 $this->insert($sql, $data);
             }
             // if we have price info for this attribute
@@ -297,7 +304,9 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                     }
                 }
                 
-                $sql = "INSERT INTO $cpsap (`product_super_attribute_id`,`value_index`,`pricing_value`,`is_percent`,`website_id`) VALUES " . implode(",", $ins) . " ON DUPLICATE KEY UPDATE pricing_value=VALUES(pricing_value),is_percent=VALUES(is_percent)";
+                $sql = "INSERT INTO $cpsap (`product_super_attribute_id`,`value_index`,`pricing_value`,`is_percent`,`website_id`) VALUES " .
+                     implode(",", $ins) .
+                     " ON DUPLICATE KEY UPDATE pricing_value=VALUES(pricing_value),is_percent=VALUES(is_percent)";
                 $this->insert($sql, $data);
                 unset($data);
             }

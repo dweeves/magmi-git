@@ -9,7 +9,8 @@ class ItemIndexer extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "On the fly indexer","author" => "Dweeves","version" => "0.1.6","url" => $this->pluginDocUrl("On_the_fly_indexer"));
+        return array("name"=>"On the fly indexer","author"=>"Dweeves","version"=>"0.1.6",
+            "url"=>$this->pluginDocUrl("On_the_fly_indexer"));
     }
 
     public function getPluginParamNames()
@@ -21,7 +22,13 @@ class ItemIndexer extends Magmi_ItemProcessor
     {
         $this->_toindex = null;
         // initialize shortname array for tables
-        $this->tns = array("cpe" => $this->tablename("catalog_product_entity"),"cce" => $this->tablename("catalog_category_entity"),"ccp" => $this->tablename("catalog_category_product"),"cpw" => $this->tablename("catalog_product_website"),"cs" => $this->tablename("core_store"),"csg" => $this->tablename("core_store_group"),"cpev" => $this->tablename("catalog_product_entity_varchar"),"cpei" => $this->tablename("catalog_product_entity_int"),"ccev" => $this->tablename("catalog_category_entity_varchar"),"ea" => $this->tablename("eav_attribute"),"ccpi" => $this->tablename("catalog_category_product_index"),"curw" => $this->tablename("core_url_rewrite"));
+        $this->tns = array("cpe"=>$this->tablename("catalog_product_entity"),
+            "cce"=>$this->tablename("catalog_category_entity"),"ccp"=>$this->tablename("catalog_category_product"),
+            "cpw"=>$this->tablename("catalog_product_website"),"cs"=>$this->tablename("core_store"),
+            "csg"=>$this->tablename("core_store_group"),"cpev"=>$this->tablename("catalog_product_entity_varchar"),
+            "cpei"=>$this->tablename("catalog_product_entity_int"),
+            "ccev"=>$this->tablename("catalog_category_entity_varchar"),"ea"=>$this->tablename("eav_attribute"),
+            "ccpi"=>$this->tablename("catalog_category_product_index"),"curw"=>$this->tablename("core_url_rewrite"));
         $inf = $this->getAttrInfo("visibility");
         if ($inf == null)
         {
@@ -179,14 +186,16 @@ class ItemIndexer extends Magmi_ItemProcessor
                 
                 // product + category url entries request
                 $catid = $pinfo["catid"];
-                $sdata = array($pid,$storeid,$catid,"product/$pid/$catid","catalog/product/view/id/$pid/category/$catid","$curlk/$purlk",1);
+                $sdata = array($pid,$storeid,$catid,"product/$pid/$catid",
+                    "catalog/product/view/id/$pid/category/$catid","$curlk/$purlk",1);
                 $vstr[] = "(" . $this->arr2values($sdata) . ")";
                 $data = array_merge($data, $sdata);
             }
         }
         if (count($vstr) > 0)
         {
-            $sqlprodcat = "INSERT IGNORE INTO {$this->tns["curw"]} (product_id,store_id,category_id,id_path,target_path,request_path,is_system) VALUES " . implode(",", $vstr);
+            $sqlprodcat = "INSERT IGNORE INTO {$this->tns["curw"]} (product_id,store_id,category_id,id_path,target_path,request_path,is_system) VALUES " .
+                 implode(",", $vstr);
             $this->insert($sqlprodcat, $data);
         }
         if (count($catpathlist) > 0)
@@ -229,7 +238,8 @@ class ItemIndexer extends Magmi_ItemProcessor
         }
         if (count($vstr) > 0)
         {
-            $sqlcat = "INSERT INTO {$this->tns["curw"]} (store_id,category_id,id_path,target_path,request_path,is_system) VALUES " . implode(",", $vstr) . " ON DUPLICATE KEY UPDATE request_path=VALUES(`request_path`)";
+            $sqlcat = "INSERT INTO {$this->tns["curw"]} (store_id,category_id,id_path,target_path,request_path,is_system) VALUES " .
+                 implode(",", $vstr) . " ON DUPLICATE KEY UPDATE request_path=VALUES(`request_path`)";
             $this->insert($sqlcat, $data);
         }
     }
@@ -353,7 +363,7 @@ class ItemIndexer extends Magmi_ItemProcessor
             {
                 if ($this->shouldReindex($item))
                 {
-                    $this->_toindex = array("sku" => $item["sku"],"pid" => $params["product_id"]);
+                    $this->_toindex = array("sku"=>$item["sku"],"pid"=>$params["product_id"]);
                 }
                 else
                 {

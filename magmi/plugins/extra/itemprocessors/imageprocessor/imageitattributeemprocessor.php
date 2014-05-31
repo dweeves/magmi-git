@@ -45,7 +45,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Image attributes processor","author" => "Dweeves","version" => "1.0.29","url" => $this->pluginDocUrl("Image_attributes_processor"));
+        return array("name"=>"Image attributes processor","author"=>"Dweeves","version"=>"1.0.29",
+            "url"=>$this->pluginDocUrl("Image_attributes_processor"));
     }
 
     public function isErrorImage($img)
@@ -85,7 +86,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         
         $sql = "DELETE $t.* FROM $t
-		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (" . $this->arr2values($rivals) . ")";
+		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (" .
+             $this->arr2values($rivals) . ")";
         $this->delete($sql, array_merge(array($pid,$gal_attinfo["attribute_id"]), $rivals));
     }
 
@@ -115,7 +117,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
             unset($infolist);
             // copy it from source dir to product media dir
-            $imagefile = $this->copyImageFile($imagefile, $item, array("store" => $storeid,"attr_code" => $attrcode,"imageindex" => $imageindex == 0 ? "" : $imageindex));
+            $imagefile = $this->copyImageFile($imagefile, $item, 
+                array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex));
             if ($imagefile !== false)
             {
                 // add to gallery
@@ -197,7 +200,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $imagefile = trim($ivalue);
         
         // else copy image file
-        $imagefile = $this->copyImageFile($imagefile, $item, array("store" => $storeid,"attr_code" => $attrcode));
+        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
         $ovalue = $imagefile;
         // add to gallery as excluded
         if ($imagefile !== false)
@@ -208,7 +211,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $label = $item[$attrcode . "_label"];
             }
             $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude, $attrdesc["attribute_id"]);
+            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude, 
+                $attrdesc["attribute_id"]);
         }
         return $ovalue;
     }
@@ -328,7 +332,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      * @param string $imgname
      *            : image file name (relative to /products/media in magento dir)
      */
-    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false, $refid = null)
+    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false, 
+        $refid = null)
     {
         $gal_attinfo = $this->getAttrInfo("media_gallery");
         $tg = $this->tablename('catalog_product_entity_media_gallery');
@@ -422,7 +427,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         else
         {
             $uid = uniqid("img", true);
-            $extra = array_merge($extra, array("imagename" => "$uid.jpg","imagename.ext" => "jpg","imagename.noext" => $uid));
+            $extra = array_merge($extra, array("imagename"=>"$uid.jpg","imagename.ext"=>"jpg","imagename.noext"=>$uid));
         }
         
         return $extra;
@@ -573,7 +578,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 // force label update
                 $attrdesc = $this->getAttrInfo($attrcode);
-                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attr_desc["is_global"]), $item[$attrcode . "_label"]);
+                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attr_desc["is_global"]), 
+                    $item[$attrcode . "_label"]);
                 unset($attrdesc);
             }
         }
@@ -637,7 +643,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
             $sql = "DELETE emg.* FROM $tg as emg
 			LEFT JOIN (SELECT emg.value_id,count(emgv.value_id) as cnt FROM  $tgv as emgv JOIN $tg as emg  ON emg.value_id=emgv.value_id GROUP BY emg.value_id ) as t1 ON t1.value_id=emg.value_id
-			WHERE attribute_id IN (" . implode(",", $attids) . ") AND t1.cnt IS NULL";
+			WHERE attribute_id IN (" . implode(",", $attids) .
+                 ") AND t1.cnt IS NULL";
             $this->delete($sql);
         }
         else

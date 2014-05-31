@@ -13,7 +13,8 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Default Values setter","author" => "Dweeves","version" => "0.0.5","url" => $this->pluginDocUrl("Default_Values_setter"));
+        return array("name"=>"Default Values setter","author"=>"Dweeves","version"=>"0.0.5",
+            "url"=>$this->pluginDocUrl("Default_Values_setter"));
     }
 
     /**

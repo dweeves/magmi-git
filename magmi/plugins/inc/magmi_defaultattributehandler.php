@@ -2,9 +2,9 @@
 
 class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 {
-    protected $_basecols = array("store" => "admin","type" => "simple");
-    protected $_baseattrs = array("status" => 1,"visibility" => 4,"page_layout" => "","tax_class_id" => "Taxable Goods");
-    protected $_forcedefault = array("store" => "admin");
+    protected $_basecols = array("store"=>"admin","type"=>"simple");
+    protected $_baseattrs = array("status"=>1,"visibility"=>4,"page_layout"=>"","tax_class_id"=>"Taxable Goods");
+    protected $_forcedefault = array("store"=>"admin");
     protected $_missingcols = array();
     protected $_missingattrs = array();
 
@@ -25,7 +25,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function getPluginInfo()
     {
-        return array("name" => "Standard Attribute Import","author" => "Dweeves","version" => "1.0.6");
+        return array("name"=>"Standard Attribute Import","author"=>"Dweeves","version"=>"1.0.6");
     }
 
     /**
@@ -43,7 +43,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         if ($m == "create" || $m == "xcreate")
         {
             $cols = array_merge($cols, $this->_missingcols, $this->_missingattrs);
-            $this->log("Newly created items will have default values for columns:" . implode(",", array_merge($this->_missingcols, $this->_missingattrs)), "startup");
+            $this->log(
+                "Newly created items will have default values for columns:" .
+                     implode(",", array_merge($this->_missingcols, $this->_missingattrs)), "startup");
         }
     }
 

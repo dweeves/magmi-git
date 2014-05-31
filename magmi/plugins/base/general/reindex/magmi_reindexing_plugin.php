@@ -8,7 +8,8 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Magmi Magento Reindexer","author" => "Dweeves","version" => "1.0.3a","url" => $this->pluginDocUrl("Magmi_Magento_Reindexer"));
+        return array("name"=>"Magmi Magento Reindexer","author"=>"Dweeves","version"=>"1.0.3a",
+            "url"=>$this->pluginDocUrl("Magmi_Magento_Reindexer"));
     }
 
     public function afterImport()
@@ -21,7 +22,9 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
     public function OptimEav()
     {
-        $tables = array("catalog_product_entity_varchar","catalog_product_entity_int","catalog_product_entity_text","catalog_product_entity_decimal","catalog_product_entity_datetime","catalog_product_entity_media_gallery","catalog_product_entity_tier_price");
+        $tables = array("catalog_product_entity_varchar","catalog_product_entity_int","catalog_product_entity_text",
+            "catalog_product_entity_decimal","catalog_product_entity_datetime","catalog_product_entity_media_gallery",
+            "catalog_product_entity_tier_price");
         
         $cpe = $this->tablename('catalog_product_entity');
         $this->log("Optmizing EAV Tables...", "info");
@@ -46,7 +49,8 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             // removing records in flat tables that are no more linked to entries in catalog_product_entity table
             // for some reasons, this seem to happen
             $sql = "DELETE cpf.* FROM $tname as cpf
-			LEFT JOIN " . $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id 
+			LEFT JOIN " .
+                 $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id 
 			WHERE cpe.entity_id IS NULL";
             $this->delete($sql);
         }

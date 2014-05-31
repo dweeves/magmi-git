@@ -13,7 +13,9 @@ class TagProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name" => "Product Tags Importer","author" => "Dweeves,Pawel Kazakow","sponsorinfo" => array("name" => "Pawel Kazakow","url" => "http://xonu.de"),"version" => "0.0.3","url" => $this->pluginDocUrl("Tag_importer"));
+        return array("name"=>"Product Tags Importer","author"=>"Dweeves,Pawel Kazakow",
+            "sponsorinfo"=>array("name"=>"Pawel Kazakow","url"=>"http://xonu.de"),"version"=>"0.0.3",
+            "url"=>$this->pluginDocUrl("Tag_importer"));
     }
 
     public function createTag($taginfo)
@@ -57,7 +59,8 @@ class TagProcessor extends Magmi_ItemProcessor
     public function clearItemTags($item, $pid, $sids)
     {
         // if we don't have any relative, clear tags for item
-        $sql = "DELETE FROM " . $this->tablename("tag_relation") . " WHERE product_id=? AND store_id IN (" . $this->arr2values($sids) . ")";
+        $sql = "DELETE FROM " . $this->tablename("tag_relation") . " WHERE product_id=? AND store_id IN (" .
+             $this->arr2values($sids) . ")";
         $this->delete($sql, array_merge(array($pid), $sids));
     }
     
@@ -99,7 +102,8 @@ class TagProcessor extends Magmi_ItemProcessor
         // perform delete
         if (count($tids) > 0)
         {
-            $sql = "DELETE FROM $tr  WHERE tag_id IN (" . $this->arr2values($tids) . ") AND customer_id IN(" . $this->arr2values($uids) . ") AND store_id IN (" . $this->arr2values($sids) . ")";
+            $sql = "DELETE FROM $tr  WHERE tag_id IN (" . $this->arr2values($tids) . ") AND customer_id IN(" .
+                 $this->arr2values($uids) . ") AND store_id IN (" . $this->arr2values($sids) . ")";
             $this->delete($sql, array_merge($tids, $uids, $sids));
         }
     }
@@ -151,7 +155,7 @@ class TagProcessor extends Magmi_ItemProcessor
 
     public function parseTag($tag)
     {
-        $taginfo = array("name" => null,"status" => 1,"user" => 1);
+        $taginfo = array("name"=>null,"status"=>1,"user"=>1);
         $tagparts = explode("::", $tag);
         $tn = $tagparts[0];
         // matching pending status name, remove whitespaces on capture
@@ -210,7 +214,8 @@ class TagProcessor extends Magmi_ItemProcessor
         // we need a real store id , not admin so let's find one
         if (count($sids) == 1 && $sids[0] == 0)
         {
-            $sql = "SELECT store_id FROM " . $this->tablename("core_store") . " WHERE website_id>0 AND is_active=1 ORDER BY website_id LIMIT 1 ";
+            $sql = "SELECT store_id FROM " . $this->tablename("core_store") .
+                 " WHERE website_id>0 AND is_active=1 ORDER BY website_id LIMIT 1 ";
             $sid = $this->selectone($sql, null, "store_id");
             if ($sid !== null)
             {

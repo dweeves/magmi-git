@@ -39,7 +39,9 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
      *
      * @var $_defaults array
      */
-    protected $_defaults = array('option' => array('type' => 'select','required' => '1','position' => '0'),'sku' => array('selection_qty' => '1','selection_can_change_qty' => '1','position' => '0','is_default' => '0','selection_price_value' => '0','selection_price_type' => '0'));
+    protected $_defaults = array('option'=>array('type'=>'select','required'=>'1','position'=>'0'),
+        'sku'=>array('selection_qty'=>'1','selection_can_change_qty'=>'1','position'=>'0','is_default'=>'0',
+            'selection_price_value'=>'0','selection_price_type'=>'0'));
 
     public function getPluginUrl()
     {
@@ -143,7 +145,8 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 {
                     $option['option_id'] = $existingOption['option_id'];
                     $sql = "UPDATE $opt AS opt SET opt.required = :required, opt.position = :position, opt.type = :type WHERE opt.option_id = :option_id";
-                    $bind = array('required' => $option['required'],'position' => $option['position'],'type' => $option['type'],'option_id' => $option['option_id']);
+                    $bind = array('required'=>$option['required'],'position'=>$option['position'],
+                        'type'=>$option['type'],'option_id'=>$option['option_id']);
                     $this->update($sql, $bind);
                     
                     if (!empty($option['title']))
@@ -151,13 +154,15 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                         if (empty($existingOption['title']))
                         {
                             $sql = "INSERT INTO $optv (option_id, store_id, title) VALUES(:option_id, :store_id, :title)";
-                            $bind = array('option_id' => $option['option_id'],'store_id' => $option['store_id'],'title' => $option['title']);
+                            $bind = array('option_id'=>$option['option_id'],'store_id'=>$option['store_id'],
+                                'title'=>$option['title']);
                             $this->insert($sql, $bind);
                         }
                         elseif ($existingOption['title'] != $option['title'])
                         {
                             $sql = "UPDATE $optv SET title = :title WHERE option_id = :option_id AND store_id = :store_id";
-                            $bind = array('option_id' => $option['option_id'],'store_id' => $option['store_id'],'title' => $option['title']);
+                            $bind = array('option_id'=>$option['option_id'],'store_id'=>$option['store_id'],
+                                'title'=>$option['title']);
                             $this->update($sql, $bind);
                         }
                     }
@@ -165,17 +170,19 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 else
                 {
                     $sql = "INSERT INTO $opt (parent_id, required, position, type) VALUES(:parent_id, :required, :position, :type)";
-                    $bind = array('parent_id' => $option['parent_id'],'required' => $option['required'],'position' => $option['position'],'type' => $option['type']);
+                    $bind = array('parent_id'=>$option['parent_id'],'required'=>$option['required'],
+                        'position'=>$option['position'],'type'=>$option['type']);
                     $optionId = $this->insert($sql, $bind);
                     $option['option_id'] = $optionId;
                     
                     $sql = "INSERT INTO $optv (option_id, store_id, title) VALUES(:option_id, :store_id, :title)";
-                    $bind = array('option_id' => $option['option_id'],'store_id' => 0,'title' => $option['code']);
+                    $bind = array('option_id'=>$option['option_id'],'store_id'=>0,'title'=>$option['code']);
                     $this->insert($sql, $bind);
                     
                     if (!empty($option['title']) && $option['store_id'] != 0)
                     {
-                        $bind = array('option_id' => $option['option_id'],'store_id' => $option['store_id'],'title' => $option['title']);
+                        $bind = array('option_id'=>$option['option_id'],'store_id'=>$option['store_id'],
+                            'title'=>$option['title']);
                         $this->insert($sql, $bind);
                     }
                 }
@@ -213,7 +220,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     opt.parent_id = :parent_id
             ";
             
-            $bind = array('parent_id' => $productId);
+            $bind = array('parent_id'=>$productId);
             $this->delete($sql, $bind);
             unset($options['-*']);
             $deleteAll = true;
@@ -232,7 +239,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                             AND optv.title = :code
                     ";
                     
-                    $bind = array('parent_id' => $productId,'code' => substr($code, 1));
+                    $bind = array('parent_id'=>$productId,'code'=>substr($code, 1));
                     $this->delete($sql, $bind);
                 }
                 
@@ -266,9 +273,12 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     
                     $option['code'] = $bundleOption[0];
                     $option['title'] = isset($bundleOption[1]) && $bundleOption[1] !== '' ? $bundleOption[1] : $bundleOption[0];
-                    $option['type'] = isset($bundleOption[2]) && $bundleOption[2] !== '' ? $bundleOption[2] : $this->getConfiguredDefault('option', 'type');
-                    $option['required'] = isset($bundleOption[3]) && $bundleOption[3] !== '' ? $bundleOption[3] : $this->getConfiguredDefault('option', 'required');
-                    $option['position'] = isset($bundleOption[4]) && $bundleOption[4] !== '' ? $bundleOption[4] : $this->getConfiguredDefault('option', 'position');
+                    $option['type'] = isset($bundleOption[2]) && $bundleOption[2] !== '' ? $bundleOption[2] : $this->getConfiguredDefault(
+                        'option', 'type');
+                    $option['required'] = isset($bundleOption[3]) && $bundleOption[3] !== '' ? $bundleOption[3] : $this->getConfiguredDefault(
+                        'option', 'required');
+                    $option['position'] = isset($bundleOption[4]) && $bundleOption[4] !== '' ? $bundleOption[4] : $this->getConfiguredDefault(
+                        'option', 'position');
                     
                     $options[$option['code']] = $option;
                 }
@@ -285,7 +295,10 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     $code = current(explode(':', $sku, 2));
                     if (empty($options[$code]))
                     {
-                        $options[$code] = array('code' => $code,'title' => null,'type' => $this->getConfiguredDefault('option', 'type'),'required' => $this->getConfiguredDefault('option', 'required'),'position' => $this->getConfiguredDefault('option', 'position'));
+                        $options[$code] = array('code'=>$code,'title'=>null,
+                            'type'=>$this->getConfiguredDefault('option', 'type'),
+                            'required'=>$this->getConfiguredDefault('option', 'required'),
+                            'position'=>$this->getConfiguredDefault('option', 'position'));
                     }
                 }
             }
@@ -317,7 +330,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             ORDER BY optv.store_id DESC
         ";
         
-        $bind = array('parent_id' => $productId,'code' => $code,'store_id' => $storeId);
+        $bind = array('parent_id'=>$productId,'code'=>$code,'store_id'=>$storeId);
         $existingOptions = $this->selectAll($sql, $bind);
         
         if (!empty($existingOptions))
@@ -353,13 +366,22 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 {
                     $sku['selection_id'] = $existingSku['selection_id'];
                     $sql = "UPDATE $cpbs AS cpbs SET cpbs.position = :position, cpbs.is_default = :is_default, cpbs.selection_qty = :selection_qty, cpbs.selection_can_change_qty = :selection_can_change_qty, cpbs.selection_price_value = :selection_price_value, cpbs.selection_price_type = :selection_price_type WHERE cpbs.selection_id = :selection_id";
-                    $bind = array('position' => $sku['position'],'is_default' => $sku['is_default'],'selection_qty' => $sku['selection_qty'],'selection_can_change_qty' => $sku['selection_can_change_qty'],'selection_price_value' => $sku['selection_price_value'],'selection_price_type' => $sku['selection_price_type'],'selection_id' => $sku['selection_id']);
+                    $bind = array('position'=>$sku['position'],'is_default'=>$sku['is_default'],
+                        'selection_qty'=>$sku['selection_qty'],
+                        'selection_can_change_qty'=>$sku['selection_can_change_qty'],
+                        'selection_price_value'=>$sku['selection_price_value'],
+                        'selection_price_type'=>$sku['selection_price_type'],'selection_id'=>$sku['selection_id']);
                     $this->update($sql, $bind);
                 }
                 else
                 {
                     $sql = "INSERT INTO $cpbs (option_id, parent_product_id, product_id, position, is_default, selection_qty, selection_can_change_qty, selection_price_value, selection_price_type) VALUES(:option_id, :parent_product_id, :product_id, :position, :is_default, :selection_qty, :selection_can_change_qty, :selection_price_value, :selection_price_type)";
-                    $bind = array('option_id' => $sku['option_id'],'parent_product_id' => $sku['parent_product_id'],'product_id' => $sku['product_id'],'position' => $sku['position'],'is_default' => $sku['is_default'],'selection_qty' => $sku['selection_qty'],'selection_can_change_qty' => $sku['selection_can_change_qty'],'selection_price_value' => $sku['selection_price_value'],'selection_price_type' => $sku['selection_price_type']);
+                    $bind = array('option_id'=>$sku['option_id'],'parent_product_id'=>$sku['parent_product_id'],
+                        'product_id'=>$sku['product_id'],'position'=>$sku['position'],'is_default'=>$sku['is_default'],
+                        'selection_qty'=>$sku['selection_qty'],
+                        'selection_can_change_qty'=>$sku['selection_can_change_qty'],
+                        'selection_price_value'=>$sku['selection_price_value'],
+                        'selection_price_type'=>$sku['selection_price_type']);
                     $selectionId = $this->insert($sql, $bind);
                     $sku['selection_id'] = $selectionId;
                 }
@@ -394,12 +416,18 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     
                     $sku['option_code'] = $bundleSku[0];
                     $sku['sku'] = $bundleSku[1];
-                    $sku['selection_qty'] = isset($bundleSku[2]) && $bundleSku[2] !== '' ? $bundleSku[2] : $this->getConfiguredDefault('sku', 'selection_qty');
-                    $sku['selection_can_change_qty'] = isset($bundleSku[3]) && $bundleSku[3] !== '' ? $bundleSku[3] : $this->getConfiguredDefault('sku', 'selection_can_change_qty');
-                    $sku['position'] = isset($bundleSku[4]) && $bundleSku[4] !== '' ? $bundleSku[4] : $this->getConfiguredDefault('sku', 'position');
-                    $sku['is_default'] = isset($bundleSku[5]) && $bundleSku[5] !== '' ? $bundleSku[5] : $this->getConfiguredDefault('sku', 'is_default');
-                    $sku['selection_price_value'] = isset($bundleSku[6]) && $bundleSku[6] !== '' ? $bundleSku[6] : $this->getConfiguredDefault('sku', 'selection_price_value');
-                    $sku['selection_price_type'] = isset($bundleSku[7]) && $bundleSku[7] !== '' ? $bundleSku[7] : $this->getConfiguredDefault('sku', 'selection_price_type');
+                    $sku['selection_qty'] = isset($bundleSku[2]) && $bundleSku[2] !== '' ? $bundleSku[2] : $this->getConfiguredDefault(
+                        'sku', 'selection_qty');
+                    $sku['selection_can_change_qty'] = isset($bundleSku[3]) && $bundleSku[3] !== '' ? $bundleSku[3] : $this->getConfiguredDefault(
+                        'sku', 'selection_can_change_qty');
+                    $sku['position'] = isset($bundleSku[4]) && $bundleSku[4] !== '' ? $bundleSku[4] : $this->getConfiguredDefault(
+                        'sku', 'position');
+                    $sku['is_default'] = isset($bundleSku[5]) && $bundleSku[5] !== '' ? $bundleSku[5] : $this->getConfiguredDefault(
+                        'sku', 'is_default');
+                    $sku['selection_price_value'] = isset($bundleSku[6]) && $bundleSku[6] !== '' ? $bundleSku[6] : $this->getConfiguredDefault(
+                        'sku', 'selection_price_value');
+                    $sku['selection_price_type'] = isset($bundleSku[7]) && $bundleSku[7] !== '' ? $bundleSku[7] : $this->getConfiguredDefault(
+                        'sku', 'selection_price_type');
                     $cids = $this->getProductIds($sku['sku']);
                     $sku['product_id'] = $cids['pid'];
                     
@@ -430,7 +458,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 product_id = :product_id
         ";
         
-        $bind = array('option_id' => $option_id,'product_id' => $product_id);
+        $bind = array('option_id'=>$option_id,'product_id'=>$product_id);
         $existingSkus = $this->selectAll($sql, $bind);
         
         if (!empty($existingSkus))

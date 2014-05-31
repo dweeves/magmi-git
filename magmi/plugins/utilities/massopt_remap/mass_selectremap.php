@@ -9,7 +9,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Mass Select Option Remapper","author" => "Dweeves","version" => "1.0.0");
+        return array("name"=>"Mass Select Option Remapper","author"=>"Dweeves","version"=>"1.0.0");
     }
 
     public function getStoreId($sc)
@@ -133,7 +133,8 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
 
     public function getPluginParamNames()
     {
-        return array('CSV:filename','CSV:enclosure','CSV:separator','CSV:basedir','CSV:headerline','CSV:noheader','CSV:allowtrunc','SREMAP:attrcode');
+        return array('CSV:filename','CSV:enclosure','CSV:separator','CSV:basedir','CSV:headerline','CSV:noheader',
+            'CSV:allowtrunc','SREMAP:attrcode');
     }
 
     public function getShortDescription()

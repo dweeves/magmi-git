@@ -167,7 +167,9 @@ class Magmi_Config extends DirbasedConfig
         if ($this->hasSection("PLUGINS_DATASOURCES"))
         {
             $pluginsconf = new DirbasedConfig($this->getConfDir(), "plugins.conf");
-            $arr = array("PLUGINS_DATASOURCES" => $this->getSection("PLUGINS_DATASOURCES"),"PLUGINS_GENERAL" => $this->getSection("PLUGINS_GENERAL"),"PLUGINS_ITEMPROCESSORS" => $this->getSection("PLUGINS_ITEMPROCESSORS"));
+            $arr = array("PLUGINS_DATASOURCES"=>$this->getSection("PLUGINS_DATASOURCES"),
+                "PLUGINS_GENERAL"=>$this->getSection("PLUGINS_GENERAL"),
+                "PLUGINS_ITEMPROCESSORS"=>$this->getSection("PLUGINS_ITEMPROCESSORS"));
             $pluginsconf->setProps($arr);
             $pluginsconf->save();
             $this->removeSection("PLUGINS_DATASOURCES");
@@ -210,7 +212,8 @@ class Magmi_Config extends DirbasedConfig
         $candidates = scandir($this->getConfDir());
         foreach ($candidates as $candidate)
         {
-            if (is_dir($this->getConfDir() . DIRSEP . $candidate) && $candidate[0] != "." && substr($candidate, 0, 2) != "__")
+            if (is_dir($this->getConfDir() . DIRSEP . $candidate) && $candidate[0] != "." &&
+                 substr($candidate, 0, 2) != "__")
             {
                 $proflist[] = $candidate;
             }

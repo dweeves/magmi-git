@@ -150,7 +150,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
         $context = $this->createContext($url);
         if (!$this->urlExists($url))
         {
-            $this->_errors = array("type" => "download error","message" => "URL $url is unreachable");
+            $this->_errors = array("type"=>"download error","message"=>"URL $url is unreachable");
             return false;
         }
         $fp = fopen($dest, "w");
@@ -169,7 +169,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
         curl_exec($context);
         if (curl_getinfo($context, CURLINFO_HTTP_CODE) >= 400)
         {
-            $this->_errors = array("type" => "download error","message" => curl_error($context));
+            $this->_errors = array("type"=>"download error","message"=>curl_error($context));
             $ret = false;
         }
         fclose($fp);
@@ -196,7 +196,7 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
     {
         if (!$this->urlExists($url))
         {
-            $this->_errors = array("type" => "target error","message" => "URL $remoteurl is unreachable");
+            $this->_errors = array("type"=>"target error","message"=>"URL $remoteurl is unreachable");
             return false;
         }
         
@@ -390,7 +390,9 @@ class Magmi_RemoteAgent
     private static $_instance;
     private $_mdh;
     private $_lasterror;
-    public static $apidesc = array("getVersion" => NULL,"copy" => array("src","dest"),"mkdir" => array("path","mask"),"chmod" => array("path","mask"),"unlink" => array("path"),"file_exists" => array("path"),"exec_cmd" => array("cmd","args"));
+    public static $apidesc = array("getVersion"=>NULL,"copy"=>array("src","dest"),"mkdir"=>array("path","mask"),
+        "chmod"=>array("path","mask"),"unlink"=>array("path"),"file_exists"=>array("path"),
+        "exec_cmd"=>array("cmd","args"));
 
     public function __construct()
     {
@@ -406,17 +408,17 @@ class Magmi_RemoteAgent
     {
         if ($this->_lasterror == NULL)
         {
-            return array("result" => $res);
+            return array("result"=>$res);
         }
         else
         {
-            return array("error" => $this->getLastError());
+            return array("error"=>$this->getLastError());
         }
     }
 
     public function getVersion()
     {
-        return $this->wrapResult(array("version" => self::getStaticVersion()));
+        return $this->wrapResult(array("version"=>self::getStaticVersion()));
     }
 
     public static function checkParams($params, $api)
@@ -510,12 +512,12 @@ class Magmi_RemoteAgent
 function sendResponse($calltype, $result)
 {
     header("Content-type: application/json");
-    echo json_encode(array($calltype => $result));
+    echo json_encode(array($calltype=>$result));
 }
 
 function buildError($errname, $errdata)
 {
-    return array("error" => array($errname,$errdata));
+    return array("error"=>array($errname,$errdata));
 }
 
 if (!class_exists('Magmi_Plugin'))

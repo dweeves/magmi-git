@@ -9,7 +9,9 @@ class Magmi_PluginHelper
     public $base_dir;
     public $plugin_dir;
     protected $_profile;
-    protected $_plmeta = array("datasources" => array("Magmi_Datasource","*/*"),"itemprocessors" => array("Magmi_ItemProcessor","*/*"),"general" => array("Magmi_GeneralImportPlugin","*/*"),"utilities" => array("Magmi_UtilityPlugin","utilities"));
+    protected $_plmeta = array("datasources"=>array("Magmi_Datasource","*/*"),
+        "itemprocessors"=>array("Magmi_ItemProcessor","*/*"),"general"=>array("Magmi_GeneralImportPlugin","*/*"),
+        "utilities"=>array("Magmi_UtilityPlugin","utilities"));
 
     public function __construct($profile = null)
     {
@@ -17,7 +19,8 @@ class Magmi_PluginHelper
         $this->base_dir = dirname(__FILE__);
         $this->plugin_dir = realpath(dirname(dirname(__FILE__)) . DIRSEP . "plugins");
         // set include path to inclue plugins inc & base dir
-        set_include_path(ini_get("include_path") . PATH_SEPARATOR . "$this->plugin_dir/inc" . PATH_SEPARATOR . "$this->base_dir");
+        set_include_path(
+            ini_get("include_path") . PATH_SEPARATOR . "$this->plugin_dir/inc" . PATH_SEPARATOR . "$this->base_dir");
         // add base classes in context
         require_once ("magmi_item_processor.php");
         require_once ("magmi_datasource.php");
@@ -56,7 +59,7 @@ class Magmi_PluginHelper
                     require_once ($pcfile);
                     foreach ($matches as $match)
                     {
-                        $pluginclasses[] = array("class" => $match[1],"dir" => $dirname,"file" => basename($pcfile));
+                        $pluginclasses[] = array("class"=>$match[1],"dir"=>$dirname,"file"=>basename($pcfile));
                     }
                 }
             }
@@ -109,7 +112,8 @@ class Magmi_PluginHelper
         {
             if (!isset(self::$_plugins_cache[$pltype]))
             {
-                self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0], $this->_plmeta[$pltype][1]);
+                self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0], 
+                    $this->_plmeta[$pltype][1]);
             }
         }
     }
@@ -161,11 +165,11 @@ class Magmi_PluginHelper
         {
             $zip->extractTo($this->plugin_dir);
             $zip->close();
-            return array("plugin_install" => "OK");
+            return array("plugin_install"=>"OK");
         }
         else
         {
-            return array("plugin_install" => "ERROR","ERROR" => "Invalid Plugin Package Archive");
+            return array("plugin_install"=>"ERROR","ERROR"=>"Invalid Plugin Package Archive");
         }
         $packages = glob("$this->plugin_dir/*");
         foreach ($packages as $pdir)

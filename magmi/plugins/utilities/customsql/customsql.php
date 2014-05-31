@@ -6,7 +6,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Custom Magento SQL Utility","author" => "Dweeves","version" => "1.0.3");
+        return array("name"=>"Custom Magento SQL Utility","author"=>"Dweeves","version"=>"1.0.3");
     }
 
     public function getShortDescription()
@@ -40,7 +40,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
             $addit = $noprefix && count($epar) == 1 || !$noprefix;
             if ($addit)
             {
-                $outparams[$plabel] = array("name" => $pname,"default" => $pdefault);
+                $outparams[$plabel] = array("name"=>$pname,"default"=>$pdefault);
             }
         }
         return $outparams;

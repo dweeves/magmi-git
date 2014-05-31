@@ -47,7 +47,8 @@ $dp->beginImportSession("default", "create", new TestLogger());
 for ($sku = 0; $sku <= 200; $sku++)
 {
     // price : random between $1 & $500
-    $item = array("store" => "admin","type" => "simple","sku" => str_pad($sku, 5, "0", STR_PAD_LEFT),"name" => "item" . $sku,"description" => "test" . $sku,"price" => rand(1, 500),"min_qty" => 3,"qty" => "+7");
+    $item = array("store"=>"admin","type"=>"simple","sku"=>str_pad($sku, 5, "0", STR_PAD_LEFT),"name"=>"item" . $sku,
+        "description"=>"test" . $sku,"price"=>rand(1, 500),"min_qty"=>3,"qty"=>"+7");
     // color : radom c0/c10
     $item["color"] = "c" . strval(rand(0, 10));
     

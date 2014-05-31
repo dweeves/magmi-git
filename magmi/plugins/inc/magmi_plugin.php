@@ -33,7 +33,7 @@ class Magmi_PluginConfig extends ProfileBasedConfig
         foreach ($arr as $k => $v)
         {
             $k = $this->_prefix . ":" . $k;
-            list ($section, $value) = explode(":", $k, 2);
+            list($section,$value) = explode(":", $k, 2);
             if (!isset($conf[$section]))
             {
                 $conf[$section] = array();
@@ -153,7 +153,8 @@ abstract class Magmi_Plugin extends Magmi_Mixin
 
     public function getPluginInfo()
     {
-        return array("name" => $this->getPluginName(),"version" => $this->getPluginVersion(),"author" => $this->getPluginAuthor(),"url" => $this->getPluginUrl());
+        return array("name"=>$this->getPluginName(),"version"=>$this->getPluginVersion(),
+            "author"=>$this->getPluginAuthor(),"url"=>$this->getPluginUrl());
     }
 
     public function getPluginUrl()

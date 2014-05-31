@@ -11,7 +11,8 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name" => "Import Report Mail Notifier","author" => "Dweeves","version" => "1.0.0","url" => $this->pluginDocUrl("Import_report_mail_notifier"));
+        return array("name"=>"Import Report Mail Notifier","author"=>"Dweeves","version"=>"1.0.0",
+            "url"=>$this->pluginDocUrl("Import_report_mail_notifier"));
     }
 
     public function send_email($to, $from, $from_name, $subject, $message, $attachments = false)
@@ -33,7 +34,9 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
         
         $email_txt .= $msg_txt;
         $email_message = $email_txt;
-        $email_message .= "This is a multi-part message in MIME format.\n\n" . "--{$mime_boundary}\n" . "Content-Type:text/html; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . $email_txt . "\n\n";
+        $email_message .= "This is a multi-part message in MIME format.\n\n" . "--{$mime_boundary}\n" .
+             "Content-Type:text/html; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . $email_txt .
+             "\n\n";
         
         $attachments = $this->_attach;
         if ($attachments !== false)
@@ -44,7 +47,8 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
                 {
                     $fileatt = $attachments[$i];
                     $fileatt_type = "application/octet-stream";
-                    $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos($attachments[$i], '/') + 1;
+                    $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
+                        $attachments[$i], '/') + 1;
                     $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
                     
                     $file = fopen($fileatt, 'rb');
@@ -53,7 +57,8 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
                     
                     $data = chunk_split(base64_encode($data));
                     
-                    $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" . " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
+                    $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
+                         " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
                 }
             }
         }
@@ -105,7 +110,9 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
                 $this->addAttachment($pfile);
             }
             
-            $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"), $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"), $this->getParam("EMAILREP:body", "report attached"), $this->_attach);
+            $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"), 
+                $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"), 
+                $this->getParam("EMAILREP:body", "report attached"), $this->_attach);
             if (!$ok)
             {
                 $this->log("Cannot send email", "error");

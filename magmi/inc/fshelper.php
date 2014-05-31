@@ -137,9 +137,11 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         {
             $this->_lookup = 1;
             $this->_protocol = "http";
-            $this->_lookup_opts = array(CURLOPT_RETURNTRANSFER => true,CURLOPT_HEADER => true,CURLOPT_NOBODY => true,CURLOPT_FOLLOWLOCATION => true,CURLOPT_FILETIME => true,CURLOPT_CUSTOMREQUEST => "HEAD");
+            $this->_lookup_opts = array(CURLOPT_RETURNTRANSFER=>true,CURLOPT_HEADER=>true,CURLOPT_NOBODY=>true,
+                CURLOPT_FOLLOWLOCATION=>true,CURLOPT_FILETIME=>true,CURLOPT_CUSTOMREQUEST=>"HEAD");
             
-            $this->_dl_opts = array(CURLOPT_CUSTOMREQUEST => "GET",CURLOPT_HEADER => false,CURLOPT_NOBODY => false,CURLOPT_FOLLOWLOCATION => true,CURLOPT_UNRESTRICTED_AUTH => true,CURLOPT_HTTPHEADER => array('Expect:'));
+            $this->_dl_opts = array(CURLOPT_CUSTOMREQUEST=>"GET",CURLOPT_HEADER=>false,CURLOPT_NOBODY=>false,
+                CURLOPT_FOLLOWLOCATION=>true,CURLOPT_UNRESTRICTED_AUTH=>true,CURLOPT_HTTPHEADER=>array('Expect:'));
         }
         else
         {
@@ -147,7 +149,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             {
                 $this->_protocol = "ftp";
                 $this->_lookup = 0;
-                $this->_dl_opts = array(CURLOPT_FTP_USE_EPSV => 0);
+                $this->_dl_opts = array(CURLOPT_FTP_USE_EPSV=>0);
             }
         }
         
@@ -230,7 +232,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         }
         catch (Exception $e)
         {
-            $this->_errors = array("type" => "source error","message" => $e->getMessage());
+            $this->_errors = array("type"=>"source error","message"=>$e->getMessage());
         }
         return $result;
     }
@@ -309,7 +311,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             }
         }
         
-        $res = array("should_dl" => true,"reason" => "");
+        $res = array("should_dl"=>true,"reason"=>"");
         
         if ($res["should_dl"])
         {
@@ -372,7 +374,7 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
     {
         if (!$this->urlExists($url))
         {
-            $this->_errors = array("type" => "target error","message" => "URL $remoteurl is unreachable");
+            $this->_errors = array("type"=>"target error","message"=>"URL $remoteurl is unreachable");
             return false;
         }
         
@@ -609,7 +611,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         
         if ($out == null)
         {
-            $this->_lasterror = array("type" => " execution error","message" => error_get_last());
+            $this->_lasterror = array("type"=>" execution error","message"=>error_get_last());
             return false;
         }
         return $out;
