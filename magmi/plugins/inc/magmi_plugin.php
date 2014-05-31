@@ -34,7 +34,7 @@ class Magmi_PluginConfig extends ProfileBasedConfig
         {
             $k = $this->_prefix . ":" . $k;
             list ($section, $value) = explode(":", $k, 2);
-            if (! isset($conf[$section]))
+            if (!isset($conf[$section]))
             {
                 $conf[$section] = array();
             }
@@ -82,7 +82,7 @@ class Magmi_PluginOptionsPanel
         $pdir = Magmi_PluginHelper::getInstance()->getPluginDir($this->_plugin);
         $panelfile = "$pdir/" . $this->getFile();
         $content = "";
-        if (! file_exists($panelfile))
+        if (!file_exists($panelfile))
         {
             $content = $this->_defaulthtml;
         }
@@ -189,10 +189,10 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     public function pluginHello()
     {
         $info = $this->getPluginInfo();
-        $hello = array(! isset($info["name"]) ? "" : $info["name"]);
-        $hello[] = ! isset($info["version"]) ? "" : $info["version"];
-        $hello[] = ! isset($info["author"]) ? "" : $info["author"];
-        $hello[] = ! isset($info["url"]) ? "" : $info["url"];
+        $hello = array(!isset($info["name"]) ? "" : $info["name"]);
+        $hello[] = !isset($info["version"]) ? "" : $info["version"];
+        $hello[] = !isset($info["author"]) ? "" : $info["author"];
+        $hello[] = !isset($info["url"]) ? "" : $info["url"];
         $hellostr = implode("-", $hello);
         $base = get_parent_class($this);
         $this->log("$hellostr ", "pluginhello", false);

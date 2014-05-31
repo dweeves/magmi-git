@@ -44,7 +44,7 @@ $dp->beginImportSession("default", "create", new TestLogger());
 /*
  * Create 5000 items , with every 100 : upsell on last 100 even cross sell on last 100 odd related on last 100 every 5 cross sell on last 100 every 10 categories named catX/even or catX/odd with X is thousand of item (using categories plugin)
  */
-for ($sku = 0; $sku <= 200; $sku ++)
+for ($sku = 0; $sku <= 200; $sku++)
 {
     // price : random between $1 & $500
     $item = array("store" => "admin","type" => "simple","sku" => str_pad($sku, 5, "0", STR_PAD_LEFT),"name" => "item" . $sku,"description" => "test" . $sku,"price" => rand(1, 500),"min_qty" => 3,"qty" => "+7");
@@ -56,7 +56,7 @@ for ($sku = 0; $sku <= 200; $sku ++)
     {
         // first, we'll remove all existing relations (upsell/cross sell / related)
         $subskus = array();
-        for ($i = $sku - 99; $i < $sku; $i ++)
+        for ($i = $sku - 99; $i < $sku; $i++)
         {
             // related item sku
             $subskus[] = str_pad($i, 5, "0", STR_PAD_LEFT);

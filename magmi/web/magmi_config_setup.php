@@ -27,7 +27,7 @@ if ($profile == "")
 }
 $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
-if (! $eplconf->hasSection("PLUGINS_DATASOURCES"))
+if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 {
     $conf_ok = 0;
 }
@@ -149,7 +149,7 @@ Saved:<?php echo $conf->getLastSaved("%c")?>
 <?php
 $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
-$cansock = ! ($dmysqlsock === false);
+$cansock = !($dmysqlsock === false);
 ?>
 <div class="clear"></div>
 <form method="post" action="magmi_saveconfig.php" id="commonconf_form">
@@ -192,7 +192,7 @@ $cansock = ! ($dmysqlsock === false);
 		
 		<?php
     $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
-    if (! file_exists($mysqlsock))
+    if (!file_exists($mysqlsock))
     {
         $mysqlsock = $dmysqlsock;
     }

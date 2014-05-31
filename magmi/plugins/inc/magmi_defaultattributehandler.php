@@ -112,7 +112,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $exists = $this->currentItemExists();
         // check for new item default value in DB for new items
-        if (! $exists && isset($attrdesc["default_value"]) && ! empty($attrdesc["default_value"]) && empty($ivalue))
+        if (!$exists && isset($attrdesc["default_value"]) && !empty($attrdesc["default_value"]) && empty($ivalue))
         {
             return $attrdesc["default_value"];
         }
@@ -265,21 +265,21 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 // if its status, default to 1 (Enabled) if not correcly mapped
                 case "catalog/product_status":
-                    if (! $this->checkInt($ivalue))
+                    if (!$this->checkInt($ivalue))
                     {
                         $ovalue = 1;
                     }
                     break;
                 // do not create options for boolean values tagged as select ,default to 0 if not correcly mapped
                 case "eav/entity_attribute_source_boolean":
-                    if (! $this->checkInt($ivalue))
+                    if (!$this->checkInt($ivalue))
                     {
                         $ovalue = 0;
                     }
                     break;
                 // if visibility no options either,default to 4 if not correctly mapped
                 case "catalog/product_visibility":
-                    if (! $this->checkInt($ivalue))
+                    if (!$this->checkInt($ivalue))
                     {
                         $ovalue = 4;
                     }
@@ -389,7 +389,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $exists = $this->currentItemExists();
         // Check store specific value & empty & new item => ignore
-        if ($storeid !== 0 && empty($ivalue) && ! $exists)
+        if ($storeid !== 0 && empty($ivalue) && !$exists)
         {
             return false;
         }

@@ -57,7 +57,7 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
 
     public function deployPlugin($url)
     {
-        $sep = (substr($url, - 1) == "/" ? "" : "/");
+        $sep = (substr($url, -1) == "/" ? "" : "/");
         $ctx = stream_context_create(array('ftp' => array('overwrite' => true)));
         
         $ok = @copy(dirname(__FILE__) . "/magmi_remoteagent.php", $url . $sep . "magmi_remoteagent.php", $ctx);

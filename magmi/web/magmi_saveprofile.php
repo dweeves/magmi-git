@@ -3,11 +3,11 @@ $profile = $_REQUEST["profile"];
 $dslist = $_REQUEST["PLUGINS_DATASOURCES:class"];
 $genlist = $_REQUEST["PLUGINS_GENERAL:classes"];
 $iplist = $_REQUEST["PLUGINS_ITEMPROCESSORS:classes"];
-if (! isset($iplist))
+if (!isset($iplist))
 {
     $iplist = "";
 }
-if (! isset($genlist))
+if (!isset($genlist))
 {
     $genlist = "";
 }
@@ -48,13 +48,13 @@ if ($epc->save())
             
             foreach ($paramlist as $pname)
             {
-                if (! isset($parr[$pname]))
+                if (!isset($parr[$pname]))
                 {
                     $parr[$pname] = 0;
                 }
             }
             $farr = array_merge($sarr, $parr);
-            if (! $plinst->persistParams($farr))
+            if (!$plinst->persistParams($farr))
             {
                 $lasterr = error_get_last();
                 echo "<div class='error'>" . $lasterr['message'] . "</div>";

@@ -15,7 +15,7 @@ class ProgressParser
         }
         else
         {
-            if (! isset($this->_simpleparsers[$ltype]))
+            if (!isset($this->_simpleparsers[$ltype]))
             {
                 $this->_simpleparsers[$ltype] = array();
             }
@@ -68,7 +68,7 @@ class DefaultProgressLineParser extends ProgressLineParser
 
     public function storeData($type, $data)
     {
-        if (! isset($this->stored[$type]))
+        if (!isset($this->stored[$type]))
         {
             $this->stored[$type] = array();
         }
@@ -77,7 +77,7 @@ class DefaultProgressLineParser extends ProgressLineParser
 
     public function accData($type, $data)
     {
-        if (! isset($this->stored[$type]))
+        if (!isset($this->stored[$type]))
         {
             $this->stored[$type] = 0;
         }

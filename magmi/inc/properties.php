@@ -1,5 +1,5 @@
 <?php
-if (! defined("DIRSEP"))
+if (!defined("DIRSEP"))
 {
     define("DIRSEP", DIRECTORY_SEPARATOR);
 }
@@ -36,7 +36,7 @@ class Properties
 
     public function load($file)
     {
-        if (! file_exists($file))
+        if (!file_exists($file))
         {
             return;
             // throw new FileNotFoundException();
@@ -73,7 +73,7 @@ class Properties
         foreach ($arr as $k => $v)
         {
             list ($section, $value) = explode(":", $k, 2);
-            if (! isset($conf[$section]))
+            if (!isset($conf[$section]))
             {
                 $conf[$section] = array();
             }
@@ -115,7 +115,7 @@ class Properties
                         if (is_array($elem2))
                         {
                             $celem2 = count($elem2);
-                            for ($i = 0; $i < $celem2; $i ++)
+                            for ($i = 0; $i < $celem2; $i++)
                             {
                                 $content .= $key2 . "[] = \"" . $this->esc($elem2[$i]) . "\"\n";
                             }
@@ -135,7 +135,7 @@ class Properties
                     if (is_array($elem))
                     {
                         $celem = count($elem);
-                        for ($i = 0; $i < $celem; $i ++)
+                        for ($i = 0; $i < $celem; $i++)
                         {
                             $content .= $key2 . "[] = \"" . $this->esc($elem[$i]) . "\"\n";
                         }
@@ -149,11 +149,11 @@ class Properties
             }
         }
         
-        if (! $handle = fopen($path, 'w'))
+        if (!$handle = fopen($path, 'w'))
         {
             return false;
         }
-        if (! fwrite($handle, $content))
+        if (!fwrite($handle, $content))
         {
             return false;
         }

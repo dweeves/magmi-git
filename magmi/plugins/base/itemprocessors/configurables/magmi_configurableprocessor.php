@@ -22,7 +22,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
      */
     public function getConfigurableOptsFromAsId($asid)
     {
-        if (! isset($this->_configurable_attrs[$asid]))
+        if (!isset($this->_configurable_attrs[$asid]))
         {
             $ea = $this->tablename("eav_attribute");
             $eea = $this->tablename("eav_entity_attribute");
@@ -179,7 +179,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         {
             $confopts = explode(",", $item["configurable_attributes"]);
             $copts = count($confopts);
-            for ($i = 0; $i < $copts; $i ++)
+            for ($i = 0; $i < $copts; $i++)
             {
                 $confopts[$i] = trim($confopts[$i]);
             }
@@ -301,7 +301,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 $this->insert($sql, $data);
                 unset($data);
             }
-            $idx ++;
+            $idx++;
         }
         unset($confopts);
         switch ($matchmode)
@@ -340,7 +340,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function processColumnList(&$cols, $params = null)
     {
-        if (! in_array("options_container", $cols))
+        if (!in_array("options_container", $cols))
         {
             $cols = array_unique(array_merge($cols, array("options_container")));
             $this->_use_defaultopc = true;

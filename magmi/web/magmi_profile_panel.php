@@ -78,7 +78,7 @@ foreach ($plugins as $k => $pclasslist)
     {
         // invoke static method, using call_user_func (5.2 compat mode)
         $pcat = call_user_func(array($pclass,"getCategory"));
-        if (! isset($pcats[$pcat]))
+        if (!isset($pcats[$pcat]))
         {
             $pcats[$pcat] = array();
         }
@@ -173,7 +173,7 @@ foreach ($order as $k)
             
             foreach ($pinf as $pclass)
             {
-                if (! in_array($pclass, $pclasslist))
+                if (!in_array($pclass, $pclasslist))
                 {
                     continue;
                 }

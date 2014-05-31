@@ -74,7 +74,7 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
         $dcols = array_diff(array_keys($this->_dset), array_intersect($cols, array_keys($this->_dset)));
         foreach ($dcols as $col)
         {
-            if (! empty($this->_dset[$col]))
+            if (!empty($this->_dset[$col]))
             {
                 $cols[] = $col;
                 $this->_dcols[] = $col;

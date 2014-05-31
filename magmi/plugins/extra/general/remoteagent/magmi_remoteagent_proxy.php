@@ -48,7 +48,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
     public function __construct($magurl, $raurl)
     {
         parent::__construct($magurl);
-        $sep = (substr($raurl, - 1) == "/" ? "" : "/");
+        $sep = (substr($raurl, -1) == "/" ? "" : "/");
         $this->_raurl = $raurl . $sep . "magmi_remoteagent.php";
         MagentoDirHandlerFactory::getInstance()->registerHandler($this);
     }
@@ -67,7 +67,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
         }
         $ctx = stream_context_create($ctxparams);
         $fp = @fopen($url, 'rb', false, $ctx);
-        if (! $fp)
+        if (!$fp)
         {
             return false;
         }
@@ -118,7 +118,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
         {
             $this->_lasterror = $r->error;
         }
-        return ! $r->is_error;
+        return !$r->is_error;
     }
 
     public function unlink($filepath)
@@ -128,7 +128,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
         {
             $this->_lasterror = $r->error;
         }
-        return ! $r->is_error;
+        return !$r->is_error;
     }
 
     public function exec_cmd($cmd, $params, $workingdir = null)
@@ -150,7 +150,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
         {
             $this->_lasterror = $r->error;
         }
-        return ! $r->is_error;
+        return !$r->is_error;
     }
 
     public function copy($srcpath, $destpath)
@@ -160,7 +160,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
         {
             $this->_lasterror = $r->error;
         }
-        return ! $r->is_error;
+        return !$r->is_error;
     }
 
     public function getLastError()

@@ -49,7 +49,7 @@ class ValueRemapper
     public function mapmulti($val, $sep = ',', $ci = false)
     {
         $vals = explode($sep, $val);
-        for ($i = 0; $i < count($vals); $i ++)
+        for ($i = 0; $i < count($vals); $i++)
         {
             $vals[$i] = $this->map($vals[$i], $ci);
         }
@@ -58,7 +58,7 @@ class ValueRemapper
 
     public function setMap($csv)
     {
-        if (! isset($this->_maps[$csv]))
+        if (!isset($this->_maps[$csv]))
         {
             $this->_maps[$csv] = array();
             $this->_cimaps[$csv] = array();

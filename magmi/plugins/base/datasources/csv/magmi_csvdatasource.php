@@ -21,7 +21,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
     public function getScanDir($resolve = true)
     {
         $scandir = $this->getParam("CSV:basedir", "var/import");
-        if (! isabspath($scandir))
+        if (!isabspath($scandir))
         {
             $scandir = abspath($scandir, Magmi_Config::getInstance()->getMagentoDir(), $resolve);
         }
@@ -79,7 +79,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
         $this->log("Fetching CSV: $url", "startup");
         // output filename (current dir+remote filename)
         $csvdldir = dirname(__FILE__) . "/downloads";
-        if (! file_exists($csvdldir))
+        if (!file_exists($csvdldir))
         {
             @mkdir($csvdldir);
             @chmod($csvdldir, Magmi_Config::getInstance()->getDirMask());

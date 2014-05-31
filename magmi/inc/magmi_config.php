@@ -14,7 +14,7 @@ class DirbasedConfig extends Properties
 
     public function get($secname, $pname, $default = null)
     {
-        if (! isset($this->_props))
+        if (!isset($this->_props))
         {
             $this->load();
         }
@@ -38,7 +38,7 @@ class DirbasedConfig extends Properties
             $name = $this->_confname;
         }
         
-        if (! file_exists($name))
+        if (!file_exists($name))
         {
             $this->save();
         }
@@ -56,7 +56,7 @@ class DirbasedConfig extends Properties
 
     public function saveTo($arr, $newdir)
     {
-        if (! file_exists($newdir))
+        if (!file_exists($newdir))
         {
             mkdir($newdir, Magmi_Config::getInstance()->getDirMask());
         }
@@ -81,7 +81,7 @@ class ProfileBasedConfig extends DirbasedConfig
     {
         $subdir = ($this->_profile == "default" ? "" : DIRSEP . $this->_profile);
         $confdir = dirname(dirname(__FILE__)) . DIRSEP . "conf$subdir";
-        if (! file_exists($confdir))
+        if (!file_exists($confdir))
         {
             @mkdir($confdir, Magmi_Config::getInstance()->getDirMask());
         }
@@ -145,12 +145,12 @@ class Magmi_Config extends DirbasedConfig
 
     public function isDefault()
     {
-        return ! file_exists($this->_confname);
+        return !file_exists($this->_confname);
     }
 
     public function load($name = null)
     {
-        $conf = (! $this->isDefault()) ? $this->_confname : $this->_confname . ".default";
+        $conf = (!$this->isDefault()) ? $this->_confname : $this->_confname . ".default";
         parent::load($conf);
         $alt = false;
         if ($this->hasSection('USE_ALTERNATE'))
@@ -195,7 +195,7 @@ class Magmi_Config extends DirbasedConfig
         {
             foreach ($arr as $k => $v)
             {
-                if (! preg_match("/\w+:\w+/", $k))
+                if (!preg_match("/\w+:\w+/", $k))
                 {
                     unset($arr[$k]);
                 }
@@ -230,7 +230,7 @@ class EnabledPlugins_Config extends ProfileBasedConfig
     public function getEnabledPluginFamilies($typelist)
     {
         $btlist = array();
-        if (! is_array($typelist))
+        if (!is_array($typelist))
         {
             $typelist = explode(",", $typelist);
         }

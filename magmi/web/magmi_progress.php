@@ -3,7 +3,7 @@ require_once ("../inc/magmi_statemanager.php");
 require_once ("progress_parser.php");
 
 $logfile = $_REQUEST["logfile"];
-if (! isset($logfile))
+if (!isset($logfile))
 {
     $logfile = Magmi_StateManager::getProgressFile();
 }
@@ -164,7 +164,7 @@ foreach (array("error","warning") as $gtype)
 	
 <?php
 $skipped = $parser->getData("skipped");
-if (! is_array($skipped) && $skipped > 0)
+if (!is_array($skipped) && $skipped > 0)
 :
     ?>
 <div class='log_info'>Skipped <?php echo $parser->getData("skipped")?> records</div>

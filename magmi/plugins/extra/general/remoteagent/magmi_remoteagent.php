@@ -29,7 +29,7 @@ class MRA_FSHelper
         }
         foreach (array("popen","shell_exec") as $func)
         {
-            if (! in_array($func, $is_disabled))
+            if (!in_array($func, $is_disabled))
             {
                 return $func;
             }
@@ -48,7 +48,7 @@ class MRA_MagentoDirHandlerFactory
 
     public static function getInstance()
     {
-        if (! isset(self::$_instance))
+        if (!isset(self::$_instance))
         {
             self::$_instance = new MagentoDirHandlerFactory();
         }
@@ -58,7 +58,7 @@ class MRA_MagentoDirHandlerFactory
     public function registerHandler($obj)
     {
         $cls = get_class($obj);
-        if (! isset($this->_handlers[$cls]))
+        if (!isset($this->_handlers[$cls]))
         {
             $this->_handlers[$cls] = $obj;
         }
@@ -148,7 +148,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
         $this->_errors = array();
         $ret = true;
         $context = $this->createContext($url);
-        if (! $this->urlExists($url))
+        if (!$this->urlExists($url))
         {
             $this->_errors = array("type" => "download error","message" => "URL $url is unreachable");
             return false;
@@ -162,7 +162,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
         curl_setopt($context, CURLOPT_FILE, $fp);
         curl_setopt($context, CURLOPT_HEADER, 0);
         curl_setopt($context, CURLOPT_FAILONERROR, true);
-        if (! ini_get('safe_mode'))
+        if (!ini_get('safe_mode'))
         {
             curl_setopt($context, CURLOPT_FOLLOWLOCATION, 1);
         }
@@ -194,14 +194,14 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
 
     public function copyRemoteFile($url, $dest)
     {
-        if (! $this->urlExists($url))
+        if (!$this->urlExists($url))
         {
             $this->_errors = array("type" => "target error","message" => "URL $remoteurl is unreachable");
             return false;
         }
         
         $ok = @copy($url, $dest);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_errors = error_get_last();
         }
@@ -290,7 +290,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
             $mask = octdec('755');
         }
         $ok = @mkdir($mp, $mask, $rec);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = error_get_last();
         }
@@ -306,7 +306,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
             $mask = octdec('755');
         }
         $ok = @chmod($mp, $mask);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = error_get_last();
         }
@@ -329,7 +329,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
         $rfg = RemoteFileGetterFactory::getFGInstance();
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $destpath));
         $ok = $rfg->copyRemoteFile($remoteurl, $mp);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $rfg->getErrors();
         }
@@ -347,7 +347,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
         else
         {
             $result = @copy($srcpath, $destpath);
-            if (! $result)
+            if (!$result)
             {
                 $this->_lasterror = error_get_last();
             }
@@ -364,7 +364,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
             case "popen":
                 $x = popen($full_cmd, "r");
                 $out = "";
-                while (! feof($x))
+                while (!feof($x))
                 {
                     $data = fread($x, 1024);
                     $out .= $data;
@@ -423,9 +423,9 @@ class Magmi_RemoteAgent
     {
         $missing = array();
         $plist = Magmi_RemoteAgent::$apidesc[$api];
-        for ($i = 0; $i < count($plist); $i ++)
+        for ($i = 0; $i < count($plist); $i++)
         {
-            if (! isset($params[$plist[$i]]))
+            if (!isset($params[$plist[$i]]))
             {
                 $missing[] = $plist[$i];
             }
@@ -443,7 +443,7 @@ class Magmi_RemoteAgent
     public function copy($params)
     {
         $ok = $this->_mdh->copy($params['src'], $params['dest']);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $this->_mdh->getLastError();
         }
@@ -460,7 +460,7 @@ class Magmi_RemoteAgent
     {
         $rec = isset($params['rec']);
         $ok = $this->_mdh->mkdir($params['path'], $params['mask'], $rec);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $this->_mdh->getLastError();
         }
@@ -470,7 +470,7 @@ class Magmi_RemoteAgent
     public function chmod($params)
     {
         $ok = $this->_mdh->chmod($params['path'], $params['mask']);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $this->_mdh->getLastError();
         }
@@ -480,7 +480,7 @@ class Magmi_RemoteAgent
     public function unlink($params)
     {
         $ok = $this->_mdh->unlink($params['path']);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $this->_mdh->getLastError();
         }
@@ -489,7 +489,7 @@ class Magmi_RemoteAgent
 
     public static function getInstance()
     {
-        if (! isset(self::$_instance))
+        if (!isset(self::$_instance))
         {
             self::$_instance = new Magmi_RemoteAgent();
         }
@@ -518,10 +518,10 @@ function buildError($errname, $errdata)
     return array("error" => array($errname,$errdata));
 }
 
-if (! class_exists('Magmi_Plugin'))
+if (!class_exists('Magmi_Plugin'))
 {
     
-    if (! isset($_REQUEST['api']))
+    if (!isset($_REQUEST['api']))
     {
         header('Status 406 : Unauthorized call', true, 406);
         exit();
@@ -529,7 +529,7 @@ if (! class_exists('Magmi_Plugin'))
     
     $api = $_REQUEST['api'];
     
-    if (! in_array($api, array_keys(Magmi_RemoteAgent::$apidesc)))
+    if (!in_array($api, array_keys(Magmi_RemoteAgent::$apidesc)))
     {
         header('Status 406 : Unauthorized call', true, 406);
         exit();

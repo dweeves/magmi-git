@@ -30,7 +30,7 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
      */
     public function getTrimmableCols($item)
     {
-        if (! $this->_scanned)
+        if (!$this->_scanned)
         {
             foreach (array_keys($item) as $col)
             {

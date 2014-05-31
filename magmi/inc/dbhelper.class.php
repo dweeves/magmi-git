@@ -71,6 +71,7 @@ class DBHelper
      *
      *
      *
+     *
      * store output in some debug file
      *
      * @param unknown_type $data            
@@ -88,6 +89,7 @@ class DBHelper
     }
 
     /**
+     *
      *
      *
      *
@@ -114,6 +116,7 @@ class DBHelper
      *
      *
      *
+     *
      * Helper method to try to guess mysql socket based on some tricky phpinfo analysis
      *
      * @throws Exception if something got wrong during detection
@@ -126,7 +129,7 @@ class DBHelper
         {
             $mysqlsock = ini_get("mysql.default_socket");
             
-            if (isset($mysqlsock) && ! @file_exists($mysqlsock))
+            if (isset($mysqlsock) && !@file_exists($mysqlsock))
             {
                 if (error_get_last() !== null)
                 {
@@ -142,7 +145,7 @@ class DBHelper
                     $mysqlsock = $matches[1];
                 }
             }
-            if (isset($mysqlsock) && ! @file_exists($mysqlsock))
+            if (isset($mysqlsock) && !@file_exists($mysqlsock))
             {
                 $mysqlsock = "";
             }
@@ -170,6 +173,7 @@ class DBHelper
      *
      *
      *
+     *
      * Enter description here ...
      *
      * @param unknown_type $nbreq            
@@ -193,6 +197,7 @@ class DBHelper
     /**
      * Garbages statement cache if above 500 , removes less used statements
      * Enter description here .
+     *
      *
      * ..
      */
@@ -218,14 +223,14 @@ class DBHelper
      */
     public function exec_stmt($sql, $params = null, $close = true)
     {
-        $this->_nreq ++;
+        $this->_nreq++;
         $this->_timecounter->initTime("indb", null, $this->_tcats);
         $this->_timecounter->incCounter("requests");
         $t0 = microtime(true);
         if ($this->_use_stmt_cache && strpos($sql, "'") == false)
         {
             // if sql not in statement cache
-            if (! isset($this->prepared[$sql]))
+            if (!isset($this->prepared[$sql]))
             {
                 $this->garbageStmtCache();
                 // create new prepared statement
@@ -236,7 +241,7 @@ class DBHelper
             else
             {
                 // get from statement cache
-                $this->prepared[$sql][1] ++;
+                $this->prepared[$sql][1]++;
                 $stmt = $this->prepared[$sql][0];
             }
         }
@@ -248,7 +253,7 @@ class DBHelper
         $this->_laststmt = $stmt;
         if ($params != null)
         {
-            if (! $this->is_assoc($params))
+            if (!$this->is_assoc($params))
             {
                 $params = is_array($params) ? $params : array($params);
                 $stmt->execute($params);
@@ -299,6 +304,7 @@ class DBHelper
     /**
      * Performs an update statement
      * Enter description here .
+     *
      *
      * ..
      *
@@ -415,6 +421,7 @@ class DBHelper
      * Quote array values in order to be used as parameters (handy if array used directly in explode in a IN condition)
      * Enter description here .
      *
+     *
      * ..
      *
      * @param array $arr
@@ -431,6 +438,7 @@ class DBHelper
     }
 
     /**
+     *
      *
      *
      *
@@ -455,17 +463,19 @@ class DBHelper
      *
      *
      *
+     *
      * transform an array of values into equivalent comma separated list of unnamed placeholders.
      *
      * @param array $arr            
      */
     public function arr2values($arr)
     {
-        $str = substr(str_repeat("?,", count($arr)), 0, - 1);
+        $str = substr(str_repeat("?,", count($arr)), 0, -1);
         return $str;
     }
 
     /**
+     *
      *
      *
      *
@@ -479,7 +489,7 @@ class DBHelper
     public function arr2select($arr, $cname = "id")
     {
         $rpt = str_repeat("? AS $cname UNION SELECT ", count($arr));
-        $subsel = substr($rpt, 0, - 1 * strlen(" UNION SELECT "));
+        $subsel = substr($rpt, 0, -1 * strlen(" UNION SELECT "));
         return "(SELECT $subsel)";
     }
 
@@ -501,6 +511,7 @@ class DBHelper
      *
      *
      *
+     *
      * transform a associative array into a list of update prepared placeholders
      *
      * @param array $arr
@@ -519,6 +530,7 @@ class DBHelper
     }
 
     /**
+     *
      *
      *
      *
@@ -574,6 +586,7 @@ class DBHelper
      *
      *
      *
+     *
      * Sets debug management
      *
      * @param bool $debug
@@ -588,6 +601,7 @@ class DBHelper
     }
 
     /**
+     *
      *
      *
      *
@@ -611,7 +625,7 @@ class DBHelper
             $params = $matches[1];
         }
         $cparams = count($params);
-        for ($i = 0; $i < $cparams; $i ++)
+        for ($i = 0; $i < $cparams; $i++)
         {
             $param = $params[$i];
             $pdef = $pdefs[$i];
@@ -627,7 +641,7 @@ class DBHelper
                 $stmt = str_replace($pdef, ":$pname", $stmt);
             }
         }
-        for ($i = 0; $i < $cparams; $i ++)
+        for ($i = 0; $i < $cparams; $i++)
         {
             $param = $params[$i];
             $pinfo = explode("/", $param);
@@ -644,6 +658,7 @@ class DBHelper
      *
      *
      *
+     *
      * Checks wether an array is associative
      *
      * @param mixed $var
@@ -655,6 +670,7 @@ class DBHelper
     }
 
     /**
+     *
      *
      *
      *

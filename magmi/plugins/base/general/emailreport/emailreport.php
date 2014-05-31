@@ -38,13 +38,13 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
         $attachments = $this->_attach;
         if ($attachments !== false)
         {
-            for ($i = 0; $i < count($attachments); $i ++)
+            for ($i = 0; $i < count($attachments); $i++)
             {
                 if (is_file($attachments[$i]))
                 {
                     $fileatt = $attachments[$i];
                     $fileatt_type = "application/octet-stream";
-                    $start = strrpos($attachments[$i], '/') == - 1 ? strrpos($attachments[$i], '//') : strrpos($attachments[$i], '/') + 1;
+                    $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos($attachments[$i], '/') + 1;
                     $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
                     
                     $file = fopen($fileatt, 'rb');
@@ -106,7 +106,7 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
             }
             
             $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"), $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"), $this->getParam("EMAILREP:body", "report attached"), $this->_attach);
-            if (! $ok)
+            if (!$ok)
             {
                 $this->log("Cannot send email", "error");
             }

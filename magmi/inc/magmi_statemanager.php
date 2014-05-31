@@ -1,5 +1,5 @@
 <?php
-if (! defined("DIRSEP"))
+if (!defined("DIRSEP"))
 {
     define("DIRSEP", DIRECTORY_SEPARATOR);
 }
@@ -34,7 +34,7 @@ class Magmi_StateManager
 
     public static function setState($state, $force = false)
     {
-        if (self::$_state == $state && ! $force)
+        if (self::$_state == $state && !$force)
         {
             return;
         }
@@ -54,9 +54,9 @@ class Magmi_StateManager
 
     public static function getState($cached = false)
     {
-        if (! $cached)
+        if (!$cached)
         {
-            if (! file_exists(self::getStateFile()))
+            if (!file_exists(self::getStateFile()))
             {
                 self::setState("idle", true);
             }

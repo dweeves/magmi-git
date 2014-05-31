@@ -71,7 +71,7 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
                     $mnane = trim($mname);
                     $item[$mname] = $item[$oname];
                 }
-                if (! in_array($oname, $mapped))
+                if (!in_array($oname, $mapped))
                 {
                     unset($item[$oname]);
                 }

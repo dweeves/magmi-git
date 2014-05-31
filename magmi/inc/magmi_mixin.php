@@ -29,7 +29,7 @@ class Magmi_Mixin
             $data = substr($data, 8);
         }
         $ccallers = count($this->_callers);
-        for ($i = 0; $i < $ccallers; $i ++)
+        for ($i = 0; $i < $ccallers; $i++)
         {
             if (method_exists($this->_callers[$i], $data))
             {

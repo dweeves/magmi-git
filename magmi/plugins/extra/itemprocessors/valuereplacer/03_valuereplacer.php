@@ -22,7 +22,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
         
         // only check for "before" compatible fields
         
-        for ($i = 0; $i < $cbefore; $i ++)
+        for ($i = 0; $i < $cbefore; $i++)
         {
             $attname = $this->_before[$i];
             if (isset($this->_rvals[$attname]))
@@ -38,7 +38,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
         foreach ($this->_rvals as $attname => $pvalue)
         {
             // do not reparse "before" fields
-            if (! in_array($attname, $this->_before))
+            if (!in_array($attname, $this->_before))
             {
                 $item[$attname] = $this->parseCalculatedValue($pvalue, $item, $params);
             }

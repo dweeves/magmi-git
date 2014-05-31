@@ -4,7 +4,7 @@ session_start();
 function extractZipDir($zip, $bdir, $zdir)
 {
     $files = array();
-    for ($i = 0; $i < $zip->numFiles; $i ++)
+    for ($i = 0; $i < $zip->numFiles; $i++)
     {
         $entry = $zip->getNameIndex($i);
         if (preg_match("|^$zdir/(.*)|", $entry, $matches))
@@ -52,7 +52,7 @@ try
         $zip->close();
         $_SESSION["magmi_install"] = array("error","Invalid Magmi Archive");
     }
-    if (! $ok)
+    if (!$ok)
     {
         $_SESSION["magmi_install"] = array("error","Cannot unzip Magmi Archive");
     }

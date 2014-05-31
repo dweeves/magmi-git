@@ -5,7 +5,7 @@ $tracefile = Magmi_StateManager::getTraceFile();
 $f = fopen($tracefile, "r");
 $display = false;
 $startout = false;
-while (! feof($f))
+while (!feof($f))
 {
     $line = fgets($f);
     
@@ -30,7 +30,7 @@ while (! feof($f))
     }
 }
 fclose($f);
-if (! $display)
+if (!$display)
 {
     echo "Trace not found";
 }

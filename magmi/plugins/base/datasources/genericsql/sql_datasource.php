@@ -85,7 +85,7 @@ class SQL_Datasource extends Magmi_Datasource
         {
             $sql = file_get_contents($this->sqlfile . ".count");
         }
-        if (! isset($sql))
+        if (!isset($sql))
         {
             $sql = "SELECT COUNT(*) as cnt FROM (" . str_replace("\n", " ", $this->extractsql) . ") as t1";
         }
@@ -106,12 +106,12 @@ class SQL_Datasource extends Magmi_Datasource
 
     public function getNextRecord()
     {
-        if (! isset($this->stmt))
+        if (!isset($this->stmt))
         {
             $this->stmt = $this->dbh->select($this->extractsql);
         }
         $data = $this->stmt->fetch();
-        if (! $data)
+        if (!$data)
         {
             return false;
         }

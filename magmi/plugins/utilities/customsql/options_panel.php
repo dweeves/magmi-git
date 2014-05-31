@@ -11,7 +11,7 @@ $dr = $this->getParam("UTCSQL:queryfile");
 
 if (count($sqlfiles) > 0)
 {
-    if (! isset($dr))
+    if (!isset($dr))
     {
         $dr = $sqlfiles[0];
     }

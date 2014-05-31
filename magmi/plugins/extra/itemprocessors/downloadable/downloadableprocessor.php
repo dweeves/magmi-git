@@ -66,7 +66,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                 {
                     $addLinks = array();
                     
-                    for ($j = $nbupdate; $j < count($links); $j ++)
+                    for ($j = $nbupdate; $j < count($links); $j++)
                     {
                         $addLinks[] = $links[$j];
                     }
@@ -87,12 +87,12 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                                 $addLink["sample"] = $this->copyFile($addLink);
                             }
                         }
-                        $i ++;
+                        $i++;
                     }
                 }
                 elseif ($nbdiff < 0)
                 { // update existing and delete links (more in database than xml file)
-                    $nbdiff = $nbdiff * - 1; // number to delete
+                    $nbdiff = $nbdiff * -1; // number to delete
                     $nbupdate = count($existingLinks) - $nbdiff; // nb links to update = number of existing links - difference
                     $i = 0;
                     $deleteLinks = array();
@@ -107,7 +107,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                             if ($i >= $nbdiff)
                                 break;
                             $deleteLinks[] = $deletelink["link_id"];
-                            $i ++;
+                            $i++;
                         }
                         $this->deleteLinks($deleteLinks);
                     }
@@ -122,7 +122,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                             break;
                         $links[$i]["link_id"] = $updatelink["link_id"];
                         $updateLinks[] = $links[$i];
-                        $i ++;
+                        $i++;
                     }
                 }
                 
@@ -170,7 +170,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
             else
             {
                 
-                if (! @copy($link["file"], $cpfilename))
+                if (!@copy($link["file"], $cpfilename))
                 {
                     unlink($cpfilename);
                     @copy($link["file"], $cpfilename);

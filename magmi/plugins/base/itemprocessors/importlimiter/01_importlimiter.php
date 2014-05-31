@@ -3,7 +3,7 @@
 class ImportLimiter extends Magmi_ItemProcessor
 {
     protected $_recranges;
-    protected $_rmax = - 1;
+    protected $_rmax = -1;
     protected $_filters;
     protected $_col_filter = NULL;
 
@@ -29,7 +29,7 @@ class ImportLimiter extends Magmi_ItemProcessor
             $match = preg_match("|$re|", $v);
             if ($negate)
             {
-                $match = ! $match;
+                $match = !$match;
             }
             if ($match)
             {
@@ -44,15 +44,15 @@ class ImportLimiter extends Magmi_ItemProcessor
         $crow = $this->getCurrentRow();
         $ok = (count($this->_recranges) == 0);
         
-        if (! $ok)
+        if (!$ok)
         {
-            if ($this->_rmax > - 1 && $crow == $this->_rmax)
+            if ($this->_rmax > -1 && $crow == $this->_rmax)
             {
                 $this->setLastItem($item);
             }
             foreach ($this->_recranges as $rr)
             {
-                $ok = ($crow >= $rr[0] && ($crow <= $rr[1] || $rr[1] == - 1));
+                $ok = ($crow >= $rr[0] && ($crow <= $rr[1] || $rr[1] == -1));
                 if ($ok)
                 {
                     break;
@@ -65,8 +65,8 @@ class ImportLimiter extends Magmi_ItemProcessor
             foreach ($this->_filters as $fltdef)
             {
                 // negative filters
-                $ok = $ok && (! $this->filtermatch($item, $fltdef));
-                if (! $ok)
+                $ok = $ok && (!$this->filtermatch($item, $fltdef));
+                if (!$ok)
                 {
                     break;
                 }
@@ -108,7 +108,7 @@ class ImportLimiter extends Magmi_ItemProcessor
             $rlist = explode("-", $rdef);
             if ($rlist[0] == "")
             {
-                $rlist[0] = - 1;
+                $rlist[0] = -1;
             }
             else
             {
@@ -118,12 +118,12 @@ class ImportLimiter extends Magmi_ItemProcessor
             {
                 if ($rlist[1] == "")
                 {
-                    $rlist[1] = - 1;
+                    $rlist[1] = -1;
                 }
                 else
                 {
                     $rmax = $rlist[1];
-                    if ($rmax > $this->_rmax && $this->_rmax != - 1)
+                    if ($rmax > $this->_rmax && $this->_rmax != -1)
                     {
                         $this->_rmax = $rmax;
                     }

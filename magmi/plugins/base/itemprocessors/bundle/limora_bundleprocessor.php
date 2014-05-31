@@ -69,7 +69,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             return true;
         }
         
-        if (! empty($item['bundle_skus']))
+        if (!empty($item['bundle_skus']))
         {
             $options = $this->_createOptions($item, $params);
             $this->_linkProducts($item, $params, $options);
@@ -137,16 +137,16 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             $option['store_id'] = $storeId;
             $existingOption = $this->_getExistingOption($option['code'], $storeId, $params['product_id']);
             
-            if (! $this->_arraysEqual($existingOption, $option, 'option_id'))
+            if (!$this->_arraysEqual($existingOption, $option, 'option_id'))
             {
-                if (! empty($existingOption['option_id']))
+                if (!empty($existingOption['option_id']))
                 {
                     $option['option_id'] = $existingOption['option_id'];
                     $sql = "UPDATE $opt AS opt SET opt.required = :required, opt.position = :position, opt.type = :type WHERE opt.option_id = :option_id";
                     $bind = array('required' => $option['required'],'position' => $option['position'],'type' => $option['type'],'option_id' => $option['option_id']);
                     $this->update($sql, $bind);
                     
-                    if (! empty($option['title']))
+                    if (!empty($option['title']))
                     {
                         if (empty($existingOption['title']))
                         {
@@ -173,7 +173,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     $bind = array('option_id' => $option['option_id'],'store_id' => 0,'title' => $option['code']);
                     $this->insert($sql, $bind);
                     
-                    if (! empty($option['title']) && $option['store_id'] != 0)
+                    if (!empty($option['title']) && $option['store_id'] != 0)
                     {
                         $bind = array('option_id' => $option['option_id'],'store_id' => $option['store_id'],'title' => $option['title']);
                         $this->insert($sql, $bind);
@@ -223,7 +223,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         {
             if (substr($code, 0, 1) === '-')
             {
-                if (! $deleteAll)
+                if (!$deleteAll)
                 {
                     $sql = "DELETE opt FROM $opt AS opt
                         JOIN $optv AS optv ON optv.option_id = opt.option_id AND optv.store_id = 0
@@ -253,12 +253,12 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
     protected function _extractOptions($item)
     {
         $options = array();
-        if (! empty($item['bundle_options']))
+        if (!empty($item['bundle_options']))
         {
             $bundleOptions = explode(';', $item['bundle_options']);
             foreach ($bundleOptions as $bundleOption)
             {
-                if (! empty($bundleOption))
+                if (!empty($bundleOption))
                 {
                     $option = array();
                     $bundleOption = explode(':', $bundleOption);
@@ -275,12 +275,12 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             }
         }
         
-        if (! empty($item['bundle_skus']))
+        if (!empty($item['bundle_skus']))
         {
             $bundleSkus = explode(';', $item['bundle_skus']);
             foreach ($bundleSkus as $sku)
             {
-                if (! empty($sku))
+                if (!empty($sku))
                 {
                     $code = current(explode(':', $sku, 2));
                     if (empty($options[$code]))
@@ -320,7 +320,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         $bind = array('parent_id' => $productId,'code' => $code,'store_id' => $storeId);
         $existingOptions = $this->selectAll($sql, $bind);
         
-        if (! empty($existingOptions))
+        if (!empty($existingOptions))
         {
             return $existingOptions[0];
         }
@@ -347,9 +347,9 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             $sku['parent_product_id'] = $params['product_id'];
             $existingSku = $this->_getExistingSku($sku['option_id'], $sku['product_id']);
             
-            if (! $this->_arraysEqual($existingSku, $sku, 'selection_id'))
+            if (!$this->_arraysEqual($existingSku, $sku, 'selection_id'))
             {
-                if (! empty($existingSku['selection_id']))
+                if (!empty($existingSku['selection_id']))
                 {
                     $sku['selection_id'] = $existingSku['selection_id'];
                     $sql = "UPDATE $cpbs AS cpbs SET cpbs.position = :position, cpbs.is_default = :is_default, cpbs.selection_qty = :selection_qty, cpbs.selection_can_change_qty = :selection_can_change_qty, cpbs.selection_price_value = :selection_price_value, cpbs.selection_price_type = :selection_price_type WHERE cpbs.selection_id = :selection_id";
@@ -381,12 +381,12 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
     protected function _extractSkus($item)
     {
         $skus = array();
-        if (! empty($item['bundle_skus']))
+        if (!empty($item['bundle_skus']))
         {
             $bundleSkus = explode(';', $item['bundle_skus']);
             foreach ($bundleSkus as $bundleSku)
             {
-                if (! empty($bundleSku))
+                if (!empty($bundleSku))
                 {
                     $sku = array();
                     $bundleSku = explode(':', $bundleSku);
@@ -433,7 +433,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         $bind = array('option_id' => $option_id,'product_id' => $product_id);
         $existingSkus = $this->selectAll($sql, $bind);
         
-        if (! empty($existingSkus))
+        if (!empty($existingSkus))
         {
             return $existingSkus[0];
         }
@@ -453,11 +453,11 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
      */
     protected function _arraysEqual($dbArray, $csvArray, $idField = 'entity_id')
     {
-        if (! is_array($dbArray) || ! is_array($csvArray))
+        if (!is_array($dbArray) || !is_array($csvArray))
         {
             return false;
         }
-        if (empty($dbArray) && ! empty($csvArray))
+        if (empty($dbArray) && !empty($csvArray))
         {
             return false;
         }
@@ -468,7 +468,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             {
                 continue;
             }
-            if (! isset($csvArray[$key]) || $csvArray[$key] != $value)
+            if (!isset($csvArray[$key]) || $csvArray[$key] != $value)
             {
                 return false;
             }

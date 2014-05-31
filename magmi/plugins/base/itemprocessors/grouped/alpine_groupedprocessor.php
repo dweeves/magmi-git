@@ -91,7 +91,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $sskus = array();
         $qtys = array();
         $ccond = count($conddata);
-        for ($i = 0; $i < $ccond; $i ++)
+        for ($i = 0; $i < $ccond; $i++)
         {
             $skuinfo = explode("::", $conddata[$i]);
             if (count($skuinfo) > 2)
@@ -178,7 +178,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $res = $this->selectAll($sql, array($pid));
         $sskus = array();
         $cres = count($res);
-        for ($i = 0; $i < $cres; $i ++)
+        for ($i = 0; $i < $cres; $i++)
         {
             $sskus[$i] = $res[$i]["sku"];
         }
@@ -255,7 +255,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         }
         
         $pid = $params["product_id"];
-        $groupreset = ! isset($item['group_reset']) || $item['group_reset'] == 1;
+        $groupreset = !isset($item['group_reset']) || $item['group_reset'] == 1;
         $matchmode = $this->getMatchMode($item);
         switch ($matchmode)
         {
@@ -303,7 +303,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     private function trimarray(&$arr)
     {
         $carr = count($arr);
-        for ($i = 0; $i < $carr; $i ++)
+        for ($i = 0; $i < $carr; $i++)
         {
             $arr[$i] = trim($arr[$i]);
         }

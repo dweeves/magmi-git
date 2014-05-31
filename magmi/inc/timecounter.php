@@ -52,7 +52,7 @@ class TimeCounter
         }
         foreach ($tcats as $tcat)
         {
-            if (! isset($this->_timingcats[$tcat]))
+            if (!isset($this->_timingcats[$tcat]))
             {
                 $this->_timingcats[$tcat] = array("_counters" => array(),"_timers" => array());
             }
@@ -80,11 +80,11 @@ class TimeCounter
         }
         foreach ($this->_timingcats as $tcat => $dummy)
         {
-            if (! isset($this->_timingcats[$tcat]["_counters"][$cname]))
+            if (!isset($this->_timingcats[$tcat]["_counters"][$cname]))
             {
                 $this->_timingcats[$tcat]["_counters"][$cname] = 0;
             }
-            $this->_timingcats[$tcat]["_counters"][$cname] ++;
+            $this->_timingcats[$tcat]["_counters"][$cname]++;
         }
     }
 
@@ -98,7 +98,7 @@ class TimeCounter
         if (count($this->_timingcontext) == 0)
             return;
         
-        if (! isset($tcat))
+        if (!isset($tcat))
         {
             $tcats = $this->_timingcats;
         }
@@ -110,15 +110,15 @@ class TimeCounter
         
         foreach ($tcats as $tcat => $dummy)
         {
-            if (! isset($this->_timingcats[$tcat]["_timers"][$phase]))
+            if (!isset($this->_timingcats[$tcat]["_timers"][$phase]))
             {
                 $this->_timingcats[$tcat]["_timers"][$phase] = array();
             }
             $ctxc = count($this->_timingcontext);
-            for ($i = 0; $i < $ctxc; $i ++)
+            for ($i = 0; $i < $ctxc; $i++)
             {
                 $src = $this->_timingcontext[$i];
-                if (! isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
+                if (!isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
                 {
                     $this->_timingcats[$tcat]["_timers"][$phase][$src] = array("init" => $t,"dur" => 0);
                 }
@@ -154,7 +154,7 @@ class TimeCounter
         $end = microtime(true);
         foreach ($tcats as $tcat => $phasetimes)
         {
-            for ($i = 0; $i < $ctargets; $i ++)
+            for ($i = 0; $i < $ctargets; $i++)
             {
                 $src = $targets[$i];
                 if (isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))

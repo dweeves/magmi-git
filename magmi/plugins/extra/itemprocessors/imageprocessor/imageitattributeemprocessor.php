@@ -122,7 +122,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
                 $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude);
             }
-            $imageindex ++;
+            $imageindex++;
         }
         unset($images);
         // we don't want to insert after that
@@ -170,7 +170,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $scandirs = explode(";", $this->getParam("IMG:sourcedir"));
         $cscandirs = count($scandirs);
         // iterate on image sourcedirs, trying to resolve file name based on input value and current source dir
-        for ($i = 0; $i < $cscandirs && $imgfile === false; $i ++)
+        for ($i = 0; $i < $cscandirs && $imgfile === false; $i++)
         {
             $sd = $scandirs[$i];
             // scandir is relative, use mdh
@@ -222,7 +222,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         // trimming
         $ivalue = trim($ivalue);
         // If not already a remote image & force remote root, set it & set authentication
-        if (! is_remote_path($ivalue))
+        if (!is_remote_path($ivalue))
         {
             if ($this->_remoteroot != "")
             {
@@ -502,7 +502,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             return $impath;
         }
         /* test if imagefile comes from export */
-        if (! $this->_mdh->file_exists($targetpath) || $this->getParam("IMG:writemode") == "override")
+        if (!$this->_mdh->file_exists($targetpath) || $this->getParam("IMG:writemode") == "override")
         {
             // if we already had problems with this target,assume we'll get others.
             if ($this->isErrorImage($impath))
@@ -511,11 +511,11 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
             
             /* try to recursively create target dir */
-            if (! $this->_mdh->file_exists($l2d))
+            if (!$this->_mdh->file_exists($l2d))
             {
                 
                 $tst = $this->_mdh->mkdir($l2d, Magmi_Config::getInstance()->getDirMask(), true);
-                if (! $tst)
+                if (!$tst)
                 {
                     // if we had problem creating target directory,add target to error cache
                     $errors = $this->_mdh->getLastError();
@@ -526,7 +526,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 }
             }
             
-            if (! $this->saveImage($imgfile, $targetpath))
+            if (!$this->saveImage($imgfile, $targetpath))
             {
                 $errors = $this->_mdh->getLastError();
                 $this->fillErrorAttributes($item);
@@ -560,7 +560,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function processItemAfterId(&$item, $params = null)
     {
-        if (! $this->_active)
+        if (!$this->_active)
         {
             return true;
         }
@@ -569,7 +569,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         foreach ($this->_img_baseattrs as $attrcode)
         {
             // if only image/small_image/thumbnail label is present (ie: no image field)
-            if (isset($item[$attrcode . "_label"]) && ! isset($item[$attrcode]))
+            if (isset($item[$attrcode . "_label"]) && !isset($item[$attrcode]))
             {
                 // force label update
                 $attrdesc = $this->getAttrInfo($attrcode);
@@ -578,7 +578,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
         }
         // Reset media_gallery
-        $galreset = ! (isset($item["media_gallery_reset"])) || $item["media_gallery_reset"] == 1;
+        $galreset = !(isset($item["media_gallery_reset"])) || $item["media_gallery_reset"] == 1;
         $forcereset = (isset($item["media_gallery_reset"])) && $item["media_gallery_reset"] == 1;
         
         if ((isset($item["media_gallery"]) && $galreset) || $forcereset)
@@ -618,7 +618,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     // Cleanup gallery from removed images if no more image values are present in any store
     public function endImport()
     {
-        if (! $this->_active)
+        if (!$this->_active)
         {
             return;
         }

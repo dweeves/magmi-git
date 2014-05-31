@@ -14,7 +14,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
 
     public function getStoreId($sc)
     {
-        if (! isset($this->_storeids[$sc]))
+        if (!isset($this->_storeids[$sc]))
         {
             $cs = $this->tablename("core_store");
             $sid = $this->selectOne("SELECT store_id FROM $cs WHERE code=?", array($sc), "store_id");
@@ -25,7 +25,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
 
     public function getOptAttributeInfos($attrcode)
     {
-        if (! isset($this->_attrinfos[$attrcode]))
+        if (!isset($this->_attrinfos[$attrcode]))
         {
             $ea = $this->tablename("eav_attribute");
             $sql = "SELECT * FROM $ea WHERE attribute_code=? AND entity_type_id=4 AND frontend_input IN ('select')";
@@ -54,7 +54,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
         {
             $csmode = "COLLATE utf8_bin";
         }
-        if (! preg_match("re::(.*)", $from, $matches))
+        if (!preg_match("re::(.*)", $from, $matches))
         {
             $where = "(SELECT eao.option_id FROM 
 			$eao as eao 
@@ -117,7 +117,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
     public function getScanDir($resolve = true)
     {
         $scandir = $this->getParam("CSV:basedir", "var/import");
-        if (! isabspath($scandir))
+        if (!isabspath($scandir))
         {
             $scandir = abspath($scandir, Magmi_Config::getInstance()->getMagentoDir(), $resolve);
         }

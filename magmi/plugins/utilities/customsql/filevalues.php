@@ -1,5 +1,5 @@
 <?php
-if (! isset($dr))
+if (!isset($dr))
 {
     if (isset($_REQUEST['UTCSQL:queryfile']))
     {

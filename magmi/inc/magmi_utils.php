@@ -14,7 +14,7 @@ function falseifempty($val)
 // test for empty string
 function testempty($arr, $val)
 {
-    return ! isset($arr[$val]) || strlen(trim($arr[$val])) == 0;
+    return !isset($arr[$val]) || strlen(trim($arr[$val])) == 0;
 }
 
 // place a DELETE maker for empty values
@@ -28,7 +28,7 @@ function csl2arr($cslarr, $sep = ",")
 {
     $arr = explode($sep, $cslarr);
     $carr = count($arr);
-    for ($i = 0; $i < $carr; $i ++)
+    for ($i = 0; $i < $carr; $i++)
     {
         $arr[$i] = trim($arr[$i]);
     }
@@ -39,7 +39,7 @@ function csl2arr($cslarr, $sep = ",")
 function trimarray(&$arr)
 {
     $carr = count($arr);
-    for ($i = 0; $i < $carr; $i ++)
+    for ($i = 0; $i < $carr; $i++)
     {
         $arr[$i] = trim($arr[$i]);
     }
@@ -78,7 +78,7 @@ function abspath($path, $basepath = "", $resolve = true)
         $basepath = dirname(dirname(__FILE__));
     }
     $cpath = str_replace('//', '/', $basepath . "/" . $path);
-    if ($resolve && ! is_remote_path($cpath))
+    if ($resolve && !is_remote_path($cpath))
     {
         $abs = realpath($cpath);
     }
@@ -87,7 +87,7 @@ function abspath($path, $basepath = "", $resolve = true)
         $inparts = explode("/", $cpath);
         $outparts = array();
         $cinparts = count($inparts);
-        for ($i = 0; $i < $cinparts; $i ++)
+        for ($i = 0; $i < $cinparts; $i++)
         {
             if ($inparts[$i] == '..')
             {
@@ -136,7 +136,7 @@ function truepath($path)
         $path = readlink($path);
     }
     // put initial separator that could have been lost
-    $path = ! $unipath ? '/' . $path : $path;
+    $path = !$unipath ? '/' . $path : $path;
     return $path;
 }
 

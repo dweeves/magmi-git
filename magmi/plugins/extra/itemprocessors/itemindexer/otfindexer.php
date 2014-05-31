@@ -71,7 +71,7 @@ class ItemIndexer extends Magmi_ItemProcessor
         foreach ($result as $row)
         {
             $sid = $row["store_id"];
-            if (! isset($cpaths[$sid]))
+            if (!isset($cpaths[$sid]))
             {
                 $cpaths[$sid] = array();
             }

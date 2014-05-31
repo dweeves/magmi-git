@@ -44,7 +44,7 @@ $dp->beginImportSession("test_ptj", "create", new TestLogger());
 /*
  * Create 5000 items , with every 100 : upsell on last 100 even cross sell on last 100 odd related on last 100 every 5 cross sell on last 100 every 10 categories named catX/even or catX/odd with X is thousand of item (using categories plugin)
  */
-for ($sku = 0; $sku < 5000; $sku ++)
+for ($sku = 0; $sku < 5000; $sku++)
 {
     // create item category path array
     // catX/even or catX/odd, X being the 1000's of the item
@@ -72,7 +72,7 @@ for ($sku = 0; $sku < 5000; $sku ++)
         $csell = array("-re::.*");
         $re = array("-re::.*");
         $xre = array();
-        for ($i = $sku - 99; $i < $sku; $i ++)
+        for ($i = $sku - 99; $i < $sku; $i++)
         {
             // related item sku
             $rsku = str_pad($i, 5, "0", STR_PAD_LEFT);

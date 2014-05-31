@@ -49,7 +49,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
         }
         
         // no item data for selected matching field, skipping
-        if (! isset($item[$matchfield]) && trim($item["matchfield"]) !== '')
+        if (!isset($item[$matchfield]) && trim($item["matchfield"]) !== '')
         {
             $this->log("No value for $matchfield in datasource", "error");
             return false;
@@ -72,7 +72,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
             {
                 $item["sku"] = $result["sku"];
             }
-            $n ++;
+            $n++;
         }
         // if no item found, warning & skip
         if ($n == 0)

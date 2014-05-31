@@ -66,7 +66,7 @@ class TagProcessor extends Magmi_ItemProcessor
     {
         $tr = $this->tablename("tag_relation");
         // no relative notation, clear existing tags from item
-        if (! $hasrel)
+        if (!$hasrel)
         {
             $this->clearItemTags($item, $pid, $sids);
         }
@@ -128,7 +128,7 @@ class TagProcessor extends Magmi_ItemProcessor
             // perform search
             $sql = "SELECT entity_id FROM " . $this->tablename("customer_entity") . " WHERE email=?";
             $id = $this->selectone($sql, $email, "entity_id");
-            if (! isset($id))
+            if (!isset($id))
             {
                 $id = $default;
             }
@@ -171,7 +171,7 @@ class TagProcessor extends Magmi_ItemProcessor
     public function processItemAfterId(&$item, $params = null)
     {
         // if no tags column, do nothing
-        if (! isset($item["tags"]))
+        if (!isset($item["tags"]))
         {
             return;
         }

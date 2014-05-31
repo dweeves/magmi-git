@@ -28,7 +28,7 @@ class Magmi_PluginHelper
     public static function getInstance($profile = null)
     {
         $key = ($profile == null ? "default" : $profile);
-        if (! isset(self::$_instances[$key]))
+        if (!isset(self::$_instances[$key]))
         {
             self::$_instances[$key] = new Magmi_PluginHelper($profile);
         }
@@ -81,7 +81,7 @@ class Magmi_PluginHelper
             $out = array();
             foreach (self::$_plugins_cache as $k => $arr)
             {
-                if (! isset($out[$k]))
+                if (!isset($out[$k]))
                 {
                     $out[$k] = array();
                 }
@@ -101,13 +101,13 @@ class Magmi_PluginHelper
 
     public function scanPlugins($pltypes)
     {
-        if (! is_array($pltypes))
+        if (!is_array($pltypes))
         {
             $pltypes = array($pltypes);
         }
         foreach ($pltypes as $pltype)
         {
-            if (! isset(self::$_plugins_cache[$pltype]))
+            if (!isset(self::$_plugins_cache[$pltype]))
             {
                 self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0], $this->_plmeta[$pltype][1]);
             }
@@ -116,7 +116,7 @@ class Magmi_PluginHelper
 
     public function createInstance($ptype, $pclass, $params = null, $mmi = null)
     {
-        if (! isset(self::$_plugins_cache[$ptype]))
+        if (!isset(self::$_plugins_cache[$ptype]))
         {
             self::scanPlugins($ptype);
         }

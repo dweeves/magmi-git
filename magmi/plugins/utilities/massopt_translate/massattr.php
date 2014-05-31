@@ -14,7 +14,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 
     public function getStoreId($sc)
     {
-        if (! isset($this->_storeids[$sc]))
+        if (!isset($this->_storeids[$sc]))
         {
             $cs = $this->tablename("core_store");
             $sid = $this->selectOne("SELECT store_id FROM $cs WHERE code=?", array($sc), "store_id");
@@ -25,7 +25,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 
     public function getOptAttributeInfos($attrcode)
     {
-        if (! isset($this->_attrinfos[$attrcode]))
+        if (!isset($this->_attrinfos[$attrcode]))
         {
             $sql = "SELECT * FROM eav_attribute WHERE attribute_code=? AND entity_type_id=4 AND frontend_input IN ('select','multiselect')";
             $attrinfos = $this->selectAll($sql, $attrcode);
@@ -85,7 +85,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
                         $storevals[$matches[1]] = $v;
                     }
                 }
-                if (! isset($item["store:admin"]))
+                if (!isset($item["store:admin"]))
                 {
                     $svk = array_keys($storevals);
                     $item["store:admin"] = $storevals[$svk[0]];
@@ -109,7 +109,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
     public function getScanDir($resolve = true)
     {
         $scandir = $this->getParam("CSV:basedir", "var/import");
-        if (! isabspath($scandir))
+        if (!isabspath($scandir))
         {
             $scandir = abspath($scandir, Magmi_Config::getInstance()->getMagentoDir(), $resolve);
         }
@@ -149,7 +149,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 		WHERE eaov.store_id=0 AND eaov.value=?";
         $optid = $this->selectOne($sql, array($attid,$valadm), "option_id");
         $new = false;
-        if (! isset($optid))
+        if (!isset($optid))
         {
             $optid = $this->createOption($attid, $pos);
             $new = true;

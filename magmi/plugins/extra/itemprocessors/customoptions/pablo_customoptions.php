@@ -63,7 +63,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         }
         
         $optionId = $this->getOptId($opt['__field']);
-        if (! isset($optionId))
+        if (!isset($optionId))
         {
             $sql = "INSERT INTO $t1 ($f) VALUES ($i)";
             $optionId = $this->insert($sql, $values);
@@ -109,7 +109,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 
     public function createOptionValues($field, $sids, $valarr)
     {
-        if (! isset($valarr) || count($valarr) == 0)
+        if (!isset($valarr) || count($valarr) == 0)
         {
             return;
         }
@@ -126,7 +126,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $optionTypeIds = $this->getOptTypeIds($field);
         $optionTypeId = null;
         $cvalarr = count($valarr);
-        for ($i = 0; $i < $cvalarr; $i ++)
+        for ($i = 0; $i < $cvalarr; $i++)
         {
             $val = $valarr[$i];
             if ($i < count($optionTypeIds))
@@ -299,7 +299,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             $this->update($sql, $data);
             $t1 = $this->tablename('catalog_product_option');
             // destroy existing options if first time we encounter item
-            if (! $params["same"])
+            if (!$params["same"])
             {
                 $sql = "DELETE $t1 FROM $t1 WHERE $t1.product_id=$pid";
                 $this->delete($sql);
@@ -310,7 +310,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             }
             // check options container
             $oc = isset($item['options_container']) ? $item['options_container'] : "container2";
-            if (! in_array($oc, array('container1','container2')))
+            if (!in_array($oc, array('container1','container2')))
             {
                 $item['options_container'] = $this->_containerMap[$oc];
             }
@@ -320,7 +320,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             }
             // fill custom options table
             $sids = $this->getItemStoreIds($item, 0);
-            if (! $params["same"])
+            if (!$params["same"])
             {
                 $sids = array_unique(array_merge(array(0), $sids));
             }
@@ -361,7 +361,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             }
         }
         // if we have at least one custom option, add options_container if not exist
-        if ($hasopt && ! in_array('options_container', $cols))
+        if ($hasopt && !in_array('options_container', $cols))
         {
             $cols[] = 'options_container';
         }

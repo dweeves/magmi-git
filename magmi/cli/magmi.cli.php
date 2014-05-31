@@ -61,7 +61,7 @@ function getClassInstance($cval, $cdir = ".")
 
 function getEngineInstance($options)
 {
-    if (! isset($options["engine"]))
+    if (!isset($options["engine"]))
     {
         $options["engine"] = "magmi_productimportengine:Magmi_ProductImportEngine";
     }
@@ -75,7 +75,7 @@ if (isset($importer))
 {
     $loggerclass = isset($options['logger']) ? $options['logger'] : "FileLogger";
     $importer->setLogger(new $loggerclass());
-    if (! isset($options["chain"]))
+    if (!isset($options["chain"]))
     {
         $options["chain"] = isset($options["profile"]) ? $options["profile"] : "";
         $options["chain"] .= isset($options["mode"]) ? ":" . $options["mode"] : "";
@@ -85,7 +85,7 @@ if (isset($importer))
     {
         $pm = explode(":", $pdef);
         $eargv = array();
-        if (! empty($pm[0]))
+        if (!empty($pm[0]))
         {
             $eargv[] = "-profile=" . $pm[0];
         }

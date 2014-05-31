@@ -55,12 +55,12 @@ class Magmi_MagentoDatasource extends Magmi_Datasource
 
     public function getNextRecord()
     {
-        if (! isset($this->stmt))
+        if (!isset($this->stmt))
         {
             $this->stmt = $this->dbh->select($this->extractsql);
         }
         $data = $this->stmt->fetch();
-        if (! $data)
+        if (!$data)
         {
             return false;
         }

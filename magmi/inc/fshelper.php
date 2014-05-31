@@ -28,7 +28,7 @@ class FSHelper
         }
         foreach (array("popen","shell_exec") as $func)
         {
-            if (! in_array($func, $is_disabled))
+            if (!in_array($func, $is_disabled))
             {
                 return $func;
             }
@@ -47,7 +47,7 @@ class MagentoDirHandlerFactory
 
     public static function getInstance()
     {
-        if (! isset(self::$_instance))
+        if (!isset(self::$_instance))
         {
             self::$_instance = new MagentoDirHandlerFactory();
         }
@@ -57,7 +57,7 @@ class MagentoDirHandlerFactory
     public function registerHandler($obj)
     {
         $cls = get_class($obj);
-        if (! isset($this->_handlers[$cls]))
+        if (!isset($this->_handlers[$cls]))
         {
             $this->_handlers[$cls] = $obj;
         }
@@ -171,7 +171,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
     {
         $context = $this->createContext($remoteurl);
         // assume existing urls
-        if (! $this->_lookup)
+        if (!$this->_lookup)
         {
             return true;
         }
@@ -327,7 +327,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             // Download the file , force expect to nothing to avoid buffer save problem
             curl_setopt_array($ch, $dl_opts);
             $inf = curl_getinfo($ch);
-            if (! curl_exec($ch))
+            if (!curl_exec($ch))
             {
                 if (curl_error($ch) != "")
                 {
@@ -370,14 +370,14 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
 
     public function copyRemoteFile($url, $dest)
     {
-        if (! $this->urlExists($url))
+        if (!$this->urlExists($url))
         {
             $this->_errors = array("type" => "target error","message" => "URL $remoteurl is unreachable");
             return false;
         }
         
         $ok = @copy($url, $dest);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_errors = error_get_last();
         }
@@ -391,7 +391,7 @@ class RemoteFileGetterFactory
 
     public static function getFGInstance($id = "default")
     {
-        if (! isset(self::$__fginsts[$id]))
+        if (!isset(self::$__fginsts[$id]))
         {
             if (function_exists("curl_init"))
             {
@@ -492,7 +492,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
             $mask = octdec('755');
         }
         $ok = @mkdir($mp, $mask, $rec);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = error_get_last();
         }
@@ -508,7 +508,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
             $mask = octdec('755');
         }
         $ok = @chmod($mp, $mask);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = error_get_last();
         }
@@ -531,7 +531,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         $rfg = RemoteFileGetterFactory::getFGInstance($this->_rfgid);
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $destpath));
         $ok = $rfg->copyRemoteFile($remoteurl, $mp);
-        if (! $ok)
+        if (!$ok)
         {
             $this->_lasterror = $rfg->getErrors();
         }
@@ -550,7 +550,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         {
             
             $result = @copy($srcpath, $destpath);
-            if (! $result)
+            if (!$result)
             {
                 $this->_lasterror = error_get_last();
             }
@@ -565,7 +565,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         $precmd = "";
         // If a working directory has been specified, switch to it
         // before running the requested command
-        if (! empty($working_dir))
+        if (!empty($working_dir))
         {
             $curdir = getcwd();
             $wdir = realpath($working_dir);
@@ -573,7 +573,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
             if ($curdir != $wdir && $wdir !== false)
             {
                 // trying to change using chdir
-                if (! @chdir($wdir))
+                if (!@chdir($wdir))
                 {
                     // if no success, use cd from shell
                     $precmd = "cd $wdir && ";
@@ -588,7 +588,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
             case "popen":
                 $x = popen($full_cmd, "r");
                 $out = "";
-                while (! feof($x))
+                while (!feof($x))
                 {
                     $data = fread($x, 1024);
                     $out .= $data;

@@ -197,7 +197,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         // cleaning parts (trimming, removing empty)
         $pcatparts = array();
         $czcatparts = count($zcatparts);
-        for ($i = 0; $i < $czcatparts; $i ++)
+        for ($i = 0; $i < $czcatparts; $i++)
         {
             $cp = trim($zcatparts[$i]);
             if ($cp != "")
@@ -265,7 +265,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             $ccatids = count($catids);
             $ccatparts = count($catparts);
             // iterate on missing levels.
-            for ($i = $ccatids; $i < $ccatparts; $i ++)
+            for ($i = $ccatids; $i < $ccatparts; $i++)
             {
                 if ($catparts[$i] == "")
                 {
@@ -284,7 +284,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         }
         $ccatparts = count($catparts);
         // added position handling
-        for ($i = 0; $i < $ccatparts; $i ++)
+        for ($i = 0; $i < $ccatparts; $i++)
         {
             $catids[$i] .= "::" . $catpos[$i];
         }
@@ -324,7 +324,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         {
             $cm1 = count($matches[1]);
             // for each found explicit root
-            for ($i = 0; $i < $cm1; $i ++)
+            for ($i = 0; $i < $cm1; $i++)
             {
                 // test store matching
                 foreach ($sids as $sid)
@@ -352,7 +352,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         {
             $cm1 = count($matches[1]);
             
-            for ($i = 0; $i < $cm1; $i ++)
+            for ($i = 0; $i < $cm1; $i++)
             {
                 $rootpaths['__error__'] = $matches[1];
             }
@@ -382,7 +382,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             {
                 $catlist = explode(";;", $icats);
                 $ccatlist = count($catlist);
-                for ($i = 0; $i < $ccatlist; $i ++)
+                for ($i = 0; $i < $ccatlist; $i++)
                 {
                     if (trim($catlist[$i]) != "")
                     {

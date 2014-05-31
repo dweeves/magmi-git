@@ -19,7 +19,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
         $table_name = $this->tablename("catalog_product_entity_group_price");
         $group_cols = array_intersect(array_keys($this->_groups), array_keys($item));
         
-        if (! empty($group_cols))
+        if (!empty($group_cols))
         {
             $website_ids = $this->_singleStore && $this->_priceScope ? $this->getItemWebsites($item) : array(0);
             $group_ids = array();
@@ -31,7 +31,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                 }
             }
             
-            if (! empty($group_ids))
+            if (!empty($group_ids))
             {
                 $sql = 'DELETE FROM ' . $table_name . '
                               WHERE entity_id=?
@@ -59,7 +59,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                         $data[] = $website_id;
                     }
                     
-                    if (! empty($data))
+                    if (!empty($data))
                     {
                         $sql .= implode(', ', $inserts);
                         $sql .= ' ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)';

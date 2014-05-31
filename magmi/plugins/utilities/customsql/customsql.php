@@ -37,7 +37,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
             $pdefault = (count($pinfo) > 2 ? $pinfo[2] : "");
             $pname = $pinfo[0];
             $epar = explode(":", $pname);
-            $addit = $noprefix && count($epar) == 1 || ! $noprefix;
+            $addit = $noprefix && count($epar) == 1 || !$noprefix;
             if ($addit)
             {
                 $outparams[$plabel] = array("name" => $pname,"default" => $pdefault);
@@ -55,7 +55,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
             $namedparams = $matches[1];
             foreach ($params as $k => $v)
             {
-                if (! in_array($k, $namedparams))
+                if (!in_array($k, $namedparams))
                 {
                     unset($params[$k]);
                 }
@@ -110,7 +110,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
         $this->persistParams($params);
         $rqfile = $params["UTCSQL:queryfile"];
         unset($params["UTCSQL:queryfile"]);
-        if (! isabspath($rqfile))
+        if (!isabspath($rqfile))
         {
             $rqfile = dirname(__FILE__) . "/prequests/$rqfile";
         }
@@ -133,7 +133,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
             else
             {
                 
-                for ($i = 0; $i < $cres; $i ++)
+                for ($i = 0; $i < $cres; $i++)
                 {
                     $str = "";
                     foreach ($res[$i] as $k => $v)

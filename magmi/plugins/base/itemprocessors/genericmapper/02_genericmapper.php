@@ -55,7 +55,7 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
                 }
             }
             // f not found,try common mappings
-            if (! $mapped)
+            if (!$mapped)
             {
                 $mpd = $this->_mapping["__common__.csv"]["DIRECT"];
                 if (isset($mpd[$item[$k]]))
@@ -87,7 +87,7 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
         foreach ($flist as $fname)
         {
             $idx = basename($fname);
-            if (! isset($this->_mapping[$idx]))
+            if (!isset($this->_mapping[$idx]))
             {
                 $this->_mapping[$idx] = array("DIRECT" => array(),"RE" => array());
             }

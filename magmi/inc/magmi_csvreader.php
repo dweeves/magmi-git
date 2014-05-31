@@ -45,7 +45,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         }
         else
         {
-            $count = - 1;
+            $count = -1;
         }
         $linenum = 0;
         if ($f != false)
@@ -53,15 +53,15 @@ class Magmi_CSVReader extends Magmi_Mixin
             $line = 1;
             while ($line < $this->getParam("CSV:headerline", 1))
             {
-                $line ++;
+                $line++;
                 $dummy = fgetcsv($f, $this->_buffersize, $this->_csep, $this->_cenc);
             }
             // get records count
             while (fgetcsv($f, $this->_buffersize, $this->_csep, $this->_cenc))
             {
-                if (! in_array($line, $this->_ignored))
+                if (!in_array($line, $this->_ignored))
                 {
-                    $count ++;
+                    $count++;
                 }
             }
             fclose($f);
@@ -77,11 +77,11 @@ class Magmi_CSVReader extends Magmi_Mixin
     {
         $this->_curline = 0;
         ini_set("auto_detect_line_endings", true);
-        if (! isset($this->_filename))
+        if (!isset($this->_filename))
         {
             throw new Magmi_CSVException("No csv file set");
         }
-        if (! file_exists($this->_filename))
+        if (!file_exists($this->_filename))
         {
             throw new Magmi_CSVException("{$this->_filename} not found");
         }
@@ -129,7 +129,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         
         while ($line < $this->getParam("CSV:headerline", 1))
         {
-            $line ++;
+            $line++;
             $dummy = fgetcsv($this->_fh, $this->_buffersize, $this->_csep, $this->_cenc);
             $this->log("skip line $line:" . implode($this->_csep, $dummy), "info");
         }
@@ -150,7 +150,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         $this->_cols = $cols;
         $this->_nhcols = count($this->_cols);
         // trim column names
-        for ($i = 0; $i < $this->_nhcols; $i ++)
+        for ($i = 0; $i < $this->_nhcols; $i++)
         {
             $this->_cols[$i] = trim($this->_cols[$i]);
         }
@@ -173,7 +173,7 @@ class Magmi_CSVReader extends Magmi_Mixin
 
     public function isemptyline($row)
     {
-        return (! isset($row[1]) && empty($row[0]));
+        return (!isset($row[1]) && empty($row[0]));
     }
 
     public function getNextRecord()
@@ -185,14 +185,14 @@ class Magmi_CSVReader extends Magmi_Mixin
             $row = fgetcsv($this->_fh, $this->_buffersize, $this->_csep, $this->_cenc);
             if ($row !== false)
             {
-                $this->_curline ++;
+                $this->_curline++;
                 // skip empty lines
                 if ($this->isemptyline($row))
                 {
                     continue;
                 }
                 $rcols = count($row);
-                if (! $allowtrunc && $rcols != $this->_nhcols)
+                if (!$allowtrunc && $rcols != $this->_nhcols)
                 {
                     // if strict matching, warning & continue
                     $this->log("warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped", "warning");
@@ -205,7 +205,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         if (is_array($row))
         {
             // strict mode
-            if (! $allowtrunc)
+            if (!$allowtrunc)
             {
                 // create product attributes values array indexed by attribute code
                 $record = array_combine($this->_cols, $row);

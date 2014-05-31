@@ -128,16 +128,16 @@ class TierpriceProcessor extends Magmi_ItemProcessor
                     {
                         continue;
                     }
-                    if (substr($tpprice, - 1) == "%")
+                    if (substr($tpprice, -1) == "%")
                     {
                         // if no reference price,skip % tier price
-                        if (! isset($item["price"]))
+                        if (!isset($item["price"]))
                         {
                             $this->warning("No price define, cannot apply % on tier price");
                             continue;
                         }
                         $fp = (float) (str_replace(",", ".", $item["price"]));
-                        $pc = (float) (substr($tpprice, 0, - 1));
+                        $pc = (float) (substr($tpprice, 0, -1));
                         $m = ($pc < 0 ? (100 + $pc) : $pc);
                         $tpprice = strval(($fp * ($m)) / 100.0);
                     }

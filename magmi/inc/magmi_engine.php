@@ -10,6 +10,7 @@ require_once ("magmi_pluginhelper.php");
  *
  *
  *
+ *
  * This class is the mother class for magmi engines
  * A magmi engine is a class that performs operations on DB
  *
@@ -144,7 +145,7 @@ abstract class Magmi_Engine extends DbHelper
             $pfile = $plinfo[0];
             $pclass = $plinfo[1];
             require_once ($pfile);
-            if (! isset($bplarr[$pfamily]))
+            if (!isset($bplarr[$pfamily]))
             {
                 $bplarr[$pfamily] = array();
             }
@@ -201,7 +202,7 @@ abstract class Magmi_Engine extends DbHelper
         $m2 = $p2->getPluginMeta();
         if ($m2 == null)
         {
-            return - 1;
+            return -1;
         }
         return strcmp($m1["file"], $m2["file"]);
     }
@@ -232,7 +233,7 @@ abstract class Magmi_Engine extends DbHelper
         foreach ($this->_pluginclasses as $pfamily => $pclasses)
         {
             // If there is no active plugins in the current family
-            if (! isset($this->_activeplugins[$pfamily]))
+            if (!isset($this->_activeplugins[$pfamily]))
             {
                 // initialize active plugins for plugin family
                 $this->_activeplugins[$pfamily] = array();
@@ -289,7 +290,7 @@ abstract class Magmi_Engine extends DbHelper
         $result = true;
         
         // If plugin type list is not an array , process it as string
-        if (! is_array($types))
+        if (!is_array($types))
         {
             // If plugin is not wildcard , build array of types based on comma separated string
             if ($types != "*")
@@ -399,7 +400,7 @@ abstract class Magmi_Engine extends DbHelper
 
     public function getExceptionTrace($tk, &$traces)
     {
-        $this->_excid ++;
+        $this->_excid++;
         $trstr = "";
         foreach ($traces as $trace)
         {
@@ -423,11 +424,11 @@ abstract class Magmi_Engine extends DbHelper
                 }
             }
         }
-        if (! isset($this->_exceptions[$tk]))
+        if (!isset($this->_exceptions[$tk]))
         {
             $this->_exceptions[$tk] = array(0,$this->_excid);
         }
-        $this->_exceptions[$tk][0] ++;
+        $this->_exceptions[$tk][0]++;
         $trstr = "************************************\n$tk\n*************************************\n$trstr";
         return array($trstr,$this->_exceptions[$tk][0] == 1,$this->_exceptions[$tk][1]);
     }
@@ -478,7 +479,7 @@ abstract class Magmi_Engine extends DbHelper
             $enginf = $this->getEngineInfo();
             $this->log("MAGMI by dweeves - version:" . Magmi_Version::$version, "title");
             $this->log("Running {$enginf["name"]} v${enginf["version"]} by ${enginf["author"]}", "startup");
-            if (! $this->_initialized)
+            if (!$this->_initialized)
             {
                 $this->initialize($params);
             }
@@ -518,7 +519,7 @@ abstract class Magmi_Engine extends DbHelper
     public function connectToMagento()
     {
         // et database infos from properties
-        if (! $this->_connected)
+        if (!$this->_connected)
         {
             $host = $this->getProp("DATABASE", "host", "localhost");
             $dbname = $this->getProp("DATABASE", "dbname", "magento");

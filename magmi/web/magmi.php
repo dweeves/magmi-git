@@ -43,7 +43,7 @@ if (file_exists($postinst))
 }
 foreach (array("../state","../conf","../plugins") as $dirname)
 {
-    if (! FSHelper::isDirWritable($dirname))
+    if (!FSHelper::isDirWritable($dirname))
     {
         $badrights[] = $dirname;
     }

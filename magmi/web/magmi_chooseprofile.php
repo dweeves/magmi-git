@@ -17,7 +17,7 @@ if ($newprofile != "")
     $filelist = scandir($cpdir);
     foreach ($filelist as $fname)
     {
-        if (substr($fname, - 5) == ".conf")
+        if (substr($fname, -5) == ".conf")
         {
             copy($cpdir . DIRSEP . $fname, $npdir . DIRSEP . $fname);
         }
