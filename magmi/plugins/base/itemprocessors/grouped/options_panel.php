@@ -23,38 +23,44 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- */?>
-<div class="plugin_description">
-This plugins handles grouped item import
+ */
+?>
+<div class="plugin_description">This plugins handles grouped item import
 </div>
 
 <ul class="formline">
-	<li class="label" style="width:360px">Perform simples/group link</li>
-	<li class="value">
-	<select name="APIGRP:nolink">
-	<option value="0" <?php if ($this->getParam("APIGRP:nolink",0)==0){?>selected="selected"<?php }?>>Yes</option>
-	<option value="1" <?php if ($this->getParam("APIGRP:nolink",0)==1){?>selected="selected"<?php }?>>No</option>
-	</select>
-	</li>
+	<li class="label" style="width: 360px">Perform simples/group link</li>
+	<li class="value"><select name="APIGRP:nolink">
+			<option value="0" <?php if ($this->getParam("APIGRP:nolink",0)==0){?>
+				selected="selected" <?php }?>>Yes</option>
+			<option value="1" <?php if ($this->getParam("APIGRP:nolink",0)==1){?>
+				selected="selected" <?php }?>>No</option>
+	</select></li>
 </ul>
 <ul class="formline">
-	<li class="label" style="width:360px">auto match simples skus before grouped</li>
+	<li class="label" style="width: 360px">auto match simples skus before
+		grouped</li>
 	<li class="value"><select name="APIGRP:groupedbeforegrp">
-	<option value="0" <?php if ($this->getParam("APIGRP:groupedbeforegrp")==0){?>selected="selected"<?php }?>>No</option>
-	<option value="1" <?php if ($this->getParam("APIGRP:groupedbeforegrp")==1){?>selected="selected"<?php }?>>Yes</option></select></li>
+			<option value="0"
+				<?php if ($this->getParam("APIGRP:groupedbeforegrp")==0){?>
+				selected="selected" <?php }?>>No</option>
+			<option value="1"
+				<?php if ($this->getParam("APIGRP:groupedbeforegrp")==1){?>
+				selected="selected" <?php }?>>Yes</option>
+	</select></li>
 </ul>
-<ul  class="formline">
-<li class="label">
-Force simples visibility
-</li>
-<li class="value">
+<ul class="formline">
+	<li class="label">Force simples visibility</li>
+	<li class="value">
 <?php $v=$this->getParam("APIGRP:updgroupedvis",0)?>
 <select name="APIGRP:updgroupedvis">
-	<option value="0" <?php if($v==0){?>selected="selected"<?php }?>>No</option>
-	<option value="1" <?php if($v==1){?>selected="selected"<?php }?>>Not Visible Individually</option>
-	<option value="2" <?php if($v==2){?>selected="selected"<?php }?>>Catalog</option>
-	<option value="3" <?php if($v==3){?>selected="selected"<?php }?>>Search</option>
-	<option value="4" <?php if($v==4){?>selected="selected"<?php }?>>Catalog, Search</option>
-</select>
-</li>
+			<option value="0" <?php if($v==0){?> selected="selected" <?php }?>>No</option>
+			<option value="1" <?php if($v==1){?> selected="selected" <?php }?>>Not
+				Visible Individually</option>
+			<option value="2" <?php if($v==2){?> selected="selected" <?php }?>>Catalog</option>
+			<option value="3" <?php if($v==3){?> selected="selected" <?php }?>>Search</option>
+			<option value="4" <?php if($v==4){?> selected="selected" <?php }?>>Catalog,
+				Search</option>
+	</select>
+	</li>
 </ul>
