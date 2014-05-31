@@ -1,16 +1,58 @@
 <?php
 
+/**
+ * Time counter class 
+ * This class provides a way to measure :
+ * 
+ * - time 
+ * - counters
+ * 
+ * store results into many categories for many timing aspects
+ * 
+ * It is based on 2 levels :
+ * - sources : labels under which timing categories will be stored, it is a label, most of the time, a method name
+ * - categories : for each source, you can store many infos like "inDB","processing" and so on....
+ * 
+ * time measure can be divided into phases, so you can measure different subparts of your processing like "initialization","lookup" aso....
+ * many counters can also be defined at the same category leve
+ * At the end, the timecounter will give this kind of results
+ * 
+ *   + cat1 
+ *     +timers
+ *       + phase1 => time for phase 1 of cat1 of source 1
+ *       + phase2 => time for phase 2 of cat1 of source 1
+ *     +counters
+ *       + counter1 => value of counter 1 of cat 1 of source 1
+ *   + cat2
+ * 
+ * Sources, categories & phases could be added dynamically, each time a new phase/counter/category or source is 
+ * declared trough calls to addCounter, initTime,exitTime that does not exist yet, a container is created for it.
+ *
+ * sources are tags. categories are more like containers
+ */
 class TimeCounter
 {
     protected $_timingcats = array();
     protected $_defaultsrc = "";
     protected $_timingcontext = array();
 
+    /**
+     * Constructor
+     * 
+     * @param string $defaultsrc
+     *            : default timing source
+     */
     public function __construct($defaultsrc = "*")
     {
         $this->_defaultsrc = $defaultsrc;
     }
 
+    /**
+     * Initializes default timing categories to use
+     * 
+     * @param unknown $tcats
+     *            array of timing categories
+     */
     public function initTimingCats($tcats)
     {
         foreach ($tcats as $tcat)
@@ -19,11 +61,23 @@ class TimeCounter
         }
     }
 
+    /**
+     * returns the content for a given timing category name
+     * 
+     * @param string $cat
+     *            : timing category name
+     * @return array informations for given category
+     */
     public function getTimingCategory($cat)
     {
         return $this->_timingcats[$cat];
     }
 
+    /**
+     * return all timers
+     * 
+     * @return all timers info by category
+     */
     public function getTimers()
     {
         $timers = array();
@@ -34,6 +88,11 @@ class TimeCounter
         return $timers;
     }
 
+    /**
+     * return all counters
+     * 
+     * @return all counters info by category
+     */
     public function getCounters()
     {
         $counters = array();
@@ -44,12 +103,21 @@ class TimeCounter
         return $counters;
     }
 
+    /**
+     * creates a new counter
+     * 
+     * @param string $cname
+     *            : counter name
+     * @param string $tcats
+     *            : array of category names to add counter to, if null => all categories
+     */
     public function addCounter($cname, $tcats = null)
     {
         if ($tcats == null)
         {
             $tcats = array_keys($this->_timingcats);
         }
+        
         foreach ($tcats as $tcat)
         {
             if (!isset($this->_timingcats[$tcat]))
@@ -60,25 +128,41 @@ class TimeCounter
         }
     }
 
+    /**
+     * initializes a new counter
+     * 
+     * @param string $cname
+     *            : counter name
+     * @param string $tcats
+     *            : array of category names to initialize counter for, if null => all categories
+     */
     public function initCounter($cname, $tcats = null)
     {
         if ($tcats == null)
         {
             $tcats = array_keys($this->_timingcats);
         }
-        foreach ($this->_timingcats as $tcat => $dummy)
+        foreach ($tcats as $tcat)
         {
             $this->_timingcats[$tcat]["_counters"][$cname] = 0;
         }
     }
 
+    /**
+     * increments a counter
+     * 
+     * @param string $cname
+     *            : counter name
+     * @param string $tcats
+     *            : array of category names to initialize counter for, if null => all categories
+     */
     public function incCounter($cname, $tcats = null)
     {
         if ($tcats == null)
         {
             $tcats = array_keys($this->_timingcats);
         }
-        foreach ($this->_timingcats as $tcat => $dummy)
+        foreach ($tcats as $tcat)
         {
             if (!isset($this->_timingcats[$tcat]["_counters"][$cname]))
             {
@@ -88,6 +172,16 @@ class TimeCounter
         }
     }
 
+    /**
+     * Initializes a timer
+     * 
+     * @param string $phase
+     *            : timer phase to initialize
+     * @param string $src
+     *            : source tag
+     * @param string $tcat
+     *            : timing category to initialize timer for
+     */
     public function initTime($phase = "global", $src = null, $tcat = null)
     {
         if (isset($src))
@@ -127,6 +221,16 @@ class TimeCounter
         }
     }
 
+    /**
+     * closes a timer for a given phase on a given category for a given source
+     * 
+     * @param unknown $phase
+     *            : time phase to exit
+     * @param string $src
+     *            : source tag
+     * @param string $tcat
+     *            : timing category
+     */
     public function exitTime($phase, $src = null, $tcat = null)
     {
         $targets = $this->_timingcontext;
