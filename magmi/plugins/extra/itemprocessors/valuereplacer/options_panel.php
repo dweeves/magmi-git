@@ -40,7 +40,7 @@ when leaving the field, new fields will be inserted for filling new column names
 	<ul>
 		<li><b>Advanced expressions</b></li>
 		<li>expressions use php eval() function, so beware of what you're doing but it can be also very powerful as:</li>
-		<li>{{substr("{item.sku}",0,4}}</li>
+		<li>{{ substr("{item.sku}",0,4) }}</li>
 	</ul>
 	</div>
 	</div>
