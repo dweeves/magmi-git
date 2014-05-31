@@ -12,6 +12,11 @@ require_once (dirname(dirname(__FILE__)) . "/inc/magmi_defs.php");
 require_once ('magmi_loggers.php');
 $script = array_shift($argv);
 
+/**
+ * Builing option dictionnary from command line
+ * @param array $argv
+ * @return dictionnary with option list
+ */
 function buildOptions($argv)
 {
     $options = array();
@@ -37,6 +42,12 @@ function buildOptions($argv)
     return $options;
 }
 
+/**
+ * returns an instance of given class , using filename(without php):classname syntax
+ * @param string $cval , filename (without php):classname value
+ * @param string $cdir , directory to search class in
+ * @return instance of class or die with error
+ */
 function getClassInstance($cval, $cdir = ".")
 {
     $cdef = explode(":", $cval);
@@ -59,6 +70,12 @@ function getClassInstance($cval, $cdir = ".")
     return $cinst;
 }
 
+/**
+ * Returns the wanted engine from an option list
+ * If engine not set in option list, uses default magmi product import engine
+ * @param array $options
+ * @return Engine instance or die if not found
+ */
 function getEngineInstance($options)
 {
     if (!isset($options["engine"]))
@@ -69,22 +86,33 @@ function getEngineInstance($options)
     return $enginst;
 }
 
+//Building option list from command line
 $options = buildOptions($argv);
+//Getting engine
 $importer = getEngineInstance($options);
 if (isset($importer))
 {
+    //if logger set, use it or use FileLogger by default
     $loggerclass = isset($options['logger']) ? $options['logger'] : "FileLogger";
     $importer->setLogger(new $loggerclass());
+    // a chain is a multiple profile run with the following syntax
+    // [profilename]:[modename],[profilename]:[modename]
+    //if no workflow chain is defined, create a new one 
     if (!isset($options["chain"]))
     {
+       
         $options["chain"] = isset($options["profile"]) ? $options["profile"] : "";
         $options["chain"] .= isset($options["mode"]) ? ":" . $options["mode"] : "";
     }
+    //parsing the workflow chain
     $pdefs = explode(",", $options["chain"]);
+    //for each import in the workflow
     foreach ($pdefs as $pdef)
     {
         $pm = explode(":", $pdef);
         $eargv = array();
+        //parse workflow definition
+        //recreate profile & mode parameters
         if (!empty($pm[0]))
         {
             $eargv[] = "-profile=" . $pm[0];
@@ -93,7 +121,9 @@ if (isset($importer))
         {
             $eargv[] = "-mode=" . $pm[1];
         }
+        //build options based on profile & mode
         $eoptions = buildOptions($eargv);
+        //launch import
         $importer->run(array_merge($eoptions, $options));
     }
 }
