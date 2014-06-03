@@ -1601,6 +1601,23 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->handleIgnore($item);
     }
 
+    /**
+     * Breaks item processing , but validates partial import
+     * This is useful for complex plugins that would assur
+     * @param array $item , item to break process on
+     * @param array $params , processing parameters (item metadata)
+     * @param bool touch , sets product update time if true (default)
+     */
+    public function breakItemProcessing(&$item,$params,$touch=true)
+    {
+        //setting empty item to break standard processing
+         
+        $item=array();
+        if($touch && isset($params["product_id"]))
+        {
+            $this->touchProduct($params["product_id"]);
+        }
+    }
     public function exitImport()
     {
         $this->callPlugins("datasources,general,itemprocessors", "endImport");
@@ -1798,4 +1815,5 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         
         Magmi_StateManager::setState("idle");
     }
+    
 }
