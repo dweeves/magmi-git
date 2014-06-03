@@ -1703,6 +1703,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         // if some rows found
         if ($nitems > 0)
         {
+            //initializing product type early (in case of db update on startImport)
+            $this->initProdType();
             $this->resetSkuStats();
             // intialize store id cache
             $this->callPlugins("datasources,itemprocessors", "startImport");
@@ -1718,7 +1720,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 return;
             }
             $this->log("Ajusted processed columns:" . count($cols), "startup");
-            $this->initProdType();
             // initialize attribute infos & indexes from column names
             if ($this->mode != "update")
             {
