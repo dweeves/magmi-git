@@ -288,7 +288,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         
         if ($lookup)
         {
-            setURLOptions($url, $lookup_opts);
+            $this->setURLOptions($url, $lookup_opts);
             // lookup , using HEAD request
             $ok = curl_setopt_array($ch, $lookup_opts);
             $res = curl_exec($ch);
