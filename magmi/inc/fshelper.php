@@ -98,11 +98,12 @@ abstract class RemoteFileGetter
     public abstract function urlExists($url);
 
     public abstract function copyRemoteFile($url, $dest);
+
     // using credentials
     public function setCredentials($user = null, $passwd = null)
     {
         $this->_user = $user;
-        $this->_password = $password;
+        $this->_password = $passwd;
     }
 
     public function getErrors()
@@ -218,6 +219,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
     public function copyRemoteFile($url, $dest)
     {
         $result = false;
+        $creds = null;
         if ($this->_user != null)
         {
             $creds = $this->_user;
@@ -250,7 +252,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         $lookup = $this->_lookup;
         $outname = $dest;
         
-        if ($creds != "")
+        if (!is_null($creds) && $creds != "")
         {
             if ($lookup != 0)
             {
@@ -295,11 +297,12 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             if ($res !== false)
             {
                 $lm = curl_getinfo($ch);
+                $err = curl_error($ch);
                 if (curl_getinfo($ch, CURLINFO_HTTP_CODE) > 400)
                 {
                     $resp = explode("\n\r\n", $res);
                     $this->destroyContext($ch);
-                    throw new Exception("Cannot fetch $url :" . $err);
+                    throw new Exception("Cannot fetch $url : " . $err);
                 }
             }
             else
@@ -374,7 +377,7 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
     {
         if (!$this->urlExists($url))
         {
-            $this->_errors = array("type"=>"target error","message"=>"URL $remoteurl is unreachable");
+            $this->_errors = array("type"=>"target error","message"=>"URL $url is unreachable");
             return false;
         }
         
