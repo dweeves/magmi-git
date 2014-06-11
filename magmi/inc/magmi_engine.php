@@ -7,12 +7,6 @@ require_once ("magmi_statemanager.php");
 require_once ("magmi_pluginhelper.php");
 
 /**
- *
- *
- *
- *
- *
- *
  * This class is the mother class for magmi engines
  * A magmi engine is a class that performs operations on DB
  *
@@ -33,16 +27,16 @@ abstract class Magmi_Engine extends DbHelper
     private $_excid = 0;
     public $logger = null;
     protected $_timingcats = array();
-    
-    /*
+
+    /**
      * Engine Metadata Table access
      */
     public function getEngineInfo()
     {
         return array("name"=>"Generic Magmi Engine","version"=>"1.1","author"=>"dweeves");
     }
-    
-    /*
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -51,8 +45,8 @@ abstract class Magmi_Engine extends DbHelper
         // force PHP internal encoding as UTF 8
         mb_internal_encoding("UTF-8");
     }
-    
-    /*
+
+    /**
      * Engine initialization @param params : key/value array of initialization parameters
      */
     public final function initialize($params = array())
@@ -73,48 +67,48 @@ abstract class Magmi_Engine extends DbHelper
             die("Error initializing Engine:{$this->_conf->getConfigFilename()} \n" . $e->getMessage());
         }
     }
-    
-    /*
+
+    /**
      * Returns magento directory
      */
     public function getMagentoDir()
     {
         return $this->_conf->getMagentoDir();
     }
-    
-    /*
+
+    /**
      * returns magento version
      */
     public function getMagentoVersion()
     {
         return $this->_conf->get("MAGENTO", "version");
     }
-    
-    /*
+
+    /**
      * Plugin loop callback registration
      */
     protected function _registerPluginLoopCallback($cbtype, $cb)
     {
         $this->_ploop_callbacks[$cbtype] = $cb;
     }
-    
-    /*
+
+    /**
      * Plugin loop callback deregistration
      */
     protected function _unregisterPluginLoopCallback($cbtype)
     {
         unset($this->_ploop_callbacks[$cbtype]);
     }
-    
-    /*
+
+    /**
      * Generic implementation of plugin families, empty for this mother class
      */
     public function getPluginFamilies()
     {
         return array();
     }
-    
-    /*
+
+    /**
      * return the list of enabled plugin classes for a given profile @param $profile : profile name to check
      */
     public function getEnabledPluginClasses($profile)
@@ -123,8 +117,8 @@ abstract class Magmi_Engine extends DbHelper
         $enabledplugins->load();
         return $enabledplugins->getEnabledPluginFamilies($this->getPluginFamilies());
     }
-    
-    /*
+
+    /**
      * initializes Plugin instances for a given profile @param $profile : profile to initialize plugins for , defaults to null (Default Profile)
      */
     public function initPlugins($profile = null)
@@ -133,8 +127,8 @@ abstract class Magmi_Engine extends DbHelper
         $this->_activeplugins = array();
         $this->_pluginclasses = $this->getEnabledPluginClasses($profile);
     }
-    
-    /*
+
+    /**
      * Returns a list of class names for "Builtin" plugins
      */
     public function getBuiltinPluginClasses()
@@ -155,8 +149,8 @@ abstract class Magmi_Engine extends DbHelper
         }
         return $bplarr;
     }
-    
-    /*
+
+    /**
      * Return the list of enabled plugin classes
      */
     public function getPluginClasses()
