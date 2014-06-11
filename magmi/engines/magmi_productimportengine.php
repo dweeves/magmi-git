@@ -16,10 +16,6 @@ require_once ("magmi_valueparser.php");
 /**
  *
  *
- *
- *
- *
- *
  * Magmi Product Import engine class
  * This class handle product import
  *
@@ -28,38 +24,52 @@ require_once ("magmi_valueparser.php");
  */
 class Magmi_ProductImportEngine extends Magmi_Engine
 {
+    //attribute info cache
     public $attrinfo = array();
+    //attribute info by type
     public $attrbytype = array();
-    public $store_ids = array();
-    public $status_id = array();
+    //attribute set cache
     public $attribute_sets = array();
+    //product entity type
     public $prod_etype;
+    //default attribute set id
     public $default_asid;
+    //store id cache
     public $sidcache = array();
+    //default mode
     public $mode = "update";
+    //cache for column names that are not attributes
     private $_notattribs = array();
+    //list of attribute handlers
     private $_attributehandlers;
+    //current import row
     private $_current_row;
+    //option id cache for select/multiselect
     private $_optidcache = null;
+    //current item ids 
     private $_curitemids = array("sku"=>null);
+    //default store list to impact
     private $_dstore = array();
+    //same flag if current import line is referencing same item than the previous one
     private $_same;
+    //current product id
     private $_currentpid;
+    //extra attributes to create 
     private $_extra_attrs;
+    //current import profile
     private $_profile;
+    //Store ids cache for website scoped attributes
     private $_sid_wsscope = array();
+    //Store ids cache for store scope attributes
     private $_sid_sscope = array();
+    //magento product table columns list
     private $_prodcols = array();
+    //magento stock related table columns list
     private $_stockcols = array();
+    //stats 
     private $_skustats = array();
-    private $_item_meta;
 
-    public function addExtraAttribute($attr)
-    {
-        $attinfo = $this->attrinfo[$attr];
-        $this->_extra_attrs[$attinfo["backend_type"]]["data"][] = $attinfo;
-    }
-
+    
     /**
      * constructor
      *
@@ -126,11 +136,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      *
-     *
-     *
-     *
-     *
-     *
      * Return list of store codes that share the same website than the stores passed as parameter
      *
      * @param string $scodes
@@ -156,6 +161,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $this->_sid_wsscope[$scodes];
     }
 
+    /**
+     * Returns the list of store ids corresponding to the store view codes 
+     * @param unknown $scodes
+     * @return multitype:
+     */
     public function getStoreIdsForStoreScope($scodes)
     {
         if (!isset($this->_sid_sscope[$scodes]))
@@ -174,8 +184,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $this->_sid_sscope[$scodes];
     }
     
-    /*
-     * Return magento data from given item
+    /**
+     * Returns Magento current data for given item
+     * @param unknown $item : item to get magento data from
+     * @param unknown $params : item metadata
+     * @param string $cols : columns list to return (if not set, all items column list)
+     * @return Ambigous <multitype:, multitype:unknown >
      */
     public function getMagentoData($item, $params, $cols = null)
     {
@@ -251,7 +265,22 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     {
         return $this->mode;
     }
-
+    
+    /**
+     * Adds an extra attribute to process
+     * Useful for some plugins if generating attribute values that are not in initial scanned list
+     * @param unknown $attr attribute code
+     */
+    public function addExtraAttribute($attr)
+    {
+        $attinfo = $this->attrinfo[$attr];
+        $this->_extra_attrs[$attinfo["backend_type"]]["data"][] = $attinfo;
+    }
+    
+    /**
+     * Returns the list of magento base product table columns
+     * @return multitype:
+     */
     public function getProdCols()
     {
         if (count($this->_prodcols) == 0)
@@ -266,6 +295,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $this->_prodcols;
     }
 
+    /**
+     * Returns the list of magento product item stock info table columns
+     * @return multitype:
+     */
     public function getStockCols()
     {
         if (count($this->_stockcols) == 0)
@@ -302,11 +335,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
      *
      * gets attribute metadata from DB and put it in attribute metadata caches
      *
@@ -395,12 +423,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * retrieves attribute metadata
      *
      * @param string $attcode
@@ -553,91 +575,159 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $optval_id;
     }
 
+    /**
+     * Returns option ids for a given store for a set of values (for select/multiselect attributes)
+     * - Create new entries if values do not exist
+     * 
+     * @param unknown $attid
+     *            attribute id
+     * @param unknown $storeid
+     *            store id
+     * @param unknown $values
+     *            value to create options for
+     * @return Ambigous <multitype:, unknown>
+     */
     public function getOptionIds($attid, $storeid, $values)
     {
         $optids = array();
         $svalues = array();
         $avalues = array();
-        // Matching refstore value
+        
+        // Checking if we want to "translate" values existing in admin
         foreach ($values as $val)
         {
+            // if we have a reference value in admin
             if (preg_match("|^(.*)::\[(.*)\]$|", $val, $matches))
             {
+                // add translated value in store value array
                 $svalues[] = $matches[2];
+                // add admin value in admin value array
                 $avalues[] = $matches[1];
             }
             else
             {
+                // if no translation, add values in both admin & current store array
                 $svalues[] = $val;
                 $avalues[] = $val;
             }
         }
+        
+        // get Existing options for admin values & current attribute (store = 0)
         $existing = $this->getOptionsFromValues($attid, 0, $avalues);
         $exvals = array();
         foreach ($existing as $optdesc)
         {
             $exvals[] = $optdesc["value"];
         }
+        // new option values are option values that are in "admin" option values array & not in existing admin option values array
         $new = array_merge(array_diff($avalues, $exvals));
+        
+        // if we are on admin option values
         if ($storeid == 0)
         {
+            // for each new option value to create in admin
             foreach ($new as $nval)
             {
+                // create a new option with value
                 $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
+                // add an option value for current store
                 $this->createOptionValue($row["opvs"], $storeid, $nval);
+                // add this value to existing pool
                 $existing[] = $row;
             }
+            // put this value in the option id cache
             $this->cacheOptIds($attid, $existing);
         }
         else
+        // we are on a specific store , not admin
         {
-            
+            // get cached option ids for current attribute
             $brows = $this->getCachedOptIds($attid);
+            // if none already exist
             if (count($brows) == 0)
             {
+                // try to find options matching given values (admin)
                 $existing = $this->getOptionsFromValues($attid, 0, $avalues);
+                // find non existing ones
                 $new = array_merge(array_diff($avalues, $exvals));
+                // for each new option value to create in admin
                 foreach ($new as $nval)
                 {
+                    // create option
                     $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
+                    // create option value for current store
                     $this->createOptionValue($row["opvs"], $storeid, $nval);
+                    // add to exisiting pool
                     $existing[] = $row;
                 }
+                // add existing pool to cache
                 $this->cacheOptIds($attid, $existing);
+                // return cached option ids
                 $brows = $this->getCachedOptIds($attid);
             }
+            // for all existing
             foreach ($existing as $ex)
             {
+                // remove from processing array
                 array_shift($brows);
             }
+            // for all new
             $cnew = count($new);
             for ($i = 0; $i < $cnew; $i++)
             {
                 $row = $brows[$i];
+                // if we don't have option
                 if (!isset($row["opvs"]))
                 {
+                    // create option
                     $row["opvs"] = $this->createOption($attid);
+                    // create option
                     $this->createOptionValue($row["opvs"], 0, $new[$i]);
                 }
+                // create option value for store
                 $this->createOptionValue($row["opvs"], $storeid, $new[$i]);
+                // add to existing pool
                 $existing[] = $row;
             }
         }
+        
         $optids = array();
+        // now all options are in existing & values are created
+        // builf and array with all option ids
         foreach ($existing as $row)
         {
             $optids[] = $row["opvs"];
         }
+        // remove existing
         unset($existing);
+        // remove existing values
         unset($exvals);
+        // remove temp array
+        unset($brows);
+        // return option ids
         return $optids;
     }
 
+    /**
+     * Adds a new option definition row in the cache
+     * 
+     * @param unknown $attid
+     *            attribute id
+     * @param unknown $row
+     *            option definition
+     */
     public function cacheOptIds($attid, $row)
     {
         $this->_optidcache[$attid] = $row;
     }
 
+    /**
+     * return cached option definition rows for a given attribute id
+     * 
+     * @param unknown $attid
+     *            attribute id
+     * @return NULL or option definition rows found
+     */
     public function getCachedOptIds($attid)
     {
         if (isset($this->_optidcache[$attid]))
@@ -676,6 +766,17 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $txid;
     }
 
+    /**
+     * parses a calculated value with tokens like {{ }} or {}
+     * 
+     * @param unknown $pvalue
+     *            parsing value
+     * @param unknown $item
+     *            item for resolving {item.xxx} tokens
+     * @param unknown $params
+     *            params for resolving {meta.xxx} tokens
+     * @return string resolved value
+     */
     public function parseCalculatedValue($pvalue, $item, $params)
     {
         $pvalue = Magmi_ValueParser::parseValue($pvalue, array("item"=>$item,"meta"=>$params));
@@ -683,12 +784,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Return affected store ids for a given item given an attribute scope
      *
      * @param array $item
@@ -874,7 +969,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     }
                 }
             }
-            
+            //if we have values to insert or update
             if (!empty($inserts))
             {
                 // now perform insert for all values of the the current backend type in one
@@ -889,6 +984,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $this->insert($sql, $data);
             }
             
+            //if we have values to delete
             if (!empty($deletes))
             {
                 $sidlist = implode(",", $store_ids);
@@ -896,19 +992,22 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $sql = "DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
                 $this->delete($sql, array($this->prod_etype,$pid));
             }
-            
+            //if no values inserted or deleted on a new item, we have a problem
             if (empty($deletes) && empty($inserts) && $isnew)
             {
+                //in fact we have a problem if we have a really new item
                 if (!$this->_same)
                 {
                     $this->log("No $tp Attributes created for sku " . $item["sku"], "warning");
                 }
             }
+            //memory release
             unset($store_ids);
             unset($data);
             unset($inserts);
             unset($deletes);
         }
+        //if new attributes are to be processed, return them
         return $this->_extra_attrs;
     }
 
@@ -1604,20 +1703,24 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     /**
      * Breaks item processing , but validates partial import
      * This is useful for complex plugins that would assur
-     * @param array $item , item to break process on
-     * @param array $params , processing parameters (item metadata)
-     * @param bool touch , sets product update time if true (default)
+     *
+     * @param array $item
+     *            , item to break process on
+     * @param array $params
+     *            , processing parameters (item metadata)
+     * @param
+     *            bool touch , sets product update time if true (default)
      */
-    public function breakItemProcessing(&$item,$params,$touch=true)
+    public function breakItemProcessing(&$item, $params, $touch = true)
     {
-        //setting empty item to break standard processing
-         
-        $item=array();
-        if($touch && isset($params["product_id"]))
+        // setting empty item to break standard processing
+        $item = array();
+        if ($touch && isset($params["product_id"]))
         {
             $this->touchProduct($params["product_id"]);
         }
     }
+
     public function exitImport()
     {
         $this->callPlugins("datasources,general,itemprocessors", "endImport");
@@ -1720,7 +1823,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         // if some rows found
         if ($nitems > 0)
         {
-            //initializing product type early (in case of db update on startImport)
+            // initializing product type early (in case of db update on startImport)
             $this->initProdType();
             $this->resetSkuStats();
             // intialize store id cache
@@ -1815,5 +1918,4 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         
         Magmi_StateManager::setState("idle");
     }
-    
 }
