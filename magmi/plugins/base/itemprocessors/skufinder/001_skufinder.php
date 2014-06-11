@@ -69,7 +69,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
             // if more than one result, cannot match single sku
             if ($n > 1)
             {
-                $this->log("Several skus match $matchfield value : " . $item["matchfield"], "error");
+                $this->log("Several skus match $matchfield value : " . $item[$matchfield], "error");
                 return false;
             }
             else
@@ -81,7 +81,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
         // if no item found, warning & skip
         if ($n == 0)
         {
-            $this->log("No sku found matching $matchfield value : " . $item["matchfield"], "warning");
+            $this->log("No sku found matching $matchfield value : " . $item[$matchfield], "warning");
             return false;
         }
         // found a single sku ! item sku is in place, continue with processor chain
