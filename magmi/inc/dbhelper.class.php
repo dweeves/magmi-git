@@ -68,12 +68,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * store output in some debug file
      *
      * @param unknown_type $data            
@@ -91,12 +85,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Sets or unsets the usage of internal prepared statement cache for reuse
      *
      * @param boolean $uc
@@ -117,12 +105,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Helper method to try to guess mysql socket based on some tricky phpinfo analysis
      *
      * @throws Exception if something got wrong during detection
@@ -176,13 +158,7 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
-     * Enter description here ...
+     * Returns database statistics
      *
      * @param unknown_type $nbreq            
      */
@@ -203,13 +179,7 @@ class DBHelper
     }
 
     /**
-     * Garbages statement cache if above 500 , removes less used statements
-     * Enter description here .
-     *
-     *
-     *
-     *
-     * ..
+     * Garbages statement cache if above 500 , removes less used statements    
      */
     public function garbageStmtCache()
     {
@@ -313,12 +283,6 @@ class DBHelper
 
     /**
      * Performs an update statement
-     * Enter description here .
-     *
-     *
-     *
-     *
-     * ..
      *
      * @param string $sql
      *            UPDATE statement sql (placeholder allowed)
@@ -431,12 +395,6 @@ class DBHelper
 
     /**
      * Quote array values in order to be used as parameters (handy if array used directly in explode in a IN condition)
-     * Enter description here .
-     *
-     *
-     *
-     *
-     * ..
      *
      * @param array $arr
      *            array of values to be quoted
@@ -452,12 +410,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * transforms an array in a comma separated list of enclosed column names for request
      *
      * @param array $arr
@@ -476,12 +428,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * transform an array of values into equivalent comma separated list of unnamed placeholders.
      *
      * @param array $arr            
@@ -493,12 +439,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * transform a list of values into static select to use it as SQL static resultset
      *
      * @param array $arr
@@ -528,12 +468,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * transform a associative array into a list of update prepared placeholders
      *
      * @param array $arr
@@ -552,13 +486,7 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
-     * Enter description here ...
+     * Filters a key value array over a list of keys , replacing __NULL__ magic value with true null
      *
      * @param unknown_type $kvarr            
      * @param unknown_type $keys            
@@ -607,12 +535,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Sets debug management
      *
      * @param bool $debug
@@ -627,12 +549,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Replaces named params in a descriptive parameterized request
      * Descriptive parameterized request have parameters defined as
      * [namespace:name/label/default value] , this parameters may represent table names or any request parameter
@@ -683,12 +599,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * Checks wether an array is associative
      *
      * @param mixed $var
@@ -700,12 +610,6 @@ class DBHelper
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
      * This method handled mutiple statements in a single SQL (PDO cannot do it by itself)
      * Statements have to be separed by ; & line return.
      *
