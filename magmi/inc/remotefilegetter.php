@@ -108,17 +108,13 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	     * Initializing for ftp
         	    */
         	case 'ftp':
-        	    if (isset($comps['user']))
-        	    {
-        	        $this->setAuthOptions($this->_dl_opts, $url,$comps[PHP_URL_USER],$comps[PHP_URL_PASS]);
-        	    }
-        	    $this->_dl_opts = array(
+        	    $curlopts = array(
         	        //longer timeouts for big files
         	        CURLOPT_TIMEOUT =>300,
         	        //use binary
         	        CURLOPT_BINARYTRANSFER=>true,
         	        CURLOPT_FOLLOWLOCATION=> 1,
-        	        CURLOPT_RETURNTRANSFER=>1);
+        	        CURLOPT_RETURNTRANSFER=>0);
         	    break;
         }
         return $curlopts;
