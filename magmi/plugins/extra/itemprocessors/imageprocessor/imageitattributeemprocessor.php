@@ -86,8 +86,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         
         $sql = "DELETE $t.* FROM $t
-		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (" .
-             $this->arr2values($rivals) . ")";
+		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (" . $this->arr2values($rivals) . ")";
         $this->delete($sql, array_merge(array($pid,$gal_attinfo["attribute_id"]), $rivals));
     }
 
@@ -643,8 +642,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
             $sql = "DELETE emg.* FROM $tg as emg
 			LEFT JOIN (SELECT emg.value_id,count(emgv.value_id) as cnt FROM  $tgv as emgv JOIN $tg as emg  ON emg.value_id=emgv.value_id GROUP BY emg.value_id ) as t1 ON t1.value_id=emg.value_id
-			WHERE attribute_id IN (" . implode(",", $attids) .
-                 ") AND t1.cnt IS NULL";
+			WHERE attribute_id IN (" . implode(",", $attids) . ") AND t1.cnt IS NULL";
             $this->delete($sql);
         }
         else
