@@ -113,12 +113,12 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	        $this->setAuthOptions($this->_dl_opts, $url,$comps[PHP_URL_USER],$comps[PHP_URL_PASS]);
         	    }
         	    $this->_dl_opts = array(
-        	        // we don't want the response as we will store it in a file
-        	        CURLOPT_RETURNTRANSFER=>false,
+        	        //longer timeouts for big files
+        	        CURLOPT_TIMEOUT =>300,
         	        //use binary
         	        CURLOPT_BINARYTRANSFER=>true,
-        	        CURLOPT_FTP_USE_EPSV=>0
-        	    );
+        	        CURLOPT_FOLLOWLOCATION=> 1,
+        	        CURLOPT_RETURNTRANSFER=>1);
         	    break;
         }
         return $curlopts;
