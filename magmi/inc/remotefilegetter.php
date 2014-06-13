@@ -46,6 +46,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
     protected $_protocol;
     protected $_creds;
     protected $_opts;
+    protected $_user;
+    protected $_password;
 
     public function __construct()
     {
@@ -122,16 +124,28 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         return $curlopts;
     }
     
-    public function setAuthOptions(&$opts,$url,$user=null,$passwd=null)
+    public function setAuthOptions($context,&$opts,$user=null,$pass=null)
     {
-        if ($user == null && $this->_user)
+        $creds="";
+        if ($user == null)
         {
-            $creds=$this->_user.":".$this->_password;
+            $user=$this->_user;
+            $pass=$this->_password;
+        }
+        
+        if($user)  
+        {
+            $creds=$user.":";
+        }
+        
+        if($pass)
+        {    
+            $creds.=$pass;
         }
         
         if (!is_null($creds) && $creds != "" && !isset($opts[CURLOPT_USERPWD]))
         {
-                if (substr($url, 0, 4) == "http")
+                if (substr($context['scheme'], 0, 4) == "http")
                 {
                     $opts[CURLOPT_HTTPAUTH] = CURLAUTH_ANY;
                     $opts[CURLOPT_UNRESTRICTED_AUTH] = true;
@@ -155,17 +169,18 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         }
         
         // create a curl context
-        $context = curl_init();
+        $ch = curl_init();
         $opts=$this->_opts[$comps['scheme']];
+        $ctx=array("curlhandle"=>$ch,"opts"=>$opts,"scheme"=>$comps['scheme']);
         
         /*
          * Inline user/pass if in url
         */
         if (isset($comps['user']))
         {
-            $this->setAuthOptions($opts, $url,$comps['user'],$comps['password']);
+            $ctx["creds"]=array($comps['user'],$comps['password']);
         }
-        return array("curlhandle"=>$context,"opts"=>$opts,"scheme"=>$comps['scheme']);
+        return $ctx;
     }
 
     public function destroyContext($context)
@@ -183,9 +198,12 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             return true;
         }
         $ch=$context["curlhandle"];
+        $opts=$context["opts"]["lookup"];
+        $this->setAuthOptions($context,$opts);
         // optimized lookup through curl
-        curl_setopt_array($ch, $context["opts"]["lookup"]);
+        curl_setopt_array($ch, $opts);
        
+        
         /* Get the HTML or whatever is linked in $url. */
         $response = curl_exec($ch);
         if ($context['scheme'] == "http" || $context['scheme'] == "https")
@@ -266,6 +284,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         }
         $dl_opts[CURLOPT_FILE] = $fp;
         $this->setURLOptions($url, $dl_opts);
+        $this->setAuthOptions($context,$dl_opts);
+         
             
         // Download the file , force expect to nothing to avoid buffer save problem
         curl_setopt_array($ch, $dl_opts);
