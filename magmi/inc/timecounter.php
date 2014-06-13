@@ -38,7 +38,7 @@ class TimeCounter
 
     /**
      * Constructor
-     * 
+     *
      * @param string $defaultsrc
      *            : default timing source
      */
@@ -49,7 +49,7 @@ class TimeCounter
 
     /**
      * Initializes default timing categories to use
-     * 
+     *
      * @param unknown $tcats
      *            array of timing categories
      */
@@ -63,7 +63,7 @@ class TimeCounter
 
     /**
      * returns the content for a given timing category name
-     * 
+     *
      * @param string $cat
      *            : timing category name
      * @return array informations for given category
@@ -75,7 +75,7 @@ class TimeCounter
 
     /**
      * return all timers
-     * 
+     *
      * @return all timers info by category
      */
     public function getTimers()
@@ -90,7 +90,7 @@ class TimeCounter
 
     /**
      * return all counters
-     * 
+     *
      * @return all counters info by category
      */
     public function getCounters()
@@ -105,7 +105,7 @@ class TimeCounter
 
     /**
      * creates a new counter
-     * 
+     *
      * @param string $cname
      *            : counter name
      * @param string $tcats
@@ -130,7 +130,7 @@ class TimeCounter
 
     /**
      * initializes a new counter
-     * 
+     *
      * @param string $cname
      *            : counter name
      * @param string $tcats
@@ -150,7 +150,7 @@ class TimeCounter
 
     /**
      * increments a counter
-     * 
+     *
      * @param string $cname
      *            : counter name
      * @param string $tcats
@@ -174,7 +174,7 @@ class TimeCounter
 
     /**
      * Initializes a timer
-     * 
+     *
      * @param string $phase
      *            : timer phase to initialize
      * @param string $src
@@ -223,7 +223,7 @@ class TimeCounter
 
     /**
      * closes a timer for a given phase on a given category for a given source
-     * 
+     *
      * @param unknown $phase
      *            : time phase to exit
      * @param string $src
