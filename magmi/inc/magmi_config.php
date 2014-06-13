@@ -1,6 +1,13 @@
 <?php
 require_once ("properties.php");
 
+/**
+ * Directory based configuration object
+ * Uses a property file
+ * 
+ * @author dweeves
+ *        
+ */
 class DirbasedConfig extends Properties
 {
     protected $_basedir = null;
