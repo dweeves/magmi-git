@@ -69,8 +69,7 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
     public function testHttpAmazonS3Lookup()
     {
         $rfg = self::$_rfg;
-        $exists = $rfg->urlExists('http://clarastream.com.s3.amazonaws.com/5395fd5bdd919a25008b4567/01497212-_1.jpg', 
-            self::$_dldir . '/amazon.jpg');
+        $exists = $rfg->urlExists('https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png');
         $this->assertTrue($exists);
         $this->assertFileExists(self::$_dldir . '/globe.png');
     }
@@ -78,11 +77,11 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
     public function testHttpAmazonS3NoLookup()
     {
         $rfg = self::$_rfg;
-        $rfg->copyRemoteFile('http://clarastream.com.s3.amazonaws.com/5395fd5bdd919a25008b4567/01497212-_1.jpg', 
-            self::$_dldir . '/amazon.jpg');
+        $rfg->copyRemoteFile('https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png', 
+            self::$_dldir . '/Logo.png');
         $errs = $rfg->getErrors();
         $this->assertCount(0, $errs);
-        $this->assertFileExists(self::$_dldir . '/globe.png');
+        $this->assertFileExists(self::$_dldir . '/Logo.png');
     }
     
     public function testFtpAuthenticatedKO()
