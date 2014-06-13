@@ -114,6 +114,9 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	        //use binary
         	        CURLOPT_BINARYTRANSFER=>true,
         	        CURLOPT_FOLLOWLOCATION=> 1,
+        	        //Better compatibility with some FTP Servers
+        	        CURLOPT_FTP_USE_EPSV=>0,
+        	        //no need to return anything, we'll have a file pointer
         	        CURLOPT_RETURNTRANSFER=>0);
         	    break;
         }
