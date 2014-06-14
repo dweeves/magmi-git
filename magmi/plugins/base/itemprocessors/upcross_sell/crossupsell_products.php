@@ -14,8 +14,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         if (count($rinfo["direct"]) > 0)
         {
             $sql = "SELECT testid.sku,cpe.sku as esku FROM " . $this->arr2select($rinfo["direct"], "sku") . " AS testid
-  	LEFT JOIN " .
-                 $this->tablename("catalog_product_entity") . " as cpe ON cpe.sku=testid.sku
+  	LEFT JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.sku=testid.sku
   	WHERE testid.sku NOT LIKE '%re::%'
   	HAVING esku IS NULL";
             $result = $this->selectAll($sql, $rinfo["direct"]);
@@ -66,15 +65,10 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         {
             $sql = "DELETE cplai.*,cpl.*
  		  FROM " . $this->tablename("catalog_product_entity") . " as cpe
- 		  JOIN " .
-                 $this->tablename("catalog_product_link_type") .
-                 " as cplt ON cplt.code='up_sell'
-		  JOIN " .
-                 $this->tablename("catalog_product_link") . " as cpl ON cpl.product_id=cpe.entity_id AND cpl.link_type_id=cplt.link_type_id
- 		  JOIN " .
-                 $this->tablename("catalog_product_link_attribute_int") . " as cplai ON cplai.link_id=cpl.link_id
-		  JOIN " .
-                 $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
+ 		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='up_sell'
+		  JOIN " . $this->tablename("catalog_product_link") . " as cpl ON cpl.product_id=cpe.entity_id AND cpl.link_type_id=cplt.link_type_id
+ 		  JOIN " . $this->tablename("catalog_product_link_attribute_int") . " as cplai ON cplai.link_id=cpl.link_id
+		  JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
 		  WHERE cpe.sku=?";
             $this->delete($sql, array_merge($joininfo["data"]["cpe2.sku"], array($item["sku"])));
         }
@@ -89,15 +83,10 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
             
             $sql = "DELETE cplai.*,cpl.*
  		  FROM " . $this->tablename("catalog_product_entity") . " as cpe
-		  JOIN " .
-                 $this->tablename("catalog_product_link_type") .
-                 " as cplt ON cplt.code='cross_sell'
- 		  JOIN " .
-                 $this->tablename("catalog_product_link") . " as cpl ON cpl.product_id=cpe.entity_id AND cpl.link_type_id=cplt.link_type_id
- 		  JOIN " .
-                 $this->tablename("catalog_product_link_attribute_int") . " as cplai ON cplai.link_id=cpl.link_id
-		  JOIN " .
-                 $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
+		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
+ 		  JOIN " . $this->tablename("catalog_product_link") . " as cpl ON cpl.product_id=cpe.entity_id AND cpl.link_type_id=cplt.link_type_id
+ 		  JOIN " . $this->tablename("catalog_product_link_attribute_int") . " as cplai ON cplai.link_id=cpl.link_id
+		  JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
 		  WHERE cpe.sku=?";
             $this->delete($sql, array_merge($joininfo["data"]["cpe2.sku"], array($item["sku"])));
         }
@@ -212,10 +201,8 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
                 // insert into link table
                 $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id 
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
-			JOIN " .
-                     $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $jinf
-			JOIN " .
-                     $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='up_sell'
+			JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $jinf
+			JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='up_sell'
 			WHERE cpe.sku=?";
                 $sql = "INSERT IGNORE INTO " . $this->tablename("catalog_product_link") .
                      " (link_type_id,product_id,linked_product_id)  $bsql";
@@ -238,10 +225,8 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
                 // insert into link table
                 $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id 
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
-			JOIN " .
-                     $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
-			JOIN " .
-                     $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
+			JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
+			JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
 			WHERE cpe.sku=?";
                 $sql = "INSERT IGNORE INTO " . $this->tablename("catalog_product_link") .
                      " (link_type_id,product_id,linked_product_id)  $bsql";
@@ -258,16 +243,10 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         // this enable to mass add
         $bsql = "SELECT cpl.link_id,cpla.product_link_attribute_id,0 as value
 	   	   FROM " . $this->tablename("catalog_product_entity") . " AS cpe
-		   JOIN " .
-             $this->tablename("catalog_product_entity") . " AS cpe2 ON cpe2.entity_id!=cpe.entity_id
-		   JOIN " .
-             $this->tablename("catalog_product_link_type") .
-             " AS cplt ON cplt.code=?
-		   JOIN " .
-             $this->tablename("catalog_product_link_attribute") .
-             " AS cpla ON cpla.product_link_attribute_code='position' AND cpla.link_type_id=cplt.link_type_id
-		   JOIN " .
-             $this->tablename("catalog_product_link") . " AS cpl ON cpl.link_type_id=cplt.link_type_id AND cpl.product_id=cpe.entity_id AND cpl.linked_product_id=cpe2.entity_id
+		   JOIN " . $this->tablename("catalog_product_entity") . " AS cpe2 ON cpe2.entity_id!=cpe.entity_id
+		   JOIN " . $this->tablename("catalog_product_link_type") . " AS cplt ON cplt.code=?
+		   JOIN " . $this->tablename("catalog_product_link_attribute") . " AS cpla ON cpla.product_link_attribute_code='position' AND cpla.link_type_id=cplt.link_type_id
+		   JOIN " . $this->tablename("catalog_product_link") . " AS cpl ON cpl.link_type_id=cplt.link_type_id AND cpl.product_id=cpe.entity_id AND cpl.linked_product_id=cpe2.entity_id
 		   WHERE cpe.sku=?";
         $sql = "INSERT IGNORE INTO " . $this->tablename("catalog_product_link_attribute_int") .
              " (link_id,product_link_attribute_id,value) $bsql";

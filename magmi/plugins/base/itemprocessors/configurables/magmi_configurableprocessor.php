@@ -91,10 +91,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         {
             $attinfo = $this->getAttrInfo("visibility");
             $sql = "UPDATE " . $this->tablename("catalog_product_entity_int") . " as cpei
-			JOIN " .
-                 $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
-			JOIN " .
-                 $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id 
+			JOIN " . $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
+			JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id 
 			SET cpei.value=?
 			WHERE cpei.entity_id=cpe.entity_id AND attribute_id=?";
             $this->update($sql, array($pid,$vis,$attinfo["attribute_id"]));
