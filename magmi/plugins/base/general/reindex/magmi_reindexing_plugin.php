@@ -49,8 +49,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             // removing records in flat tables that are no more linked to entries in catalog_product_entity table
             // for some reasons, this seem to happen
             $sql = "DELETE cpf.* FROM $tname as cpf
-			LEFT JOIN " .
-                 $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id 
+			LEFT JOIN " . $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id 
 			WHERE cpe.entity_id IS NULL";
             $this->delete($sql);
         }
