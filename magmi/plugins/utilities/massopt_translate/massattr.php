@@ -179,8 +179,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
         
         $valstr = $this->arr2values($values);
         $sql = "INSERT INTO $eaov (option_id,store_id,value)
-		VALUES " . join(",", $ins) .
-             " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
+		VALUES " . join(",", $ins) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
         $this->insert($sql, $values);
     }
 
