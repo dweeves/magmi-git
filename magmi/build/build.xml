@@ -15,11 +15,11 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="depends" description="Magmi project">
+    <target name="default" depends="depends" description="Magmi base">
     	
 
     	<zip destfile="magmi_${target_version}.zip" update="no">
-        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project"  prefix="magmi"/>
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
            	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
@@ -27,9 +27,21 @@
     		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
     		<zipfileset dir=".." includes="**/plugins/inc/**" prefix="magmi" dirmode="777"/>
         	<zipfileset dir=".." includes="**/plugins/base/**" excludes="**/plugins/base/datasources/csv/downloads/**" prefix="magmi" dirmode="777"/>
+        	
+        </zip>    	
+    </target>
+    <target name="full" depends="depends" description="Magmi full"> 
+        <zip destfile="magmi_full_${target_version}.zip" update="no">
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
+           	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/plugins/**" prefix="magmi" dirmode="777"/>
+			<zipfileset dir=".." includes="**/tests/**" prefix="magmi" dirmode="777"/>        	
         </zip>
-    	
-
+        
     </target>
 	 <tstamp>
 	    <format property="RLSDATE" pattern="yyyyMMdd" />
