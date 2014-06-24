@@ -21,7 +21,7 @@
  			</div>
 			<div>
 				Online Help : see <a
-					href="http://sourceforge.net/apps/mediawiki/magmi/" target="wiki">Wiki</a>
+					href="http://wiki.magmi.org" target="wiki">Wiki</a>
 				or plugin panels documentation link
 			</div>
 		</div>
