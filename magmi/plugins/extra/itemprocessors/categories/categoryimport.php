@@ -85,7 +85,7 @@ class CategoryImporter extends Magmi_ItemProcessor
     public function getPluginInfo()
     {
         return array("name"=>"On the fly category creator/importer","author"=>"Dweeves","version"=>"0.2.4",
-            "url"=>$this->pluginDocUrl("On_the_fly_category_creator/importer");
+            "url"=>$this->pluginDocUrl("On_the_fly_category_creator/importer"));
     }
 
     public function getExistingCategory($parentpath, $cattr)
