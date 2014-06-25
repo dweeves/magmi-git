@@ -589,9 +589,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getOptionIds($attid, $storeid, $values)
     {
-        $optids = array();
-        $svalues = array();
-        $avalues = array();
+        $svalues = array(); // store specific values
+        $avalues = array(); // default (admin) values
         
         // Checking if we want to "translate" values existing in admin
         foreach ($values as $val)
@@ -613,97 +612,76 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
         
         // get Existing options for admin values & current attribute (store = 0)
-        $existing = $this->getOptionsFromValues($attid, 0, $avalues);
-        $exvals = array();
-        foreach ($existing as $optdesc)
-        {
-            $exvals[] = $optdesc["value"];
+        // this array contains two items:
+        //    'opvs' => the option id;
+        //    'value' => the corresponding admin value
+        $optExisting = $this->getCachedOptIds($attid);
+        if (count($optExisting) == 0) {
+            $optExisting = $this->getOptionsFromValues($attid, 0, $avalues);
         }
-        // new option values are option values that are in "admin" option values array & not in existing admin option values array
-        $new = array_merge(array_diff($avalues, $exvals));
-        
-        // if we are on admin option values
-        if ($storeid == 0)
-        {
-            // for each new option value to create in admin
-            foreach ($new as $nval)
-            {
-                // create a new option with value
-                $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
-                // add an option value for current store
-                $this->createOptionValue($row["opvs"], $storeid, $nval);
-                // add this value to existing pool
-                $existing[] = $row;
-            }
-            // put this value in the option id cache
-            $this->cacheOptIds($attid, $existing);
+        // get the values as array
+        $exvalsAdmin = array();
+        foreach ($optExisting as $optdesc) {
+            $exvalsAdmin[] = $optdesc["value"];
         }
-        else
-        // we are on a specific store , not admin
+        // new option values are option values that are in "admin" option values array ($avalues)
+        // and not in EXISTING admin option values array ($exvalsAdmin)
+        $newAdminValues = array_diff($avalues, $exvalsAdmin);
+
+        // foreach new admin option value we create a new option and a new
+        // option value (in admin store).
+        foreach ($newAdminValues as $nval)
         {
-            // get cached option ids for current attribute
-            $brows = $this->getCachedOptIds($attid);
-            // if none already exist
-            if (count($brows) == 0)
-            {
-                // try to find options matching given values (admin)
-                $existing = $this->getOptionsFromValues($attid, 0, $avalues);
-                // find non existing ones
-                $new = array_merge(array_diff($avalues, $exvals));
-                // for each new option value to create in admin
-                foreach ($new as $nval)
-                {
-                    // create option
-                    $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
-                    // create option value for current store
-                    $this->createOptionValue($row["opvs"], $storeid, $nval);
-                    // add to exisiting pool
-                    $existing[] = $row;
+            // create a new option with value
+            $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
+            // add an option value for admin store
+            $this->createOptionValue($row["opvs"], $storeid, $nval);
+            // add this value to existing pool
+            $optExisting[] = $row;
+        }
+        // put this value in the option id cache
+        $this->cacheOptIds($attid, $optExisting);
+
+        // if we are on a specific store (not admin), we need to create store
+        // specific values if they do not exist yet.
+        if ($storeid != 0) {
+            $existingStoreValues = $this->getOptionsFromValues($attid, $storeid, $svalues);
+            foreach ($svalues as $inx => $storeValue) {
+                $adminValue = $avalues[$inx];
+                $optionId = null;
+                foreach ($optExisting as $optRow) {
+                    if ($adminValue == $optRow["value"]) {
+                        // this is the option id to which we have to attach the store specific value
+                        $optionId = $optRow["opvs"];
+                        break;
+                    }
                 }
-                // add existing pool to cache
-                $this->cacheOptIds($attid, $existing);
-                // return cached option ids
-                $brows = $this->getCachedOptIds($attid);
-            }
-            // for all existing
-            foreach ($existing as $ex)
-            {
-                // remove from processing array
-                array_shift($brows);
-            }
-            // for all new
-            $cnew = count($new);
-            for ($i = 0; $i < $cnew; $i++)
-            {
-                $row = $brows[$i];
-                // if we don't have option
-                if (!isset($row["opvs"]))
-                {
-                    // create option
-                    $row["opvs"] = $this->createOption($attid);
-                    // create option
-                    $this->createOptionValue($row["opvs"], 0, $new[$i]);
+                if (is_null($optionId)) {
+                    continue; // no match, something went wrong...
                 }
-                // create option value for store
-                $this->createOptionValue($row["opvs"], $storeid, $new[$i]);
-                // add to existing pool
-                $existing[] = $row;
+                $valueExistsAlready = false;
+                foreach ($existingStoreValues as $existingValue) {
+                    if ($existingValue['opvs'] == $optionId && $existingValue['value'] == $svalues[$inx]) {
+                        $valueExistsAlready = true;
+                    }
+                }
+                if (!$valueExistsAlready) {
+                    $this->createOptionValue($optionId, $storeid, $svalues[$inx]);
+                }
             }
         }
         
         $optids = array();
         // now all options are in existing & values are created
         // builf and array with all option ids
-        foreach ($existing as $row)
+        foreach ($optExisting as $row)
         {
             $optids[] = $row["opvs"];
         }
-        // remove existing
-        unset($existing);
+        // remove existing store values
+        unset($existingStoreValues);
         // remove existing values
-        unset($exvals);
-        // remove temp array
-        unset($brows);
+        unset($exvalsAdmin);
         // return option ids
         return $optids;
     }
