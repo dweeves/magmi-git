@@ -66,7 +66,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $removelimit = intval($mxerrcache / 10);
         if (count($this->_errorimgs) > $mxerrcache)
         {
-            uasort($this->prepared, array($this,"cachesort"));
+            uasort($this->_errorimgs, array($this,"cachesort"));
             array_splice($this->_errorimgs, $removelimit, count($this->_errorimgs));
         }
         $this->_errorimgs[$img] = microtime(true);
