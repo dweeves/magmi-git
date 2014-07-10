@@ -59,7 +59,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
             return false;
         }
         // now find sku
-        $cpebt = $this->tablebname("catalog_product_entity_" . $attinfo["backend_type"]);
+        $cpebt = $this->tablename("catalog_product_entity_" . $attinfo["backend_type"]);
         $sql = "SELECT sku FROM " . $this->tablename("catalog_product_entity") . " as cpe JOIN
 		$cpebt as cpebt ON cpebt.value=? AND cpebt.attribute_id=? AND cpebt.entity_id=cpe.entity_id";
         $stmt = $this->select($sql, array($item[$matchfield],$attinfo["attribute_id"]));
