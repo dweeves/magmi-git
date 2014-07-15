@@ -344,6 +344,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return "__MAGMI_DELETE__";
         }
+        
+        //in case of url key already has special regexp value in it
+        $urlk=preg_quote($urlk);
         // for existing product, check if we have already a value matching the current pattern
         if ($exists)
         {
