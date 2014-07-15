@@ -346,12 +346,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         }
         
         //in case of url key already has special regexp value in it
-        $urlk=preg_quote($urlk);
+        $xurlk=preg_quote($urlk);
         // for existing product, check if we have already a value matching the current pattern
         if ($exists)
         {
             $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND value REGEXP ?";
-            $eurl = $this->selectone($sql, array($attrdesc["attribute_id"],$pid,$urlk . "(-\d+)?"), "value");
+            $eurl = $this->selectone($sql, array($attrdesc["attribute_id"],$pid,$xurlk . "(-\d+)?"), "value");
             // we match wanted pattern, try finding conflicts with our current one
             if ($eurl)
             {
@@ -364,7 +364,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 
                 $sql = "SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value REGEXP ?";
-                $umatch = $urlk . "(-\d+)?";
+                $umatch = $xurlk . "(-\d+)?";
             }
             $lst = $this->selectAll($sql, array($attrdesc["attribute_id"],$pid,$umatch));
         }
