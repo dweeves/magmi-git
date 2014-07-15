@@ -86,6 +86,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         {
             $this->initializeBaseCols($item);
             $this->initializeBaseAttrs($item);
+            //force url key for new items for magento > 1.7.x
+            if($this->getMagentoVersion()>"1.7.x")
+            {
+               $item["url_key"]=Slugger::slug($item["name"]);
+            } 
+        
         }
         // forcing default values for mandatory processing columns
         foreach ($this->_forcedefault as $k => $v)
