@@ -35,7 +35,15 @@ class DirbasedConfig extends Properties
 
     public function getLastSaved($fmt)
     {
-        return strftime($fmt, filemtime($this->_confname));
+        if(file_exists($this->_confname))
+        {
+            $lastsaved=strftime($fmt, filemtime($this->_confname));
+        }
+        else
+        {
+            $lastsaved="never";
+        }
+        return $lastsaved;
     }
 
     public function load($name = null)
