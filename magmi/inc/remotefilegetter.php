@@ -158,8 +158,6 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
      */
     public function createContext($url)
     {
-        // handle spaces in url
-        $curl_url = str_replace(" ", "%20", $url);
         // parsing url components
         $comps = parse_url($url);
         if ($comps == false || !isset($this->_opts[$comps['scheme']]))
@@ -199,6 +197,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         $ch=$context["curlhandle"];
         $opts=$context["opts"]["lookup"];
         $this->setAuthOptions($context,$opts);
+        //adding url to curl
+        $this->setURLOptions($remoteurl, $opts);
         // optimized lookup through curl
         curl_setopt_array($ch, $opts);
        
@@ -255,7 +255,9 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 
     public function setURLOptions($url, &$optab)
     {
-        $optab[CURLOPT_URL] = $url;
+        // handle spaces in url
+        $curl_url = str_replace(" ", "%20", $url);
+        $optab[CURLOPT_URL] = $curl_url;
     }
 
     
