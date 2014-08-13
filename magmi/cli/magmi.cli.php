@@ -97,6 +97,13 @@ $options = buildOptions($argv);
 $importer = getEngineInstance($options);
 if (isset($importer))
 {
+    $inifile=isset($options['config'])? $options['config']:null;
+    if(isset($inifile))
+    {
+        require_once ('magmi_config.php');
+        $conf=Magmi_Config::getInstance();
+        $conf->load($options['config']);
+    }
     // if logger set, use it or use FileLogger by default
     $loggerclass = isset($options['logger']) ? $options['logger'] : "FileLogger";
     $importer->setLogger(new $loggerclass());
