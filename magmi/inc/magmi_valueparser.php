@@ -11,6 +11,12 @@ class Magmi_ValueParser
         
         foreach ($dictarray as $key => $vals)
         {
+            // Unsure of cause for NULL $vals, but this avoids messages in the error log
+            if ($vals === NULL)
+            {
+                continue;   
+            }
+            
             $ik = array_keys($vals);
             // replace base values
             while (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches))
@@ -21,7 +27,13 @@ class Magmi_ValueParser
                     {
                         if (in_array($match, $ik))
                         {
-                            $rep = $renc . $dictarray[$key][$match] . $renc;
+                            if (strpos($dictarray[$key][$match], '"') !== FALSE)
+                            {
+                                $rep = $renc . preg_replace('/"/', '\\"', $dictarray[$key][$match]) . $renc;
+                            }
+                            else {
+                                $rep = $renc . $dictarray[$key][$match] . $renc;
+                            }
                         }
                         else
                         {
