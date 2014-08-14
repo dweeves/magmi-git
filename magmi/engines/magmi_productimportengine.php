@@ -599,9 +599,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             if (preg_match("|^(.*)::\[(.*)\]$|", $val, $matches))
             {
                 // add translated value in store value array
-                $svalues[] = $matches[2];
+                $svalues[] = $matches[1];
                 // add admin value in admin value array
-                $avalues[] = $matches[1];
+                $avalues[] = $matches[2];
             }
             else
             {
