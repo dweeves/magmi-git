@@ -27,13 +27,7 @@ class Magmi_ValueParser
                     {
                         if (in_array($match, $ik))
                         {
-                            if (strpos($dictarray[$key][$match], '"') !== FALSE)
-                            {
-                                $rep = $renc . preg_replace('/"/', '\\"', $dictarray[$key][$match]) . $renc;
-                            }
-                            else {
-                                $rep = $renc . $dictarray[$key][$match] . $renc;
-                            }
+                            $rep = $renc . str_replace('"', '\\"', $dictarray[$key][$match]) . $renc;
                         }
                         else
                         {
