@@ -6,10 +6,34 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"SKU Finder","author"=>"Dweeves","version"=>"0.0.2",
+        return array("name"=>"SKU Finder","author"=>"Dweeves","version"=>"0.0.3",
             "url"=>$this->pluginDocUrl("SKU_Finder"));
     }
 
+    public function getPluginParams($params)
+    
+    {
+    
+        $pp=array();
+    
+        foreach($params as $k=>$v)
+    
+        {
+    
+            if(preg_match("/^SKUF:.*$/",$k))
+    
+            {
+    
+                $pp[$k]=$v;
+    
+            }
+    
+        }
+    
+        return $pp;
+    
+    }
+   
     public function processItemBeforeId(&$item, $params = null)
     {
         $matchfield = trim($this->getParam("SKUF:matchfield"));
