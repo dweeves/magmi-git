@@ -1,12 +1,13 @@
+#!/usr/bin/env php
 <?php
 
 /**
  * MAGENTO MASS IMPORTER CLI SCRIPT
- * 
+ *
  * version : 0.1
  * author : S.BRACQUEMONT aka dweeves
  * updated : 2010-08-02
- * 
+ *
  */
 require_once (dirname(dirname(__FILE__)) . "/inc/magmi_defs.php");
 require_once ('magmi_loggers.php');
@@ -14,8 +15,8 @@ $script = array_shift($argv);
 
 /**
  * Builing option dictionnary from command line
- * 
- * @param array $argv            
+ *
+ * @param array $argv
  * @return dictionnary with option list
  */
 function buildOptions($argv)
@@ -24,7 +25,7 @@ function buildOptions($argv)
     foreach ($argv as $option)
     {
         $isopt = $option[0] == "-";
-        
+
         if ($isopt)
         {
             $optarr = explode("=", substr($option, 1), 2);
@@ -45,7 +46,7 @@ function buildOptions($argv)
 
 /**
  * returns an instance of given class , using filename(without php):classname syntax
- * 
+ *
  * @param string $cval
  *            , filename (without php):classname value
  * @param string $cdir
@@ -77,8 +78,8 @@ function getClassInstance($cval, $cdir = ".")
 /**
  * Returns the wanted engine from an option list
  * If engine not set in option list, uses default magmi product import engine
- * 
- * @param array $options            
+ *
+ * @param array $options
  * @return Engine instance or die if not found
  */
 function getEngineInstance($options)
@@ -112,7 +113,7 @@ if (isset($importer))
     // if no workflow chain is defined, create a new one
     if (!isset($options["chain"]))
     {
-        
+
         $options["chain"] = isset($options["profile"]) ? $options["profile"] : "";
         $options["chain"] .= isset($options["mode"]) ? ":" . $options["mode"] : "";
     }
@@ -139,4 +140,3 @@ if (isset($importer))
         $importer->run(array_merge($eoptions, $options));
     }
 }
-?>
