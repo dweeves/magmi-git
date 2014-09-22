@@ -20,7 +20,7 @@
 <div class="fieldinfo"></div>
 <script type="text/javascript">
 
-magmi_getimporturl=function()
+	magmi_getimporturl=function()
 	{
 		var mode=$('GETURL:mode').value;
 		var old_action=$('runmagmi').action;
@@ -44,21 +44,18 @@ magmi_getimporturl=function()
 				content=url;
 				break;
 			case "cli":
-				content='magmi.cli.php -mode='+$F('mode')+' -profile='+$F('runprofile');
+				content='magmi-cli -mode='+$F('mode')+' -profile='+$F('runprofile');
 				break;
 			default:
 				content=url;
 		}
 		$('GETURL:url').update(content);
 	}
-	
-		
+
 	$('runmagmi').getElements().each(function(it){
 				it.observe('blur',magmi_getimporturl);
 		});
 	$('GETURL:mode').observe('change',magmi_getimporturl);
 	magmi_getimporturl();
-		
-	
-	
+
 </script>
