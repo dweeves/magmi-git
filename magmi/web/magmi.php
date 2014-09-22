@@ -41,7 +41,7 @@ if (file_exists($postinst))
         rename($postinst, $postinst . "." . strval(time()));
     }
 }
-foreach (array("../state","../conf","../plugins") as $dirname)
+foreach (array("../log","../conf","../plugins") as $dirname)
 {
     if (!FSHelper::isDirWritable($dirname))
     {
