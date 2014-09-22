@@ -17,18 +17,18 @@ class Magmi_StateManager
 
     public static function getTraceFile()
     {
-        return self::getStateDir() . DIRSEP . "trace.txt";
+        return self::getStateDir() . DIRSEP . "trace.log";
     }
 
     public static function getStateDir()
     {
-        return dirname(dirname(self::$_script)) . DIRSEP . "state";
+        return dirname(dirname(self::$_script)) . DIRSEP . "log";
     }
 
     public static function getProgressFile($full = false)
     {
-        $fullname = self::getStateDir() . DIRSEP . "progress.txt";
-        $pfname = ($full ? $fullname : "progress.txt");
+        $fullname = self::getStateDir() . DIRSEP . "progress.log";
+        $pfname = ($full ? $fullname : "progress.log");
         return $pfname;
     }
 
@@ -38,7 +38,6 @@ class Magmi_StateManager
         {
             return;
         }
-        
         self::$_state = $state;
         $f = fopen(self::getStateFile(), "w");
         fwrite($f, self::$_state);

@@ -1865,7 +1865,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         Magmi_StateManager::setState("idle");
         
         $timers = $this->_timecounter->getTimers();
-        $f = fopen(Magmi_StateManager::getStateDir() . "/timings.txt", "w");
+        $f = fopen(Magmi_StateManager::getStateDir() . "/timings.log", "w");
         foreach ($timers as $cat => $info)
         {
             $rep = "\nTIMING CATEGORY:$cat\n--------------------------------";

@@ -19,8 +19,8 @@
     	
 
     	<zip destfile="magmi_${target_version}.zip" update="no">
-        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
-           	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/log/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
+           	<zipfileset dir=".." includes="**/log"  prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
@@ -32,8 +32,8 @@
     </target>
     <target name="full" depends="depends" description="Magmi full"> 
         <zip destfile="magmi_full_${target_version}.zip" update="no">
-        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
-           	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/log/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
+           	<zipfileset dir=".." includes="**/log"  prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
