@@ -14,7 +14,7 @@ session_start();
 <link rel="stylesheet" href="css/reset.css"></link>
 <link rel="stylesheet" href="css/magmi.css"></link>
 <script
-	src="//ajax.googleapis.com/ajax/libs/prototype/1.7.1.0/prototype.js"></script>
+	src="//ajax.googleapis.com/ajax/libs/prototype/1.7.2.0/prototype.js"></script>
 <script type="text/javascript" src="js/ScrollBox.js"></script>
 <script type="text/javascript" src="js/magmi_utils.js"></script>
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
