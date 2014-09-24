@@ -66,6 +66,16 @@
 </div>
 
 <div class="formline">
+	<span>Import into DB (use only if Magento Media Storage is set to Database)</span> <select name="IMG:storeindb">
+<?php $qstoreindb=$this->getParam("IMG:storeindb","no");?>
+<option value="yes" <?php if($qstoreindb=="yes"){?> selected="selected"
+			<?php }?>>Enable</option>
+		<option value="no" <?php if($qstoreindb=="no"){?> selected="selected"
+			<?php }?>>Disable</option>
+	</select>
+</div>
+
+<div class="formline">
 	<span>Debug mode</span> <select name="IMG:debug">
 <?php $qdd=$this->getParam("IMG:debug","no");?>
 <option value="yes" <?php if($qdd=="yes"){?> selected="selected"
