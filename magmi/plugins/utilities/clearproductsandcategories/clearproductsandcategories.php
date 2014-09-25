@@ -5,7 +5,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Clear Catalog, Categories and Reviews","author"=>"www.blinkdata.com","version"=>"1.0.1");
+        return array("name"=>"Clear Catalog, Categories and Reviews","author"=>"www.blinkdata.com,dweeves","version"=>"1.0.2");
     }
 
     public function runUtility()
@@ -96,33 +96,43 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
         $sql = "select attribute_id from $tname where entity_type_id={$entity_type_id} and attribute_code='display_mode'";
         $displaymode_id = $this->selectone($sql, null, "attribute_id");
         
+
+        //Base categories in the tree
         $sql = "insert  into " . $this->tablename("catalog_category_entity") . " ";
         $sql .= "(entity_id,entity_type_id,attribute_set_id,parent_id,created_at,updated_at,path,position,level,children_count) values ";
-        $sql .= "(1,{$entity_type_id},{$attributeSetId},0,'0000-00-00 00:00:00','2009-02-20 00:25:34','1'  ,1,0,1),";
-        $sql .= "(3,{$entity_type_id},{$attributeSetId},1,'0000-00-00 00:00:00','2009-02-20 00:25:34','1/3'  ,3,1,1),";
-        $sql .= "(4,{$entity_type_id},{$attributeSetId},3,'0000-00-00 00:00:00','2009-02-20 00:25:34','1/3/4',4,2,0)";
+        $sql .= "(1,{$entity_type_id},{$attributeSetId},0,'0000-00-00 00:00:00','".strftime('%Y-%m-%d %H:%M:%S')."','1'  ,1,0,1),";
+        $sql .= "(2,{$entity_type_id},{$attributeSetId},1,'0000-00-00 00:00:00','".strftime('%Y-%m-%d %H:%M:%S')."','1/2'  ,2,1,1),";
         $this->exec_stmt($sql);
-        
+       
+        //Default settings (active,include in menu)
         $sql = "insert  into " . $this->tablename("catalog_category_entity_int") . " ";
         $sql .= "(value_id,entity_type_id,attribute_id,store_id,entity_id,value) values ";
         $sql .= "(1,{$entity_type_id},{$isactive_id},0,1,1),";
         $sql .= "(2,{$entity_type_id},{$includeinmenu_id},0,1,1),";
-        $sql .= "(3,{$entity_type_id},{$isactive_id},0,3,1),";
-        $sql .= "(4,{$entity_type_id},{$includeinmenu_id},0,3,1),";
-        $sql .= "(5,{$entity_type_id},{$isactive_id},0,4,1),";
-        $sql .= "(6,{$entity_type_id},{$includeinmenu_id},1,4,1)";
+        $sql .= "(3,{$entity_type_id},{$isactive_id},0,2,1),";
+        $sql .= "(4,{$entity_type_id},{$includeinmenu_id},0,2,1),";
+        $sql .= "(5,{$entity_type_id},{$isactive_id},1,2,1),";
+        $sql .= "(6,{$entity_type_id},{$includeinmenu_id},1,2,1),";
+        
         $this->exec_stmt($sql);
         
+        //Fix inserting default values for categories & root cat in both admin & base store
         $sql = "insert  into " . $this->tablename("catalog_category_entity_varchar") . " ";
         $sql .= "(value_id,entity_type_id,attribute_id,store_id,entity_id,value) values ";
-        $sql .= "(1,{$entity_type_id},{$name_id},0,3,'Root Catalog'),";
-        $sql .= "(2,{$entity_type_id},{$displaymode_id},0,3,'PRODUCTS'),";
-        $sql .= "(3,{$entity_type_id},{$urlkey_id},0,3,'root-catalog'),";
-        $sql .= "(4,{$entity_type_id},{$name_id},0,4,'Default Category'),";
-        $sql .= "(5,{$entity_type_id},{$displaymode_id},0,4,'PRODUCTS'),";
-        $sql .= "(6,{$entity_type_id},{$urlkey_id},0,4,'default-category')";
+        $sql .= "(1,{$entity_type_id},{$name_id},0,1,'Root Catalog'),";
+        $sql .= "(2,{$entity_type_id},{$name_id},1,1,'Root Catalog'),";      
+        $sql .= "(3,{$entity_type_id},{$displaymode_id},0,1,'PRODUCTS'),";
+        $sql .= "(4,{$entity_type_id},{$displaymode_id},1,1,'PRODUCTS'),";
+        $sql .= "(5,{$entity_type_id},{$urlkey_id},0,1,'root-catalog'),";
+        $sql .= "(6,{$entity_type_id},{$urlkey_id},1,1,'root-catalog'),";
+        $sql .= "(7,{$entity_type_id},{$name_id},0,2,'Default Category'),";
+        $sql .= "(8,{$entity_type_id},{$name_id},1,2,'Default Category'),";
+        $sql .= "(9,{$entity_type_id},{$displaymode_id},0,2,'PRODUCTS'),";
+        $sql .= "(10,{$entity_type_id},{$displaymode_id},1,2,'PRODUCTS'),";
+        $sql .= "(11,{$entity_type_id},{$urlkey_id},0,2,'default-category')";
+        $sql .= "(12,{$entity_type_id},{$urlkey_id},0,2,'default-category')";
         $this->exec_stmt($sql);
-        
+        //default cat stock
         $sql = "insert  into " . $this->tablename("cataloginventory_stock") . " ";
         $sql .= "(stock_id,stock_name) values ";
         $sql .= "(1,'Default')";
