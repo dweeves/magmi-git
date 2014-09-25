@@ -11,7 +11,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly','version'=>'0.0.1');
+        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.2');
     }
 
     public function processItemAfterId(&$item, $params = null)
@@ -39,14 +39,16 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                                 AND website_id IN (' . implode(', ', $website_ids) . ')';
                 $this->delete($sql, array($params['product_id']));
             }
+
+            $sql = 'INSERT INTO ' . $table_name .
+            ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
             
             foreach ($group_cols as $key)
-            {
-                if ($price = (float) $item[$key])
+            {            	
+            	$price=str_replace(",",".",$item[$key]);
+                if (!empty($price))
                 {
                     $group_id = $this->_groups[$key]['id'];
-                    $sql = 'INSERT INTO ' . $table_name .
-                         ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
                     $inserts = array();
                     $data = array();
                     
@@ -58,20 +60,46 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                         $data[] = $group_id;
                         $data[] = $price;
                         $data[] = $website_id;
-                    }
-                    
-                    if (!empty($data))
-                    {
-                        $sql .= implode(', ', $inserts);
-                        $sql .= ' ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)';
-                        $this->insert($sql, $data);
-                    }
+                    }                    
                 }
             }
+            //multiple insert
+            if (!empty($data))
+            {
+            	$sql .= implode(', ', $inserts);
+            	$sql .= ' ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)';
+            	$this->insert($sql, $data);
+            }
+            
         }
         return true;
     }
 
+    public function createGroup($groupname)
+    {
+    	$taxClasses = Mage::getModel('tax/class')->getCollection()
+    	->setClassTypeFilter('CUSTOMER')
+    	->toOptionArray();
+    	$gid=null;
+    	if (count($taxClasses) > 0)
+    	{
+    		$sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") .
+    		' WHERE customer_group_code = ?';
+    		
+    		$taxClassCustomer = $taxClasses[0]['value'];
+    	
+    		// create the group and do it again
+    		$customerGroups = Mage::getModel('customer/group');
+    		$customerGroups->customer_group_code = $matches[1];
+    		$customerGroups->tax_class_id = $taxClassCustomer;
+    		$customerGroups->save();
+    	
+    		$gid = $this->selectone($sql,$groupname, "customer_group_id");
+    	}
+    	return $gid;
+    		
+    }
+    
     /**
      * Inspect column list for group price columns info
      *
@@ -86,33 +114,16 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
         {
             if (preg_match("|group_price:(.*)|", $col, $matches))
             {
+            	$groupname=$matches[1];
                 $sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") .
                      ' WHERE customer_group_code = ?';
-                if ($id = $this->selectone($sql, $matches[1], "customer_group_id"))
+                if ($id = $this->selectone($sql, $groupname, "customer_group_id"))
                 {
-                    $this->_groups[$col] = array('name'=>$matches[1],'id'=>$id);
+                    $this->_groups[$col] = array('name'=>$groupname,'id'=>$id);
                 }
                 else
                 {
-                    // Only pickup the first class
-                    $taxClasses = Mage::getModel('tax/class')->getCollection()
-                        ->setClassTypeFilter('CUSTOMER')
-                        ->toOptionArray();
-                    if (count($taxClasses) > 0)
-                    {
-                        $taxClassCustomer = $taxClasses[0]['value'];
-                        
-                        // create the group and do it again
-                        $customerGroups = Mage::getModel('customer/group');
-                        $customerGroups->customer_group_code = $matches[1];
-                        $customerGroups->tax_class_id = $taxClassCustomer;
-                        $customerGroups->save();
-                        
-                        if ($id = $this->selectone($sql, $matches[1], "customer_group_id"))
-                        {
-                            $this->_groups[$col] = array('name'=>$matches[1],'id'=>$id);
-                        }
-                    }
+                   	$this->_groups[$col] = array('name'=>$groupname,'id'=>$this->createGroup($groupname));
                 }
             }
         }
