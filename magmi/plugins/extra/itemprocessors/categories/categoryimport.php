@@ -121,7 +121,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 		LEFT JOIN  $cet as eac ON eac.parent_id=cce.entity_id
 		WHERE cce.entity_id=?
 		GROUP BY eac.parent_id";
-        $info = $this->selectAll($sql, $parentid);
+        $info = $this->selectAll($sql, array($parentid));
         $info = $info[0];
         // insert new category
         $sql = "INSERT INTO $cet 	(entity_type_id,attribute_set_id,parent_id,position,level,path,children_count) VALUES (?,?,?,?,?,?,?)";
