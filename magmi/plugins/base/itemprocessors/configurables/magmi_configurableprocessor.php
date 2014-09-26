@@ -135,7 +135,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         }
         // reset option price info
         $this->_optpriceinfo = array();
-        if (isset($item["super_attribute_pricing"]))
+        if (isset($item["super_attribute_pricing"]) && !empty($item["super_attribute_pricing"]))
         {
             $this->_optpriceinfo = $this->buildSAPTable($item["super_attribute_pricing"]);
             unset($item["super_attribute_pricing"]);
