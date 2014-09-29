@@ -95,6 +95,14 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists(self::$_dldir . '/ruby-2.1.1.tar.gz');
     }
     
+    public function testBug81()
+    {
+    	$rfg = self::$_rfg;
+    	$rfg->copyRemoteFile("http://be.eurocircuits.com/imgdownload.aspx?id=120291-91&type=articleimage&index=0&size=Large&name=120291-91", self::$_dldir."/test.jpg");
+    	$errs = $rfg->getErrors();
+    	$this->assertCount(0,$errs);
+    }    
+    
     public function testFtpAuthenticatedOK()
     {
         $rfg = self::$_rfg;
