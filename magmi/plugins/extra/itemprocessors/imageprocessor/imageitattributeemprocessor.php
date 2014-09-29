@@ -45,7 +45,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves","version"=>"1.0.29",
+        return array("name"=>"Image attributes processor","author"=>"Dweeves","version"=>"1.0.30",
             "url"=>$this->pluginDocUrl("Image_attributes_processor"));
     }
 
@@ -115,9 +115,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $imagefile = $infolist[0];
             }
             unset($infolist);
+            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
             // copy it from source dir to product media dir
-            $imagefile = $this->copyImageFile($imagefile, $item, 
-                array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex));
+            $imagefile = $this->copyImageFile($imagefile, $item, $extra);
+			unset($extra);
             if ($imagefile !== false)
             {
                 // add to gallery
