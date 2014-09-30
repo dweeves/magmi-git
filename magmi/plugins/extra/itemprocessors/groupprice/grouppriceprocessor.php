@@ -8,12 +8,13 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
     protected $_groups = array();
     protected $_singleStore;
     protected $_priceScope;
-
+	protected $_tax_class_id;
     public function getPluginInfo()
     {
         return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.2');
     }
 
+    
     public function processItemAfterId(&$item, $params = null)
     {
         $table_name = $this->tablename("catalog_product_entity_group_price");
@@ -76,26 +77,11 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
     }
 
     public function createGroup($groupname)
-    {
-    	$taxClasses = Mage::getModel('tax/class')->getCollection()
-    	->setClassTypeFilter('CUSTOMER')
-    	->toOptionArray();
-    	$gid=null;
-    	if (count($taxClasses) > 0)
-    	{
-    		$sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") .
-    		' WHERE customer_group_code = ?';
-    		
-    		$taxClassCustomer = $taxClasses[0]['value'];
-    	
-    		// create the group and do it again
-    		$customerGroups = Mage::getModel('customer/group');
-    		$customerGroups->customer_group_code = $matches[1];
-    		$customerGroups->tax_class_id = $taxClassCustomer;
-    		$customerGroups->save();
-    	
-    		$gid = $this->selectone($sql,$groupname, "customer_group_id");
-    	}
+	{
+		$cg=$this->tablename('customer_group');
+    	$sql="INSERT INTO $cg (customer_group_code,tax_class_id)
+    				VALUES (?,?)";
+		$gid=$this->insert($sql,array($groupname,$this->_tax_class_id));    	
     	return $gid;
     		
     }
@@ -140,5 +126,9 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
         /* Check price scope in a general config (0 = global, 1 = website) */
         $sql = 'SELECT value FROM ' . $this->tablename('core_config_data') . ' WHERE path = ?';
         $this->_priceScope = intval($this->selectone($sql, array('catalog/price/scope'), 'value'));
+        /* Getting customer tax class */
+        $sql="SELECT id FROM tax_class WHERE class_type='CUSTOMER'";
+        $this->_tax_class_id=$this->selectone($sql,null,'id');
+        
     }
 }
