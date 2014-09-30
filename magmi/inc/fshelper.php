@@ -6,16 +6,16 @@ require_once ('remotefilegetter.php');
  *
  * File System Helper
  * Gives several utility methods for filesystem testing
- * 
+ *
  * @author dweeves
- *        
+ *
  */
 class FSHelper
 {
 
     /**
      * Checks if a directory has write rights
-     * 
+     *
      * @param string $dir
      *            directory to test
      * @return boolean wether directory is writable
@@ -39,7 +39,7 @@ class FSHelper
 
     /**
      * Tries to find a suitable way to execute processes
-     * 
+     *
      * @return string NULL method to execute process
      */
     public static function getExecMode()
@@ -67,7 +67,7 @@ class FSHelper
  * Factory for magento directory handle
  *
  * @author dweeves
- *        
+ *
  */
 class MagentoDirHandlerFactory
 {
@@ -79,7 +79,7 @@ class MagentoDirHandlerFactory
 
     /**
      * Singleton getInstance method
-     * 
+     *
      * @return MagentoDirHandlerFactory
      */
     public static function getInstance()
@@ -93,8 +93,8 @@ class MagentoDirHandlerFactory
 
     /**
      * Registers a new object to handle magento directory
-     * 
-     * @param unknown $obj            
+     *
+     * @param unknown $obj
      */
     public function registerHandler($obj)
     {
@@ -107,8 +107,8 @@ class MagentoDirHandlerFactory
 
     /**
      * Return a handler for a given url
-     * 
-     * @param unknown $url            
+     *
+     * @param unknown $url
      * @return unknown
      */
     public function getHandler($url)
@@ -129,9 +129,9 @@ class MagentoDirHandlerFactory
  *
  * Provides methods for filesystem operations & command execution
  * Mother abstract class to be derived either for local operation or remote (for performing operations on remote systems)
- * 
+ *
  * @author dweeves
- *        
+ *
  */
 abstract class MagentoDirHandler
 {
@@ -141,7 +141,7 @@ abstract class MagentoDirHandler
 
     /**
      * Constructor from a magento directory url
-     * 
+     *
      * @param unknown $magurl
      *            magento base directory url
      */
@@ -154,7 +154,7 @@ abstract class MagentoDirHandler
 
     /**
      * Returns magento directory
-     * 
+     *
      * @return string
      */
     public function getMagentoDir()
@@ -164,7 +164,7 @@ abstract class MagentoDirHandler
 
     /**
      * Returns available execution mode
-     * 
+     *
      * @return Ambigous <string, NULL>
      */
     public function getexecmode()
@@ -174,53 +174,53 @@ abstract class MagentoDirHandler
 
     /**
      * Wether current handler is compatible with given url
-     * 
-     * @param unknown $url            
+     *
+     * @param unknown $url
      */
     public abstract function canhandle($url);
 
     /**
      * File exists
-     * 
-     * @param unknown $filepath            
+     *
+     * @param unknown $filepath
      */
     public abstract function file_exists($filepath);
 
     /**
      * Mkdir
-     * 
-     * @param unknown $path            
-     * @param string $mask            
-     * @param string $rec            
+     *
+     * @param unknown $path
+     * @param string $mask
+     * @param string $rec
      */
     public abstract function mkdir($path, $mask = null, $rec = false);
 
     /**
      * File Copy
-     * 
-     * @param unknown $srcpath            
-     * @param unknown $destpath            
+     *
+     * @param unknown $srcpath
+     * @param unknown $destpath
      */
     public abstract function copy($srcpath, $destpath);
 
     /**
      * File Deletion
-     * 
-     * @param unknown $path            
+     *
+     * @param unknown $path
      */
     public abstract function unlink($path);
 
     /**
      * Chmod
-     * 
-     * @param unknown $path            
-     * @param unknown $mask            
+     *
+     * @param unknown $path
+     * @param unknown $mask
      */
     public abstract function chmod($path, $mask);
 
     /**
      * Check if we can execute processes
-     * 
+     *
      * @return boolean
      */
     public function isExecEnabled()
@@ -230,10 +230,10 @@ abstract class MagentoDirHandler
 
     /**
      * Executes a process
-     * 
-     * @param unknown $cmd            
-     * @param unknown $params            
-     * @param string $workingdir            
+     *
+     * @param unknown $cmd
+     * @param unknown $params
+     * @param string $workingdir
      */
     public abstract function exec_cmd($cmd, $params, $workingdir = null);
 }
@@ -242,9 +242,9 @@ abstract class MagentoDirHandler
  * Local Magento Dir Handler.
  *
  * Handle Magento related filesystem operations for a given local directory
- * 
+ *
  * @author dweeves
- *        
+ *
  */
 class LocalMagentoDirHandler extends MagentoDirHandler
 {
@@ -252,8 +252,8 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * Constructor
-     * 
-     * @param unknown $magdir            
+     *
+     * @param unknown $magdir
      */
     public function __construct($magdir)
     {
@@ -265,8 +265,8 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * Can Handle any non remote urls
-     * 
-     * @param unknown $url            
+     *
+     * @param unknown $url
      * @return boolean
      */
     public function canHandle($url)
@@ -276,13 +276,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * Cleans a bit input filename, ensures filename will be located under magento directory if not already
-     * 
+     *
      * @see MagentoDirHandler::file_exists()
      */
     public function file_exists($filename)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $filename));
-        
+
         return file_exists($mp);
     }
 
@@ -297,8 +297,8 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * Handles a remote file getter id
-     * 
-     * @param unknown $rfgid            
+     *
+     * @param unknown $rfgid
      */
     public function setRemoteGetterId($rfgid)
     {
@@ -307,13 +307,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * ensures dirname will be located under magento directory if not already
-     * 
+     *
      * @see MagentoDirHandler::mkdir()
      */
     public function mkdir($path, $mask = null, $rec = false)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
-        
+
         if ($mask == null)
         {
             $mask = octdec('755');
@@ -328,13 +328,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * ensures path will be located under magento directory if not already
-     * 
+     *
      * @see MagentoDirHandler::chmod()
      */
     public function chmod($path, $mask)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
-        
+
         if ($mask == null)
         {
             $mask = octdec('755');
@@ -349,7 +349,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * Returns last error
-     * 
+     *
      * @return Ambigous <multitype:, multitype:string multitype: >
      */
     public function getLastError()
@@ -359,7 +359,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * ensures filename will be located under magento directory if not already
-     * 
+     *
      * @see MagentoDirHandler::unlink()
      */
     public function unlink($path)
@@ -371,9 +371,9 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     /**
      * Download a file into local filesystem
      * ensures local filename will be located under magento directory if not already
-     * 
-     * @param unknown $remoteurl            
-     * @param unknown $destpath            
+     *
+     * @param unknown $remoteurl
+     * @param unknown $destpath
      * @return unknown
      */
     public function copyFromRemote($remoteurl, $destpath)
@@ -390,7 +390,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
     /**
      * ensures filename will be located under magento directory if not already
-     * 
+     *
      * @see MagentoDirHandler::copy()
      */
     public function copy($srcpath, $destpath)
@@ -403,11 +403,18 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         }
         else
         {
-            
+
             $result = @copy($srcpath, $destpath);
             if (!$result)
             {
                 $this->_lasterror = error_get_last();
+            }
+            else
+            {
+                // make sure the copied file has the same filemtime as the original file
+                if (file_exists($destpath)) {
+                    touch($destpath, filemtime($srcpath));
+                }
             }
         }
         return $result;
@@ -416,7 +423,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     /**
      * execute command, performs some execution directory check
      * uses available command execution method
-     * 
+     *
      * @see MagentoDirHandler::exec_cmd()
      */
     public function exec_cmd($cmd, $params, $working_dir = null)
@@ -461,13 +468,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
                 $out = shell_exec($full_cmd);
                 break;
         }
-        
+
         // restore old directory if changed
         if ($curdir)
         {
             @chdir($curdir);
         }
-        
+
         if ($out == null)
         {
             $this->_lasterror = array("type"=>" execution error","message"=>error_get_last());
