@@ -417,6 +417,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 if ($imglabel != null)
                 {
                     $data[] = $imglabel;
+					//if image label is not specified, do not update the label to null.
+					$updatelabel = "label=VALUES(`label`),";
                 }
             }
             
@@ -425,7 +427,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $sql = "INSERT INTO $tgv
 					(value_id,store_id,position,disabled,label)
 					VALUES " . implode(",", $vinserts) . " 
-					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
+					ON DUPLICATE KEY UPDATE $updatelabel disabled=VALUES(`disabled`)";
                 $this->insert($sql, $data);
             }
             unset($vinserts);
