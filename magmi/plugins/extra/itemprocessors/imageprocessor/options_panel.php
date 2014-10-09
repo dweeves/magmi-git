@@ -65,6 +65,18 @@
 	</ul>
 </div>
 
+<ul class="formline">
+	<li class="label">Enable Wildcard on Gallery Paths: </li>
+	<li class="value"><select name="IMG:wildcard">
+			<?php $wildcard=$this->getParam("IMG:wildcard",false);?>
+			<option value="true" <?php if($wildcard===true){?> selected="selected"
+				<?php }?>>Enable</option>
+			<option value="false" <?php if($wildcard===false){?> selected="selected"
+				<?php }?>>Disable</option>
+	</select></li>
+</ul>
+<div class="fieldinfo">Example: /cat1/sku01/*.jpg will match all jpg files in /cat1/sku01/ folder</div>
+
 <div class="formline">
 	<span>Debug mode</span> <select name="IMG:debug">
 <?php $qdd=$this->getParam("IMG:debug","no");?>
