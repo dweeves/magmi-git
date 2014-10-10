@@ -54,7 +54,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
         {
             $csmode = "COLLATE utf8_bin";
         }
-        if (!preg_match("re::(.*)", $from, $matches))
+        if (!preg_match("/(.*)/", $from, $matches))
         {
             $where = "(SELECT eao.option_id FROM 
 			$eao as eao 
