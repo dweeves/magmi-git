@@ -1,0 +1,2 @@
+# 404 all requests that don't go to the web/ subdirectory
+RedirectMatch 404 ^((?!/web/).)*$
