@@ -7,13 +7,13 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $imgsourcedirs = array();
     protected $errattrs = array();
     protected $_errorimgs = array();
-    protected $_lastimage = "";
     protected $_handled_attributes = array();
     protected $_img_baseattrs = array("image","small_image","thumbnail");
     protected $_active = false;
     protected $_newitem;
     protected $_mdh;
     protected $_remoteroot = "";
+    protected $_wildcard = false;
     protected $debug;
 
     public function initialize($params)
@@ -41,6 +41,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
         }
         $this->debug = $this->getParam("IMG:debug", 0);
+		$this->_wildcard = $this->getParam("IMG:wildcard", false);
     }
 
     public function getPluginInfo()
@@ -117,15 +118,15 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             unset($infolist);
             $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
             // copy it from source dir to product media dir
-            $imagefile = $this->copyImageFile($imagefile, $item, $extra);
+            $imagefiles = $this->copyImageFile($imagefile, $item, $extra);
 			unset($extra);
-            if ($imagefile !== false)
-            {
-                // add to gallery
-                $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-                $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude);
-            }
-            $imageindex++;
+			
+			// add to gallery
+			$targetsids = $this->getStoreIdsForStoreScope($item["store"]);
+			foreach($imagefiles as $file){
+				$vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $file, $targetsids, $label, $exclude);
+				$imageindex++;
+			}
         }
         unset($images);
         // we don't want to insert after that
@@ -155,6 +156,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         return $exclude;
     }
 
+	/** Cang Luo - 07/10/2014
+	 * If the relative image path is a wildcard path,  find and return all match image (absolute) paths as array
+	 * If it is not a wildcard path, find and return the absolute path as an array (of 1 element)
+	 * @param $ivalue : relative image path, allows wildcard (*)
+	 * @return : an array of absolute image paths on success, false if not found
+	 */
     public function findImageFile($ivalue)
     {
         // do no try to find remote image
@@ -168,6 +175,24 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             return $ivalue;
         }
         
+		//Cang Luo - 7/10/2014 Check if ivalue is a valid wildcard path
+		$isWild = false;
+		$path = '';
+		$name = $ivalue;
+		//if the image path is a valid wildcard path, split the path at the last /
+		if ($this->_wildcard && preg_match("/.*\*\w*\.(jpg|jpeg|png|gif)$/", $ivalue)){
+			//get the index of the last /
+			$isWild = true;
+			$pos = strrpos ($ivalue, '/', -0);
+			if($pos !== false){
+				$path = substr($ivalue, 0, $pos+1);
+				$name = substr($ivalue, $pos+1);
+			}
+			//replace * with .* (turn name into regular expression) 
+			$name = str_replace('.', '\.', $name);
+			$name = str_replace('*', '.*', $name);
+		}
+		
         // ok , so it's a relative path
         $imgfile = false;
         $scandirs = explode(";", $this->getParam("IMG:sourcedir"));
@@ -181,9 +206,36 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 $sd = $this->_mdh->getMagentoDir() . "/" . $sd;
             }
-            $imgfile = abspath($ivalue, $sd, true);
+			
+			//Cang Luo - 7/10/2014 if it is a wildcard path,
+			if($isWild){ 
+				$sd .= $path;
+				$sd = realpath($sd);
+				
+				if($sd){ 
+					$imgfile = array();
+					
+					// scan directory for files that matched the regex
+					if ($handle = opendir($sd)) {
+						while (false !== ($entry = readdir($handle))) {
+							if (preg_match("/^$name$/i", $entry)) {
+								$imgfile[] = abspath($entry,$sd);
+							}
+						}
+						closedir($handle);
+				    }
+					if(empty($imgfile)){
+						//if no match, set imgfile back to false, to scan the next source directory;
+						$imgfile = false;
+					}
+				}
+			}else{ //ordinary path
+				if($imgfile=abspath($ivalue,$sd)){
+					$imgfile=array($imgfile);
+				}
+			}
         }
-        return $imgfile;
+        return $imgfile; //returns array or false
     }
 
     public function handleImageTypeAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
@@ -195,25 +247,28 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             return "__MAGMI_DELETE__";
         }
         
-        // add support for explicit exclude
-        $exclude = $this->getExclude($ivalue, true);
+        // add support for explicit exclude, default to false (include image)
+        $exclude = $this->getExclude($ivalue, false);
         $imagefile = trim($ivalue);
         
         // else copy image file
-        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
-        $ovalue = $imagefile;
+        $imagefiles = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
+        $ovalue = false;
         // add to gallery as excluded
-        if ($imagefile !== false)
-        {
+        if(count($imagefiles) > 0){
             $label = null;
             if (isset($item[$attrcode . "_label"]))
             {
                 $label = $item[$attrcode . "_label"];
             }
             $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude, 
+			$ovalue=$imagefiles[0];
+            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $ovalue, $targetsids, $label, $exclude, 
                 $attrdesc["attribute_id"]);
-        }
+        }else{
+			//TODO test log
+			$this->log("Image not found: $ovalue","warning");
+		}
         return $ovalue;
     }
 
@@ -454,13 +509,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     }
 
     /**
-     * copy image file from source directory to
-     * product media directory
+     * copy image file(s) from source directory to product media directory
      *
      * @param $imgfile :
-     *            name of image file name in source directory
-     * @return : name of image file name relative to magento catalog media dir,including leading
-     *         directories made of first char & second char of image file name.
+     *            relative image file path (may contain wildcard) in source directory
+     * @return : an array of image file names relative to magento catalog media dir, including leading
+     *         	directories made of first char & second char of image file name;
      */
     public function copyImageFile($imgfile, &$item, $extra)
     {
@@ -480,74 +534,72 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             return false;
         }
         
-        $source = $this->findImageFile($imgfile);
-        if ($source == false)
+        $files = $this->findImageFile($imgfile);
+        if ($files == false)
         {
             $this->log("$imgfile cannot be found in images path", "warning");
             // last image in error,add it to error cache
             $this->setErrorImg($imgfile);
             return false;
         }
-        $imgfile = $source;
-        $checkexist = ($this->getParam("IMG:existingonly") == "yes");
-        $curlh = false;
-        $bimgfile = $this->getTargetName($imgfile, $item, $extra);
-        // source file exists
-        $i1 = $bimgfile[0];
-        $i2 = $bimgfile[1];
-        // magento image value (relative to media catalog)
-        $impath = "/$i1/$i2/$bimgfile";
-        // target directory;
-        $l2d = "media/catalog/product/$i1/$i2";
-        // test for existence
-        $targetpath = "$l2d/$bimgfile";
-        /* test for same image (without problem) */
-        if ($impath == $this->_lastimage)
-        {
-            return $impath;
-        }
-        /* test if imagefile comes from export */
-        if (!$this->_mdh->file_exists($targetpath) || $this->getParam("IMG:writemode") == "override")
-        {
-            // if we already had problems with this target,assume we'll get others.
-            if ($this->isErrorImage($impath))
-            {
-                return false;
-            }
-            
-            /* try to recursively create target dir */
-            if (!$this->_mdh->file_exists($l2d))
-            {
-                
-                $tst = $this->_mdh->mkdir($l2d, Magmi_Config::getInstance()->getDirMask(), true);
-                if (!$tst)
-                {
-                    // if we had problem creating target directory,add target to error cache
-                    $errors = $this->_mdh->getLastError();
-                    $this->log("error creating $l2d: {$errors["type"]},{$errors["message"]}", "warning");
-                    unset($errors);
-                    $this->setErrorImg($impath);
-                    return false;
-                }
-            }
-            
-            if (!$this->saveImage($imgfile, $targetpath))
-            {
-                $errors = $this->_mdh->getLastError();
-                $this->fillErrorAttributes($item);
-                $this->log("error copying $l2d/$bimgfile : {$errors["type"]},{$errors["message"]}", "warning");
-                unset($errors);
-                $this->setErrorImg($impath);
-                return false;
-            }
-            else
-            {
-                @$this->_mdh->chmod("$l2d/$bimgfile", Magmi_Config::getInstance()->getFileMask());
-            }
-        }
-        $this->_lastimage = $impath;
-        /* return image file name relative to media dir (with leading / ) */
-        return $impath;
+		
+		$media_paths = array();
+		foreach ($files as $file){
+			$bimgfile=$this->getTargetName($file,$item,$extra);
+			//source file exists
+			$i1=$bimgfile[0];
+			$i2=$bimgfile[1];
+			
+			// magento image value (relative to media catalog)
+			$path = "/$i1/$i2/$bimgfile";
+			
+			// target directory;
+			$l2d="media/catalog/product/$i1/$i2";
+			$targetpath="$l2d/$bimgfile";
+			
+			
+			/* test if imagefile comes from export */
+			if(!$this->_mdh->file_exists("$targetpath") || $this->getParam("IMG:writemode")=="override")
+			{
+				// if we already had problems with this target,assume we'll get others.
+				if (!$this->isErrorImage($path))
+				{
+					$_continue = true;
+					/* try to recursively create target dir */
+					if(!$this->_mdh->file_exists("$l2d"))
+					{
+						$tst=$this->_mdh->mkdir($l2d,Magmi_Config::getInstance()->getDirMask(),true);
+						if(!$tst)
+						{
+							$errors=$this->_mdh->getLastError();
+							$this->log("error creating $l2d: {$errors["type"]},{$errors["message"]}","warning");
+							unset($errors);
+							$this->setErrorImg($path);
+							$_continue = false;
+						}
+					}
+
+					if($_continue && !$this->saveImage($file,"$l2d/$bimgfile"))
+					{
+						$errors=$this->_mdh->getLastError();
+						$this->fillErrorAttributes($item);
+						$this->log("error copying $file TO $l2d/$bimgfile : {$errors["type"]},{$errors["message"]}","warning");
+						unset($errors);
+						$this->setErrorImg($path);
+						$_continue = false;
+					}
+					else
+					{
+						$this->_mdh->chmod("$l2d/$bimgfile",Magmi_Config::getInstance()->getFileMask());
+						$media_paths[]=$path;		
+					}
+				}
+			}else{
+				$media_paths[]=$path;
+			}
+		}
+		/* return an array of image file names relative to media dir (with leading / ) */
+		return $media_paths;
     }
 
     public function updateLabel($attrdesc, $pid, $sids, $label)
