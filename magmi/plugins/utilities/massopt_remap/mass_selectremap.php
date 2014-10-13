@@ -54,12 +54,12 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
         {
             $csmode = "COLLATE utf8_bin";
         }
-        if (!preg_match("re::(.*)", $from, $matches))
+        if (!preg_match("/re::(.*)/", $from, $matches))
         {
             $where = "(SELECT eao.option_id FROM 
 			$eao as eao 
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
-			WHERE eao.attribute_id=? and eaov.value REGEXP '?' $cs)";
+			WHERE eao.attribute_id=? and eaov.value REGEXP ? $csmode)";
             $from = $matches[1];
         }
         else
@@ -67,12 +67,12 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
             $where = "(SELECT eao.option_id FROM 
 			$eao as eao 
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
-			WHERE eao.attribute_id=? and eaov.value='?' $cs)";
+			WHERE eao.attribute_id=? and eaov.value=? $csmode)";
         }
         $sql = "UPDATE $cpei SET value=(SELECT eao.option_id 
 			FROM $eao as eao 
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
-			WHERE eao.attribute_id=? and eaov.value='?' COLLATE utf8_bin)
+			WHERE eao.attribute_id=? and eaov.value=? COLLATE utf8_bin)
 			WHERE value IN $where";
         $this->update($sql, array($attid,$to,$attid,$from));
     }
