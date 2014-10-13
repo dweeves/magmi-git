@@ -470,7 +470,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         if (preg_match("|re::(.*)::(.*)|", $formula, $matches))
         {
             $rep = $matches[2];
-            $xname = preg_replace("|" . $matches[1] . "|", $rep, $xname);
+			$pattern = $matches[1];
+			if ('\\' === DIRECTORY_SEPARATOR)
+				$pattern = str_replace('/', '\\\\', $pattern);
+            $xname = preg_replace("|$pattern|", $rep, $xname);
             $extra['parsed'] = true;
         }
         $xname = basename($xname);
