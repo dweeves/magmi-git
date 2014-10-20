@@ -32,7 +32,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
     $conf_ok = 0;
 }
 ?>
-<!-- MAGMI UPLOADER -->
+<!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
 <?php $zipok=class_exists("ZipArchive");?>
 <div class="container_12">
 	<div class="grid_12 subtitle">
@@ -40,7 +40,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 	</div>
 </div>
 <div class="container_12">
-<?php if($zipok){?>
+<?php if(false){?>
 <form method="post" enctype="multipart/form-data"
 		action="magmi_upload.php">
 		<div class="grid_12 col">
@@ -89,8 +89,8 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 <?php } else {?>
 <div class="grid_12 col">
 		<h3>Update Disabled</h3>
-		<div class="error">Zip library not available, Upgrade/Upload function
-			are not enabled</div>
+		<div class="error">Upgrade/Upload function
+			are disabled for security reasons</div>
 	</div>
 <?php }?>
 </div>

@@ -1,5 +1,5 @@
 <?php
-session_start();
+/*session_start();
 
 function extractZipDir($zip, $bdir, $zdir)
 {
@@ -62,5 +62,5 @@ catch (Exception $e)
 {
     session_write_close();
     die($e->getMessage());
-}
+}*/
 header("Location: ./magmi.php");
