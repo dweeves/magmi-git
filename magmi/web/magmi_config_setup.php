@@ -158,21 +158,21 @@ $cansock = !($dmysqlsock === false);
 			<h3>Database</h3>
 	
 	<?php $curconn=$conf->get("DATABASE","connectivity","net");?>
-	<ul class="formline">
+			<ul class="formline">
 				<li class="label">Connectivity</li>
-				<li class="value"><select name="DATABASE:connectivity"
-					id="DATABASE:connectivity">
-						<option value="net" <?php if($curconn=="net"){?>
-							selected="selected" <?php }?>>Using host/port</option>
-			<?php if($cansock){?>
-			<option value="socket" <?php if($curconn=="socket"){?>
-							selected="selected" <?php }?>>Using local socket</option>
-			<?php }?>
-		</select></li>
+				<li class="value"><select name="DATABASE:connectivity" id="DATABASE:connectivity">
+					<option value="net" <?php if($curconn=="net") { ?>
+						selected="selected" <?php } ?>>Using host/port</option>
+					<?php if($cansock) { ?>
+					<option value="socket" <?php if($curconn=="socket") { ?>
+						selected="selected" <?php } ?>>Using local socket</option>
+					<?php }?>
+					<option value="localxml" <?php echo $curconn == "localxml" ? 'selected="selected"' : '' ?>>Using magento.xml</option>
+				</select></li>
 			</ul>
 
 			<div id="connectivity:net" class="connectivity"
-				<?php if($curconn!="net"){?> style="display: none" <?php }?>>
+				<?php if($curconn != "net"){?> style="display: none" <?php }?>>
 				<ul class="formline">
 					<li class="label">Host:</li>
 					<li class="value"><input type="text" name="DATABASE:host"
@@ -184,47 +184,56 @@ $cansock = !($dmysqlsock === false);
 						value="<?php echo $conf->get("DATABASE","port","3306")?>"></input></li>
 				</ul>
 			</div>
-	<?php if($cansock){?>
-	<div id="connectivity:socket" class="connectivity"
-				<?php if($curconn!="socket"){?> style="display: none" <?php  }?>>
+			<div id="connectivity:localxml" class="connectivity" <?php echo $curconn != 'localxml' ? 'style="display: none;"' : '' ?>>
 				<ul class="formline">
-					<li class="label">Unix Socket:</li>
-		
-		<?php
-    $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
-    if (!file_exists($mysqlsock))
-    {
-        $mysqlsock = $dmysqlsock;
-    }
-    ?>
-		<li class="value"><input type="text" name="DATABASE:unix_socket"
-						value="<?php echo $mysqlsock?>"></input></li>
+					<li class="label">Resource:</li>
+					<li class="value"><select id="select_localxml_resources" name="DATABASE:resource">
+						<option value="<?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?>"><?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?></option>
+					</select>
 				</ul>
 			</div>
-	<?php }?>	
-	<hr />
-
-			<ul class="formline">
-				<li class="label">DB Name:</li>
-				<li class="value"><input type="text" name="DATABASE:dbname"
-					value="<?php echo $conf->get("DATABASE","dbname")?>"></input></li>
-			</ul>
-
-			<ul class="formline">
-				<li class="label">Username:</li>
-				<li class="value"><input type="text" name="DATABASE:user"
-					value="<?php echo $conf->get("DATABASE","user")?>"></input></li>
-			</ul>
-			<ul class="formline">
-				<li class="label">Password:</li>
-				<li class="value"><input type="password" name="DATABASE:password"
-					value="<?php echo $conf->get("DATABASE","password")?>"></input></li>
-			</ul>
-			<ul class="formline">
-				<li class="label">Table prefix:</li>
-				<li class="value"><input type="text" name="DATABASE:table_prefix"
-					value="<?php echo $conf->get("DATABASE","table_prefix")?>"></input></li>
-			</ul>
+			<?php if($cansock){?>
+				<div id="connectivity:socket" class="connectivity"
+							<?php if($curconn != "socket"){?> style="display: none" <?php  }?>>
+							<ul class="formline">
+								<li class="label">Unix Socket:</li>
+					
+					<?php
+					    $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
+					    if (!file_exists($mysqlsock))
+					    {
+					        $mysqlsock = $dmysqlsock;
+					    }
+				    ?>
+					<li class="value"><input type="text" name="DATABASE:unix_socket"
+									value="<?php echo $mysqlsock?>"></input></li>
+					</ul>
+			</div>
+			<?php }?>	
+			<div id="connectivity_extra" <?php echo $curconn == 'localxml' ? 'style="display: none;"' : ''; ?>>
+				<hr />
+				<ul class="formline">
+					<li class="label">DB Name:</li>
+					<li class="value"><input type="text" name="DATABASE:dbname"
+						value="<?php echo $conf->get("DATABASE","dbname")?>"></input></li>
+				</ul>
+	
+				<ul class="formline">
+					<li class="label">Username:</li>
+					<li class="value"><input type="text" name="DATABASE:user"
+						value="<?php echo $conf->get("DATABASE","user")?>"></input></li>
+				</ul>
+				<ul class="formline">
+					<li class="label">Password:</li>
+					<li class="value"><input type="password" name="DATABASE:password"
+						value="<?php echo $conf->get("DATABASE","password")?>"></input></li>
+				</ul>
+				<ul class="formline">
+					<li class="label">Table prefix:</li>
+					<li class="value"><input type="text" name="DATABASE:table_prefix"
+						value="<?php echo $conf->get("DATABASE","table_prefix")?>"></input></li>
+				</ul>
+			</div>
 		</div>
 		<div class="grid_4 col">
 			<h3>Magento</h3>
@@ -243,7 +252,6 @@ $cansock = !($dmysqlsock === false);
 				<li class="value"><input type="text" name="MAGENTO:basedir"
 					value="<?php echo $conf->get("MAGENTO","basedir")?>"></input></li>
 			</ul>
-
 		</div>
 		<div class="grid_4 col omega">
 			<h3>Global</h3>
@@ -321,6 +329,22 @@ $('DATABASE:connectivity').observe('change',function(ev)
 							el.hide();
 						}
 					});
-			
+			if ($F('DATABASE:connectivity') != 'localxml') {
+				$('connectivity_extra').show();
+			} else {
+				$('connectivity_extra').hide();
+				new Ajax.Updater('select_localxml_resources',
+					'ajax_readlocalxml.php', {
+						parameters: $('commonconf_form').serialize('true')
+					}
+				);
+			}
 		});
+if ($('DATABASE:connectivity').value == 'localxml') {
+	new Ajax.Updater('select_localxml_resources',
+		'ajax_readlocalxml.php', {
+			parameters: $('commonconf_form').serialize('true')
+		}
+	);
+}
 </script>

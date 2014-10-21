@@ -47,13 +47,13 @@ class DBHelper
     {
         // intialize connection with PDO
         // fix by Mr Lei for UTF8 special chars
-        if ($conntype == "net")
+        if ($conntype == "socket")
         {
-            $pdostr = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
+            $pdostr = "mysql:unix_socket=$socket;dbname=$dbname;charset=utf8";
         }
         else
         {
-            $pdostr = "mysql:unix_socket=$socket;dbname=$dbname;charset=utf8";
+        	$pdostr = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
         }
         
         $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"));
