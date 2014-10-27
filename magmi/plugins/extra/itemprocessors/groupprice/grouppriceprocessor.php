@@ -11,7 +11,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
 	protected $_tax_class_id;
     public function getPluginInfo()
     {
-        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.2');
+        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.3');
     }
 
     
@@ -127,8 +127,8 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
         $sql = 'SELECT value FROM ' . $this->tablename('core_config_data') . ' WHERE path = ?';
         $this->_priceScope = intval($this->selectone($sql, array('catalog/price/scope'), 'value'));
         /* Getting customer tax class */
-        $sql="SELECT id FROM tax_class WHERE class_type='CUSTOMER'";
-        $this->_tax_class_id=$this->selectone($sql,null,'id');
+        $sql="SELECT class_id FROM tax_class WHERE class_type='CUSTOMER'";
+        $this->_tax_class_id=$this->selectone($sql,null,'class_id');
         
     }
 }
