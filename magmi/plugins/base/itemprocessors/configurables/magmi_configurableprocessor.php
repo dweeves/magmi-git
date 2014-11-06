@@ -6,9 +6,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentsimples = array();
+	private $addsimpleimages;
 
     public function initialize($params)
-    {}
+    {
+		$this->addsimpleimages = $this->getParam("CFGR:addsimpleimages", 0);
+	
+	}
     /* Plugin info declaration */
     public function getPluginInfo()
     {
@@ -61,27 +65,39 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $cpsl = $this->tablename("catalog_product_super_link");
         $cpr = $this->tablename("catalog_product_relation");
         $cpe = $this->tablename("catalog_product_entity");
+		
         $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
 				JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
 				WHERE cpsl.parent_id=?";
         $this->delete($sql, array($pid));
+		
+		//cache select results
+		$sql = "SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id  
+				  FROM $cpe as cpec 
+				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
+			  	  WHERE cpec.entity_id=?";
+		$rows = $this->selectAll($sql, array_merge($conddata, array($pid)));
+		
+		$ids = array();
+		//convert result array into a string of values
+		foreach($rows as $row){
+			$values .= "(".$row['parent_id'].",".$row['product_id']."),";
+			$ids[] = $row['product_id'];
+		}
+		$values = rtrim($values, ',');
+		
         // recreate associations
-        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id  
-				  FROM $cpe as cpec 
-				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
-			  	  WHERE cpec.entity_id=?";
-        $this->insert($sql, array_merge($conddata, array($pid)));
-        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id  
-				  FROM $cpe as cpec 
-				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
-			  	  WHERE cpec.entity_id=?";
-        $this->insert($sql, array_merge($conddata, array($pid)));
+        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) VALUES $values";
+        $this->insert($sql);
+        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) VALUES $values";
+        $this->insert($sql);
         unset($conddata);
+		return $ids;
     }
 
     public function autoLink($pid)
     {
-        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')");
+        return $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')");
     }
 
     public function updSimpleVisibility($pid)
@@ -101,7 +117,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function fixedLink($pid, $skulist)
     {
-        $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $skulist);
+        return $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $skulist);
     }
 
     public function buildSAPTable($sapdesc)
@@ -311,24 +327,25 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $idx++;
         }
         unset($confopts);
+		$ids = array();
         switch ($matchmode)
         {
             case "none":
                 break;
             case "auto":
                 // destroy old associations
-                $this->autoLink($pid);
+                $ids = $this->autoLink($pid);
                 $this->updSimpleVisibility($pid);
                 break;
             case "cursimples":
-                $this->fixedLink($pid, $this->_currentsimples);
+                $ids = $this->fixedLink($pid, $this->_currentsimples);
                 $this->updSimpleVisibility($pid);
                 
                 break;
             case "fixed":
                 $sskus = explode(",", $item["simples_skus"]);
                 trimarray($sskus);
-                $this->fixedLink($pid, $sskus);
+                $ids = $this->fixedLink($pid, $sskus);
                 $this->updSimpleVisibility($pid);
                 unset($item["simples_skus"]);
                 unset($sskus);
@@ -336,6 +353,11 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             default:
                 break;
         }
+		
+		if($this->addsimpleimages==1){
+			$this->rewriteImageAttributes($item, $ids);
+		}
+		
         // always clear current simples
         if (count($this->_currentsimples) > 0)
         {
@@ -344,6 +366,23 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         }
         return true;
     }
+	
+	/**
+		Cang Luo 31/10/2014 
+		Overwrite the image attributes with product IDs.
+		This function must run before the handleVarcharAttribute() function of Image Attribute Processor
+		@param Array  $item
+				: The item array.
+		@param Array $ids
+				: an array of IDs
+	*/
+	private function rewriteImageAttributes(&$item, $ids){
+		$prefix="id:";
+		$item['image'] = $prefix.$ids[0];
+		$item['small_image'] = $item['image'];
+		$item['thumbnail'] = $item['image'];
+		$item['media_gallery']=$prefix.implode(',',$ids);
+	}
 
     public function processColumnList(&$cols, $params = null)
     {
@@ -357,7 +396,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginParamNames()
     {
-        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink");
+        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:addsimpleimages");
     }
 
     static public function getCategory()
