@@ -38,3 +38,14 @@
 	</select>
 	</li>
 </ul>
+
+<ul class="formline">
+	<li class="label" style="width: 360px">Auto assign simples images to configurable</li>
+	<?php $v=$this->getParam("CFGR:addsimpleimages",0)?>
+	<li class="value"><select name="CFGR:addsimpleimages">
+			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>No</option>
+			<option value="1" <?php if ($v==1){?> selected="selected" <?php }?>>Yes</option>
+	</select></li>
+</ul>
+<div class="fieldinfo" >If yes, it will assign the base image of the first associated simple to be the base image, thumbnail and small image of the configurable, and add all gallery images of associated simples to the configurable.</div>
+

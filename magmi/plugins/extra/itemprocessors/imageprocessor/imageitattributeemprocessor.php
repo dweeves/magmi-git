@@ -6,6 +6,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $magdir = null;
     protected $imgsourcedirs = array();
     protected $errattrs = array();
+    protected $baseImageCache = array();
     protected $_errorimgs = array();
     protected $_handled_attributes = array();
     protected $_img_baseattrs = array("image","small_image","thumbnail");
@@ -13,7 +14,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $_newitem;
     protected $_mdh;
     protected $_remoteroot = "";
-    protected $_wildcard = false;
+    protected $wildcard;
+    protected $backImageOn;
     protected $debug;
 
     public function initialize($params)
@@ -41,7 +43,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
         }
         $this->debug = $this->getParam("IMG:debug", 0);
-		$this->_wildcard = $this->getParam("IMG:wildcard", false);
+		$this->wildcard = $this->getParam("IMG:wildcard", 0);
+		$this->backImageOn = $this->getParam("IMG:backimage", 0);
     }
 
     public function getPluginInfo()
@@ -94,44 +97,74 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     public function handleGalleryTypeAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         // do nothing if empty
-        if ($ivalue == "")
-        {
-            return false;
-        }
-        // use ";" as image separator
-        $images = explode(";", $ivalue);
-        $imageindex = 0;
-        // for each image
-        foreach ($images as $imagefile)
-        {
-            // trim image file in case of spaced split
-            $imagefile = trim($imagefile);
-            // handle exclude flag explicitely
-            $exclude = $this->getExclude($imagefile, false);
-            $infolist = explode("::", $imagefile);
-            $label = null;
-            if (count($infolist) > 1)
-            {
-                $label = $infolist[1];
-                $imagefile = $infolist[0];
-            }
-            unset($infolist);
-            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
-            // copy it from source dir to product media dir
-            $imagefiles = $this->copyImageFile($imagefile, $item, $extra);
-			unset($extra);
-			
-			// add to gallery
-			$targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-			foreach($imagefiles as $file){
-				$vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $file, $targetsids, $label, $exclude);
-				$imageindex++;
+        if ($ivalue == ""){ return false; }
+		
+		$targetsids = $this->getStoreIdsForStoreScope($item["store"]);
+		
+		//if is configurable and attribute begins with id:
+		if($item["type"] == "configurable" && substr( $ivalue, 0, 3 ) === "id:"){
+			if(substr( $ivalue, 0, 3 ) === "id:"){
+				$ivalue = substr($ivalue, 3);
 			}
-        }
-        unset($images);
+			
+			//back image support
+			if($this->backImageOn == 1){
+				$ids = explode(',', $ivalue);
+				if(count($ids) > 1){
+					//get the base image of the second linked simple product
+					$backImage = $this->fetchBaseImage($ids[1]);
+				}
+			}
+			
+			$rows = $this->fetchGalleryImages($ivalue);
+			foreach($rows as $row){
+				//back image support
+				if($this->backImageOn == 1){
+					if($row['label'] === 'back'){
+						$row['label'] = ''; //reset existing 'back' label
+					}
+					if($row['value'] === $backImage){
+						//set the label of base image of the second simple product to 'back'
+						$row['label'] = 'back'; 
+					}
+				}
+				
+				$this->addImageToGallery($pid, $storeid, $attrdesc, $row['value'], $targetsids, $row['label'], $false);
+			} 
+		}else{
+			// use ";" as image separator
+			$images = explode(";", $ivalue);
+			$imageindex = 0;
+			// for each image
+			foreach ($images as $imagefile)
+			{
+				// trim image file in case of spaced split
+				$imagefile = trim($imagefile);
+				// handle exclude flag explicitely
+				$exclude = $this->getExclude($imagefile, false);
+				$infolist = explode("::", $imagefile);
+				$label = null;
+				if (count($infolist) > 1)
+				{
+					$label = $infolist[1];
+					$imagefile = $infolist[0];
+				}
+				unset($infolist);
+				$extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+				// copy it from source dir to product media dir
+				$imagefiles = $this->copyImageFile($imagefile, $item, $extra);
+				unset($extra);
+				
+				// add to gallery
+				foreach($imagefiles as $file){
+					$vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $file, $targetsids, $label, $exclude);
+					$imageindex++;
+				}
+			}
+			unset($images);
+		}
         // we don't want to insert after that
-        $ovalue = false;
-        return $ovalue;
+        return false;
     }
 
     public function removeImageFromGallery($pid, $storeid, $attrdesc)
@@ -180,7 +213,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		$path = '';
 		$name = $ivalue;
 		//if the image path is a valid wildcard path, split the path at the last /
-		if ($this->_wildcard && preg_match("/.*\*\w*\.(jpg|jpeg|png|gif)$/", $ivalue)){
+		if ($this->wildcard==1 && preg_match("/.*\*\w*\.(jpg|jpeg|png|gif)$/", $ivalue)){
 			//get the index of the last /
 			$isWild = true;
 			$pos = strrpos ($ivalue, '/', -0);
@@ -251,11 +284,16 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $exclude = $this->getExclude($ivalue, false);
         $imagefile = trim($ivalue);
         
-        // else copy image file
-        $imagefiles = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
+		$imagefiles = array();
+		//if is configurable and attribute begin with id, then fetch image from DB, otherwise copy image from image sources
+		if($item["type"] == "configurable" && substr( $ivalue, 0, 3 ) === "id:"){
+			$imagefiles[] = $this->fetchBaseImage($ivalue);
+        }else{
+			$imagefiles = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
+		}
         $ovalue = false;
         // add to gallery as excluded
-        if(count($imagefiles) > 0){
+        if(is_array($imagefiles) && count($imagefiles) > 0 && $imagefiles[0] !== false){
             $label = null;
             if (isset($item[$attrcode . "_label"]))
             {
@@ -263,15 +301,74 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             }
             $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
 			$ovalue=$imagefiles[0];
-            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $ovalue, $targetsids, $label, $exclude, 
-                $attrdesc["attribute_id"]);
-        }else{
-			//TODO test log
-			$this->log("Image not found: $ovalue","warning");
-		}
+            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $ovalue, $targetsids, $label, $exclude, $attrdesc["attribute_id"]);
+        }
         return $ovalue;
     }
 
+	/**
+		Cang Luo 03/11/2014 
+		select the base image path of given product ID from database
+		@param string $id
+				: an integer
+		@return string/false	
+				: returns the path of base image of given product,
+				: returns false if $id is not in accepted format or no result found.
+	*/
+	public function fetchBaseImage($id){
+		if(substr( $id, 0, 3 ) === "id:"){
+			$id = substr($id, 3);
+		}
+		$id = trim($id);
+		if(!preg_match('/^\d+$/', $id)){
+			$this->log("Invalid ID for base image: $id", 'warning');
+			return false;
+		}
+		if(!isset($this->baseImageCache[$id])){
+			$t = $this->tablename('catalog_product_entity_varchar');
+			$sql = "SELECT value FROM $t WHERE attribute_id = 85 AND entity_id = ?";
+			$path = $this->selectone($sql, $id, 'value');
+			if(is_null($path)){
+				return false;
+			}
+			//caching image path
+			$this->baseImageCache[$id] = $path;
+		}
+		return $this->baseImageCache[$id];
+	}
+	
+	/**
+		Cang Luo 03/11/2014 
+		Select the gallery image paths and labels of given product IDs from database
+		@param string/array $ids
+				: a string of comma separated integers (e.g. 1,2,3,4,5 )
+				: Or an array of integers, which will be converted into a string of above format.
+		@return array/false	
+				: returns an associated array of 'value' and 'label' on success,
+				: returns false if $ids is not in accepted format.
+	*/
+	public function fetchGalleryImages($ids){
+		if(is_array($ids)){
+			$ids = implode(',' , $ids);
+		}
+		if(substr( $ids, 0, 3 ) === "id:"){
+			$ids = substr($ids, 3);
+		}
+		if(!preg_match('/^\d+(,\d+)*$/', $ids)){
+			$this->log("Invalid IDs for gallery images: $ids", 'warning');
+			return false;
+		}
+		
+        $tg = $this->tablename('catalog_product_entity_media_gallery');
+        $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
+		$sql = "SELECT value, label
+				 FROM $tgv AS emgv
+				 JOIN $tg AS emg ON emg.value_id = emgv.value_id 
+				 WHERE emg.entity_id in ($ids) AND emgv.store_id=0 AND value IS NOT NULL";
+		$rows = $this->selectAll($sql);
+		return $rows;
+	}
+	
     public function handleVarcharAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         if (trim($ivalue) == "")
@@ -465,10 +562,15 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $matches = array();
         $xname = $fname;
+        
         if (preg_match("|re::(.*)::(.*)|", $formula, $matches))
         {
             $rep = $matches[2];
-            $xname = preg_replace("|" . $matches[1] . "|", $rep, $xname);
+            $pattern = $matches[1];
+			if ('\\' === DIRECTORY_SEPARATOR)
+				//fix image renaming bug on windows
+				$pattern = str_replace('/', '\\\\', $pattern);
+            $xname = preg_replace("|$pattern|", $rep, $xname);
             $extra['parsed'] = true;
         }
         $xname = basename($xname);
@@ -498,7 +600,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $cname = $this->parsename($pname, $item, $extra);
         }
         $cname = strtolower(preg_replace("/%[0-9][0-9|A-F]/", "_", rawurlencode($cname)));
-        
         return $cname;
     }
 
@@ -535,7 +636,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         
         $files = $this->findImageFile($imgfile);
-        if ($files == false)
+        if ($files === false)
         {
             $this->log("$imgfile cannot be found in images path", "warning");
             // last image in error,add it to error cache
