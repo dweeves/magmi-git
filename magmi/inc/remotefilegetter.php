@@ -77,8 +77,6 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	                   CURLOPT_HEADER=>true,
         	                   // we don't want the body
         	                   CURLOPT_NOBODY=>true,
-        	                   // follow redirects
-        	                   CURLOPT_FOLLOWLOCATION=>true,
         	                   // some stats on target
         	                    CURLOPT_FILETIME=>true);
         	    	    break;
@@ -90,8 +88,6 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	    	        CURLOPT_HEADER=>false,
         	    	        // we want body
         	    	        CURLOPT_NOBODY=>false,
-        	    	        // redirect
-        	    	        CURLOPT_FOLLOWLOCATION=>true,
         	    	        // handle 100 continue
         	    	        CURLOPT_HTTPHEADER=>array('Expect:'),
         	    	        // we don't want the response as we will store it in a file
@@ -102,6 +98,12 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         	    	    break;
         	    	default:
         	    	    break;
+        	    }
+        	    //fix for some servers not able to follow location & failing downloads
+        	    //only set follow location if compatible with PHP settings
+        	    if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off'))
+        	    {
+        	    	$curlopts[CURLOPT_FOLLOWLOCATION]=1;
         	    }
         	    break;
         	    /*
