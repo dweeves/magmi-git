@@ -6,7 +6,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $magdir = null;
     protected $imgsourcedirs = array();
     protected $errattrs = array();
-    protected $baseImageCache = array();
     protected $_errorimgs = array();
     protected $_handled_attributes = array();
     protected $_img_baseattrs = array("image","small_image","thumbnail");
@@ -15,7 +14,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $_mdh;
     protected $_remoteroot = "";
     protected $wildcard;
-    protected $backImageOn;
     protected $debug;
 
     public function initialize($params)
@@ -44,7 +42,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         $this->debug = $this->getParam("IMG:debug", 0);
 		$this->wildcard = $this->getParam("IMG:wildcard", 0);
-		$this->backImageOn = $this->getParam("IMG:backimage", 0);
     }
 
     public function getPluginInfo()
@@ -101,68 +98,43 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		
 		$targetsids = $this->getStoreIdsForStoreScope($item["store"]);
 		
-		//if is configurable and attribute begins with id:
-		if($item["type"] == "configurable" && substr( $ivalue, 0, 3 ) === "id:"){
-			if(substr( $ivalue, 0, 3 ) === "id:"){
-				$ivalue = substr($ivalue, 3);
-			}
-			
-			//back image support
-			if($this->backImageOn == 1){
-				$ids = explode(',', $ivalue);
-				if(count($ids) > 1){
-					//get the base image of the second linked simple product
-					$backImage = $this->fetchBaseImage($ids[1]);
-				}
-			}
-			
-			$rows = $this->fetchGalleryImages($ivalue);
-			foreach($rows as $row){
-				//back image support
-				if($this->backImageOn == 1){
-					if($row['label'] === 'back'){
-						$row['label'] = ''; //reset existing 'back' label
-					}
-					if($row['value'] === $backImage){
-						//set the label of base image of the second simple product to 'back'
-						$row['label'] = 'back'; 
-					}
-				}
-				
-				$this->addImageToGallery($pid, $storeid, $attrdesc, $row['value'], $targetsids, $row['label'], $false);
-			} 
-		}else{
-			// use ";" as image separator
-			$images = explode(";", $ivalue);
-			$imageindex = 0;
-			// for each image
-			foreach ($images as $imagefile)
+		// use ";" as image separator
+		$images = explode(";", $ivalue);
+		$imageindex = 0;
+		// for each image
+		foreach ($images as $imagefile)
+		{
+			// trim image file in case of spaced split
+			$imagefile = trim($imagefile);
+			// handle exclude flag explicitely
+			$exclude = $this->getExclude($imagefile, false);
+			$infolist = explode("::", $imagefile);
+			$label = null;
+			if (count($infolist) > 1)
 			{
-				// trim image file in case of spaced split
-				$imagefile = trim($imagefile);
-				// handle exclude flag explicitely
-				$exclude = $this->getExclude($imagefile, false);
-				$infolist = explode("::", $imagefile);
-				$label = null;
-				if (count($infolist) > 1)
-				{
-					$label = $infolist[1];
-					$imagefile = $infolist[0];
-				}
-				unset($infolist);
-				$extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+				$label = $infolist[1];
+				$imagefile = $infolist[0];
+			}
+			unset($infolist);
+			$extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+			
+			//if gallery attributes have been overwritten by configurable processor, then no need to copy.
+			if(isset($item['IMAGES_OVERWRITTEN']) && $item['IMAGES_OVERWRITTEN'] >=2 ){
+				$imagefiles = array($imagefile);
+			}else{
 				// copy it from source dir to product media dir
 				$imagefiles = $this->copyImageFile($imagefile, $item, $extra);
-				unset($extra);
-				
-				// add to gallery
-				foreach($imagefiles as $file){
-					$vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $file, $targetsids, $label, $exclude);
-					$imageindex++;
-				}
 			}
-			unset($images);
+			unset($extra);
+			
+			// add to gallery
+			foreach($imagefiles as $file){
+				$vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $file, $targetsids, $label, $exclude);
+				$imageindex++;
+			}
 		}
+		unset($images);
+		
         // we don't want to insert after that
         return false;
     }
@@ -284,10 +256,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $exclude = $this->getExclude($ivalue, false);
         $imagefile = trim($ivalue);
         
-		$imagefiles = array();
-		//if is configurable and attribute begin with id, then fetch image from DB, otherwise copy image from image sources
-		if($item["type"] == "configurable" && substr( $ivalue, 0, 3 ) === "id:"){
-			$imagefiles[] = $this->fetchBaseImage($ivalue);
+		//if image attributes have been overwritten by configurable processor, then no need to copy.
+		if(isset($item['IMAGES_OVERWRITTEN']) && ( $item['IMAGES_OVERWRITTEN']==1 or  $item['IMAGES_OVERWRITTEN']==3 ) ){
+			$imagefiles = array($imagefile);
         }else{
 			$imagefiles = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
 		}
@@ -306,70 +277,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         return $ovalue;
     }
 
-	/**
-		Cang Luo 03/11/2014 
-		select the base image path of given product ID from database
-		@param string $id
-				: an integer
-		@return string/false	
-				: returns the path of base image of given product,
-				: returns false if $id is not in accepted format or no result found.
-	*/
-	public function fetchBaseImage($id){
-		if(substr( $id, 0, 3 ) === 'id:'){
-			$id = substr($id, 3);
-		}
-		$id = trim($id);
-		if(!preg_match('/^\d+$/', $id)){
-			$this->log("Invalid ID for base image: $id", 'warning');
-			return false;
-		}
-		if(!isset($this->baseImageCache[$id])){
-			$image_attinfo = $this->getAttrInfo('image');
-			$attribute_id = $image_attinfo['attribute_id'];
-			$t = $this->tablename('catalog_product_entity_varchar');
-			$sql = "SELECT value FROM $t WHERE attribute_id = $attribute_id AND entity_id = ?";
-			$path = $this->selectone($sql, $id, 'value');
-			if(is_null($path)){
-				return false;
-			}
-			//caching image path
-			$this->baseImageCache[$id] = $path;
-		}
-		return $this->baseImageCache[$id];
-	}
-	
-	/**
-		Cang Luo 03/11/2014 
-		Select the gallery image paths and labels of given product IDs from database
-		@param string/array $ids
-				: a string of comma separated integers (e.g. 1,2,3,4,5 )
-				: Or an array of integers, which will be converted into a string of above format.
-		@return array/false	
-				: returns an associated array of 'value' and 'label' on success,
-				: returns false if $ids is not in accepted format.
-	*/
-	public function fetchGalleryImages($ids){
-		if(is_array($ids)){
-			$ids = implode(',' , $ids);
-		}
-		if(substr( $ids, 0, 3 ) === "id:"){
-			$ids = substr($ids, 3);
-		}
-		if(!preg_match('/^\d+(,\d+)*$/', $ids)){
-			$this->log("Invalid IDs for gallery images: $ids", 'warning');
-			return false;
-		}
-		
-        $tg = $this->tablename('catalog_product_entity_media_gallery');
-        $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
-		$sql = "SELECT value, label
-				 FROM $tgv AS emgv
-				 JOIN $tg AS emg ON emg.value_id = emgv.value_id 
-				 WHERE emg.entity_id in ($ids) AND emgv.store_id=0 AND value IS NOT NULL";
-		$rows = $this->selectAll($sql);
-		return $rows;
-	}
 	
     public function handleVarcharAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {

@@ -75,17 +75,6 @@
 </ul>
 <div class="fieldinfo">Example: /cat1/sku01/*.jpg will match all jpg files in /cat1/sku01/ folder</div>
 
-<ul class="formline">
-	<li class="label" style="width: 360px;">Configurable Back Image Label support</li>
-	<?php $v=$this->getParam("IMG:backimage",0)?>
-	<li class="value"><select name="IMG:backimage">
-			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>No</option>
-			<option value="1" <?php if ($v==1){?> selected="selected" <?php }?>>Yes</option>
-	</select></li>
-	<div class="clear"></div>
-</ul>
-<div class="fieldinfo">Depends on the Auto Assign Simple Images option of Configurables. If yes, When auto adding images to the gallery of configurable, it will clear any existing 'back' label and set the base image of the second simple to 'back'. The labels of simple products will not be affected. </div>
-
 <div class="formline">
 	<span>Debug mode</span> <select name="IMG:debug">
 <?php $qdd=$this->getParam("IMG:debug","no");?>

@@ -40,12 +40,24 @@
 </ul>
 
 <ul class="formline">
-	<li class="label" style="width: 360px">Auto assign simples images to configurable</li>
+	<li class="label" style="width: 360px">Auto assign images to configurable product</li>
 	<?php $v=$this->getParam("CFGR:addsimpleimages",0)?>
 	<li class="value"><select name="CFGR:addsimpleimages">
+			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>Diable</option>
+			<option value="1" <?php if ($v==1){?> selected="selected" <?php }?>>Gallery Only</option>
+			<option value="2" <?php if ($v==2){?> selected="selected" <?php }?>>All</option>
+	</select></li>
+</ul>
+<div class="fieldinfo" >If 'All' is selected, it will assign the base image of the first associated product to be the base image, thumbnail and small image of the configurable product, and add all gallery images of associated products to the gallery of configurable product.</div>
+
+<ul class="formline">
+	<li class="label" style="width:300px; margin-left:60px">Back Image Label support</li>
+	<?php $v=$this->getParam("CFGR:backimage",0)?>
+	<li class="value"><select name="CFGR:backimage">
 			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>No</option>
 			<option value="1" <?php if ($v==1){?> selected="selected" <?php }?>>Yes</option>
 	</select></li>
+	<div class="clear"></div>
 </ul>
-<div class="fieldinfo" >If yes, it will assign the base image of the first associated simple to be the base image, thumbnail and small image of the configurable, and add all gallery images of associated simples to the configurable.</div>
+<div class="fieldinfo" style="margin-left:60px">Depends on the Auto Assign Images option. If yes, When auto adding images to the gallery of configurable, it will clear any existing 'back' label and set the label of the base image of the second associated product to 'back'. The labels of simple products will not be affected. </div>
 

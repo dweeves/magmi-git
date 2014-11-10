@@ -6,11 +6,14 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentsimples = array();
+    private $baseImageCache = array();
 	private $addsimpleimages;
+    private $backImageSupport;
 
     public function initialize($params)
     {
 		$this->addsimpleimages = $this->getParam("CFGR:addsimpleimages", 0);
+		$this->backImageSupport = $this->getParam("CFGR:backimage", 0);
 	
 	}
     /* Plugin info declaration */
@@ -354,7 +357,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 break;
         }
 		
-		if($this->addsimpleimages==1){
+		if($this->addsimpleimages >= 1){
+			// Calling rewriteImageAttributes() here ensures that it runs before handleVarcharAttribute().
 			$this->rewriteImageAttributes($item, $ids);
 		}
 		
@@ -369,7 +373,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 	
 	/**
 		Cang Luo 31/10/2014 
-		Overwrite the image attributes with product IDs.
+		Overwrite the image attributes with image paths from associated products only if it has associated products
 		This function must run before the handleVarcharAttribute() function of Image Attribute Processor
 		@param Array  $item
 				: The item array.
@@ -377,13 +381,111 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 				: an array of IDs
 	*/
 	private function rewriteImageAttributes(&$item, $ids){
-		$prefix="id:";
-		$item['image'] = $prefix.$ids[0];
-		$item['small_image'] = $item['image'];
-		$item['thumbnail'] = $item['image'];
-		$item['media_gallery']=$prefix.implode(',',$ids);
+		$state=0;
+		if(count($ids) > 1){
+			if($this->addsimpleimages>=2){
+				$firstBaseImage = $this->fetchBaseImage($ids[0]);
+				if( !empty($firstBaseImage) ){
+					$state += 1;
+					$item['image'] = $firstBaseImage;
+					$item['small_image'] = $item['image'];
+					$item['thumbnail'] = $item['image'];
+				}
+			}
+			$gallery = $this->fetchGalleryImages($ids);
+			if( !empty($gallery) ){
+				$state += 2;
+				$item['media_gallery'] = $gallery;
+			}
+		}else{
+			$this->log("No associated products found, configurable images are not overwritten.", 'warning');
+		}
+		$item['IMAGES_OVERWRITTEN']=$state;
 	}
 
+	/**
+		Cang Luo 03/11/2014 
+		select the base image path of given product ID from database
+		@param string $id
+				: an integer
+		@return string/false	
+				: returns the path of base image of given product,
+				: returns false if $id is not in accepted format or no result found.
+	*/
+	public function fetchBaseImage($id){
+		$id = trim($id);
+		if(!preg_match('/^\d+$/', $id)){
+			$this->log("Invalid ID for base image: $id", 'warning');
+			return false;
+		}
+		if(!isset($this->baseImageCache[$id])){
+			$image_attinfo = $this->getAttrInfo('image');
+			$attribute_id = $image_attinfo['attribute_id'];
+			$t = $this->tablename('catalog_product_entity_varchar');
+			$sql = "SELECT value FROM $t WHERE attribute_id = $attribute_id AND entity_id = ?";
+			$path = $this->selectone($sql, $id, 'value');
+			if(is_null($path)){
+				return false;
+			}
+			//caching image path
+			$this->baseImageCache[$id] = $path;
+		}
+		return $this->baseImageCache[$id];
+	}
+	
+	/**
+		Cang Luo 03/11/2014 
+		Select the gallery image paths and labels of given product IDs from database
+		@param array $ids
+				: an array of integers
+		@return string/false	
+				: returns a string of paths and labels, in the format of: path1[::label1]; path2[::label2];...
+				: returns false if $ids is not in accepted format.
+	*/
+	public function fetchGalleryImages($ids){
+		$idString = $ids;
+		if(is_array($ids)){
+			$idString = implode(',' , $ids);
+		}
+		if(!preg_match('/^\d+(,\d+)*$/', $idString)){
+			$this->log("Invalid IDs for gallery images: $idString", 'warning');
+			return false;
+		}
+		
+        $tg = $this->tablename('catalog_product_entity_media_gallery');
+        $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
+		$sql = "SELECT value, label
+				 FROM $tgv AS emgv
+				 JOIN $tg AS emg ON emg.value_id = emgv.value_id 
+				 WHERE emg.entity_id in ($idString) AND emgv.store_id=0 AND value IS NOT NULL";
+		$rows = $this->selectAll($sql);
+		
+		//back image support
+		if($this->backImageSupport == 1){
+			$backImage = false;
+			if(count($ids) > 1){
+				//get the base image of the second linked simple product
+				$backImage = $this->fetchBaseImage($ids[1]);
+			}
+		}
+		$ovalue = '';
+		foreach($rows as $row){
+			//back image support
+			if($this->backImageSupport == 1){
+				if($row['label'] === 'back'){
+					$row['label'] = ''; //reset existing 'back' label
+				}
+				if($row['value'] === $backImage){
+					//set the label of base image of the second simple product to 'back'
+					$row['label'] = 'back'; 
+				}
+			}
+			$ovalue .= $row['value']. (empty($row['label']) ? '' : '::'.$row['label']) .';';
+		}
+		unset($rows);
+		return rtrim($ovalue, ';');
+	}
+	
     public function processColumnList(&$cols, $params = null)
     {
         if (!in_array("options_container", $cols))
@@ -396,7 +498,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginParamNames()
     {
-        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:addsimpleimages");
+        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:addsimpleimages","CFGR:backimage");
     }
 
     static public function getCategory()
