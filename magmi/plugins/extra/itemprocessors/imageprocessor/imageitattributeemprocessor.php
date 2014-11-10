@@ -316,7 +316,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				: returns false if $id is not in accepted format or no result found.
 	*/
 	public function fetchBaseImage($id){
-		if(substr( $id, 0, 3 ) === "id:"){
+		if(substr( $id, 0, 3 ) === 'id:'){
 			$id = substr($id, 3);
 		}
 		$id = trim($id);
@@ -325,8 +325,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			return false;
 		}
 		if(!isset($this->baseImageCache[$id])){
+			$image_attinfo = $this->getAttrInfo('image');
+			$attribute_id = $image_attinfo['attribute_id'];
 			$t = $this->tablename('catalog_product_entity_varchar');
-			$sql = "SELECT value FROM $t WHERE attribute_id = 85 AND entity_id = ?";
+			$sql = "SELECT value FROM $t WHERE attribute_id = $attribute_id AND entity_id = ?";
 			$path = $this->selectone($sql, $id, 'value');
 			if(is_null($path)){
 				return false;
