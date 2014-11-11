@@ -307,7 +307,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
                         return "__MAGMI_DELETE__";
                     }
                     $oids = $this->getOptionIds($attid, $storeid, array($ivalue));
-                    $ovalue = $oids[0];
+                    $ovalue = $oids[$ivalue];
                     unset($oids);
                     break;
             }
@@ -433,7 +433,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             $sep = Magmi_Config::getInstance()->get("GLOBAL", "multiselect_sep", ",");
             $multiselectvalues = explode($sep, $ivalue);
             $oids = $this->getOptionIds($attid, $storeid, $multiselectvalues);
-            $ovalue = implode(",", $oids);
+            $ovalue = implode(",", array_values($oids));
             unset($oids);
         }
         

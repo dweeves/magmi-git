@@ -276,32 +276,46 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 }
                 $data = array();
                 $ins = array();
-                
+                //option value list
+                $optvlist=array();
+                //option prices list
+                $optplist=array();
+                //retrieve all priced options at once to avoid duplication of existing
+                //due to cache miss
                 foreach ($this->_optpriceinfo[$confopt] as $opdef)
                 {
-                    // if optpriceinfo has no is_percent, force to 0
-                    $opinf = explode(":", $opdef);
-                    $optids = $this->getOptionIds($attrid, 0, explode("//", $opinf[0]));
-                    foreach ($optids as $optid)
+                   $opinf = explode(":", $opdef);
+                    $vlist=explode('//',$opinf[0]);
+                    $optvlist=array_merge($optvlist,$vlist);
+                    if (count($opinf) < 3)
                     {
-                        // generate price info for each given website
-                        foreach ($wsids as $wsid)
-                        {
-                            if (count($opinf) < 3)
-                            {
-                                $opinf[] = 0;
-                            }
-                            
-                            $data[] = $psaid;
-                            $data[] = $optid;
-                            $data[] = $opinf[1];
-                            $data[] = $opinf[2];
-                            $data[] = $wsid;
-                            $ins[] = "(?,?,?,?,?)";
-                        }
+                       // if optpriceinfo has no is_percent, force to 0
+                        $opinf[] = 0;
+                    }
+                    foreach($vlist as $v) {
+                        $optplist[$v] = array($opinf[1],$opinf[2]);
                     }
                 }
-                
+                $optvlist=array_unique($optvlist);
+                $optids = $this->getOptionIds($attrid, 0,$optvlist);
+                unset($optvlist);
+
+                foreach ($optids as $val=>$optid)
+                {
+                       // generate price info for each given website
+                   foreach ($wsids as $wsid)
+                   {
+
+
+                        $data[] = $psaid;
+                        $data[] = $optid;
+                        $data[] = $optplist[$val][0];
+                        $data[] = $optplist[$val][1];
+                        $data[] = $wsid;
+                        $ins[] = "(?,?,?,?,?)";
+                   }
+                }
+
                 $sql = "INSERT INTO $cpsap (`product_super_attribute_id`,`value_index`,`pricing_value`,`is_percent`,`website_id`) VALUES " .
                      implode(",", $ins) .
                      " ON DUPLICATE KEY UPDATE pricing_value=VALUES(pricing_value),is_percent=VALUES(is_percent)";

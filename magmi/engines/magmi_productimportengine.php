@@ -676,7 +676,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         // builf and array with all option ids
         foreach ($optExisting as $row)
         {
-            $optids[] = $row["opvs"];
+                $optids[$row["value"]]=$row["opvs"];
         }
         // remove existing store values
         unset($existingStoreValues);
