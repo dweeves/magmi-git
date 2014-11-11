@@ -382,7 +382,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 	*/
 	private function rewriteImageAttributes(&$item, $ids){
 		$state=0;
-		if(count($ids) > 1){
+		if(count($ids) > 0){
 			if($this->addsimpleimages>=2){
 				$firstBaseImage = $this->fetchBaseImage($ids[0]);
 				if( !empty($firstBaseImage) ){
@@ -392,13 +392,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 					$item['thumbnail'] = $item['image'];
 				}
 			}
-			$gallery = $this->fetchGalleryImages($ids);
+			$gallery = $this->fetchGalleryImages($item, $ids);
 			if( !empty($gallery) ){
 				$state += 2;
 				$item['media_gallery'] = $gallery;
 			}
 		}else{
-			$this->log("No associated products found, configurable images are not overwritten.", 'warning');
+			$this->log("No associated products found for item ".$item['sku'].", fall back to original image values.", 'warning');
 		}
 		$item['IMAGES_OVERWRITTEN']=$state;
 	}
@@ -442,7 +442,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 				: returns a string of paths and labels, in the format of: path1[::label1]; path2[::label2];...
 				: returns false if $ids is not in accepted format.
 	*/
-	public function fetchGalleryImages($ids){
+	public function fetchGalleryImages($item, $ids){
 		$idString = $ids;
 		if(is_array($ids)){
 			$idString = implode(',' , $ids);
@@ -451,13 +451,14 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 			$this->log("Invalid IDs for gallery images: $idString", 'warning');
 			return false;
 		}
-		
+		$sids = $this->getItemStoreIds($item, 0);
+		$sids = '('.implode(",", $sids).')';
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
 		$sql = "SELECT value, label
 				 FROM $tgv AS emgv
 				 JOIN $tg AS emg ON emg.value_id = emgv.value_id 
-				 WHERE emg.entity_id in ($idString) AND emgv.store_id=0 AND value IS NOT NULL";
+				 WHERE emg.entity_id in ($idString) AND emgv.store_id IN $sids AND value IS NOT NULL";
 		$rows = $this->selectAll($sql);
 		
 		//back image support
