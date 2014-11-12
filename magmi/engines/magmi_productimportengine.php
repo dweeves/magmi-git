@@ -8,7 +8,7 @@
  * updated : 2010-10-09
  *
  */
-
+require_once("../inc/magmi_defs.php");
 /* use external file for db helper */
 require_once ("magmi_engine.php");
 require_once ("magmi_valueparser.php");
