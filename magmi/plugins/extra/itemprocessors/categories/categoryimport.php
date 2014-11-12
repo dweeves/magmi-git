@@ -379,6 +379,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 
     public function processItemAfterId(&$item, $params = null)
     {
+        $this->handleIgnore($item);
         if (isset($item["categories"]))
         {
             // handle escaping
