@@ -910,10 +910,14 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     
                     // base output value to be inserted = base source value
                     $ovalue = $ivalue;
+                    //iterate on available handlers until one gives a proper value
                     for($i=0;$i<count($handlers);$i++)
                     {
+                        //get handler info array for current handler (handler instance & callback name)
                         list($hdl,$cb)=$handlers[$i];
+                        //call appropriate callback on current handler to get return value to insert in DB
                         $hvalue=$hdl->$cb($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
+                        //if valid value returned, take it as output value & break
                         if (isset($hvalue) && $hvalue != "__MAGMI_UNHANDLED__")
                         {
                             $ovalue = $hvalue;
