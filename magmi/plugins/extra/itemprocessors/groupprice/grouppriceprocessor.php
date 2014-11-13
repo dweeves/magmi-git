@@ -43,7 +43,8 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
 
             $sql = 'INSERT INTO ' . $table_name .
             ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
-            
+            $data=array();
+            $inserts=array();
             foreach ($group_cols as $key)
             {            	
             	$price=str_replace(",",".",$item[$key]);
@@ -69,7 +70,8 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
             	$sql .= ' ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)';
             	$this->insert($sql, $data);
             }
-            
+            unset($data);
+            unset($inserts);
         }
         return true;
     }
