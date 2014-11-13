@@ -918,32 +918,28 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         //call appropriate callback on current handler to get return value to insert in DB
                         $hvalue=$hdl->$cb($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
                         //if valid value returned, take it as output value & break
-                        if (isset($hvalue) && $hvalue != "__MAGMI_UNHANDLED__")
+                        if (isset($hvalue) && $hvalue != '__MAGMI_UNHANDLED__')
                         {
                             $ovalue = $hvalue;
                             break;
                         }
                     }
 
-                    // if __MAGMI_UNHANDLED__ ,don't insert anything
-                    if ($ovalue == "__MAGMI_UNHANDLED__")
+                    // if __MAGMI_UNHANDLED__ ,don't insert anything, __MAGMI_IGNORE__ has also to do nothing
+                    if ($ovalue == '__MAGMI_UNHANDLED__' || $ovalue=='__MAGMI_IGNORE__')
                     {
                         $ovalue = false;
                     }
                     
-                    // force null value => to delete
-                    if ($ovalue == "__NULL__")
-                    {
-                        $ovalue = "__MAGMI_DELETE__";
-                    }
-                    
-                    // if handled value is a "DELETE"
-                    if ($ovalue == "__MAGMI_DELETE__")
+                    else
+                    // if handled value is a "DELETE" or a NULL , which will also be removed
+                    if ($ovalue == '__MAGMI_DELETE__' || $ovalue=='__NULL__')
                     {
                         $deletes[] = $attid;
                         // do not handle value in insert
                         $ovalue = null;
                     }
+
                     // if we have something to do with this value
                     if ($ovalue !== false && $ovalue != null)
                     {
