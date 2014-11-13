@@ -8,7 +8,7 @@
  * updated : 2010-10-09
  *
  */
-require_once("../inc/magmi_defs.php");
+require_once(dirname(__DIR__)."/inc/magmi_defs.php");
 /* use external file for db helper */
 require_once ("magmi_engine.php");
 require_once ("magmi_valueparser.php");
@@ -68,20 +68,20 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     private $_stockcols = array();
     //stats 
     private $_skustats = array();
+    //handlers cache
+    private  $_handlercache=array();
 
-    
+
     /**
-     * constructor
-     *
-     * @param string $conffile
-     *            : configuration .ini filename
+     * Constructor
+     * add default attribute processor
      */
     public function __construct()
     {
         parent::__construct();
         $this->setBuiltinPluginClasses("itemprocessors", 
-            dirname(dirname(__FILE__)) .
-                 "/plugins/inc/magmi_defaultattributehandler.php::Magmi_DefaultAttributeItemProcessor");
+            MAGMI_PLUGIN_DIR .
+            '/inc/magmi_defaultattributehandler.php::Magmi_DefaultAttributeItemProcessor');
     }
 
     public function getSkuStats()
@@ -96,7 +96,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.2","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.3","author"=>"dweeves");
     }
 
     /**
@@ -259,7 +259,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
-     * returns mode
+     * returns execution mode
      */
     public function getMode()
     {
@@ -797,6 +797,46 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
+     * Optimized attribute handler resolution
+     * @param $item
+     * @param $attinfo
+     */
+    public function getHandlers($attrdesc)
+    {
+        $attrcode=$attrdesc['attribute_code'];
+        $atype=$attrdesc['backend_type'];
+        // use reflection to find special handlers
+        $typehandler = "handle" . ucfirst($atype) . "Attribute";
+        $atthandler = "handle" . ucfirst($attrcode) . "Attribute";
+        $handlers=array();
+        if(!in_array($attrcode,$this->_handlercache))
+        {
+            foreach ($this->_attributehandlers as $match => $ah)
+            {
+                $matchinfo = explode(":", $match);
+                $mtype = $matchinfo[0];
+                $mtest = $matchinfo[1];
+                unset($matchinfo);
+                if (preg_match("/$mtest/", $attrdesc[$mtype])) {
+                    // if there is a specific handler for attribute, use it
+                    if (method_exists($ah, $atthandler)) {
+                        $handlers[] = array($ah,$atthandler);
+                    }
+                    else
+                        // use generic type attribute
+                        if (method_exists($ah, $typehandler)) {
+                            $handlers[] = array($ah,$typehandler);
+                        }
+                }
+            }
+            $this->_handlercache[$attrcode]=$handlers;
+            unset($handlers);
+        }
+        return $this->_handlercache[$attrcode];
+
+
+    }
+    /**
      * Create product attribute from values for a given product id
      *
      * @param $pid :
@@ -829,8 +869,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // deletes to perform on backend type eav
             $deletes = array();
             
-            // use reflection to find special handlers
-            $typehandler = "handle" . ucfirst($tp) . "Attribute";
+
             // iterate on all attribute descriptions for the given backend type
             foreach ($a["data"] as $attrdesc)
             {
@@ -844,8 +883,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // get attribute id
                 $attid = $attrdesc["attribute_id"];
                 // get attribute value in the item to insert based on code
-                $atthandler = "handle" . ucfirst($attrdesc["attribute_code"]) . "Attribute";
+
                 $attrcode = $attrdesc["attribute_code"];
+
                 // if the attribute code is no more in item (plugins may have come into the way), continue
                 if (!in_array($attrcode, array_keys($item)))
                 {
@@ -861,41 +901,26 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 {
                     continue;
                 }
+                //attribute handler for attribute
+                $handlers=$this->getHandlers($attrdesc);
+
                 // for all store ids
                 foreach ($store_ids as $store_id)
                 {
                     
                     // base output value to be inserted = base source value
                     $ovalue = $ivalue;
-                    // check for attribute handlers for current attribute
-                    foreach ($this->_attributehandlers as $match => $ah)
+                    for($i=0;$i<count($handlers);$i++)
                     {
-                        $matchinfo = explode(":", $match);
-                        $mtype = $matchinfo[0];
-                        $mtest = $matchinfo[1];
-                        unset($matchinfo);
-                        unset($hvalue);
-                        if (preg_match("/$mtest/", $attrdesc[$mtype]))
+                        list($hdl,$cb)=$handlers[$i];
+                        $hvalue=$hdl->$cb($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
+                        if (isset($hvalue) && $hvalue != "__MAGMI_UNHANDLED__")
                         {
-                            // if there is a specific handler for attribute, use it
-                            if (method_exists($ah, $atthandler))
-                            {
-                                $hvalue = $ah->$atthandler($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
-                            }
-                            else 
-                                // use generic type attribute
-                                if (method_exists($ah, $typehandler))
-                                {
-                                    $hvalue = $ah->$typehandler($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
-                                }
-                            // if handlers returned a value that is not "__MAGMI_UNHANDLED__" , we have our output value
-                            if (isset($hvalue) && $hvalue != "__MAGMI_UNHANDLED__")
-                            {
-                                $ovalue = $hvalue;
-                                break;
-                            }
+                            $ovalue = $hvalue;
+                            break;
                         }
                     }
+
                     // if __MAGMI_UNHANDLED__ ,don't insert anything
                     if ($ovalue == "__MAGMI_UNHANDLED__")
                     {
@@ -1348,18 +1373,21 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $this->_curitemids;
     }
 
+    //more efficient filtering for handleIgnore
+    public function keepValue($v)
+    {
+        return $v!=='__MAGMI_IGNORE__';
+    }
+    //more efficient handleIgnore
     public function handleIgnore(&$item)
     {
-        // filter __MAGMI_IGNORE__ COLUMNS
-        foreach ($item as $k => $v)
-        {
-            if ($v === "__MAGMI_IGNORE__")
-            {
-                unset($item[$k]);
-            }
-        }
+        $item=array_filter($item,array($this,'keepValue'));
     }
 
+    /**
+     * @param $pid product id
+     * @return string comma separated list of stores for item id
+     */
     public function findItemStores($pid)
     {
         $sql = "SELECT cs.code FROM " . $this->tablename("catalog_product_website") . " AS cpw" . " JOIN " .

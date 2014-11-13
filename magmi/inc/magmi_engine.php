@@ -284,7 +284,7 @@ abstract class Magmi_Engine extends DbHelper
     public function callPlugins($types, $callback, &$data = null, $params = null, $break = true)
     {
         $result = true;
-        
+        $tclass=get_class($this);
         // If plugin type list is not an array , process it as string
         if (!is_array($types))
         {
@@ -311,6 +311,7 @@ abstract class Magmi_Engine extends DbHelper
                 // For all instances in the family
                 foreach ($this->_activeplugins[$ptype] as $pinst)
                 {
+                    $pclass=get_class($pinst);
                     // If the plugin has a hook for the defined processing step
                     if (method_exists($pinst, $callback))
                     {
@@ -334,24 +335,21 @@ abstract class Magmi_Engine extends DbHelper
                         {
                             $cb = $this->_ploop_callbacks[$callback];
                             // Call the plugin processing loop callback , time it
-                            $this->_timecounter->initTime($callback, get_class($pinst));
+                            $this->_timecounter->initTime($callback, $pclass);
                             $this->$cb($pinst, $data, $result);
-                            $this->_timecounter->exitTime($callback, get_class($pinst));
+                            $this->_timecounter->exitTime($callback, $pclass);
                         }
                         // if last result plugin is false & break flag
                         if ($result === false && $break)
                         {
-                            // End timing
-                            $this->_timecounter->exitTime($callback, get_class($this));
-                            // return false
-                            return $result;
+                            break;
                         }
                     }
                 }
             }
         }
         // Nothing broke, end timing
-        $this->_timecounter->exitTime($callback, get_class($this));
+        $this->_timecounter->exitTime($callback, $tclass);
         // Return plugin call result
         return $result;
     }
