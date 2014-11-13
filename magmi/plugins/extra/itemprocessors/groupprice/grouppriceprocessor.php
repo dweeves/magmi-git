@@ -11,7 +11,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
 	protected $_tax_class_id;
     public function getPluginInfo()
     {
-        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.3');
+        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.4');
     }
 
     
@@ -50,9 +50,7 @@ class GrouppriceProcessor extends Magmi_ItemProcessor
                 if (!empty($price))
                 {
                     $group_id = $this->_groups[$key]['id'];
-                    $inserts = array();
-                    $data = array();
-                    
+
                     foreach ($website_ids as $website_id)
                     {
                         $inserts[] = '(?,?,?,?,?)';
