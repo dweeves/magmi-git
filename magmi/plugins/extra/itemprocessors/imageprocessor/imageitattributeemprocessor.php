@@ -45,7 +45,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.31",
+        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.32",
             "url"=>$this->pluginDocUrl("Image_attributes_processor"));
     }
 
@@ -225,14 +225,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         // trimming
         $ivalue = trim($ivalue);
-        // If not already a remote image & force remote root, set it & set authentication
-        if (!is_remote_path($ivalue))
-        {
-            if ($this->_remoteroot != "")
-            {
-                $ivalue = $this->_remoteroot . str_replace("//", "/", "/$ivalue");
-            }
-        }
         if (is_remote_path($ivalue))
         {
             // Amazon images patch , remove SLXXXX part
@@ -479,7 +471,13 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             ;
             return false;
         }
-        
+
+        //handle remote root per image
+        if ($this->_remoteroot != "")
+        {
+           $imgfile = $this->_remoteroot . str_replace("//", "/", "/$imgfile");
+        }
+
         $source = $this->findImageFile($imgfile);
         if ($source == false)
         {
