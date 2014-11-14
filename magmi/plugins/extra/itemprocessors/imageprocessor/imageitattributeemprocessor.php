@@ -45,7 +45,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.32",
+        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.33",
             "url"=>$this->pluginDocUrl("Image_attributes_processor"));
     }
 
@@ -219,20 +219,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function handleVarcharAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
-        if (trim($ivalue) == "")
-        {
-            return trim($ivalue);
-        }
+
         // trimming
         $ivalue = trim($ivalue);
-        if (is_remote_path($ivalue))
+        if($ivalue=="")
         {
-            // Amazon images patch , remove SLXXXX part
-            if (strpos($ivalue, 'amazon.com/images/I') !== false)
-            {
-                $pattern = '/\bSL[0-9]+\./i';
-                $ivalue = preg_replace($pattern, '', $ivalue);
-            }
+            return $ivalue;
         }
         
         // if it's a gallery
@@ -473,9 +465,20 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
 
         //handle remote root per image
-        if ($this->_remoteroot != "")
+        if(!is_remote_path($imgfile)) {
+            if ($this->_remoteroot != "") {
+                $imgfile = $this->_remoteroot . str_replace("//", "/", "/$imgfile");
+            }
+        }
+        //handle amazon specific
+        if (is_remote_path($imgfile))
         {
-           $imgfile = $this->_remoteroot . str_replace("//", "/", "/$imgfile");
+           // Amazon images patch , remove SLXXXX part
+           if (preg_match('|amazon\..*?/images/I|',$imgfile))
+           {
+                $pattern = '/\bSL[0-9]+\./i';
+                $imgfile = preg_replace($pattern, '', $imgfile);
+           }
         }
 
         $source = $this->findImageFile($imgfile);
@@ -622,7 +625,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 // force label update
                 $attrdesc = $this->getAttrInfo($attrcode);
-                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attr_desc["is_global"]), 
+                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attrdesc["is_global"]),
                     $item[$attrcode . "_label"]);
                 unset($attrdesc);
             }
