@@ -96,7 +96,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.3","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.3a","author"=>"dweeves");
     }
 
     /**
@@ -1566,13 +1566,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             {
                 $this->updateWebSites($pid, $item);
             }
-            
-            if (!$this->_same)
-            {
-                // update stock
-                $this->updateStock($pid, $item, $isnew);
-            }
-            
+
+            //fix for multiple stock update
+            //always update stock
+            $this->updateStock($pid, $item, $isnew);
+
             $this->touchProduct($pid);
             // ok,we're done
             if (!$this->callPlugins("itemprocessors", "processItemAfterImport", $item, $fullmeta))
