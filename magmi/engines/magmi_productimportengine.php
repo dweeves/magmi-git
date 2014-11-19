@@ -96,7 +96,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.3a","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.4","author"=>"dweeves");
     }
 
     /**
@@ -334,6 +334,18 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $required;
     }
 
+    public function checkAttributeInfo($attrinf)
+    {
+        $smodel=$attrinf['source_model'];
+        $finp=$attrinf['frontend_input'];
+        $bt=$attrinf['backend_type'];
+        //checking specific extension custom model for selects that might not respect magento default model
+        if($bt=='int' && $finp=='select' && isset($smodel) && $smodel!="eav/entity_attribute_source_table")
+        {
+              $this->log("Potential assignment problem, specific model found for select attribute => ".$attrinf['attribute_code'],"warning");
+        }
+
+    }
     /**
      *
      * gets attribute metadata from DB and put it in attribute metadata caches
@@ -368,7 +380,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             {
                 $extra = $this->tablename("catalog_eav_attribute");
                 // SQL for selecting attribute properties for all wanted attributes
-                $sql = "SELECT `$tname`.*,$extra.is_global,$extra.apply_to FROM `$tname`
+                $sql = "SELECT `$tname`.*,$extra.* FROM `$tname`
 				LEFT JOIN $extra ON $tname.attribute_id=$extra.attribute_id
 				WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";
             }
@@ -386,7 +398,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $attrinfs[$r["attribute_code"]] = $r;
             }
             unset($result);
-            
+
+            //check specific select info with custom model
+
+
+
             // create a backend_type based array for the wanted columns
             // this will greatly help for optimizing inserts when creating attributes
             // since eav_ model for attributes has one table per backend type
@@ -403,6 +419,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     $this->attrbytype[$bt]["data"][] = $a;
                     $this->attrinfo[$k] = $a;
                 }
+                $this->checkAttributeInfo($a);
             }
             // now add a fast index in the attrbytype array to store id list in a comma separated form
             foreach ($this->attrbytype as $bt => $test)
@@ -894,7 +911,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // get the item value
                 $ivalue = $item[$attrcode];
                 // get item store id for the current attribute
-                $store_ids = $this->getItemStoreIds($item, $attrdesc["is_global"]);
+                //if is global then , global scope applies but if configurable, back to store view scope since
+                //it's a select
+                $scope=$attrdesc["is_global"];
+                $scope=$scope>0?$scope-$attrdesc["is_configurable"]:0;
+                $store_ids = $this->getItemStoreIds($item, $scope);
                 
                 // do not handle empty generic int values in create mode
                 if ($ivalue == "" && $this->mode != "update" && $tp == "int")

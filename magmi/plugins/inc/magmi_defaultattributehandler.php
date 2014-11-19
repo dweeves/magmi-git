@@ -268,8 +268,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         // if we've got a select type value
         if ($attrdesc["frontend_input"] == "select")
         {
+            $smodel=$attrdesc["source_model"];
             // we need to identify its type since some have no options
-            switch ($attrdesc["source_model"])
+            switch ($smodel)
             {
                 // if its status, default to 1 (Enabled) if not correcly mapped
                 case "catalog/product_status":
@@ -307,7 +308,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
                         return "__MAGMI_DELETE__";
                     }
                     $oids = $this->getOptionIds($attid, $storeid, array($ivalue));
-                    $ovalue = $oids[$ivalue];
+                    //the new oids is a key/value array
+                    //in case of translate, the oids key is only the admin value, but the values are ok
+                    //this would also work for multiselect
+                    $ovalue = implode(",",array_unique(array_values($oids)));
                     unset($oids);
                     break;
             }
