@@ -96,7 +96,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.4","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.5","author"=>"dweeves");
     }
 
     /**
@@ -855,6 +855,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     }
 
+    /**
+     * Filter attribute map with item data
+     * @param $attmap attribute map to filter
+     * @param $item item to match
+     * @param $itemids item identifiers
+     * @return array filtered attribute map that matches item data
+     */
     public function filterAttributeMap($attmap,$item,$itemids)
     {
         $fmap=array();
@@ -1295,6 +1302,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         unset($inserts);
     }
 
+    /**
+     * Return websites for an item line, based either on websites or store column
+     * @param $item item to check
+     * @param bool $default
+     * @return mixed list of website ids for item
+     */
     public function getItemWebsites($item, $default = false)
     {
         // support for websites column if set
@@ -1367,12 +1380,20 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->insert($sql, array_merge(array($pid), $wsids));
     }
 
+    /**
+     * Clears option id cache
+     */
     public function clearOptCache()
     {
         unset($this->_optidcache);
         $this->_optidcache = array();
     }
 
+    /**
+     * Specific processing to set internal state for new sku to import
+     * @param $sku sku to import
+     * @param $existing boolean, item existing or not
+     */
     public function onNewSku($sku, $existing)
     {
         $this->clearOptCache();
@@ -1389,6 +1410,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->_same = false;
     }
 
+    /**
+     * Specific processing to set internal state on repeating sku on import
+     * @param $sku repeated sku
+     */
     public function onSameSku($sku)
     {
         unset($this->_dstore);
@@ -1396,11 +1421,33 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->_same = true;
     }
 
+    /**
+     * returns if item to import already exists (need item to have been identified)
+     * @return bool exists or not
+     */
     public function currentItemExists()
     {
         return $this->_curitemids["__new"] == false;
     }
 
+    /**
+     * Override of log to add sku reference
+     * @param $data raw log data
+     * @param string $type log type (may be modified by plugin)
+     * @param null $logger logger to use (null = defaul logger)
+     */
+    public function log($data,$type="info",$logger=null)
+    {
+        $prefix=((strpos($type,'warning')!==FALSE || strpos($type,'error')!==FALSE ) && isset($this->_curitemids['sku']))?"SKU ".$this->_curitemids['sku']." - " :'';
+        parent::log($prefix.$data,$type,$logger);
+    }
+
+    /**
+     * Fetches item identifiers (attribute_set, type, product id if existing)
+     * if the item does not exist, uses the data source , otherwise fetch it from magento db
+     * @param $item item to retreive ids for
+     * @return array associative array for identifiers
+     */
     public function getItemIds($item)
     {
         $sku = $item["sku"];
@@ -1600,7 +1647,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             
             if (!$this->checkstore($item, $pid, $isnew))
             {
-                $this->log("invalid store value, skipping item sku:" . $item["sku"]);
+                $this->log("invalid store value, skipping item");
                 return false;
             }
             // if column list has been modified by callback, update attribute info cache.
@@ -1670,6 +1717,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $count;
     }
 
+    /**
+     * Update raw product data in magento (catalog_product_entity fields)
+     * @param $item data to update
+     * @param $pid product id
+     */
     public function updateProduct($item, $pid)
     {
         $tname = $this->tablename('catalog_product_entity');
@@ -1687,11 +1739,17 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->update($sql, array_merge(array_values($values), array($pid)));
     }
 
+    /**
+     * @return mixed product entity type
+     */
     public function getProductEntityType()
     {
         return $this->prod_etype;
     }
 
+    /**
+     * @return mixed current importing row
+     */
     public function getCurrentRow()
     {
         return $this->_current_row;
