@@ -1,0 +1,3 @@
+"sku","attribute_set","url_key","type","name","description","short_description","weight","price","is_in_stock","status","visibility","categories","bundle_options","bundle_skus"
+"sku49","default","sku49","simple","sku49","description","short description",1,1,1,1,"Catalog, Search","new/item",,
+"sku50","default","sku50","bundle","sku50","description","short description",,,1,1,"Catalog, Search","new/item","light:light:checkbox:0:0","light:sku49:2:1:0:1"

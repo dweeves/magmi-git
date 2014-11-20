@@ -25,7 +25,7 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
 		//remove test.ini
 		unlink(__DIR__."/test.ini");
 	}
-	
+
     public function testBasicItem()
     {
         $conf=Magmi_Config::getInstance();
@@ -39,7 +39,7 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
                     "price"=>10,
                     "qty"=>1,
                     "category_ids"=>"2");
-        $dp->beginImportSession("baseprofile","create");
+        $dp->beginImportSession("baseprofile","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
         $dp->ingest($item);
         $dp->endImportSession();
     }
@@ -62,10 +62,31 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
         			"image"=>"http://be.eurocircuits.com/imgdownload.aspx?id=120291-91&type=articleimage&index=0&size=Large&name=120291-91",
         			"small_image"=>"http://be.eurocircuits.com/imgdownload.aspx?id=120291-91&type=articleimage&index=0&size=Large&name=120291-91",
            			"thumbnail"=>"http://be.eurocircuits.com/imgdownload.aspx?id=120291-91&type=articleimage&index=0&size=Large&name=120291-91");
-        $dp->beginImportSession("multiplugins","create");
+        $dp->beginImportSession("multiplugins","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
         $dp->ingest($item);
         $dp->endImportSession();
     }
+
+    public function testImgDLBad()
+       {
+       	$conf=Magmi_Config::getInstance();
+       	$conf->load(__DIR__."/test.ini");
+
+           $dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+           $item=array("sku"=>"I0001_img",
+                       "name"=>"test item with image",
+                       "description"=>"test description",
+                       "short_description"=>"test short desc",
+                       "weight"=>0,
+                       "price"=>10,
+                       "qty"=>1,
+                       "category_ids"=>"2",
+           			"image"=>"badimage.jpg",
+          );
+           $dp->beginImportSession("multiplugins","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+           $dp->ingest($item);
+           $dp->endImportSession();
+       }
     
     public function testImgDLMulti()
     {
@@ -73,7 +94,7 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
     	$conf->load(__DIR__."/test.ini");
     	 
     	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
-    	$dp->beginImportSession("multiplugins","create");
+    	$dp->beginImportSession("multiplugins","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
     	for($i=0;$i<50;$i++)
     	{
     	$item=array("sku"=>"I".str_pad($i, 4,"0",STR_PAD_LEFT)."_img",
@@ -94,4 +115,124 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
     	$dp->endImportSession();
     	 
     }
+    
+    public function testConfig()
+    {
+    	$conf=Magmi_Config::getInstance();
+    	$conf->load(__DIR__."/test.ini");
+    	
+    	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+    	$dp->beginImportSession("configurable","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+    	//import 10 simples
+        $stores=array("en","us");
+        foreach($stores as $st) {
+            for ($i = 0; $i < 10; $i++) {
+                $basecolor="c".($i%10);
+                $item = array("store"=>$st,
+                    "sku" => "S" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                    "name" => "simple item $i",
+                    "description" => "test description",
+                    "short_description" => "test short desc",
+                    "type" => "simple",
+                    "attribute_set" => "apparel",
+                    "weight" => 0,
+                    "price" => 10,
+                    "qty" => 1,
+                    "color" => $basecolor,
+                    "category_ids" => "2",
+                    "visibility" => "1");
+                $dp->ingest($item);
+                unset($item);
+            }
+        }
+    	//import configurable
+    	 $item=array("sku"=>"C000",
+    	 		"name"=>"config item 0",
+    	 		"description"=>"config desc",
+    	 		"short_description"=>"config short",
+    	 		"type"=>"configurable",
+                "price"=>20,
+                "is_in_stock"=>1,
+    	 		"attribute_set"=>"apparel",
+    	 		"configurable_attributes"=>"color",
+    	 		"simples_skus"=>"S0001_item,S0003_item,S0005_item",
+    	 		"super_attribute_pricing"=>"color::c1:10;c3:15;c5:18",
+    	 		"category_ids"=>"2",
+    	 		"visibility"=>"4");
+    	$dp->ingest($item);
+        $dp->endImportSession();
+    }
+
+    public function testTranslatedOptions()
+    {
+        $conf=Magmi_Config::getInstance();
+            	$conf->load(__DIR__."/test.ini");
+
+            	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+            	$dp->beginImportSession("configurable","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+            	//import 10 simples
+                $stores=array("en","us");
+                foreach($stores as $st) {
+                    for ($i = 10; $i < 100; $i++) {
+                        $basecolor="c".($i%10);
+                        $item = array("store"=>$st,
+                            "sku" => "S" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                            "name" => "simple item $i",
+                            "description" => "test description",
+                            "short_description" => "test short desc",
+                            "type" => "simple",
+                            "attribute_set" => "apparel",
+                            "weight" => 0,
+                            "price" => 10,
+                            "qty" => 1,
+                            "color" => $basecolor."_".$st."::[$basecolor]",
+                            "category_ids" => "2",
+                            "visibility"=>"4");
+                        $dp->ingest($item);
+                        unset($item);
+                    }
+                }
+        $dp->endImportSession();
+    }
+
+    public function testGrouped()
+       {
+       	$conf=Magmi_Config::getInstance();
+       	$conf->load(__DIR__."/test.ini");
+
+       	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+       	$dp->beginImportSession("grouped","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+       	//import 10 simples
+               for ($i = 0; $i < 10; $i++) {
+                   $item = array("sku" => "SG" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                       "name" => "simple item $i",
+                       "description" => "test description",
+                       "short_description" => "test short desc",
+                       "type" => "simple",
+                       "attribute_set" => "apparel",
+                       "weight" => 0,
+                       "price" => 10,
+                       "qty" => 1,
+                       "visibility" => "1");
+                   $dp->ingest($item);
+                   unset($item);
+               }
+        //import configurable
+       	 $item=array("sku"=>"G000",
+       	 		"name"=>"grouped item 0",
+       	 		"description"=>"config desc",
+       	 		"short_description"=>"config short",
+       	 		"type"=>"grouped",
+                "is_in_stock"=>1,
+       	 		"attribute_set"=>"apparel",
+       	 		"configurable_attributes"=>"color",
+       	 		"grouped_skus"=>"SG0001_item,SG0003_item,SG0005_item",
+       	 		"category_ids"=>"2",
+       	 		"visibility"=>"4");
+       	$dp->ingest($item);
+           $dp->endImportSession();
+       }
 }
+
+
+
