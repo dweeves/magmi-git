@@ -34,7 +34,7 @@
  */
 class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 {
-    public static $_VERSION = '1.4';
+    public static $_VERSION = '1.4.1';
     private $_use_defaultopc = false;
     private $_optpriceinfo = array();
     private $_currentgrouped = array();
@@ -240,9 +240,11 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             {
                 $matchmode = "cursimples";
             }
-            if (isset($item["grouped_skus"]) && trim($item["grouped_skus"]) != "")
+            //fix for empty grouped skus support => no link
+            if (isset($item["grouped_skus"]))
             {
-                $matchmode = "fixed";
+
+                $matchmode = (trim($item["grouped_skus"]) != "")?"fixed":"none";
             }
         }
         return $matchmode;
