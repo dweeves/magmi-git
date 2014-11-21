@@ -116,7 +116,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
             $url = $this->getParam("CSV:remoteurl", "");
             $outname = $this->getRemoteFile($url);
             $this->setParam("CSV:filename", $outname);
-            $this->_csvreader->initialize();
+            $this->_csvreader->initialize($this->_params);
         }
         return $this->_csvreader->checkCSV();
     }
