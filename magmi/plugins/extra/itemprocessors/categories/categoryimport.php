@@ -173,7 +173,6 @@ class CategoryImporter extends Magmi_ItemProcessor
         foreach ($cdefs as $cdef)
         {
             
-            $attrs = array();
             $parts = explode("::", $cdef);
             $cp = count($parts);
             $cname = trim($parts[0]);
@@ -311,7 +310,7 @@ class CategoryImporter extends Magmi_ItemProcessor
     {
         $rootpaths = array();
         $sids = $this->getItemStoreIds($item, 2);
-        $trimroot = "";
+        //$trimroot = "";
         // remove admin from store ids (no category root on it)
         if ($sids[0] == 0)
         {
@@ -347,7 +346,7 @@ class CategoryImporter extends Magmi_ItemProcessor
                         $k = "%RP:$sid%";
                         // store root path definitions
                         $rootpaths[$k] = array("path"=>$srp["path"],"rootarr"=>$srp["rootarr"]);
-                        $trimroot = trim($rname);
+                        //$trimroot = trim($rname);
                         // replace root name with store root key
                         $item["categories"] = str_replace($matches[0][$i], $k, $item["categories"]);
                         break;
