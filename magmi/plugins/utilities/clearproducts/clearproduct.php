@@ -5,7 +5,7 @@ class ClearProductUtility extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Clear Catalog","author"=>"Dweeves","version"=>"1.0.3");
+        return array("name"=>"Clear Catalog","author"=>"Dweeves","version"=>"1.0.4");
     }
 
     public function runUtility()
@@ -38,6 +38,10 @@ class ClearProductUtility extends Magmi_UtilityPlugin
         {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
+
+        //clean url rewrites for products
+        $sql="DELETE FROM ".$this->tablename("core_url_rewrite")." WHERE product_id IS NOT NULL AND is_system=1";
+        $this->delete($sql);
         
         $sql = "SET FOREIGN_KEY_CHECKS = 1";
         
