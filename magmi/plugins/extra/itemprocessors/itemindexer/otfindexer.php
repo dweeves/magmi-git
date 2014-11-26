@@ -9,7 +9,7 @@ class ItemIndexer extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"On the fly indexer","author"=>"Dweeves","version"=>"0.1.7",
+        return array("name"=>"On the fly indexer","author"=>"Dweeves","version"=>"0.1.8",
             "url"=>$this->pluginDocUrl("On_the_fly_indexer"));
     }
 
@@ -290,7 +290,7 @@ class ItemIndexer extends Magmi_ItemProcessor
 				 JOIN {$this->tns["ccp"]} as ccp ON ccp.product_id=cpe.entity_id
 				 JOIN {$this->tns["cce"]} as cce ON ccp.category_id=cce.entity_id
 				 WHERE cpe.entity_id=?";
-        
+
         // insert lines
         $sqlprod = "INSERT INTO {$this->tns["curw"]} (product_id,store_id,id_path,target_path,request_path,is_system) $produrlsql ON DUPLICATE KEY UPDATE request_path=VALUES(`request_path`)";
         $this->insert($sqlprod, array($purlk,$pid));
@@ -347,50 +347,18 @@ class ItemIndexer extends Magmi_ItemProcessor
         $this->insert($sql, array($pet,$pid));
     }
     
-    // To be done, find a way to avoid reindexing if not necessary
-    public function shouldReindex($item)
-    {
-        return count($item) > 0;
-    }
 
     public function processItemAfterImport(&$item, $params = null)
     {
         if (count($item) > 0)
         {
-            $this->reindexLastImported();
-            // if current item is not the same than previous one
-            if ($params["same"] == false)
-            {
-                if ($this->shouldReindex($item))
-                {
-                    $this->_toindex = array("sku"=>$item["sku"],"pid"=>$params["product_id"]);
-                }
-                else
-                {
-                    $this->log("Do not reindex, no indexed column changed");
-                }
-            }
+            $pid=$params["product_id"];
+            $this->buildCatalogCategoryProductIndex($pid);
+            $this->buildUrlRewrite($pid);
         }
         return true;
     }
-    
-    // index last imported item
-    public function reindexLastImported()
-    {
-        if ($this->_toindex != null)
-        {
-            $pid = $this->_toindex["pid"];
-            $this->buildCatalogCategoryProductIndex($pid);
-            $this->buildUrlRewrite($pid);
-            $this->_toindex = null;
-        }
-    }
 
-    public function afterImport()
-    {
-        // reindex last item since we index one row later than the current
-        $this->reindexLastImported();
-    }
 }
 
 
