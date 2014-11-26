@@ -163,21 +163,52 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
         $dp->endImportSession();
     }
 
+
+    public function testBaseOptions()
+    {
+        $conf=Magmi_Config::getInstance();
+            	$conf->load(__DIR__."/test.ini");
+
+            	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+            	$dp->beginImportSession("baseprofile","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+            	//import 100 simples
+                for ($i = 0; $i < 100; $i++) {
+                      $basecolor="c".($i%10);
+                        $item = array("store"=>"admin",
+                            "sku" => "S" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                            "name" => "simple item $i",
+                            "description" => "test description",
+                            "short_description" => "test short desc",
+                            "type" => "simple",
+                            "attribute_set" => "apparel",
+                            "weight" => 0,
+                            "price" => 10,
+                            "qty" => 1,
+                            "color" => $basecolor,
+                            "category_ids" => "2",
+                            "visibility"=>"4");
+                        $dp->ingest($item);
+                        unset($item);
+                    }
+
+        $dp->endImportSession();
+    }
+
     public function testTranslatedOptions()
     {
         $conf=Magmi_Config::getInstance();
             	$conf->load(__DIR__."/test.ini");
 
             	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
-            	$dp->beginImportSession("configurable","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+            	$dp->beginImportSession("baseprofile","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
             	//import 10 simples
                 $stores=array("en","us");
                 foreach($stores as $st) {
-                    for ($i = 10; $i < 100; $i++) {
+                    for ($i = 0; $i < 100; $i++) {
                         $basecolor="c".($i%10);
                         $item = array("store"=>$st,
                             "sku" => "S" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
-                            "name" => "simple item $i",
+                            "name" => "simple item toption $i",
                             "description" => "test description",
                             "short_description" => "test short desc",
                             "type" => "simple",
@@ -193,6 +224,88 @@ class Suite1Test extends  PHPUnit_Framework_TestCase
                     }
                 }
         $dp->endImportSession();
+    }
+
+    public function testMultiSelect()
+    {
+            $conf=Magmi_Config::getInstance();
+            $conf->load(__DIR__."/test.ini");
+            $mselvals=array("v1"=>1,"v2"=>1,"v3"=>1,"v4"=>1,"v5"=>1,"v6"=>1,"v7"=>1);
+            $dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+            $dp->beginImportSession("baseprofile","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+            //import 100 simples
+            for ($i = 0; $i < 100; $i++) {
+                $selvals=array_rand($mselvals,3);
+                              $item = array("sku" => "TM" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                                  "name" => "simple item msel $i",
+                                  "description" => "test description",
+                                  "short_description" => "test short desc",
+                                  "type" => "simple",
+                                  "attribute_set" => "apparel",
+                                  "weight" => 0,
+                                  "price" => 10,
+                                  "qty" => 1,
+                                   "test_multiselect"=>implode(",",$selvals),
+                                  "visibility" => "2",
+                              );
+                              $dp->ingest($item);
+                              unset($item);
+                          }
+
+
+    }
+
+
+    public function testUrlKey()
+    {
+        $conf=Magmi_Config::getInstance();
+              	$conf->load(__DIR__."/test.ini");
+
+              	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+              	$dp->beginImportSession("baseprofile","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+              	//import 10 simples
+                      for ($i = 0; $i < 10; $i++) {
+                          $item = array("sku" => "SG" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                              "name" => "simple item $i",
+                              "description" => "test description",
+                              "short_description" => "test short desc",
+                              "type" => "simple",
+                              "attribute_set" => "apparel",
+                              "weight" => 0,
+                              "price" => 10,
+                              "qty" => 1,
+                              "visibility" => $i%2==0?"1":"4",
+                          "url_key"=>"item");
+                          $dp->ingest($item);
+                          unset($item);
+                      }
+
+
+    }
+
+    public function testMassItem()
+    {
+        $conf=Magmi_Config::getInstance();
+                 	$conf->load(__DIR__."/test.ini");
+
+                 	$dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+                 	$dp->beginImportSession("grouped","create",new FileLogger(__DIR__."/log_".__FUNCTION__.".txt"));
+                 	//import 10 simples
+                         for ($i = 0; $i < 10000; $i++) {
+                             $item = array("sku" => "S" . str_pad($i, 4, "0", STR_PAD_LEFT) . "_item",
+                                 "name" => "simple item $i",
+                                 "description" => "test description",
+                                 "short_description" => "test short desc",
+                                 "type" => "simple",
+                                 "attribute_set" => "apparel",
+                                 "weight" => 0,
+                                 "price" => 10,
+                                 "qty" => 1,
+                                 "visibility" => "1",
+                             "url_key"=>"item ".$i);
+                             $dp->ingest($item);
+                             unset($item);
+                         }
     }
 
     public function testGrouped()
