@@ -52,9 +52,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     private $_dstore = array();
     //same flag if current import line is referencing same item than the previous one
     private $_same;
-    //current product id
-    private $_currentpid;
-    //extra attributes to create 
+    //extra attributes to create
     private $_extra_attrs;
     //current import profile
     private $_profile;
@@ -70,7 +68,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     private $_skustats = array();
     //handlers cache
     private  $_handlercache=array();
-
 
     /**
      * Constructor
@@ -96,7 +93,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.8.5","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.9","author"=>"dweeves");
     }
 
     /**
@@ -555,22 +552,31 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      *            : value to get option id for
      * @return : array of lines (should be as much as values found),"opvd"=>option_id for value on store 0,"opvs" option id for value on current store
      */
-    public function getOptionsFromValues($attid, $store_id, $optvals)
+    public function getOptionsFromValues($attid, $store_id, $optvals=null)
     {
-        $ovstr = substr(str_repeat("?,", count($optvals)), 0, -1);
+        //add support for passing no values,returning all optionid/value tuples
+        if($optvals!=null) {
+            $ovstr = substr(str_repeat("?,", count($optvals)), 0, -1);
+            $extra ="AND BINARY optvals.value IN($ovstr)";
+        }
+        else
+        {
+            $optvals=array();
+            $extra='';
+        }
         $t1 = $this->tablename('eav_attribute_option');
         $t2 = $this->tablename('eav_attribute_option_value');
         $sql = "SELECT optvals.option_id as opvs,optvals.value FROM $t2 as optvals";
         $sql .= " JOIN $t1 as opt ON opt.option_id=optvals.option_id AND opt.attribute_id=?";
-        $sql .= " WHERE optvals.store_id=? AND BINARY optvals.value IN  ($ovstr)";
+        $sql .= " WHERE optvals.store_id=? $extra";
         return $this->selectAll($sql, array_merge(array($attid,$store_id), $optvals));
     }
     
     /* create a new option entry for an attribute */
-    public function createOption($attid)
+    public function createOption($attid,$pos=0)
     {
         $t = $this->tablename('eav_attribute_option');
-        $optid = $this->insert("INSERT INTO $t (attribute_id) VALUES (?)", $attid);
+        $optid = $this->insert("INSERT INTO $t (attribute_id,sort_order) VALUES (?,?)", array($attid,$pos));
         return $optid;
     }
 
@@ -609,7 +615,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     {
         $svalues = array(); // store specific values
         $avalues = array(); // default (admin) values
-        
         // Checking if we want to "translate" values existing in admin
         foreach ($values as $val)
         {
@@ -628,78 +633,56 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $avalues[] = $val;
             }
         }
-        
+        $cval=count($values);
         // get Existing options for admin values & current attribute (store = 0)
         // this array contains two items:
         //    'opvs' => the option id;
         //    'value' => the corresponding admin value
-        $optExisting = $this->getCachedOptIds($attid);
-        if (count($optExisting) == 0) {
-            $optExisting = $this->getOptionsFromValues($attid, 0, $avalues);
-        }
-        // get the values as array
-        $exvalsAdmin = array();
-        foreach ($optExisting as $optdesc) {
-            $exvalsAdmin[] = $optdesc["value"];
-        }
-        // new option values are option values that are in "admin" option values array ($avalues)
-        // and not in EXISTING admin option values array ($exvalsAdmin)
-        $newAdminValues = array_diff($avalues, $exvalsAdmin);
-
-        // foreach new admin option value we create a new option and a new
-        // option value (in admin store).
-        foreach ($newAdminValues as $nval)
+        $optAdmin = $this->getCachedOptIds($attid,0);
+        //missing admin values in cache
+        for($i=0;$i<$cval;$i++)
         {
-            // create a new option with value
-            $row = array("opvs"=>$this->createOption($attid),"value"=>$nval);
-            // add an option value for admin store
-            $this->createOptionValue($row["opvs"], $storeid, $nval);
-            // add this value to existing pool
-            $optExisting[] = $row;
+            if(!isset($optAdmin[$avalues[$i]]))
+            {
+                //create new option entry
+                $newoptid = $this->createOption($attid);
+                $this->createOptionValue($newoptid, 0,$avalues[$i]);
+                //cache new created one
+                $this->cacheOptId($attid, 0, $newoptid, $avalues[$i]);
+            }
         }
-        // put this value in the option id cache
-        $this->cacheOptIds($attid, $optExisting);
 
-        // if we are on a specific store (not admin), we need to create store
-        // specific values if they do not exist yet.
-        if ($storeid != 0) {
-            $existingStoreValues = $this->getOptionsFromValues($attid, $storeid, $svalues);
-            foreach ($svalues as $inx => $storeValue) {
-                $adminValue = $avalues[$inx];
-                $optionId = null;
-                foreach ($optExisting as $optRow) {
-                    if ($adminValue == $optRow["value"]) {
-                        // this is the option id to which we have to attach the store specific value
-                        $optionId = $optRow["opvs"];
-                        break;
-                    }
-                }
-                if (is_null($optionId)) {
-                    continue; // no match, something went wrong...
-                }
-                $valueExistsAlready = false;
-                foreach ($existingStoreValues as $existingValue) {
-                    if ($existingValue['opvs'] == $optionId && $existingValue['value'] == $svalues[$inx]) {
-                        $valueExistsAlready = true;
-                    }
-                }
-                if (!$valueExistsAlready) {
-                    $this->createOptionValue($optionId, $storeid, $svalues[$inx]);
+        //operating on store values
+        if($storeid!=0)
+        {
+            $optExisting=$this->getCachedOptIds($attid,$storeid);
+            //iterating on store values
+            for($i=0;$i<$cval;$i++)
+            {
+                //if missing
+                if(!isset($optExisting[$svalues[$i]]))
+                {
+                    //get option id from admin
+                  $optid=$this->getCachedOptId($attid,0,$avalues[$i]);
+                  $this->createOptionValue($optid,$storeid,$svalues[$i]);
+                    $this->cacheOptId($attid,$storeid,$optid,$svalues[$i]);
+
                 }
             }
         }
-        
-        $optids = array();
-        // now all options are in existing & values are created
-        // builf and array with all option ids
-        foreach ($optExisting as $row)
+
+        //now we have the full cache in optExisting, just take wanted values from it
+        for($i=0;$i<$cval;$i++)
         {
-                $optids[$row["value"]]=$row["opvs"];
+            $av=$avalues[$i];
+            $optids[$av]=$this->getCachedOptId($attid,0,$av);
         }
+
+
         // remove existing store values
-        unset($existingStoreValues);
+        unset($optExisting);
         // remove existing values
-        unset($exvalsAdmin);
+        unset($optAdmin);
         // return option ids
         return $optids;
     }
@@ -712,9 +695,26 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      * @param unknown $row
      *            option definition
      */
-    public function cacheOptIds($attid, $row)
+    public function cacheOptIds($attid, $storeid,$data)
     {
-        $this->_optidcache[$attid] = $row;
+        $akey="a$attid";
+        $skey="s$storeid";
+        $this->_optidcache[$akey][$skey] = $data;
+    }
+
+
+    public function cacheOptId($attid,$storeid,$optid,$val)
+    {
+        $akey="a$attid";
+        $skey="s$storeid";
+        $this->_optidcache[$akey][$skey][$val]=$optid;
+    }
+
+    public function getCachedOptId($attid,$storeid,$val)
+    {
+        $akey="a$attid";
+        $skey="s$storeid";
+        return $this->_optidcache[$akey][$skey][$val];
     }
 
     /**
@@ -724,16 +724,25 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      *            attribute id
      * @return NULL or option definition rows found
      */
-    public function getCachedOptIds($attid)
+    public function getCachedOptIds($attid,$storeid=0)
     {
-        if (isset($this->_optidcache[$attid]))
-        {
-            return $this->_optidcache[$attid];
+        $akey="a$attid";
+        $skey="s$storeid";
+        if (!isset($this->_optidcache[$akey])) {
+            $this->_optidcache[$akey] = array();
         }
-        else
+        if(!isset($this->_optidcache[$akey][$skey]))
         {
-            return null;
+           $this->_optidcache[$akey][$skey] = array();
+           //initialize cache with all existing values
+           $exvals = $this->getOptionsFromValues($attid, $storeid);
+           foreach ($exvals as $optdesc)
+           {
+                $this->cacheOptId($attid,$storeid,$optdesc['opvs'],$optdesc['value']);
+           }
         }
+
+        return $this->_optidcache[$akey][$skey];
     }
 
     /**
@@ -1378,15 +1387,15 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->delete($sql, $ddata);
         $sql = "INSERT INTO `$cpst` (`product_id`, `website_id`) SELECT ?,website_id FROM $cws WHERE website_id IN ($qcolstr)";
         $this->insert($sql, array_merge(array($pid), $wsids));
-    }
+     }
 
     /**
      * Clears option id cache
      */
     public function clearOptCache()
     {
-        unset($this->_optidcache);
-        $this->_optidcache = array();
+       /* unset($this->_optidcache);
+        $this->_optidcache = array();*/
     }
 
     /**
@@ -1396,7 +1405,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function onNewSku($sku, $existing)
     {
-        $this->clearOptCache();
+        //$this->clearOptCache();
         // only assign values to store 0 by default in create mode for new sku
         // for store related options
         if (!$existing)
