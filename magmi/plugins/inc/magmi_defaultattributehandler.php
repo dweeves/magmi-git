@@ -7,7 +7,6 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     protected $_forcedefault = array("store"=>"admin");
     protected $_missingcols = array();
     protected $_missingattrs = array();
-
     /**
      * (non-PHPdoc)
      *
@@ -342,37 +341,65 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $cpev = $this->tablename("catalog_product_entity_varchar");
         // find conflicting url keys
         $urlk = trim($ivalue);
-        $exists = $this->currentItemExists();
         $lst = array();
+
+        $exists = $this->currentItemExists();
+        //if no value & exist , then "reset url key" with empty value
+        //this should then be automatically reset by indexing to item name slug
         if ($urlk == "" && $exists)
         {
             return "__MAGMI_DELETE__";
         }
-        
-        //in case of url key already has special regexp value in it
-        $xurlk=preg_quote($urlk);
-        // for existing product, check if we have already a value matching the current pattern
-        if ($exists)
+        //remove non visible item values
+        if($item["visibility"]==1)
         {
-            $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND value REGEXP ?";
-            $eurl = $this->selectone($sql, array($attrdesc["attribute_id"],$pid,$xurlk . "(-\d+)?"), "value");
-            // we match wanted pattern, try finding conflicts with our current one
-            if ($eurl)
-            {
-                $urlk = $eurl;
-                $sql = "SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value=?";
-                $umatch = $urlk;
-            }
-            // no current value, so try inserting into target pattern list
+            return "__MAGMI_DELETE__";
+        }
+
+        $attid=$attrdesc["attribute_id"];
+        //optimization check if we have a conflict
+        //fix for multistore conflict
+        $sql = "SELECT entity_id FROM $cpev WHERE attribute_id=? AND store_id=? AND value=? ORDER BY entity_id";
+        $sameurl=  $this->selectone($sql, array($attid,$storeid,$urlk), "entity_id");
+        $exurl=(isset($sameurl) && $sameurl!=$pid);
+        //if we have at least one
+        if($exurl)
+        {
+            //$lst[]=$urlk;
+            //in case of url key already has special regexp value in it
+            $xurlk=preg_quote($urlk);
+            $pattern="^".$xurlk . "-(\d+)?";
+            $zpattern="$pattern$";
+
+            //if item is already existing
+            if($exists) {
+                //check if current item url key exists with a "renamed" url key
+                $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND store_id=?";
+                $eurl = $this->selectone($sql, array($attid, $pid, $storeid), "value");
+                $matching=preg_match("|$zpattern|",$eurl);
+              }
             else
             {
-                
-                $sql = "SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value REGEXP ?";
-                $umatch = $xurlk . "(-\d+)?";
+                $matching=false;
+
             }
-            $lst = $this->selectAll($sql, array($attrdesc["attribute_id"],$pid,$umatch));
+
+            // we match wanted pattern, nothing to do
+            if ($matching)
+            {
+                $urlk = "__MAGMI_IGNORE__";
+            }
+            // no current value, but chosen is conflicting,so try inserting into target pattern list
+            else
+            {
+                $lst[]=$sameurl;
+                $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND store_id=? AND value REGEXP ?";
+                $umatch = $pattern;
+                $others = $this->selectAll($sql, array($attid,$pid,$storeid,$umatch));
+                $lst=array_merge($lst,$others);
+            }
         }
-        
+
         // all conflicting url keys
         if (count($lst) > 0)
         {
