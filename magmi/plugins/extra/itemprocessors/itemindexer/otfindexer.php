@@ -15,7 +15,7 @@ class ItemIndexer extends Magmi_ItemProcessor
 
     public function getPluginParamNames()
     {
-        return array("OTFI:urlending","OTFI:usecatinurl");
+        return array("OTFI:urlending","OTFI:usecatinurl","OTFI:useurlending");
     }
 
     public function initialize($params)
@@ -226,7 +226,7 @@ class ItemIndexer extends Magmi_ItemProcessor
                         $names[] = $cnames[$cpid];
                         // make string with that
                         $namestr = implode("/", $names);
-                        $urlend = $this->getParam("OTFI:urlending", ".html");
+                        $urlend = $this->getParam("OTFI:useurlending",1)==1?$this->getParam("OTFI:urlending", ".html"):"";
                         // build category url key (allow / in slugging)
                         $curlk = Slugger::slug($namestr, true) . $urlend;
                         $cdata = array($storeid,$cpid,"category/$cpid","catalog/category/view/id/$cpid","$curlk",1);
@@ -271,7 +271,7 @@ class ItemIndexer extends Magmi_ItemProcessor
             }
         }
         // if we've got an url key use it, otherwise , make a slug from the product name as url key
-        $urlend = $this->getParam("OTFI:urlending", ".html");
+        $urlend =$this->getParam("OTFI:useurlending",1)==1?$this->getParam("OTFI:urlending", ".html"):"";
         $purlk = (isset($pburlk) ? $pburlk : Slugger::slug($pname)) . $urlend;
         
         // delete old "system" url rewrite entries for product
