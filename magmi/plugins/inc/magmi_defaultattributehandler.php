@@ -24,7 +24,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function getPluginInfo()
     {
-        return array("name"=>"Standard Attribute Import","author"=>"Dweeves","version"=>"1.0.6");
+        return array("name"=>"Standard Attribute Import","author"=>"Dweeves","version"=>"1.1");
     }
 
     /**
