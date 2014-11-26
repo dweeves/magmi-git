@@ -9,7 +9,7 @@ class ItemIndexer extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"On the fly indexer","author"=>"Dweeves","version"=>"0.1.6",
+        return array("name"=>"On the fly indexer","author"=>"Dweeves","version"=>"0.1.7",
             "url"=>$this->pluginDocUrl("On_the_fly_indexer"));
     }
 
