@@ -9,10 +9,15 @@ class ImportLimiter extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Magmi Import Limiter","author"=>"Dweeves","version"=>"0.0.6",
+        return array("name"=>"Magmi Import Limiter","author"=>"Dweeves","version"=>"0.0.7",
             "url"=>$this->pluginDocUrl("Magmi_Import_Limiter"));
     }
 
+    /**
+     * @param $item item to match filter against
+     * @param $fltdef filters
+     * @return bool|int if item matches filter
+     */
     public function filtermatch($item, $fltdef)
     {
         $negate = 0;
@@ -40,17 +45,26 @@ class ImportLimiter extends Magmi_ItemProcessor
         return $match;
     }
 
+    /**
+     * Processing callback, before any database identification
+     * @param $item item to check for import limit
+     * @param null $params meta parameters
+     * @return bool true : continue processing, false: skip item
+     */
     public function processItemBeforeId(&$item, $params = null)
     {
-        $crow = $this->getCurrentRow();
-        $ok = (count($this->_recranges) == 0);
-        
-        if (!$ok)
+
+        $ok=true;
+        //filtering row
+        if (count($this->_recranges)>0)
         {
+            $crow = $this->getCurrentRow();
+            // check if we are at the last wanted line by range list
             if ($this->_rmax > -1 && $crow == $this->_rmax)
             {
                 $this->setLastItem($item);
             }
+            //iterating on allowed row ranges
             foreach ($this->_recranges as $rr)
             {
                 $ok = ($crow >= $rr[0] && ($crow <= $rr[1] || $rr[1] == -1));
@@ -59,9 +73,15 @@ class ImportLimiter extends Magmi_ItemProcessor
                     break;
                 }
             }
+            //if filtered, log it
+            if(!$ok)
+            {
+                        $this->log("Filtered row $crow not in range " . $this->getParam("LIMITER:ranges", ""),"info");
+            }
         }
-        
-        if ($ok)
+
+        //filtering based on values
+        if ($ok && count($this->_filters)>0)
         {
             foreach ($this->_filters as $fltdef)
             {
@@ -73,11 +93,13 @@ class ImportLimiter extends Magmi_ItemProcessor
                 }
             }
         }
-        else
+
+        //filtering importable columns if not skipped by another.
+        if(count($this->_col_filter)>0 && $ok)
         {
-            $this->log("Filtered row $crow not in range " . $this->getParam("LIMITER:ranges", ""));
+            $item=array_intersect_key($item,array_flip($this->_col_filter));
         }
-        
+
         return $ok;
     }
 
@@ -154,6 +176,7 @@ class ImportLimiter extends Magmi_ItemProcessor
         $this->_col_filter = explode(",", $this->getParam("LIMITER:col_filter"));
         return true;
     }
+
 
     public function getPluginParamNames()
     {
