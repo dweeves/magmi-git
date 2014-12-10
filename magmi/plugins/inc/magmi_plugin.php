@@ -2,6 +2,9 @@
 require_once ("magmi_config.php");
 require_once ("magmi_mixin.php");
 
+/**
+ * Class Magmi_PluginConfig , Plugin configuration class
+ */
 class Magmi_PluginConfig extends ProfileBasedConfig
 {
     protected $_prefix;
@@ -110,9 +113,16 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     protected $_config;
     protected $_magmiconfig;
     protected $_pluginmeta;
+    protected $_params;
 
     public function __construct()
     {}
+
+
+    public function getParams()
+    {
+        return $this->_params;
+    }
 
     public function pluginDocUrl($urlk)
     {
