@@ -290,7 +290,7 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             $dp->ingest($item);
             unset($item);
         }
-
+        $dp->endImportSession();
 
     }
 
@@ -320,7 +320,7 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             $dp->ingest($item);
             unset($item);
         }
-
+        $dp->endImportSession();
 
     }
 
@@ -347,6 +347,26 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             $dp->ingest($item);
             unset($item);
         }
+        $dp->endImportSession();
+    }
+
+    public function testLimiter()
+    {
+        $conf = Magmi_Config::getInstance();
+        $conf->load(__DIR__ . "/test.ini");
+
+        $dp = Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+        $dp->beginImportSession("limiter", "create", new FileLogger(__DIR__ . "/log_" . __FUNCTION__ . ".txt"));
+        $limiter=$dp->getEngine()->getPluginInstanceByClassName('itemprocessors','ImportLimiter');
+        $limiter->setParam("LIMITER:col_filter","sku,qty");
+        $limiter->initialize($limiter->getParams());
+        $item=array('sku'=>'S0001',
+                    'description'=>'toto',
+                    'other'=>'titi',
+                    'qty'=>'25');
+        $dp->ingest($item);
+        $dp->endImportSession();
+
     }
 
     public function testGrouped()
