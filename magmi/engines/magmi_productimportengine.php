@@ -93,7 +93,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.9","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.9.1","author"=>"dweeves");
     }
 
     /**
@@ -672,11 +672,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             //if not existing in cache,create it
             if(!isset($optAdmin[$avalues[$i]]))
             {
+                //if no position set, default to 0
+                $xpos=$pos==-1?0:$pos;
                 //create new option entry
-                $newoptid = $this->createOption($attid,$pos);
+                $newoptid = $this->createOption($attid,$xpos);
                 $this->createOptionValue($newoptid, 0,$avalues[$i]);
                 //cache new created one
-                $this->cacheOpt($attid, 0, $newoptid, $avalues[$i],$pos==-1?0:$pos);
+                $this->cacheOpt($attid, 0, $newoptid, $avalues[$i],$xpos);
             }
             //else check for position change
             else{
