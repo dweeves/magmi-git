@@ -21,6 +21,9 @@
 			<option value="1"
 				<?php if ($this->getParam("CFGR:simplesbeforeconf")==1){?>
 				selected="selected" <?php }?>>Yes</option>
+            <option value="2"
+				<?php if ($this->getParam("CFGR:simplesbeforeconf")==2){?>
+				selected="selected" <?php }?>>Yes, but filter on SKU</option>
 	</select></li>
 </ul>
 <ul class="formline">

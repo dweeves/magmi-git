@@ -84,6 +84,14 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')");
     }
 
+    public function autoLinkCurrentSimples($pid, $skulist=array())
+    {
+        if (!empty($skulist))
+        {
+            $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%') AND cpes.sku IN (".$this->arr2values($skulist).")", $skulist);
+        }
+    }
+
     public function updSimpleVisibility($pid)
     {
         $vis = $this->getParam("CFGR:updsimplevis", 0);
@@ -156,6 +164,10 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             {
                 $matchmode = "cursimples";
             }
+            elseif ($this->getParam("CFGR:simplesbeforeconf") == 2)
+            {
+                $matchmode = "autocursimples";
+            }
             if (isset($item["simples_skus"]) && trim($item["simples_skus"]) != "")
             {
                 $matchmode = "fixed";
@@ -169,7 +181,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         // if item is not configurable, nothing to do
         if ($item["type"] !== "configurable")
         {
-            if ($this->getParam("CFGR:simplesbeforeconf") == 1)
+            if ($this->getParam("CFGR:simplesbeforeconf") != 0)
             {
                 $this->_currentsimples[] = $item["sku"];
             }
@@ -332,6 +344,10 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             case "auto":
                 // destroy old associations
                 $this->autoLink($pid);
+                $this->updSimpleVisibility($pid);
+                break;
+            case "autocursimples":
+                $this->autoLinkCurrentSimples($pid, $this->_currentsimples);
                 $this->updSimpleVisibility($pid);
                 break;
             case "cursimples":
