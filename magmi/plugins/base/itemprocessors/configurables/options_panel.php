@@ -43,7 +43,7 @@
 	<li class="label" style="width: 360px">Auto assign images to configurable product</li>
 	<?php $v=$this->getParam("CFGR:addsimpleimages",0)?>
 	<li class="value"><select name="CFGR:addsimpleimages">
-			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>Diable</option>
+			<option value="0" <?php if ($v==0){?> selected="selected" <?php }?>>Disable</option>
 			<option value="1" <?php if ($v==1){?> selected="selected" <?php }?>>Gallery Only</option>
 			<option value="2" <?php if ($v==2){?> selected="selected" <?php }?>>All</option>
 	</select></li>

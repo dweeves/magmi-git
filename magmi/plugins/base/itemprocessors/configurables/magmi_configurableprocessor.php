@@ -89,11 +89,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 		}
 		$values = rtrim($values, ',');
 		
-        // recreate associations
-        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) VALUES $values";
-        $this->insert($sql);
-        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) VALUES $values";
-        $this->insert($sql);
+		if( ! empty($values) ){
+			// recreate associations
+			$sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) VALUES $values";
+			$this->insert($sql);
+			$sql = "INSERT INTO $cpr (`parent_id`,`child_id`) VALUES $values";
+			$this->insert($sql);
+		}
         unset($conddata);
 		return $ids;
     }
