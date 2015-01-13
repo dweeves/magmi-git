@@ -83,6 +83,14 @@ abstract class Magmi_Engine extends DbHelper
     {
         return $this->_conf->get("MAGENTO", "version");
     }
+    
+    /**
+     * checks the magento version
+     */
+    public function checkMagentoVersion($version, $operator)
+    {
+        return version_compare($this->getMagentoVersion(), $version, $operator);
+    }
 
     /**
      * Plugin loop callback registration

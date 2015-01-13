@@ -39,7 +39,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
 
             "review","review_detail","review_entity_summary","review_store");
         
-        if ($this->getMagentoVersion() >= "1.7.")
+        if ($this->checkMagentoVersion("1.7.x", ">="))
         {
             $tables[] = "report_viewed_product_aggregated_daily";
             $tables[] = "report_viewed_product_aggregated_monthly";
