@@ -594,8 +594,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public function createOptionValue($optid, $store_id, $optval)
     {
         $t = $this->tablename('eav_attribute_option_value');
-        $optval_id = $this->insert("INSERT INTO $t (option_id,store_id,value) VALUES (?,?,?)", 
-            array($optid,$store_id,$optval));
+        $optval_id = $this->selectone("SELECT value_id FROM $t WHERE option_id=? AND store_id=?", array($optid,$store_id), "value_id");
+        if (!$optval_id)
+        {
+            $optval_id = $this->insert("INSERT INTO $t (option_id,store_id,value) VALUES (?,?,?)", 
+                array($optid,$store_id,$optval));
+        }
+        
         return $optval_id;
     }
 
@@ -703,7 +708,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 {
                     //get option id from admin
                   $opt=$this->getCachedOpt($attid,0,$avalues[$i]);
-                  $this->createOptionValue($opt[0],$storeid,$svalues[$i]);
+                  if ($avalues[$i] !== $svalues[$i]) {
+                      $this->createOptionValue($opt[0],$storeid,$svalues[$i]);
+                  }
                   $this->cacheOpt($attid,$storeid,$opt[0],$svalues[$i],$opt[1]);
 
                 }
