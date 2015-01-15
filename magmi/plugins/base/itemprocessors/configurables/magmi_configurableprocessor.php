@@ -56,15 +56,17 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         return $this->_configurable_attrs[$asid];
     }
 
-    public function dolink($pid, $cond, $conddata = array())
+    public function dolink($pid, $cond, $conddata = array(), $replace = true)
     {
         $cpsl = $this->tablename("catalog_product_super_link");
         $cpr = $this->tablename("catalog_product_relation");
         $cpe = $this->tablename("catalog_product_entity");
-        $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
-				JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
-				WHERE cpsl.parent_id=?";
-        $this->delete($sql, array($pid));
+        if ($replace) {
+            $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
+                    JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
+                    WHERE cpsl.parent_id=?";
+            $this->delete($sql, array($pid));
+        }
         // recreate associations
         $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id  
 				  FROM $cpe as cpec 
@@ -79,9 +81,9 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         unset($conddata);
     }
 
-    public function autoLink($pid)
+    public function autoLink($pid, $replace)
     {
-        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')");
+        $this->dolink($pid, "LIKE CONCAT(cpec.sku,'%')", array(), $replace);
     }
 
     public function updSimpleVisibility($pid)
@@ -99,9 +101,9 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         }
     }
 
-    public function fixedLink($pid, $skulist)
+    public function fixedLink($pid, $skulist, $replace)
     {
-        $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $skulist);
+        $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $skulist, $replace);
     }
 
     public function buildSAPTable($sapdesc)
@@ -325,24 +327,28 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $idx++;
         }
         unset($confopts);
+        $replace = true;
+        if (isset($item['simples_skus_noreplace']) && $item['simples_skus_noreplace'] == 1) {
+            $replace = false;
+        }
         switch ($matchmode)
         {
             case "none":
                 break;
             case "auto":
                 // destroy old associations
-                $this->autoLink($pid);
+                $this->autoLink($pid, $replace);
                 $this->updSimpleVisibility($pid);
                 break;
             case "cursimples":
-                $this->fixedLink($pid, $this->_currentsimples);
+                $this->fixedLink($pid, $this->_currentsimples, $replace);
                 $this->updSimpleVisibility($pid);
                 
                 break;
             case "fixed":
                 $sskus = explode(",", $item["simples_skus"]);
                 trimarray($sskus);
-                $this->fixedLink($pid, $sskus);
+                $this->fixedLink($pid, $sskus, $replace);
                 $this->updSimpleVisibility($pid);
                 unset($item["simples_skus"]);
                 unset($sskus);
