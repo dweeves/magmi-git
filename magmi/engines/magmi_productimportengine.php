@@ -168,11 +168,18 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         if (!isset($this->_sid_sscope[$scodes]))
         {
             $this->_sid_sscope[$scodes] = array();
-            $scarr = csl2arr($scodes);
-            $qcolstr = $this->arr2values($scarr);
             $cs = $this->tablename("core_store");
-            $sql = "SELECT csmain.store_id from $cs as csmain WHERE csmain.code IN ($qcolstr)";
-            $sidrows = $this->selectAll($sql, $scarr);
+            
+            if ($scodes == 'admin') {
+                $sql = "SELECT csmain.store_id from $cs as csmain";
+                $sidrows = $this->selectAll($sql, $scarr);
+            } else {
+                $scarr = csl2arr($scodes);
+                $qcolstr = $this->arr2values($scarr);
+                $sql = "SELECT csmain.store_id from $cs as csmain WHERE csmain.code IN ($qcolstr)";
+                $sidrows = $this->selectAll($sql, $scarr);
+            }
+            
             foreach ($sidrows as $sidrow)
             {
                 $this->_sid_sscope[$scodes][] = $sidrow["store_id"];
