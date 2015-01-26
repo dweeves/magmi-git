@@ -170,7 +170,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->_sid_sscope[$scodes] = array();
             $cs = $this->tablename("core_store");
             
-            if ($scodes == 'admin') {
+            if ($scodes == "*") {
                 $sql = "SELECT csmain.store_id from $cs as csmain";
                 $sidrows = $this->selectAll($sql, $scarr);
             } else {
@@ -860,7 +860,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         {
             // global scope
             case 1:
-                $bstore_ids = $this->getStoreIdsForStoreScope("admin");
+                $bstore_ids = $this->getStoreIdsForStoreScope("*");
                 break;
             // store scope
             case 0:
