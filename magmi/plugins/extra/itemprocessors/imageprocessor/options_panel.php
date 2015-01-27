@@ -31,7 +31,7 @@
 					input image &amp; force the name to be [item sku]_[store id].jpg
 					for each copy.
 				</li>
-				<li>{item.sku}_{meta.imageindex}.{meta.imagename.ext} - thise code will create a unique filename for all images used for each product, using the original extension.</li>
+				<li>{item.sku}_{meta.imageindex}.{meta.imagename.ext} : this will create a unique filename for all images used for each product, using the original extension.</li>
 			</ul>
 		</div>
 	</div>
