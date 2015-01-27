@@ -22,7 +22,7 @@
 			<ul>
 				<li>You can use "dynamic variables" to fill this field.</li>
 				<li>{item.[some item field]} and
-					{magmi.[store|imagename|imagename.noext|imagename.ext|attr_code]}
+					{meta.[store|imagename|imagename.noext|imagename.ext|attr_code]}
 					are supported.</li>
 				<li>{item.sku}.jpg : will create an image with item sku value as
 					name and a jpg extension.</li>
@@ -31,9 +31,7 @@
 					input image &amp; force the name to be [item sku]_[store id].jpg
 					for each copy.
 				</li>
-				<li>{item.sku}_{magmi.imagename.noext}_{magmi.attr_code}.jpg, will
-					create [sku]_[image name without extension]_[column name].jpg
-					magento filename.</li>
+				<li>{item.sku}_{meta.imageindex}.{meta.imagename.ext} : this will create a unique filename for all images used for each product, using the original extension.</li>
 			</ul>
 		</div>
 	</div>
