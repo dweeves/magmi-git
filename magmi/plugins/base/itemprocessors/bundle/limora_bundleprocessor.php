@@ -66,7 +66,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginAuthor()
     {
-        return 'Björn Tantau';
+        return 'Björn Tantau,dweeves,igi8819';
     }
 
     public function processItemAfterId(&$item, $params = null)
@@ -412,6 +412,17 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                 $sku['selection_id'] = $existingSku['selection_id'];
             }
         }
+
+        //show in frontend fix (thx igi8819)
+
+        $cpr = $this->tablename("catalog_product_relation");
+        $sql = "INSERT IGNORE INTO $cpr (parent_id, child_id) VALUES(:parent_id, :child_id)";
+        $bind = array(
+          'parent_id' => $sku['parent_product_id'],
+         'child_id' => $sku['product_id']
+       );
+        $this->insert($sql);
+
     }
 
     /**
