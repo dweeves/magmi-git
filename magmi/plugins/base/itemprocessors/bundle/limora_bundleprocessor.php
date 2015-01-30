@@ -149,7 +149,8 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
     protected function _createOptions($item, $params)
     {
         $options = $this->_deleteOptions($this->_extractOptions($item), $params['product_id']);
-        $storeId = array_pop($this->getItemStoreIds($item));
+        $sids=$this->getItemStoreIds($item);
+        $storeId = array_pop($sids);
         
         $opt = $this->tablename('catalog_product_bundle_option');
         $optv = $this->tablename('catalog_product_bundle_option_value');
@@ -373,6 +374,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
     {
         $skus = $this->_extractSkus($item);
         $cpbs = $this->tablename('catalog_product_bundle_selection');
+        $cpr = $this->tablename("catalog_product_relation");
         
         foreach ($skus as $sku)
         {
@@ -411,17 +413,18 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
             {
                 $sku['selection_id'] = $existingSku['selection_id'];
             }
+             //show in frontend fix (thx igi8819)
+
+
+            $sql = "INSERT IGNORE INTO $cpr (parent_id, child_id) VALUES(:parent_id, :child_id)";
+            $bind = array(
+             'parent_id' => $sku['parent_product_id'],
+            'child_id' => $sku['product_id']
+             );
+             $this->insert($sql,$bind);
         }
 
-        //show in frontend fix (thx igi8819)
 
-        $cpr = $this->tablename("catalog_product_relation");
-        $sql = "INSERT IGNORE INTO $cpr (parent_id, child_id) VALUES(:parent_id, :child_id)";
-        $bind = array(
-          'parent_id' => $sku['parent_product_id'],
-         'child_id' => $sku['product_id']
-       );
-        $this->insert($sql);
 
     }
 
