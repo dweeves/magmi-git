@@ -32,7 +32,7 @@
  */
 class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
 {
-    public static $_VERSION = '1.0';
+    public static $_VERSION = '1.1';
     
     /**
      * Defaults to use when nothing is configured.
@@ -42,6 +42,12 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
     protected $_defaults = array('option'=>array('type'=>'select','required'=>'1','position'=>'0'),
         'sku'=>array('selection_qty'=>'1','selection_can_change_qty'=>'1','position'=>'0','is_default'=>'0',
             'selection_price_value'=>'0','selection_price_type'=>'0'));
+
+    /**
+     * @var _mfields : fields to fill in item in order to allow frontend display & correct structure if not set in csv
+     */
+    protected $_mfields=array('sku_type'=>1,'shipment_type'=>0,'options_container'=>'container1','weight_type'=>1,
+        'price_type'=>1,'price_view'=>1);
 
     public function getPluginUrl()
     {
@@ -75,9 +81,24 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
         {
             $options = $this->_createOptions($item, $params);
             $this->_linkProducts($item, $params, $options);
+            $this->fillBundleMandatoryFields($item);
         }
         
         return true;
+    }
+
+    /**
+     * @param $item Fill extra item fields for bundle
+     */
+    public function fillBundleMandatoryFields(&$item)
+    {
+        foreach($this->_mfields as $k=>$v)
+        {
+            if(!isset($item[$k]))
+            {
+                $item[$k]=$v;
+            }
+        }
     }
 
     public function getPluginParamNames()
