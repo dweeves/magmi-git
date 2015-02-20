@@ -1,6 +1,8 @@
 <?php
+require_once(dirname(dirname(__DIR__))."/inc/magmi_defs.php");
 require_once ("magmi_config.php");
 require_once ("magmi_mixin.php");
+
 
 /**
  * Class Magmi_PluginConfig , Plugin configuration class
@@ -61,8 +63,8 @@ class Magmi_PluginOptionsPanel
     public function __construct($pinst, $file = null)
     {
         $this->_plugin = $pinst;
-       //fix xsrf, limit to magmi base directory
-        if(strpos($file,MAGMI_BASEDIR)!==0)
+       //fix xsrf, limit inclusion to "basename"
+       if($file !==null && (basename($file)!==$file))
         {
             $file=null;
         }
