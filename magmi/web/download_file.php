@@ -1,4 +1,6 @@
 <?php
+
+session_write_close();
 $file = $_REQUEST["file"];
 $f = @fopen($file, "r");
 $err = error_get_last();

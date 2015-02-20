@@ -1,5 +1,6 @@
 <?php
 $params = $_REQUEST;
+require_once("security.php");
 ini_set("display_errors", 1);
 require_once ("../inc/magmi_defs.php");
 require_once ("../inc/magmi_statemanager.php");

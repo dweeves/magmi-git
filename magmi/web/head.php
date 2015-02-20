@@ -5,6 +5,10 @@ ini_set("error_reporting", E_ALL);
 ini_set("magic_quotes_gpc", 0);
 require_once ("magmi_version.php");
 session_start();
+if(!isset($_SESSION["token"])) {
+    $token = uniqid(mt_rand(), TRUE);
+    $_SESSION['token'] = $token;
+}
 ?>
 <html>
 <head>

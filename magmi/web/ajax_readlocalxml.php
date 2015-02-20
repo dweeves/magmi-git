@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once("security.php");
 require_once ("../inc/magmi_config.php");
 $conf = Magmi_Config::getInstance();
 $conf->load();

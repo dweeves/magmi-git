@@ -1,6 +1,8 @@
 <?php
 require_once ("../inc/magmi_config.php");
+
 $currentprofile = $_REQUEST["profile"];
+$token=$_SESSION["token"];
 if ($currentprofile == "default")
 {
     $currentprofile = null;
@@ -27,5 +29,5 @@ else
 {
     $newprofile = $currentprofile;
 }
-header("Location:magmi.php?configstep=2&profile=$newprofile");
+header("Location:magmi.php?configstep=2&profile=$newprofile&token=$token");
 

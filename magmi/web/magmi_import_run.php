@@ -1,11 +1,12 @@
 	<?php
-ini_set('magic_gpc_quotes', 0);
-$profile = isset($_REQUEST["profile"]) ? $_REQUEST["profile"] : 'default';
+ini_set('gpc_magic_quotes', 0);
+    require_once("security.php");
+$profile = isset($_REQUEST["profile"]) ? strip_tags($_REQUEST["profile"]) : 'default';
 $_SESSION["last_runned_profile"] = $profile;
 session_write_close();
 ?>
 <script type="text/javascript">
-	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine'};
+	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine',token:'<?php echo $_SESSION["token"]?>'};
 	<?php
 foreach ($_REQUEST as $k => $v)
 {
