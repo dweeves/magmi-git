@@ -1,7 +1,7 @@
 <?php
 if (isset($_REQUEST["profile"]))
 {
-    $profile = $_REQUEST["profile"];
+    $profile = strip_tags($_REQUEST["profile"]);
 }
 else
 {
@@ -18,11 +18,8 @@ if ($profile == "")
 $profilename = ($profile != "default" ? $profile : "Default");
 ?>
 <script type="text/javascript">
-		var profile="<?php echo $profile?>";
+		var profile="<?php echo $profile ?>";
 	</script>
-<script type="text/javascript">
-
-</script>
 <div class="container_12" id="profile_action">
 	<div class="grid_12 subtitle">
 		<span>Configure Current Profile (<?php echo $profilename?>)</span>
@@ -64,9 +61,9 @@ else
 			</ul>
 			<ul class="formline">
 				<li class="label">Copy Selected Profile to:</li>
-				<li class="value"><input type="text" name="newprofile"></input></li>
+				<li class="value"><input type="text" name="newprofile"></li>
 			</ul>
-			<input type="submit" value="Copy Profile &amp; switch"></input>
+			<input type="submit" value="Copy Profile &amp; switch">
 	<?php
 require_once ("magmi_pluginhelper.php");
 $order = array("datasources","general","itemprocessors");
@@ -100,7 +97,7 @@ foreach ($order as $k)
     ?>
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
 			value="<?php echo implode(",",$eplconf->getEnabledPluginClasses($k))?>"
-			name="PLUGINS_<?php echo strtoupper($k)?>:classes"></input>
+			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
 		<div class="grid_12 col">
 			<h3><?php echo ucfirst($k)?></h3>
 		<?php
