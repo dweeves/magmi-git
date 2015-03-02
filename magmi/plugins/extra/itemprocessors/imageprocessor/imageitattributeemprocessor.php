@@ -71,7 +71,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         $this->_errorimgs[$img] = microtime(true);
     }
-    
+
     // Image removal feature
     public function handleRemoveImages($pid, &$item, $ivalue)
     {
@@ -84,7 +84,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         {
             $rivals[] = '/' . implode('/', array($rimg[0],$rimg[1],$rimg));
         }
-        
+
         $sql = "DELETE $t.* FROM $t
 		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (" . $this->arr2values($rivals) . ")";
         $this->delete($sql, array_merge(array($pid,$gal_attinfo["attribute_id"]), $rivals));
@@ -137,8 +137,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $t = $this->tablename('catalog_product_entity_media_gallery');
         $tv = $this->tablename('catalog_product_entity_media_gallery_value');
-        
-        $sql = "DELETE $tv.* FROM $tv 
+
+        $sql = "DELETE $tv.* FROM $tv
 			JOIN $t ON $t.value_id=$tv.value_id AND $t.entity_id=? AND $t.attribute_id=?
 			WHERE  $tv.store_id=?";
         $this->delete($sql, array($pid,$attrdesc["attribute_id"],$storeid));
@@ -167,7 +167,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return $ivalue;
         }
-        
+
         // ok , so it's a relative path
         $imgfile = false;
         $scandirs = explode(";", $this->getParam("IMG:sourcedir"));
@@ -194,11 +194,11 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $this->removeImageFromGallery($pid, $storeid, $attrdesc);
             return "__MAGMI_DELETE__";
         }
-        
+
         // add support for explicit exclude
         $exclude = $this->getExclude($ivalue, true);
         $imagefile = trim($ivalue);
-        
+
         // else copy image file
         $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid,"attr_code"=>$attrcode));
         $ovalue = $imagefile;
@@ -211,7 +211,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $label = $item[$attrcode . "_label"];
             }
             $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude, 
+            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude,
                 $attrdesc["attribute_id"]);
         }
         return $ovalue;
@@ -226,12 +226,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return $ivalue;
         }
-        
+
         // if it's a gallery
         switch ($attrdesc["frontend_input"])
         {
             case "gallery":
-                
+
                 $ovalue = $this->handleGalleryTypeAttribute($pid, $item, $storeid, $attrcode, $attrdesc, $ivalue);
                 break;
             case "media_image":
@@ -255,7 +255,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     public function getImageId($pid, $attid, $imgname, $refid = null)
     {
         $t = $this->tablename('catalog_product_entity_media_gallery');
-        
+
         $sql = "SELECT $t.value_id FROM $t ";
         if ($refid != null)
         {
@@ -269,7 +269,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $sql .= " WHERE value=? AND entity_id=? AND attribute_id=?";
             $imgid = $this->selectone($sql, array($imgname,$pid,$attid), 'value_id');
         }
-        
+
         if ($imgid == null)
         {
             // insert image in media_gallery
@@ -277,7 +277,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				(attribute_id,entity_id,value)
 				VALUES
 				(?,?,?)";
-            
+
             $imgid = $this->insert($sql, array($attid,$pid,$imgname));
         }
         else
@@ -300,7 +300,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
         $tg = $this->tablename('catalog_product_entity_media_gallery');
-        $sql = "DELETE emgv,emg FROM `$tgv` as emgv 
+        $sql = "DELETE emgv,emg FROM `$tgv` as emgv
 			JOIN `$tg` AS emg ON emgv.value_id = emg.value_id AND emgv.store_id=?
 			WHERE emg.entity_id=? AND emg.attribute_id=?";
         $this->delete($sql, array($storeid,$pid,$attid));
@@ -316,7 +316,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      * @param string $imgname
      *            : image file name (relative to /products/media in magento dir)
      */
-    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false, 
+    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false,
         $refid = null)
     {
         $gal_attinfo = $this->getAttrInfo("media_gallery");
@@ -325,7 +325,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $vid = $this->getImageId($pid, $gal_attinfo["attribute_id"], $imgname, $refid);
         if ($vid != null)
         {
-            
+
             // et maximum current position in the product gallery
             $sql = "SELECT MAX( position ) as maxpos
 					 FROM $tgv AS emgv
@@ -335,10 +335,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $pos = $this->selectone($sql, array($pid,$storeid), 'maxpos');
             $pos = ($pos == null ? 0 : $pos + 1);
             // nsert new value (ingnore duplicates)
-            
+
             $vinserts = array();
             $data = array();
-            
+
             foreach ($targetsids as $tsid)
             {
                 $vinserts[] = "(?,?,?,?," . ($imglabel == null ? "NULL" : "?") . ")";
@@ -348,12 +348,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                     $data[] = $imglabel;
                 }
             }
-            
+
             if (count($data) > 0)
             {
                 $sql = "INSERT INTO $tgv
 					(value_id,store_id,position,disabled,label)
-					VALUES " . implode(",", $vinserts) . " 
+					VALUES " . implode(",", $vinserts) . "
 					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
                 $this->insert($sql, $data);
             }
@@ -413,7 +413,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $uid = uniqid("img", true);
             $extra = array_merge($extra, array("imagename"=>"$uid.jpg","imagename.ext"=>"jpg","imagename.noext"=>$uid));
         }
-        
+
         return $extra;
     }
 
@@ -427,7 +427,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $cname = $this->parsename($pname, $item, $extra);
         }
         $cname = strtolower(preg_replace("/%[0-9][0-9|A-F]/", "_", rawurlencode($cname)));
-        
+
         return $cname;
     }
 
@@ -452,7 +452,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return false;
         }
-        
+
         // check for source image in error
         if ($this->isErrorImage($imgfile))
         {
@@ -515,11 +515,11 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             {
                 return false;
             }
-            
+
             /* try to recursively create target dir */
             if (!$this->_mdh->file_exists($l2d))
             {
-                
+
                 $tst = $this->_mdh->mkdir($l2d, Magmi_Config::getInstance()->getDirMask(), true);
                 if (!$tst)
                 {
@@ -531,66 +531,81 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                     return false;
                 }
             }
-            
-            if (!$this->saveImage($imgfile, $targetpath))
+
+            $fileIdentical = false;
+            $targetFile = $this->magdir . DIRECTORY_SEPARATOR . $targetpath;
+            if ($this->_mdh->file_exists($targetpath) && $this->getParam("IMG:comparefiles") == "yes")
             {
-                $errors = $this->_mdh->getLastError();
-                $this->fillErrorAttributes($item);
-                $this->log("error copying $l2d/$bimgfile : {$errors["type"]},{$errors["message"]}", "warning");
-                unset($errors);
-                $this->setErrorImg($impath);
-                return false;
+                $fileIdentical = (filemtime($imgfile) == filemtime($targetFile)
+                    && filesize($imgfile) == filesize($targetFile));
             }
-            else
+
+            if (!$fileIdentical)
             {
-                @$this->_mdh->chmod("$l2d/$bimgfile", Magmi_Config::getInstance()->getFileMask());
+				if (!$this->saveImage($imgfile, $targetpath))
+				{
+					$errors = $this->_mdh->getLastError();
+					$this->fillErrorAttributes($item);
+					$this->log("error copying $l2d/$bimgfile : {$errors["type"]},{$errors["message"]}", "warning");
+					unset($errors);
+					$this->setErrorImg($impath);
+					return false;
+				}
+				else
+				{
+					@$this->_mdh->chmod("$l2d/$bimgfile", Magmi_Config::getInstance()->getFileMask());
 
-                if ($this->getParam("IMG:storeindb", "no") == "yes")
-                {
-                    /* create target dirs if they don't exist */
-                    $dir_table = $this->tablename('core_directory_storage');
-                    // get "catalog/product" path ID
-                    $sql = "SELECT directory_id from $dir_table where name='product' and path='catalog'";
-                    $parent_id = $this->selectone($sql, null, 'directory_id');
+					if ($this->getParam("IMG:storeindb", "no") == "yes")
+					{
+						/* create target dirs if they don't exist */
+						$dir_table = $this->tablename('core_directory_storage');
+						// get "catalog/product" path ID
+						$sql = "SELECT directory_id from $dir_table where name='product' and path='catalog'";
+						$parent_id = $this->selectone($sql, null, 'directory_id');
 
-                    // check if i1 dir exists
-                    $i1_dir = "catalog/product/$i1";
-                    $sql = "SELECT directory_id FROM $dir_table WHERE name=? and parent_id=?";
-                    $i1_dir_id = $this->selectone($sql, array($i1,$parent_id), 'directory_id');
-                    // insert if it doesn't exist
-                    if ($i1_dir_id == null)
-                    {
-                        $sql = "INSERT INTO $dir_table (name, path, upload_time, parent_id)
-                                    VALUES (?, 'catalog/product', NOW(), ?);";
-                        $i1_dir_id = $this->insert($sql, array($i1,$parent_id));
-                    }
+						// check if i1 dir exists
+						$i1_dir = "catalog/product/$i1";
+						$sql = "SELECT directory_id FROM $dir_table WHERE name=? and parent_id=?";
+						$i1_dir_id = $this->selectone($sql, array($i1,$parent_id), 'directory_id');
+						// insert if it doesn't exist
+						if ($i1_dir_id == null)
+						{
+							$sql = "INSERT INTO $dir_table (name, path, upload_time, parent_id)
+										VALUES (?, 'catalog/product', NOW(), ?);";
+							$i1_dir_id = $this->insert($sql, array($i1,$parent_id));
+						}
 
-                    // check if i2 dir exists
-                    $i2_dir = "$i1_dir/$i2";
-                    $sql = "SELECT directory_id FROM $dir_table WHERE name=? and parent_id=?";
-                    $i2_dir_id = $this->selectone($sql, array($i2,$i1_dir_id), 'directory_id');
-                    // insert second level if it doesn't exist
-                    if ($i2_dir_id == null)
-                    {
-                        $sql = "INSERT INTO $dir_table (name, path, upload_time, parent_id)
-                                    VALUES (?, ?, NOW(), ?);";
-                        $i2_dir_id = $this->insert($sql, array($i2,$i1_dir,$i1_dir_id));
-                    }
+						// check if i2 dir exists
+						$i2_dir = "$i1_dir/$i2";
+						$sql = "SELECT directory_id FROM $dir_table WHERE name=? and parent_id=?";
+						$i2_dir_id = $this->selectone($sql, array($i2,$i1_dir_id), 'directory_id');
+						// insert second level if it doesn't exist
+						if ($i2_dir_id == null)
+						{
+							$sql = "INSERT INTO $dir_table (name, path, upload_time, parent_id)
+										VALUES (?, ?, NOW(), ?);";
+							$i2_dir_id = $this->insert($sql, array($i2,$i1_dir,$i1_dir_id));
+						}
 
-                    /* insert the image */
-                    $media_table = $this->tablename('core_file_storage');
-                    $sql = "SELECT file_id FROM $media_table WHERE filename=? and directory_id=?";
-                    $existing_file_id = $this->selectone($sql, array($bimgfile,$i2_dir_id), 'file_id');
-                    if ($existing_file_id == null || $this->getParam("IMG:writemode") == "override") {
-                        $image_path = $this->magdir . '/' . $targetpath;
-                        $image_content = file_get_contents($image_path);
-                        $sql = "INSERT INTO $media_table (content, upload_time, filename, directory_id, directory)
-                                    VALUES (?, NOW(), ?, ?, ?)
-                                    ON DUPLICATE KEY UPDATE content=VALUES(content), upload_time=VALUES(upload_time);";
-                        $file_id = $this->insert($sql, array($image_content,$bimgfile,$i2_dir_id,$i2_dir));
-                    }
-                }
-            }
+						/* insert the image */
+						$media_table = $this->tablename('core_file_storage');
+						$sql = "SELECT file_id FROM $media_table WHERE filename=? and directory_id=?";
+						$existing_file_id = $this->selectone($sql, array($bimgfile,$i2_dir_id), 'file_id');
+						if ($existing_file_id == null || $this->getParam("IMG:writemode") == "override") {
+							$image_path = $this->magdir . '/' . $targetpath;
+							$image_content = file_get_contents($image_path);
+							$sql = "INSERT INTO $media_table (content, upload_time, filename, directory_id, directory)
+										VALUES (?, NOW(), ?, ?, ?)
+										ON DUPLICATE KEY UPDATE content=VALUES(content), upload_time=VALUES(upload_time);";
+							$file_id = $this->insert($sql, array($image_content,$bimgfile,$i2_dir_id,$i2_dir));
+						}
+					}
+				}
+			}
+			else
+			{
+				$this->log("Files where identical: skipped copying " . $imgfile . " to " . $targetFile, "info");
+			}
         }
         $this->_lastimage = $impath;
         /* return image file name relative to media dir (with leading / ) */
@@ -602,10 +617,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
         $vc = $this->tablename('catalog_product_entity_varchar');
-        $sql = "UPDATE $tgv as emgv 
+        $sql = "UPDATE $tgv as emgv
 		JOIN $tg as emg ON emg.value_id=emgv.value_id AND emg.entity_id=?
-		JOIN $vc  as ev ON ev.entity_id=emg.entity_id AND ev.value=emg.value and ev.attribute_id=? 
-		SET label=? 
+		JOIN $vc  as ev ON ev.entity_id=emg.entity_id AND ev.value=emg.value and ev.attribute_id=?
+		SET label=?
 		WHERE emgv.store_id IN (" . implode(",", $sids) . ")";
         $this->update($sql, array($pid,$attrdesc["attribute_id"],$label));
     }
@@ -633,7 +648,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         // Reset media_gallery
         $galreset = !(isset($item["media_gallery_reset"])) || $item["media_gallery_reset"] == 1;
         $forcereset = (isset($item["media_gallery_reset"])) && $item["media_gallery_reset"] == 1;
-        
+
         if ((isset($item["media_gallery"]) && $galreset) || $forcereset)
         {
             $gattrdesc = $this->getAttrInfo("media_gallery");
@@ -653,7 +668,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     public function processColumnList(&$cols, $params = null)
     {
         // automatically add modified attributes if not found in datasource
-        
+
         // automatically add media_gallery for attributes to handle
         $imgattrs = array_intersect(array_merge($this->_img_baseattrs, array('media_gallery')), $cols);
         if (count($imgattrs) > 0)
@@ -667,7 +682,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         return true;
     }
-    
+
     // Cleanup gallery from removed images if no more image values are present in any store
     public function endImport()
     {
