@@ -25,6 +25,7 @@ require_once ("../engines/magmi_utilityengine.php");
 	runUtility=function(pclass)
 	{
 		var pparams={
+				token: '<?php echo $_SESSION["token"]; ?>',
 				engine:'magmi_utilityengine:Magmi_UtilityEngine',
 				pluginclass:pclass,	
 				};
