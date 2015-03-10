@@ -264,7 +264,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
     public function getExistingLinks($pid)
     {
         $dl = $this->tablename('downloadable_link');
-        $sql = "select * from downloadable_link where product_id = ?";
+        $sql = "select * from ".$dl." where product_id = ?";
         $links = $this->selectAll($sql, array($pid));
         return $links;
     }
