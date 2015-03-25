@@ -467,6 +467,7 @@ loadConfigPanel=function(container,profile,plclass,pltype)
  new Ajax.Updater({success:container},'ajax_pluginconf.php',
 	{parameters:{
 		profile:profile,
+        token:'<?php echo $_SESSION['token']?>',
 		plugintype:pltype,
 		pluginclass:plclass},
 		evalScripts:true,
