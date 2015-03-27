@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+
+.navbar-brand
+{
+    height:auto;
+    padding:0px;
+    float:left;
+}
+.menu-body {
+    float:left;
+    margin-top:70px;
+}
