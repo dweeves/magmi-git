@@ -15,11 +15,11 @@ if($conf!=='') {
         $conf = MAGMI_BASEDIR . DIRECTORY_SEPARATOR . $conf;
     }
     if (!file_exists($conf)) {
-        setMessage("ERROR" ,"invalid file : $conf not found");
+        setMessage("ERROR" ,"invalid file : $conf not found","magmiconf");
     }
     else {
         $_SESSION['MAGMI_CONFIG_FILE'] = $conf;
-        setMessage("OK","using magmi configuration file : $conf ");
+        setMessage("OK","using magmi configuration file : $conf ","magmiconf");
     }
 }
 else

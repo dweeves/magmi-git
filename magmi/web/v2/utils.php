@@ -23,25 +23,3 @@ function getSessionConfig()
     return $conf;
 }
 
-function setMessage($type,$data)
-{
-    $_SESSION["message"][$type][]=$data;
-}
-
-function clearMessages()
-{
-    unset($_SESSION["message"]);
-    $_SESSION["message"]=array("OK"=>array(),
-        "WARN"=>array(),
-        "ERROR"=>array());
-}
-
-function hasMessages($type)
-{
-    return isset($_SESSION["message"]) && count($_SESSION["message"][$type])>0;
-}
-
-function getMessages($type)
-{
-    return $_SESSION["message"][$type];
-}

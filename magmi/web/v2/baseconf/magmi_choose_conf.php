@@ -1,5 +1,5 @@
 <h2>Magmi Base Configuration File</h2>
-
+<?php require_once('../message.php');?>
 <?php $custconf=isset($_SESSION['MAGMI_CONFIG_FILE']);?>
 <ul class="nav nav-pills">
      <li class="<?php echo $custconf?'':'active'?>"><a href="javascript:void(0)" id="stdconf_btn">Standard (conf/magmi.ini)</a></li>
@@ -12,7 +12,7 @@
  <input type="text" id="magconf" name="magconf" class="form-control" placeholder="leave blank to reset to default" aria-describedby="magmiconf" value="<?php echo $cf?>">
 </div>
 </div>
-<div id="chooseconf_msg"></div>
+<div id="chooseconf_msg"><?php show_messages("magmiconf");?></div>
 <div class="bs-callout bs-callout-info">
         <h4>Magmi Base Configuration Files</h4>
         <p>Magmi has its standard config file (&lt;magmi dir&gt;/conf/magmi.ini), but it can also use alternate ones.</p>
