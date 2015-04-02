@@ -1,9 +1,6 @@
 <?php
 require_once("utils.php");
-if(session_id()==null)
-{
-    session_start();
-}
+require_once('session.php');
 /**
  * Created by PhpStorm.
  * User: seb

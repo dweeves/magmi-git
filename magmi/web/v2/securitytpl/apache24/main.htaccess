@@ -1,0 +1,6 @@
+#MAGMI SECURITY FILE
+AuthName "Magmi Secure"
+AuthType Basic
+AuthBasicProvider file
+AuthUserFile /home/seb/magmi-git/magmi/passfile
+Require valid-user

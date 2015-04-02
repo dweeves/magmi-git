@@ -1,5 +1,9 @@
 <?php
-require_once("menuclass.php");?>
+require_once("security.php");
+require_once("menuclass.php");
+
+?>
+
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -7,6 +11,7 @@ require_once("menuclass.php");?>
         <img alt="Magmi" src="../images/logo.png">
       </a>
     </div>
+    <?php if($_SESSION['IS_SECURE']){?>
       <div class="navbar-header menu-body" >
         <ul class="nav nav-tabs">
         <li><a href="javascript:void(0)" id="baseconf">Setup</a></li>
@@ -15,7 +20,8 @@ require_once("menuclass.php");?>
         <?php endif; ?>
         </ul>
         </div>
-    </div>
+    <?php } ?>
+  </div>
 </nav>
 <script>
     $('.menu-body li a').click(function()

@@ -5,10 +5,11 @@
  * Date: 26/03/15
  * Time: 18:58
  */
+
 require_once("../../../inc/magmi_defs.php");
 require_once("magmi_utils.php");
+require_once('../session.php');
 require_once("../utils.php");
-session_start();
 $conf= $_REQUEST['magmiconf'];
 if($conf!=='') {
     if (!isabspath($conf)) {

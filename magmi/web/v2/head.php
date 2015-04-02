@@ -1,5 +1,3 @@
-<?php
- session_start();?>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="css/bootstrap.min.css">
 

@@ -23,3 +23,20 @@ function getSessionConfig()
     return $conf;
 }
 
+function getWebServerType()
+{
+    $wst=$_SERVER["SERVER_SOFTWARE"];
+    $wsdata=explode('/',$wst);
+      if(count($wsdata)==2) {
+           $sname = strtolower($wsdata[0]);
+           $sver = strtok($wsdata[1], ' ');
+           $classname=ucfirst($sname)."ServerHelper";
+           $inst=new $classname($sver);
+       }
+       else
+       {
+           $sname=$wst;
+           $sver=null;
+       }
+    return array('Server'=>$sname,'Version'=>$sver);
+}

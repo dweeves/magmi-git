@@ -5,15 +5,24 @@
  * Date: 27/03/15
  * Time: 18:51
  */
-session_start();
+require_once('../session.php');
 require_once("../utils.php");
 require_once("../message.php");
-$mdir=$_REQUEST["magentodir"];
+$conf=getSessionConfig();
+
+if(isset($_REQUEST["magentodir"])) {
+    $mdir = $_REQUEST["magentodir"];
+}
+else
+{
+    $mdir=$conf->getMagentoDir();
+}
 if(file_exists($mdir) && file_exists("$mdir/app/Mage.php"))
 {
-    $conf=getSessionConfig();
     $conf->set("MAGENTO",'basedir',$mdir);
+    $conf->set("DATABASE",'connectivity','localxml');
     $conf->save();
+
     setMessage("OK","using magento directory $mdir","magentodir");
 }
 else
