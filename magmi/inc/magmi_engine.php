@@ -5,7 +5,7 @@ require_once ("magmi_version.php");
 require_once ("magmi_utils.php");
 require_once ("magmi_statemanager.php");
 require_once ("magmi_pluginhelper.php");
-
+require_once ("magmi_magento_utils.php");
 /**
  * This class is the mother class for magmi engines
  * A magmi engine is a class that performs operations on DB
@@ -529,21 +529,17 @@ abstract class Magmi_Engine extends DbHelper
             $debug = $this->getProp("DATABASE", "debug",false);
             $socket = $this->getProp("DATABASE", "unix_socket");
             if ($conn == 'localxml') {
+
             	$xmlPath = $this->_conf->getMagentoDir().'/app/etc/local.xml';
-                if (!file_exists($xmlPath))
-                {
-                    throw new Exception("Cannot load xml from path '$xmlPath'");
-                }
-            	$xml = new SimpleXMLElement(file_get_contents($xmlPath));
-            	$default_setup = $xml->global->resources->{$this->getProp('DATABASE', 'resource', 'default_setup')}->connection;
-            	$host = $default_setup->host;
-            	$dbname = $default_setup->dbname;
-            	$user = $default_setup->username;
-            	$pass = $default_setup->password;
-            	$port = $default_setup->port;
+                $entries=getDBInfoFromLocalXML($xmlPath);
+                $host = $entries["host"];
+            	$dbname = $entries["dbname"];
+            	$user = $entries["username"];
+            	$pass = $entries["password"];
+            	$port = $entries["port"];
             } else {
             	$host = $this->getProp("DATABASE", "host", "localhost");
-            	$dbname = $this->getProp("DATABASE", "dbname", "magento");
+            	$dbname =$this->getProp("DATABASE", "dbname", "magento");
             	$user = $this->getProp("DATABASE", "user");
             	$pass = $this->getProp("DATABASE", "password");
             	$port = $this->getProp("DATABASE", "port", "3306");

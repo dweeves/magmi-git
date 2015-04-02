@@ -29,6 +29,7 @@ class DBHelper
         $this->_timecounter->addCounter("requests");
     }
 
+
     /**
      * Intializes database connection
      *
