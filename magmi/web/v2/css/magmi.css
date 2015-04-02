@@ -11,3 +11,25 @@
     float:left;
     margin-top:70px;
 }
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+  background-color:  #8888cc;
+  color: #fff;
+}
+.bs-callout-info h4 {
+    color:  #8888cc;
+}
+
+.bs-callout-info {
+    border-left-color: #ccccff;
+}
+
+a {
+    color: #8888cc;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover
+{
+    background-color:  #8888cc;
+     color: #fff;
+}
