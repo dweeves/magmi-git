@@ -33,7 +33,7 @@ require_once("utils.php");
     <h2>Securing Magmi Access for <?php echo ucfirst($inf['Server']).' '.$inf['Version']?> server</h2>
    <?php if($helper!=null){?>
     <p> Magmi will now proceed to magmi interface security setup.</p>
-        <?php echo $inst->getWebUI()?>
+        <?php echo $helper->getWebUI()?>
   <?php }
     else {?>
         <div class="bs-callout bs-callout-danger">

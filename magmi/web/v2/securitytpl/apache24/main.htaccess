@@ -2,5 +2,5 @@
 AuthName "Magmi Secure"
 AuthType Basic
 AuthBasicProvider file
-AuthUserFile /home/seb/magmi-git/magmi/passfile
+AuthUserFile /home/seb/magmi-git/.htmagmipass
 Require valid-user
