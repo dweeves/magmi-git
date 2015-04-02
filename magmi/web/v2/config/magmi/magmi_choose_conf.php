@@ -43,8 +43,8 @@ $custconf = isset($_SESSION['MAGMI_CONFIG_FILE'])?$_SESSION['MAGMI_CONFIG_FILE']
             $('#magmi_custom_conf').hide();
         });
         $('#magconf').blur(function () {
-            $.post('baseconf/magmi_changeconf.ajax.php', {'magmiconf': $('#magconf').val()}, function (data) {
-                $('#main_content').load('baseconf/content.php', function () {
+            $.post('config/magmi/magmi_changeconf.ajax.php', {'magmiconf': $('#magconf').val()}, function (data) {
+                $('#main_content').load('config/content.php', function () {
                     $('#chooseconf_msg').load("message.php", {'msgtarget': 'magmiconf'})
                 });
             });

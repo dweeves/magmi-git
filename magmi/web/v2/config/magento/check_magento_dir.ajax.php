@@ -5,9 +5,9 @@
  * Date: 27/03/15
  * Time: 18:51
  */
-require_once('../session.php');
-require_once("../utils.php");
-require_once("../message.php");
+require_once(dirname(dirname(__DIR__)).'/session.php');
+require_once(dirname(dirname(__DIR__)).'/utils.php');
+require_once(dirname(dirname(__DIR__)).'/message.php');
 $conf=getSessionConfig();
 
 if(isset($_REQUEST["magentodir"])) {
