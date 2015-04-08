@@ -5,7 +5,6 @@
  * Date: 30/03/15
  * Time: 18:55
  */
-require_once("../utils.php");
 $conf=getSessionConfig();
 $dbconf=$conf->get('DATABASE','connectivity');
 ?>
@@ -29,7 +28,7 @@ $dbconf=$conf->get('DATABASE','connectivity');
                     {
                         $('a.dbconflink').parent().removeClass('active');
                         $(this).parent().addClass('active');
-                        $('#dbconf_content').load("config/db/dbconf_"+scname+".php");
+                        $('#dbconf_content').load("db/dbconf_"+scname+".php");
                     }
                 );
             }

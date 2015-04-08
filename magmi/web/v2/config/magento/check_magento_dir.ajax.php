@@ -5,9 +5,7 @@
  * Date: 27/03/15
  * Time: 18:51
  */
-require_once(dirname(dirname(__DIR__)).'/session.php');
-require_once(dirname(dirname(__DIR__)).'/utils.php');
-require_once(dirname(dirname(__DIR__)).'/message.php');
+require_once("../../inc/basedefs.php");
 $conf=getSessionConfig();
 
 if(isset($_REQUEST["magentodir"])) {

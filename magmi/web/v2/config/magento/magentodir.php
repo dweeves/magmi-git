@@ -5,10 +5,11 @@
  * Date: 30/03/15
  * Time: 18:05
  */
-require_once(dirname(dirname(__DIR__))."/utils.php");
-require_once(dirname(dirname(__DIR__))."/message.php");
+if(!isset($_SESSION)) {
+    require_once("../../inc/basedefs.php");
+}
+
 $conf=getSessionConfig();
-require_once("check_magento_dir.ajax.php");
 $errs=hasMessages("ERROR","magentodir");
 ?>
 
@@ -29,10 +30,12 @@ $errs=hasMessages("ERROR","magentodir");
 <?php }?>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#magentodir').focus(function(){
         $('#magentodir').blur(function () {
-            $.post('config/magento/check_magento_dir.ajax.php', {'magentodir': $('#magentodir').val()}, function (data) {
-                $('#magentodir_container').load('config/magento/magentodir.php');
+            $.post('magento/check_magento_dir.ajax.php', {'magentodir': $('#magentodir').val()}, function (data) {
+                $('#magentodir_container').load('magento/magentodir.php');
+                $('#magentodir').blur(function(){});
             });
-        });
+        });});
     });
 </script>

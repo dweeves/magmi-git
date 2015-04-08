@@ -6,7 +6,7 @@
  * Time: 18:17
  */
 
-require_once(dirname(dirname(__DIR__)).'/inc/magmi_config.php');
+require_once('magmi_config.php');
 
 function getSessionConfig()
 {

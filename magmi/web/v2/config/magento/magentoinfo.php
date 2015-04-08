@@ -6,7 +6,7 @@
  * Time: 16:01
  */
 
-require_once(dirname(dirname(__DIR__)).'/utils.php');
+require_once(dirname(dirname(__DIR__)).'/inc/utils.php');
 $conf=getSessionConfig();
 $mdir=$conf->getMagentoDir();
 

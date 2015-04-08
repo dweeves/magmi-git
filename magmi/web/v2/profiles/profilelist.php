@@ -1,4 +1,3 @@
-<?php require_once('../utils.php') ?>
 <div class="panel panel-default">
     <div class="panel-heading">Magmi Profiles</div>
         <div class="panel-body">
@@ -15,12 +14,31 @@
                 foreach($pflist as $prof){?>
                     <tr>
                         <td><?php echo $prof?></td>
-                        <td>
-                                <a href="profile_edit.php" title="Edit"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span></a>
+                        <td class="profactions">
+                                <a href="javascript:void(0)" data-profilename="<?php echo $prof?>" data-action="summary" title="Summary"><span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span></a>
+
+                                <a href="javascript:void(0)" data-profilename="<?php echo $prof?>" data-action="edit" title="Configure"><span aria-hidden="true" class="glyphicon glyphicon-edit"></span></a>
+                                <a href="javascript:void(0)" data-profilename="<?php echo $prof?>" data-action="run" title="Run"><span aria-hidden="true" class="glyphicon glyphicon-circle-arrow-right"></span></a>
+                                <a href="javascript:void(0)" data-profilename="<?php echo $prof?>" data-action="delete" title="Delete"><span aria-hidden="true" class="glyphicon glyphicon-trash"></span></a>
                         </td>
-                    </tr>
+                      </tr>
                 <?php }?>
             </tbody>
         </table>
+    <form role="form" class="inline-form profactionform" method="post" id="doaction_form" action="profiles/do_profile_action.php">
+    <input type="hidden" name="profilename" value="" id="profactionform_name"/>
+    <input type="hidden" name="profaction" value="" id="profactionform_action"/>
+    </form>
+
 </div>
 </div>
+<script type="text/javascript">
+       $('td.profactions a').each(function () {
+           $(this).click(function ()
+           {
+            $('#profactionform_name').val($(this).data('profilename'));
+            $('#profactionform_action').val($(this).data('action'));
+            $('#doaction_form').submit();
+           })
+       });
+</script>

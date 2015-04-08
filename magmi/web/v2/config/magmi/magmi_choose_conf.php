@@ -1,5 +1,5 @@
 <h2>Magmi Base Configuration File</h2>
-<?php require_once('../message.php');
+<?php
 require_once('magmi_init_conf.php');
 $custconf = isset($_SESSION['MAGMI_CONFIG_FILE'])?$_SESSION['MAGMI_CONFIG_FILE']:''; ?>
 <ul class="nav nav-pills">
@@ -39,14 +39,12 @@ $custconf = isset($_SESSION['MAGMI_CONFIG_FILE'])?$_SESSION['MAGMI_CONFIG_FILE']
         $('#stdconf_btn').click(function () {
             $('#stdconf_btn').parent('li').addClass('active');
             $('#custconf_btn').parent('li').removeClass('active');
-            $.post('magmi_changeconf.ajax.php', {'magmiconf': ''});
+            $.post('magmi/magmi_changeconf.ajax.php', {'magmiconf': ''});
             $('#magmi_custom_conf').hide();
         });
         $('#magconf').blur(function () {
-            $.post('config/magmi/magmi_changeconf.ajax.php', {'magmiconf': $('#magconf').val()}, function (data) {
-                $('#main_content').load('config/content.php', function () {
-                    $('#chooseconf_msg').load("message.php", {'msgtarget': 'magmiconf'})
-                });
+            $.post('magmi/magmi_changeconf.ajax.php', {'magmiconf': $('#magconf').val()}, function (data) {
+              location.reload();
             });
         });
 
