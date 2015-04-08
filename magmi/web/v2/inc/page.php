@@ -1,4 +1,4 @@
-<?php require_once('basedefs.php');?>
+<?php require_once('pagedefs.php');?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

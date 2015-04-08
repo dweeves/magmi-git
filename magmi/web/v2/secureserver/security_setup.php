@@ -5,7 +5,7 @@
  * Date: 01/04/15
  * Time: 22:43
  */
-require_once('utils.php');
+require_once('../inc/basedefs.php');
 function getWebServerHelper()
 {
     $wst=getWebServerType();
@@ -24,14 +24,14 @@ function getWebServerHelper()
 abstract class WebServerHelper
 {
     protected $_version;
-    protected $_user="magmi";
-    protected $_pass="magmi";
+    protected $_user=null;
+    protected $_pass=null;
     protected $_templatesdir;
     protected $_signature="#MAGMI SECURITY FILE";
     public function __construct($version)
     {
         $this->_version=$version;
-        $this->_templatesdir=dirname(__FILE__)."/securitytpl";
+        $this->_templatesdir=dirname(__DIR__)."/securitytpl";
     }
 
     public function setCredentials($user,$pass)
@@ -54,10 +54,12 @@ class ApacheServerHelper extends WebServerHelper
 {
     protected $_passfile;
     protected $_mode;
+    protected $_mdir;
+
     public function __construct($version)
     {
         parent::__construct($version);
-        $this->_passfile=dirname(dirname(dirname(__DIR__)))."/.htmagmipass";
+        $this->_passfile=dirname(dirname(UI_BASEDIR))."/.htmagmipass";
         if(version_compare($this->_version,"2.4",">="))
         {
             $this->_mode="24";
@@ -66,10 +68,30 @@ class ApacheServerHelper extends WebServerHelper
         {
             $this->_mode="22";
         }
+        $this->_mdir=null;
+    }
+
+    public function setMagentoDir($mdir)
+    {
+        $ok = checkMagentoDir($mdir);
+        if($ok)
+        {
+            $this->_mdir=$mdir;
+        }
+
     }
 
     public function secureServer()
     {
+        if($this->_user==null)
+        {
+            if($this->_mdir!=null) {
+               require_once(MAGMI_DIR . "/inc/magmi_magento_utils.php");
+               $entries = getDBInfoFromLocalXML($this->_mdir . "/app/etc/local.xml");
+               $this->setCredentials($entries["username"], $entries["password"]);
+
+            }
+        }
         $methname="generateFiles_".$this->_mode;
         return $this->$methname();
     }
@@ -106,11 +128,11 @@ class ApacheServerHelper extends WebServerHelper
         try {
             $this->generateHtPass($this->_user,$this->_pass,$this->_passfile);
             $log["OK"][]="Generated PassFile";
-            $this->copyOrInsertTemplate("main.htaccess", dirname(dirname(__DIR__)) . "/.htaccess");
+            $this->copyOrInsertTemplate("main.htaccess", dirname(dirname(UI_INCDIR)) . "/.htaccess");
             $log["OK"][]="Protected main magmi directory";
-            $this->copyOrInsertTemplate("main.htaccess", dirname(__FILE__) . "/.htaccess");
+            $this->copyOrInsertTemplate("main.htaccess", dirname(UI_INCDIR) . "/.htaccess");
             $log["OK"][]="Protected main magmi UI directory";
-            $this->copyOrInsertTemplate("images.htaccess", dirname(dirname(__FILE__)) . "/images/.htaccess");
+            $this->copyOrInsertTemplate("images.htaccess", dirname(UI_INCDIR) . "/images/.htaccess");
             $log["OK"][]="Authorized image access";
 
         }
