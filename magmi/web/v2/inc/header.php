@@ -41,7 +41,7 @@ function checkProfiles()
                 {
                     $upd=new Magmi_Git_Updater();
                     $latest=$upd->getLastRelease();
-                    $_SESSION['latest_release']=$latest->name;
+                    $_SESSION['latest_release']=$latest;
                 }
           ?>
           <div class="version"><?php echo Magmi_Version::$version?></div>

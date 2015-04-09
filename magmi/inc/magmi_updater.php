@@ -5,7 +5,7 @@
  * Date: 09/04/15
  * Time: 18:20
  */
-require("properties.php");
+require_once("properties.php");
 
 class Magmi_Git_Updater
 {
