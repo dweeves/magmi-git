@@ -537,6 +537,7 @@ abstract class Magmi_Engine extends DbHelper
             	$user = $entries["username"];
             	$pass = $entries["password"];
             	$port = $entries["port"];
+                $this->tprefix=$entries["table_prefix"];
             } else {
             	$host = $this->getProp("DATABASE", "host", "localhost");
             	$dbname =$this->getProp("DATABASE", "dbname", "magento");

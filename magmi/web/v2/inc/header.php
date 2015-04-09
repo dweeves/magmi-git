@@ -34,5 +34,19 @@ function checkProfiles()
         </ul>
         </div>
     <?php } ?>
+      <div class="navbar-header navbar-right">
+          <?php require_once('magmi_version.php');
+                require_once('magmi_updater.php');
+                if(!isset($_SESSION['latest_release']))
+                {
+                    $upd=new Magmi_Git_Updater();
+                    $latest=$upd->getLastRelease();
+                    $_SESSION['latest_release']=$latest->name;
+                }
+          ?>
+          <div class="version"><?php echo Magmi_Version::$version?></div>
+          <div class="release"><?php echo $_SESSION['latest_release']?></div>
+      </div>
   </div>
 </nav>
+
