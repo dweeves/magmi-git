@@ -951,6 +951,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         return $fmap;
     }
 
+    public function isMagicValue($v)
+    {
+        return substr($v,0,8)=="__MAGMI_" || $v=="__NULL__";
+    }
+
     /**
      * Create product attribute from values for a given product id
      *
@@ -1013,9 +1018,14 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
                 $scope=$attrdesc["is_global"];
-                $scope=$scope>0?$scope-$attrdesc["is_configurable"]:0;
+                if($attrdesc["is_configurable"]==1)
+                {
+                    $scope=0;
+                }
+
                 $store_ids = $this->getItemStoreIds($item, $scope);
-                
+
+
                 // do not handle empty generic int values in create mode
                 if ($ivalue == "" && $this->mode != "update" && $tp == "int")
                 {
@@ -1030,21 +1040,21 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     
                     // base output value to be inserted = base source value
                     $ovalue = $ivalue;
-                    //iterate on available handlers until one gives a proper value
-                    for($i=0;$i<count($handlers);$i++)
-                    {
-                        //get handler info array for current handler (handler instance & callback name)
-                        list($hdl,$cb)=$handlers[$i];
-                        //call appropriate callback on current handler to get return value to insert in DB
-                        $hvalue=$hdl->$cb($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
-                        //if valid value returned, take it as output value & break
-                        if (isset($hvalue) && $hvalue != '__MAGMI_UNHANDLED__')
-                        {
-                            $ovalue = $hvalue;
-                            break;
+                    //do not handle magic values
+                    if(!$this->isMagicValue($ovalue)) {
+                        //iterate on available handlers until one gives a proper value
+                        for ($i = 0; $i < count($handlers); $i++) {
+                            //get handler info array for current handler (handler instance & callback name)
+                            list($hdl, $cb) = $handlers[$i];
+                            //call appropriate callback on current handler to get return value to insert in DB
+                            $hvalue = $hdl->$cb($pid, $item, $store_id, $attrcode, $attrdesc, $ivalue);
+                            //if valid value returned, take it as output value & break
+                            if (isset($hvalue) && $hvalue != '__MAGMI_UNHANDLED__') {
+                                $ovalue = $hvalue;
+                                break;
+                            }
                         }
                     }
-
                     // if __MAGMI_UNHANDLED__ ,don't insert anything, __MAGMI_IGNORE__ has also to do nothing
                     if ($ovalue == '__MAGMI_UNHANDLED__' || $ovalue=='__MAGMI_IGNORE__')
                     {
@@ -1651,7 +1661,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         // extract product id & attribute set id
         $pid = $itemids["pid"];
         $asid = $itemids["asid"];
-        
+
+
         $isnew = false;
         if (isset($pid) && $this->mode == "xcreate")
         {
@@ -1689,6 +1700,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         {
             $basemeta = array("product_id"=>$pid,"new"=>$isnew,"same"=>$this->_same,"asid"=>$asid);
             $fullmeta = array_merge($basemeta, $itemids);
+
+            if (!$this->callPlugins("itemprocessors", "preprocessItemAfterId", $item,$fullmeta))
+            {
+                   return false;
+            }
+
             if (!$this->callPlugins("itemprocessors", "processItemAfterId", $item, $fullmeta))
             {
                 return false;
