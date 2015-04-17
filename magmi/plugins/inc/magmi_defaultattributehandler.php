@@ -7,6 +7,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     protected $_forcedefault = array("store"=>"admin");
     protected $_missingcols = array();
     protected $_missingattrs = array();
+    protected $_hasurlkeytable=false;
+    protected $_urlkeytablename="";
     /**
      * (non-PHPdoc)
      *
@@ -14,7 +16,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function initialize($params)
     {
+        $this->_urlkeytablename=$this->tablename('catalog_product_entity_url_key');
         $this->registerAttributeHandler($this, array("attribute_code:.*"));
+        $sql="SHOW TABLES LIKE ?";
+        $result=$this->selectAll($sql,array($this->_urlkeytablename));
+        $this->_hasurlkeytable=(count($result)>0);
+
     }
 
     /**
@@ -79,7 +86,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      *
      * @see Magmi_ItemProcessor::processItemAfterId()
      */
-    public function processItemAfterId(&$item, $params = null)
+    public function preprocessItemAfterId(&$item, $params = null)
     {
         if ($params["new"] == true)
         {
@@ -91,6 +98,14 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
                $item["url_key"]=Slugger::slug($item["name"]);
             } 
         
+        }
+        else
+        {
+            //if we have an existing item, get some structural info from identification meta
+            if(!isset($item["type"]))
+            {
+                $item["type"]=$params["type"];
+            }
         }
         // forcing default values for mandatory processing columns
         foreach ($this->_forcedefault as $k => $v)
@@ -256,6 +271,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     public function handleIntAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         $ovalue = $ivalue;
+
         // default value exists, return it
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
         if ($dval !== null)
@@ -338,72 +354,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function handleUrl_keyAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
-        $cpev = $this->tablename("catalog_product_entity_varchar");
-        // find conflicting url keys
-        $urlk = trim($ivalue);
-        $lst = array();
-
-        $exists = $this->currentItemExists();
-        //if no value & exist , then "reset url key" with empty value
-        //this should then be automatically reset by indexing to item name slug
-        if ($urlk == "" && $exists)
-        {
-            return "__MAGMI_DELETE__";
-        }
-        //remove non visible item values
-        if($item["visibility"]==1)
-        {
-            return "__MAGMI_DELETE__";
-        }
-
-        $attid=$attrdesc["attribute_id"];
-        //optimization check if we have a conflict
-        //fix for multistore conflict
-        $sql = "SELECT entity_id FROM $cpev WHERE attribute_id=? AND store_id=? AND value=? ORDER BY entity_id";
-        $sameurl=  $this->selectone($sql, array($attid,$storeid,$urlk), "entity_id");
-        $exurl=(isset($sameurl) && $sameurl!=$pid);
-        //if we have at least one
-        if($exurl)
-        {
-            //$lst[]=$urlk;
-            //in case of url key already has special regexp value in it
-            $xurlk=preg_quote($urlk);
-            $pattern="^".$xurlk . "-(\d+)?";
-            $zpattern="$pattern$";
-
-            //if item is already existing
-            if($exists) {
-                //check if current item url key exists with a "renamed" url key
-                $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND store_id=?";
-                $eurl = $this->selectone($sql, array($attid, $pid, $storeid), "value");
-                $matching=preg_match("|$zpattern|",$eurl);
-              }
-            else
-            {
-                $matching=false;
-
-            }
-
-            // we match wanted pattern, nothing to do
-            if ($matching)
-            {
-                $urlk = "__MAGMI_IGNORE__";
-            }
-            // no current value, but chosen is conflicting,so try inserting into target pattern list
-            else
-            {
-                $lst[]=$sameurl;
-                $sql = "SELECT value FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND store_id=? AND value REGEXP ?";
-                $umatch = $pattern;
-                $others = $this->selectAll($sql, array($attid,$pid,$storeid,$umatch));
-                $lst=array_merge($lst,$others);
-            }
-        }
-
-        // all conflicting url keys
-        if (count($lst) > 0)
-        {
-            $urlk = $urlk . "-" . count($lst);
+        //specific behaviour for url key table if exists
+        //no more conflict checking at this point, will only do for url rewrite
+        $urlk=$ivalue;
+        if($this->_hasurlkeytable) {
+            $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
+            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $ivalue));
         }
         return $urlk;
     }
