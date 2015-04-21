@@ -274,10 +274,22 @@ class ItemIndexer extends Magmi_ItemProcessor
                 $pname = $row["value"];
             }
         }
+        $candidate=(isset($pburlk) ? $pburlk : Slugger::slug($pname));
         // if we've got an url key use it, otherwise , make a slug from the product name as url key
         $urlend =$this->getParam("OTFI:useurlending",1)==1?$this->getParam("OTFI:urlending", ".html"):"";
-        $purlk = (isset($pburlk) ? $pburlk : Slugger::slug($pname)) . $urlend;
-        $rewrites=array();
+        $pattern="^".preg_quote($candidate)."(-[[:digit:]]+)?".preg_quote($urlend).'$';
+        //check duplicates
+
+        $sql="SELECT COUNT(product_id) as cnt,store_id FROM {$this->tns["curw"]} WHERE product_id!=? AND request_path REGEXP ? GROUP BY store_id";
+        $data=$this->selectAll($sql,array($pid,$pattern));
+        $maxcnt=0;
+        foreach($data as $line) {
+            if($line['cnt']>$maxcnt)
+            {
+                $maxcnt=$line['cnt'];
+            }
+        }
+       $purlk=$candidate.($maxcnt>0?'-'.$maxcnt:'').$urlend;
 
         if($dorewrite) {
                //rewrites SQL
