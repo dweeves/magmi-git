@@ -160,8 +160,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * Returns the list of store ids corresponding to the store view codes 
-     * @param unknown $scodes
-     * @return multitype:
+     * @param string $scodes
+     * @return array store ids:
      */
     public function getStoreIdsForStoreScope($scodes)
     {
@@ -183,10 +183,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     
     /**
      * Returns Magento current data for given item
-     * @param unknown $item : item to get magento data from
-     * @param unknown $params : item metadata
+     * @param array $item : item to get magento data from
+     * @param array $params : item metadata
      * @param string $cols : columns list to return (if not set, all items column list)
-     * @return Ambigous <multitype:, multitype:unknown >
+     * @return array magento data for item
      */
     public function getMagentoData($item, $params, $cols = null)
     {
@@ -266,7 +266,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     /**
      * Adds an extra attribute to process
      * Useful for some plugins if generating attribute values that are not in initial scanned list
-     * @param unknown $attr attribute code
+     * @param string $attr attribute code
      */
     public function addExtraAttribute($attr)
     {
@@ -276,7 +276,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     
     /**
      * Returns the list of magento base product table columns
-     * @return multitype:
+     * @return array list of columns
      */
     public function getProdCols()
     {
@@ -294,7 +294,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * Returns the list of magento product item stock info table columns
-     * @return multitype:
+     * @return array list of stock related columns:
      */
     public function getStockCols()
     {
@@ -534,8 +534,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     /**
      * Updateds product update time
      *
-     * @param unknown_type $pid
-     *            : entity_id of product
+     * @param int $pid : entity_id of product
+     *
      */
     public function touchProduct($pid)
     {
@@ -606,8 +606,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * updates option positioning
-     * @param $optid option id
-     * @param $newpos new position
+     * @param int $optid
+     *              option id
+     * @param int $newpos
+     *              new position
      */
     public function updateOptPos($optid,$newpos)
     {
@@ -618,13 +620,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      * Returns option ids for a given store for a set of values (for select/multiselect attributes)
      * - Create new entries if values do not exist
      * 
-     * @param unknown $attid
+     * @param int $attid
      *            attribute id
-     * @param unknown $storeid
+     * @param int $storeid
      *            store id
-     * @param unknown $values
+     * @param array $values
      *            value to create options for
-     * @return Ambigous <multitype:, unknown>
+     * @return array list of option ids
      */
     public function getOptionIds($attid, $storeid, $values)
     {
@@ -737,10 +739,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * Cache an option definition
-     * @param $attid attribute id
-     * @param $storeid store id
-     * @param $optid option id
-     * @param $val value for option
+     * @param int $attid attribute id
+     * @param int $storeid store id
+     * @param int $optid option id
+     * @param string $val value for option
      * @param int $pos position for option
      */
     public function cacheOpt($attid,$storeid,$optid,$val,$pos=0)
@@ -1188,7 +1190,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         
         if (count($common) > 0)
         {
-            $cols = $this->arr2columns($common);
             $stockvals = $this->filterkvarr($item, $common);
             
             // ill with values
@@ -1287,7 +1288,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $data = array();
         $cdata = array();
         $ddata = array();
-        $cpos = array();
         $catids = csl2arr($item["category_ids"]);
         
         // find positive category assignments
@@ -1581,7 +1581,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         
         $scarr = explode(",", $scodes);
         trimarray($scarr);
-        $rscode = array();
         $sql = "SELECT code FROM " . $this->tablename("core_store") . " WHERE code IN (" . $this->arr2values($scarr) .
              ")";
         $result = $this->selectAll($sql, $scarr);
