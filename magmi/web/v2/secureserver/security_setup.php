@@ -178,8 +178,59 @@ class ApacheServerHelper extends WebServerHelper
 
 class NginxServerHelper
 {
+
+    protected $_passfile;
+    protected $_mdir;
+
     public function __construct($version)
     {
 
+    }
+
+    public function generateHtPass($usr,$pass,$dest)
+      {
+          $f=fopen($dest,"w");
+          $htpass= '{SHA}' . base64_encode(sha1($pass, TRUE));
+          fwrite($f,$usr.":".$htpass);
+          fclose($f);
+      }
+
+    public function setMagentoDir($mdir)
+       {
+           $ok = checkMagentoDir($mdir);
+           if($ok)
+           {
+               $this->_mdir=$mdir;
+           }
+
+       }
+
+       public function secureServer()
+       {
+           if($this->_user==null)
+           {
+               if($this->_mdir!=null) {
+                  require_once(MAGMI_DIR . "/inc/magmi_magento_utils.php");
+                  $entries = getDBInfoFromLocalXML($this->_mdir . "/app/etc/local.xml");
+                  $this->setCredentials($entries["username"], $entries["password"]);
+
+               }
+           }
+           $methname="generateFiles_".$this->_mode;
+           return $this->$methname();
+       }
+
+    public function getManualContent()
+    {
+
+        $tplcontent=file_get_contents($this->_templatesdir."/nginx/main.config");
+        $tplcontent=str_replace('[magmi_url]',BASE_URL,$tplcontent);
+        return $tplcontent;
+
+    }
+
+    public function getWebUI()
+    {
+        include_once($this->_templatesdir."/nginx/webui.php");
     }
 }
