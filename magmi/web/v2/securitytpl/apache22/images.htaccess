@@ -1,4 +1,4 @@
 #MAGMI SECURITY FILE
 #Allow access for images
 AuthType None
-Require all granted
+Satisfy any

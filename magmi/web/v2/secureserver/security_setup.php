@@ -5,7 +5,7 @@
  * Date: 01/04/15
  * Time: 22:43
  */
-require_once('../inc/basedefs.php');
+require_once(dirname(__DIR__).'/inc/basedefs.php');
 function getWebServerHelper()
 {
     $wst=getWebServerType();
@@ -112,7 +112,10 @@ class ApacheServerHelper extends WebServerHelper
          //if template content not present, append it to dest file
          if(strpos($exist,$this->_signature)===FALSE) {
               $cf = fopen($dest, "a");
-              fwrite($cf, $tplcontent);
+              $tplcontent=str_replace('[magmi_root]',MAGMI_BASEDIR,$tplcontent);
+             $tplcontent=str_replace('[magmi_user]',$this->_user,$tplcontent);
+
+             fwrite($cf, $tplcontent);
 
               fclose($cf);
           }
@@ -142,6 +145,30 @@ class ApacheServerHelper extends WebServerHelper
         }
         return $log;
     }
+
+    public function generateFiles_22()
+       {
+           $sfname=".htaccess";
+           //check if we have already a .htaccess
+           //generating "main dir" .htaccess
+           $log=array("ERROR"=>array(),"OK"=>array());
+           try {
+               $this->generateHtPass($this->_user,$this->_pass,$this->_passfile);
+               $log["OK"][]="Generated PassFile";
+               $this->copyOrInsertTemplate("main.htaccess", dirname(dirname(UI_INCDIR)) . "/.htaccess");
+               $log["OK"][]="Protected main magmi directory";
+               $this->copyOrInsertTemplate("main.htaccess", dirname(UI_INCDIR) . "/.htaccess");
+               $log["OK"][]="Protected main magmi UI directory";
+               $this->copyOrInsertTemplate("images.htaccess", dirname(UI_INCDIR) . "/images/.htaccess");
+               $log["OK"][]="Authorized image access";
+
+           }
+           catch(Exception $e)
+           {
+               $log["ERROR"][]=$e->getMessage();
+           }
+           return $log;
+       }
 
     public function getWebUI()
     {
