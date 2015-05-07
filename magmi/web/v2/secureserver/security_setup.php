@@ -176,7 +176,7 @@ class ApacheServerHelper extends WebServerHelper
     }
 }
 
-class NginxServerHelper
+class NginxServerHelper extends WebServerHelper
 {
 
     protected $_passfile;
@@ -184,7 +184,8 @@ class NginxServerHelper
 
     public function __construct($version)
     {
-
+        parent::__construct($version);
+        $this->_passfile=dirname(dirname(UI_BASEDIR))."/.htmagmipass";
     }
 
     public function generateHtPass($usr,$pass,$dest)
@@ -216,8 +217,9 @@ class NginxServerHelper
 
                }
            }
-           $methname="generateFiles_".$this->_mode;
-           return $this->$methname();
+
+           $this->generateHtPass($this->_user,$this->_pass,$this->_passfile);
+           return array();
        }
 
     public function getManualContent()
@@ -225,6 +227,7 @@ class NginxServerHelper
 
         $tplcontent=file_get_contents($this->_templatesdir."/nginx/main.config");
         $tplcontent=str_replace('[magmi_url]',BASE_URL,$tplcontent);
+        $tplcontent=str_replace('[magmi_root]',MAGMI_BASEDIR,$tplcontent);
         return $tplcontent;
 
     }

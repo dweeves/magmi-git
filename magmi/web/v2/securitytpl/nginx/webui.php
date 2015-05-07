@@ -27,13 +27,8 @@ if(hasMessages("ERROR","secureserver"))
         <div class="bs-callout bs-callout-warning">
             <h4>Nginx security setup requires action</h4>
             <p>Please copy the following lines into your <b>nginx.conf</b> file to secure your magmi access</p>
-            <p><?php echo $this->getManualContent()?></p>
+            <p><pre><?php echo $this->getManualContent()?></pre></p>
         </div>
-        <script type="text/javascript">
-            setTimeout(function(){
-                window.location="index.php";
-            },5000);
-        </script>
         <?php }?>
 <?php
 
