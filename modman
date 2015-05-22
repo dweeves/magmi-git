@@ -1,1 +1,12 @@
-magmi/   magmi/
+magmi/build                    magmi/build
+magmi/cli                      magmi/cli
+magmi/conf/magmi.ini.default   magmi/conf/magmi.ini.default
+magmi/engines                  magmi/engines
+magmi/inc                      magmi/inc
+magmi/integration              magmi/integration
+magmi/plugins                  magmi/plugins
+magmi/state                    magmi/state
+magmi/tests                    magmi/tests
+magmi/web                      magmi/web
+magmi/.htaccess                magmi/.htaccess
+magmi/ReleaseNotes.txt         magmi/ReleaseNotes.txt
