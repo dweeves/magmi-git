@@ -344,6 +344,27 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
 
     }
+    
+    public function initAttrSetInfos() {
+        if(sizeof($this->attribute_set_infos) > 0)
+        {
+            return;
+        }
+
+        $this->fetchProdEType();
+        $sql = "SELECT  ea.attribute_set_id,ea.attribute_id
+				FROM 	eav_entity_attribute ea
+				WHERE 	ea.entity_type_id = ?";
+        $result = $this->selectAll($sql,$this->prod_etype);
+        foreach($result as $row)
+        {
+            $this->attribute_set_infos[$row["attribute_set_id"]][$row["attribute_id"]] = 1;
+        }
+        unset($result);
+        $this->log("Initialized attribute_set_infos!");
+    }
+
+
     /**
      *
      * gets attribute metadata from DB and put it in attribute metadata caches
@@ -354,13 +375,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function initAttrInfos($cols)
     {
-        if ($this->prod_etype == null)
-        {
-            // Find product entity type
-            $tname = $this->tablename("eav_entity_type");
-            $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?", 
-                "catalog_product", "entity_type_id");
-        }
+        $this->fetchProdEType();
         
         // remove from candidates, those which we already know are not attributes
         $candidates = array_diff($cols, $this->_notattribs);
@@ -435,6 +450,19 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         /*
          * now we have 2 index arrays 1. $this->attrinfo which has the following structure: key : attribute_code value : attribute_properties 2. $this->attrbytype which has the following structure: key : attribute backend type value : array of : data => array of attribute_properties ,one for each attribute that match the backend type ids => list of attribute ids of the backend type
          */
+    }
+    
+    /**
+     * @param tname
+     */
+    private function fetchProdEType() {
+        if ($this->prod_etype == null)
+        {
+            // Find product entity type
+            $tname = $this->tablename("eav_entity_type");
+            $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
+				"catalog_product", "entity_type_id");
+        }
     }
 
     /**
@@ -989,8 +1017,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 }*/
                 // get attribute id
                 $attid = $attrdesc["attribute_id"];
-                // get attribute value in the item to insert based on code
+                $asid = $itemids["asid"];
 
+                // Ignore user defined attributes not in current attribute set!
+                if($attrdesc["is_user_defined"] && !isset($this->attribute_set_infos[$asid][$attid])) {
+                    continue;
+                }
+                // get attribute value in the item to insert based on code
                 $attrcode = $attrdesc["attribute_code"];
 
                 // if the attribute code is no more in item (plugins may have come into the way), continue
@@ -2013,6 +2046,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $this->checkRequired($cols);
             }
             $this->initAttrInfos(array_values($cols));
+            $this->initAttrSetInfos();
             // counter
             $this->_current_row = 0;
             // start time
