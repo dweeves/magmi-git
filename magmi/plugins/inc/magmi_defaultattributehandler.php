@@ -359,7 +359,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $urlk=$ivalue;
         if($this->_hasurlkeytable) {
             $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
-            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $ivalue));
+            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid,$storeid, $ivalue));
         }
         return $urlk;
     }
