@@ -1778,7 +1778,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public function lookup()
     {
         $t0 = microtime(true);
-        $this->log("Performing Datasouce Lookup...", "startup");
+        $this->log("Performing Datasource Lookup...", "startup");
         
         $count = $this->datasource->getRecordsCount();
         $t1 = microtime(true);
