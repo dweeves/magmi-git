@@ -376,13 +376,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public function initAttrInfos($cols)
     {
         $this->fetchProdEType();
+        $toscan = array();
         
-        // remove from candidates, those which we already know are not attributes
-        $candidates = array_diff($cols, $this->_notattribs);
-        // remove from candidates already known attributes
-        $candidates = array_diff($candidates, array_keys($this->attrinfo));
-        // now we have a count of "unknown columns" that are potential attributes
-        $toscan = array_values($candidates);
+        foreach($cols as $col) {
+            if(!isset($this->_notattribs[$col]) && !isset($this->attrinfo[$col])) {
+                $toscan[] = $col;
+            }
+        }
         if (count($toscan) > 0)
         {
             // create statement parameter string ?,?,?.....
@@ -445,7 +445,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $this->attrbytype[$bt]["ids"] = implode(",", $idlist);
             }
             // Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
-            $this->_notattribs = array_diff($cols, array_keys($this->attrinfo));
+            $notattribs = array_diff($cols, array_keys($this->attrinfo));
+            foreach($notattribs as $notattrib) {
+                $this->_notattribs[$notattrib] = 1;
+            }
         }
         /*
          * now we have 2 index arrays 1. $this->attrinfo which has the following structure: key : attribute_code value : attribute_properties 2. $this->attrbytype which has the following structure: key : attribute backend type value : array of : data => array of attribute_properties ,one for each attribute that match the backend type ids => list of attribute ids of the backend type
