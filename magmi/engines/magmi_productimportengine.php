@@ -934,46 +934,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
 
     /**
-     * Filter attribute map with item data
-     * @param $attmap attribute map to filter
-     * @param $item item to match
-     * @param $itemids item identifiers
-     * @return array filtered attribute map that matches item data
-     */
-    public function filterAttributeMap($attmap,$item,$itemids)
-    {
-        $fmap=array();
-        //code not optimized to keep php 5.2.x compat, to review with maybe dynamic inclusion
-        foreach ($attmap as $tp => $a) {
-            if($tp=="static")
-            {
-                continue;
-            }
-            foreach($a["data"] as $attrdesc)
-            {
-                if ($attrdesc["apply_to"] != null &&
-                                    strpos($attrdesc["apply_to"], strtolower($itemids["type"])) === false)
-                {
-                      // do not handle attribute if it does not apply to the product type
-                       continue;
-                }
-                $attrcode = $attrdesc["attribute_code"];
-                // if the attribute code is no more in item (plugins may have come into the way), continue
-                if (!in_array($attrcode, array_keys($item)))
-                {
-                                  continue;
-                }
-                if(!isset($fmap[$tp]))
-                {
-                    $fmap[$tp]=array("data"=>array());
-                }
-                $fmap[$tp]["data"][]=$attrdesc;
-            }
-        }
-        return $fmap;
-    }
-
-    /**
      * Create product attribute from values for a given product id
      *
      * @param $pid :
@@ -989,14 +949,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->_extra_attrs = array();
         /* now is the interesring part */
 		/* iterate on attribute backend type index */
-        $fmap=$this->filterAttributeMap($attmap,$item,$itemids);
-		foreach ($fmap as $tp => $a)
+        foreach ($attmap as $tp => $a)
         {
             /* for static types, do not insert into attribute tables */
-           /* if ($tp == "static")
+           if ($tp == "static")
             {
                 continue;
-            }*/
+            }
             
             // table name for backend type data
             $cpet = $this->tablename("catalog_product_entity_$tp");
@@ -1011,13 +970,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // iterate on all attribute descriptions for the given backend type
             foreach ($a["data"] as $attrdesc)
             {
-                // check item type is compatible with attribute apply_to
-                /*if ($attrdesc["apply_to"] != null &&
-                     strpos($attrdesc["apply_to"], strtolower($itemids["type"])) === false)
-                {
-                    // do not handle attribute if it does not apply to the product type
-                    continue;
-                }*/
                 // get attribute id
                 $attid = $attrdesc["attribute_id"];
                 $asid = $itemids["asid"];
@@ -1026,14 +978,21 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 if($attrdesc["is_user_defined"] && !isset($this->attribute_set_infos[$asid][$attid])) {
                     continue;
                 }
+                // check item type is compatible with attribute apply_to
+                if ($attrdesc["apply_to"] != null &&
+                     strpos($attrdesc["apply_to"], strtolower($itemids["type"])) === false)
+                {
+                    // do not handle attribute if it does not apply to the product type
+                	continue;
+                }
                 // get attribute value in the item to insert based on code
                 $attrcode = $attrdesc["attribute_code"];
 
                 // if the attribute code is no more in item (plugins may have come into the way), continue
-                /*if (!in_array($attrcode, array_keys($item)))
+                if (!array_key_exists($attrcode,$item))
                 {
                     continue;
-                }*/
+                }
                 // get the item value
                 $ivalue = $item[$attrcode];
                 // get item store id for the current attribute
