@@ -344,7 +344,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
 
     }
-    
+    /**
+     *
+     * gets attribute set metadata from DB and put it in attribute set metadata cache ($this->attribute_set_infos)
+     *
+     */
     public function initAttrSetInfos() {
         if(sizeof($this->attribute_set_infos) > 0)
         {
@@ -375,9 +379,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function initAttrInfos($cols)
     {
-        $this->fetchProdEType();
+        // Extracting fetchProdEType to own method (is used in initAttrSetInfos as well)
+    	$this->fetchProdEType();
         $toscan = array();
         
+        //Using isset instead of array_diff for performance reasons
+        // each col which is not in _notattribs and not in attrinfo is to be scanned
         foreach($cols as $col) {
             if(!isset($this->_notattribs[$col]) && !isset($this->attrinfo[$col])) {
                 $toscan[] = $col;
@@ -422,6 +429,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // skip already in attrinfo
             foreach ($attrinfs as $k => $a)
             {
+                // Using isset instead of in_array(..,array_keys(..)) for performance reasons
                 if (!isset($this->attrinfo[$k]))
                 {
                     $bt = $a["backend_type"];
@@ -446,6 +454,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             }
             // Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
             
+            // Using isset instead of array_diff(..,array_keys(..)) for performance reasons
             foreach($cols as $col) {
                 if(!isset($this->attrinfo[$col])) {
                     $this->_notattribs[$col] = 1;
@@ -458,7 +467,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     }
     
     /**
-     * @param tname
+     * Fetches the entity type for "catalog_product" and stores it to $this->prod_etype (if not already done).
      */
     private function fetchProdEType() {
         if ($this->prod_etype == null)
@@ -967,6 +976,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->_extra_attrs = array();
         /* now is the interesring part */
 		/* iterate on attribute backend type index */
+        
+        // Reverted extraction of method filterAttributeMap because doing the same nested loops twice is quite inefficient
+        // from a performance point of view (even if in the second run the values are filtered)
         foreach ($attmap as $tp => $a)
         {
             /* for static types, do not insert into attribute tables */
@@ -990,6 +1002,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             {
                 // get attribute id
                 $attid = $attrdesc["attribute_id"];
+                // get attribute set id
                 $asid = $itemids["asid"];
 
                 // Ignore user defined attributes not in current attribute set!
@@ -1007,6 +1020,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $attrcode = $attrdesc["attribute_code"];
 
                 // if the attribute code is no more in item (plugins may have come into the way), continue
+                // Using array_key_exists instead of in_array(..,array_keys(..)) for performance reasons
                 if (!array_key_exists($attrcode,$item))
                 {
                     continue;
