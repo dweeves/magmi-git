@@ -422,7 +422,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // skip already in attrinfo
             foreach ($attrinfs as $k => $a)
             {
-                if (!in_array($k, array_keys($this->attrinfo)))
+                if (!isset($this->attrinfo[$k]))
                 {
                     $bt = $a["backend_type"];
                     if (!isset($this->attrbytype[$bt]))
@@ -445,9 +445,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $this->attrbytype[$bt]["ids"] = implode(",", $idlist);
             }
             // Important Bugfix, array_merge_recurvise to merge 2 dimenstional arrays.
-            $notattribs = array_diff($cols, array_keys($this->attrinfo));
-            foreach($notattribs as $notattrib) {
-                $this->_notattribs[$notattrib] = 1;
+            
+            foreach($cols as $col) {
+                if(!isset($this->attrinfo[$col])) {
+                    $this->_notattribs[$col] = 1;
+                }
             }
         }
         /*
