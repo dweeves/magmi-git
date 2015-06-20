@@ -1,6 +1,7 @@
 <?php
 if(session_id()==null) {
     session_start();
+    session_write_close();
 }
 if(!isset($_REQUEST["token"]) || !isset($_SESSION["token"]) || $_REQUEST["token"]!==$_SESSION["token"])
 {
