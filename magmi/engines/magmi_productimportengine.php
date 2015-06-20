@@ -30,6 +30,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public $attrbytype = array();
     //attribute set cache
     public $attribute_sets = array();
+    //attribute set to attribute relation cache
+    public $attribute_set_infos = array();
     //product entity type
     public $prod_etype;
     //default attribute set id
