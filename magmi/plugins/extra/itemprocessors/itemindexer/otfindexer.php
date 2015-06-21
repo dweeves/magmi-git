@@ -274,22 +274,30 @@ class ItemIndexer extends Magmi_ItemProcessor
                 $pname = $row["value"];
             }
         }
-        $candidate=(isset($pburlk) ? $pburlk : Slugger::slug($pname));
+        $baseurl=(isset($pburlk) ? $pburlk : Slugger::slug($pname));
         // if we've got an url key use it, otherwise , make a slug from the product name as url key
         $urlend =$this->getParam("OTFI:useurlending",1)==1?$this->getParam("OTFI:urlending", ".html"):"";
         $pattern="^".preg_quote($candidate)."(-[[:digit:]]+)?".preg_quote($urlend).'$';
-        //check duplicates
 
-        $sql="SELECT COUNT(product_id) as cnt,store_id FROM {$this->tns["curw"]} WHERE product_id!=? AND request_path REGEXP ? GROUP BY store_id";
-        $data=$this->selectAll($sql,array($pid,$pattern));
-        $maxcnt=0;
+        //check duplicates
+        // using LIKE because it can use indexes and therefore is much faster than REGEXP
+        $sql = "SELECT request_path as path FROM {$this->tns["curw"]} WHERE product_id!=? AND request_path LIKE ?";
+        $data = $this->selectAll($sql,array($pid,$baseurl."%"));
+        
+        // fill $duplicates array with paths as key (to be able to use fast hash access (isset) when checking for duplicates
+        $duplicates = array();
         foreach($data as $line) {
-            if($line['cnt']>$maxcnt)
-            {
-                $maxcnt=$line['cnt'];
-            }
+            $duplicates[$line["path"]] = 1;
         }
-       $purlk=$candidate.($maxcnt>0?'-'.$maxcnt:'').$urlend;
+        unset($data);
+        
+        $candidate = $baseurl.$urlend;
+        $index = 0;
+        while(isset($duplicates[$candidate])) {
+            $index++;
+            $candidate = $baseurl.'-'.$index.$urlend;
+        }
+       $purlk=$candidate;
 
         if($dorewrite) {
                //rewrites SQL
