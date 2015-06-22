@@ -342,7 +342,7 @@ class ItemIndexer extends Magmi_ItemProcessor
         $this->insert($sqlprod, array($purlk,$pid));
 
  //insert rewrites
-        if(count($rewrites)>0)
+        if($dorewrite && count($rewrites)>0)
         {
 
             $fields=$this->arr2values(array_values($rewrites[0]));
