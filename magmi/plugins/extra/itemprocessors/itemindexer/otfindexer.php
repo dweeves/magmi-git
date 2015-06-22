@@ -6,6 +6,7 @@ class ItemIndexer extends Magmi_ItemProcessor
     protected $tns;
     protected $visinf;
     protected $catpaths;
+    protected $usedurls;
 
     public function getPluginInfo()
     {
@@ -274,22 +275,28 @@ class ItemIndexer extends Magmi_ItemProcessor
                 $pname = $row["value"];
             }
         }
-        $candidate=(isset($pburlk) ? $pburlk : Slugger::slug($pname));
+        $baseurl=(isset($pburlk) ? $pburlk : Slugger::slug($pname));
         // if we've got an url key use it, otherwise , make a slug from the product name as url key
         $urlend =$this->getParam("OTFI:useurlending",1)==1?$this->getParam("OTFI:urlending", ".html"):"";
-        $pattern="^".preg_quote($candidate)."(-[[:digit:]]+)?".preg_quote($urlend).'$';
         //check duplicates
-
-        $sql="SELECT COUNT(product_id) as cnt,store_id FROM {$this->tns["curw"]} WHERE product_id!=? AND request_path REGEXP ? GROUP BY store_id";
-        $data=$this->selectAll($sql,array($pid,$pattern));
-        $maxcnt=0;
-        foreach($data as $line) {
-            if($line['cnt']>$maxcnt)
-            {
-                $maxcnt=$line['cnt'];
+        if(!isset($this->usedurls)) {
+        	$this->usedurls = array();
+            $sql = "SELECT product_id,request_path as path FROM {$this->tns["curw"]}";
+            $data = $this->selectAll($sql);
+            foreach($data as $line) {
+                $this->usedurls[$line['path']] = $line['product_id'];
             }
+            unset($data);
         }
-       $purlk=$candidate.($maxcnt>0?'-'.$maxcnt:'').$urlend;
+        
+        $candidate = $baseurl.$urlend;
+        $index = 0;
+        while(isset($this->usedurls[$candidate]) && $this->usedurls[$candidate] != $pid) {
+            $index++;
+            $candidate = $baseurl.'-'.$index.$urlend;
+        }
+        $purlk=$candidate;
+        $this->usedurls[$candidate] = $pid;
 
         if($dorewrite) {
                //rewrites SQL
