@@ -152,7 +152,9 @@ foreach (array("error","warning") as $gtype)
 <?php }?>
 <?php endforeach?>
 
-<?php if(count($parser->getData("info")>0)):?>
+<?php
+$info=$parser->getData("info");
+if(count($info)>0):?>
 <div class="col">
 	<h3>Runtime infos</h3>
 	<div class="runtime_info">
