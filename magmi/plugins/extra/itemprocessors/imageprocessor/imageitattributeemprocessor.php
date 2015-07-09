@@ -45,7 +45,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.33",
+        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.33a",
             "url"=>$this->pluginDocUrl("Image_attributes_processor"));
     }
 
@@ -655,7 +655,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         // automatically add modified attributes if not found in datasource
         
         // automatically add media_gallery for attributes to handle
-        $imgattrs = array_intersect(array_merge($this->_img_baseattrs, array('media_gallery')), $cols);
+        $imgattrs = array_intersect(array_merge($this->_img_baseattrs, array('media_gallery','image_remove')), $cols);
         if (count($imgattrs) > 0)
         {
             $this->_active = true;
