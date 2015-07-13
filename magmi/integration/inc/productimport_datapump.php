@@ -65,6 +65,8 @@ class Magmi_ProductImport_DataPump
             // process columns
             $this->_engine->callPlugins("itemprocessors", "processColumnList", $this->_importcolumns);
             $this->_engine->initAttrInfos($this->_importcolumns);
+            //initializing attribute set infos
+            $this->_engine->initAttrSetInfos();
         }
         $res = $this->_engine->processDataSourceLine($item, $this->_rstep, $this->_stats["tstart"], 
             $this->_stats["tdiff"], $this->_stats["lastdbtime"], $this->stats["lastrec"]);
