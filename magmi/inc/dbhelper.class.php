@@ -20,6 +20,7 @@ class DBHelper
     protected $prepared = array();
     protected $_timecounter = null;
     protected $_tcats;
+    protected $_tables2columns = array();
 
     public function __construct()
     {
@@ -656,6 +657,24 @@ class DBHelper
         if ($return)
         {
             return $results;
+        }
+    }
+    
+    /**
+     * Returns an array of columns names for the given table name.
+     * @param string $tablename name of the table (without table prefix, as it will be applied)
+     */
+    public function cols($tablename) {
+        if(isset($this->_tables2columns[$tablename])) {
+            return $this->_tables2columns[$tablename];
+        } else {
+            $columnNames = array();
+            $data = $this->select("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?",array($this->tablename($tablename)));
+            foreach($data as $record) {
+                $columnNames[] = $record['COLUMN_NAME'];
+            }
+            $this->_tables2columns[$tablename] = $columnNames;
+            return $columnNames;
         }
     }
 }
