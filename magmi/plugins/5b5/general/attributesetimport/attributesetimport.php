@@ -169,7 +169,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Attribute Set Importer","author"=>"5byfive GmbH","version"=>"0.0.1","url"=>$this->pluginDocUrl("5b5_Attribute_Set_Importer"));
+        return array("name"=>"Attribute Set Importer","author"=>"5byfive GmbH","version"=>"0.0.1","url"=>$this->pluginDocUrl("Attribute_set_importer"));
     }
 
     /**

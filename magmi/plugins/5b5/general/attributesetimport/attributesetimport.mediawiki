@@ -39,10 +39,11 @@ If you use JSON-style array notation there is more control over what will be kep
  [['Default'],['Set1','name'],['Set2','name','Group1']]
 will keep ALL associations of any attribute to attribute set 'Default', the association of attribute 'name' with attribute set 'Set1' regardless of in which group the attribute is, and the association of attribute 'name' with attribute set 'Set2' but only if it is in group 'Group1'.
 The inner arrays are ordered, the order is always 'set name','attribute code','group name' and values can only be omitted from the right.
-If you need more flexibility, also have a look at the [[#Add these attribute associations to given CSV data]] option!
+If you need more flexibility, also have a look at the [[#Add these attribute associations to given CSV data|Add these attribute associations to given CSV data]] option!
 
+<div id="magmi_delete"/>
 ==== Delete <entity type> marked "magmi:delete" = 1 ====
-'''magmi:delete''' is used just like in the Product Deleter plugin. If this option is activated and you add a column names "magmi:delete" to your CSV file, each record having a "1" in this column will be deleted.
+'''magmi:delete''' is used just like in the Product Deleter plugin. If this option is activated and you add a column named "magmi:delete" to your CSV file, each record having a "1" in this column will be deleted.
 
 ==== Create <entity type> from CSV which are not in database ====
 If this switch is active, records from CSV wich don't exist in the database will be created according to the given data.
@@ -60,7 +61,11 @@ Within attribute set CSV data a column "magmi:groups" may be added. The format o
 So, if you want to set three groups for an attribute set named "Group1", "Group2" and "Group3", you would probably set
  Group1:1,Group2:2,Group3:3
 as the value for "magmi:groups" column in the atrribute set's CSV row.
-The colon and following sort order may be omitted, the sort order is calculated as <sort order of previous element plus 1>, if no sort order is given for the first element, it will obtain sort order 0.
+The colon and following sort order may be omitted, the sort order is calculated as <sort order of previous element plus 1>, if no sort order is given for the first element, it will obtain sort order 0. So this
+ Group1,Group2,Group3:6,Group4
+would be equivalent to 
+ Group1:0,Group2:1,Group3:6,Group4:7
+
 One of the groups may optionally be set as the default group by giving its name in an extra column "magmi:default_group".
 
 ''All options for group import have a "per attribute set" focus, so will only have effect for updated/imported attribute sets.''
@@ -71,15 +76,23 @@ The first line should therefore contain the column names (attribute_set_name,att
 The following lines contain the additional data rows (obviously in the same order).
 
 Seems easy but not very useful, though?
-There is one specialty: A single asterisk "*" may be used as value for attribute set names to denote "add this attribute to each attribute set given within the original CSV file".
+There is one specialty: A single asterisk "*" may be used as value for attribute set names to denote "add this attribute to each attribute set given within the original attribute associations CSV file".
 This allows to define a default set of attributes for each attribute set without putting these default attributes in the CSV file on each export.
+
+If you entered this into the textarea
+ attribute_set_name,attribute_code,attribute_group_name
+ *,sku,General
+ *,name,General
+ *,description,General
+ MySet,MyAttribute,MyGroup
+the Attribute Set Importer would add the attributes "sku", "name" and "description" in ''each'' given attribute set in your attribute associations CSV file. (So there must be at least one association for each respective set in the CSV file for this to take effect! ) Whereas "MyAttribute" will only be added to "MySet"...
 
 === CSV data format ===
 ==== General considerations about import files ====
-From the plugin's perspective, the only mandatory columns in the CSV files are the "name" columns identifying the record (attribute_code for attributes, attribute_set_name for attribute sets, both of them for associations).
+From the plugin's perspective, the only mandatory columns in the CSV files are the "name" columns identifying the record (attribute_code for attributes, attribute_set_name for attribute sets, both of them plus attribute_group_name for associations).
 All further columns will be inserted/updated if given or just ignored if not. (Further columns would nevertheless be mandatory if the value is not nullable AND there is no default value in database, fortunately this is not the case.).
 All other column names from the respective database tables can be used as columns in the CSV data, just don't use the primary key columns! The records are identified by the "names" and using primary keys columns in CSV could or most likely will lead to destroyed data in your database! If column names don't match between CSV and database, the data will be ignored (there will be no error message). In other words: extra columns are ignored.
-There are a few extra columns defined by this plugin: "magmi:delete" (all entity types, see [[Delete <entity type> marked "magmi:delete" = 1]]), "magmi:groups" and "magmi:default_group" (only for attribute sets, see [[#Attribute Set Groups import]]).
+There are a few extra columns defined by this plugin: "magmi:delete" (all entity types, see [[#magmi_delete|Delete <entity type> marked "magmi:delete" = 1]]), "magmi:groups" and "magmi:default_group" (only for attribute sets, see [[#Attribute Set Groups import|Attribute Set Groups import]]).
 
 
 ==== Entity type "Attribute" ====
@@ -349,7 +362,7 @@ Identified by '''attribute_set_name'''
 
 ==== Entity type "Attribute to attribute set association" ====
 Updates database table '''eav_entity_attribute'''
-Identified by '''attribute_set_name''' and '''attribute_code'''
+Identified by '''attribute_set_name''', '''attribute_code''' and '''attribute_group_name'''
 
 {| cellpadding="5" cellspacing="0" border="1"
 !Column name
