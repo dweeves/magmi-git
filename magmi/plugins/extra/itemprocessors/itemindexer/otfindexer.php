@@ -69,10 +69,11 @@ class ItemIndexer extends Magmi_ItemProcessor
      */
     public function getItemCategoryPaths($pid)
     {
-        $sql = "SELECT cce.path as cpath,SUBSTR(cce.path,LOCATE('/',cce.path,3)+1) as cshortpath,csg.default_store_id as store_id,cce.entity_id as catid
+        $sql = "SELECT cce.path as cpath,SUBSTR(cce.path,LOCATE('/',cce.path,3)+1) as cshortpath,cs.store_id,cce.entity_id as catid
 			  FROM {$this->tns["ccp"]} as ccp 
 			  JOIN {$this->tns["cce"]} as cce ON cce.entity_id=ccp.category_id 
 			  JOIN {$this->tns["csg"]} as csg ON csg.root_category_id=SUBSTR(SUBSTRING_INDEX(cce.path,'/',2),LOCATE('/',SUBSTRING_INDEX(cce.path,'/',2))+1)
+			  JOIN {$this->tns["cs"]} as cs ON cs.group_id=csg.group_id
 			  WHERE ccp.product_id=?";
         $result = $this->selectAll($sql, $pid);
         $cpaths = array();
