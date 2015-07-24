@@ -61,21 +61,28 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $cpsl = $this->tablename("catalog_product_super_link");
         $cpr = $this->tablename("catalog_product_relation");
         $cpe = $this->tablename("catalog_product_entity");
+
         $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
 				JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
 				WHERE cpsl.parent_id=?";
         $this->delete($sql, array($pid));
+
         // recreate associations
         $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id  
 				  FROM $cpe as cpec 
 				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
-			  	  WHERE cpec.entity_id=?";
+			  	  WHERE cpec.entity_id=?
+			  	  ORDER BY cpes.entity_id";
+
         $this->insert($sql, array_merge($conddata, array($pid)));
+
         $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id  
 				  FROM $cpe as cpec 
 				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
-			  	  WHERE cpec.entity_id=?";
+			  	  WHERE cpec.entity_id=?
+                  ORDER BY cpes.entity_id";
         $this->insert($sql, array_merge($conddata, array($pid)));
+
         unset($conddata);
     }
 
