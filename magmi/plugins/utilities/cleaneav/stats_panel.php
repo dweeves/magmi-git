@@ -21,13 +21,13 @@ foreach ($stats as $type => $data)
 {
     ?>
 	<?php
-    
+
     $style = "";
     if ($data["pc"] == 0)
     {
         $style = "background-color:#88ff88";
     }
-    else 
+    else
         if ($data["pc"] < 15)
         {
             $style = "background-color:#ffff88";
@@ -43,7 +43,7 @@ foreach ($stats as $type => $data)
 				<td><?php echo $data["empty"]?></td>
 				<td><?php echo $data["total"]?></td>
 				<td><?php echo $data["pc"]?></td>
-			</tr>	
+			</tr>
 <?php
 }
 ?>

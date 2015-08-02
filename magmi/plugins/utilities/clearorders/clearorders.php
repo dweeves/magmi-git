@@ -21,15 +21,15 @@ class ClearOrdersUtility extends Magmi_UtilityPlugin
             "sales_flat_invoice","sales_flat_invoice_comment","sales_flat_invoice_grid","sales_flat_invoice_item",
             "sales_flat_creditmemo","sales_flat_creditmemo_comment","sales_flat_creditmemo_grid",
             "sales_flat_creditmemo_item","downloadable_link_purchased","downloadable_link_purchased_item");
-        
+
         foreach ($tables as $table)
         {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
-        
+
         $sql = "SET FOREIGN_KEY_CHECKS = 1";
         $this->exec_stmt($sql);
-        
+
         echo "Orders cleared";
     }
 

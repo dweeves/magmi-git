@@ -14,19 +14,19 @@ require_once(__DIR__."/../../integration/inc/magmi_datapump.php");
 
 class PluginSuiteTest extends  PHPUnit_Framework_TestCase
 {
-	
+
 	public static function setupBeforeClass()
 	{
 		//copying magmi config to current test directory
 		copy(__DIR__."/../../conf/magmi.ini",__DIR__."/test.ini");
 	}
-	
+
 	public  static function tearDownAfterClass()
 	{
 		//remove test.ini
 		unlink(__DIR__."/test.ini");
 	}
-	
+
     public function testBundle()
     {
         $conf=Magmi_Config::getInstance();
@@ -65,5 +65,5 @@ class PluginSuiteTest extends  PHPUnit_Framework_TestCase
     }
 
 
-   
+
 }

@@ -120,7 +120,7 @@ class Properties
                                 $content .= $key2 . "[] = \"" . $this->esc($elem2[$i]) . "\"\n";
                             }
                         }
-                        else 
+                        else
                             if ($elem2 == "")
                                 $content .= $key2 . " = \n";
                             else
@@ -140,7 +140,7 @@ class Properties
                             $content .= $key . "[] = \"" . $this->esc($elem[$i]) . "\"\n";
                         }
                     }
-                    else 
+                    else
                         if ($elem == "")
                             $content .= $key . " = \n";
                         else
@@ -148,7 +148,7 @@ class Properties
                 }
             }
         }
-        
+
         if (!$handle = fopen($path, 'w'))
         {
             return false;

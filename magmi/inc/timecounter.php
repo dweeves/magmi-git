@@ -1,31 +1,31 @@
 <?php
 
 /**
- * Time counter class 
+ * Time counter class
  * This class provides a way to measure :
- * 
- * - time 
+ *
+ * - time
  * - counters
- * 
+ *
  * store results into many categories for many timing aspects
- * 
+ *
  * It is based on 2 levels :
  * - sources : labels under which timing categories will be stored, it is a label, most of the time, a method name
  * - categories : for each source, you can store many infos like "inDB","processing" and so on....
- * 
+ *
  * time measure can be divided into phases, so you can measure different subparts of your processing like "initialization","lookup" aso....
  * many counters can also be defined at the same category leve
  * At the end, the timecounter will give this kind of results
- * 
- *   + cat1 
+ *
+ *   + cat1
  *     +timers
  *       + phase1 => time for phase 1 of cat1 of source 1
  *       + phase2 => time for phase 2 of cat1 of source 1
  *     +counters
  *       + counter1 => value of counter 1 of cat 1 of source 1
  *   + cat2
- * 
- * Sources, categories & phases could be added dynamically, each time a new phase/counter/category or source is 
+ *
+ * Sources, categories & phases could be added dynamically, each time a new phase/counter/category or source is
  * declared trough calls to addCounter, initTime,exitTime that does not exist yet, a container is created for it.
  *
  * sources are tags. categories are more like containers
@@ -117,7 +117,7 @@ class TimeCounter
         {
             $tcats = array_keys($this->_timingcats);
         }
-        
+
         foreach ($tcats as $tcat)
         {
             if (!isset($this->_timingcats[$tcat]))
@@ -191,7 +191,7 @@ class TimeCounter
         }
         if (count($this->_timingcontext) == 0)
             return;
-        
+
         if (!isset($tcat))
         {
             $tcats = $this->_timingcats;
@@ -201,7 +201,7 @@ class TimeCounter
             $tcats = array($tcat=>$this->_timingcats[$tcat]);
         }
         $t = microtime(true);
-        
+
         foreach ($tcats as $tcat => $dummy)
         {
             if (!isset($this->_timingcats[$tcat]["_timers"][$phase]))
@@ -242,9 +242,9 @@ class TimeCounter
         {
             $targets = array($src);
         }
-        
+
         $ctargets = count($targets);
-        
+
         if ($ctargets == 0)
             return;
         if ($tcat == null)

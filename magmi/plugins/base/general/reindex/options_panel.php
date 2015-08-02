@@ -36,13 +36,13 @@ foreach ($idxarr as $indexname)
 			return outs.join(",");
 		};
 
-		
-	
+
+
 		fcheck=function(t)
 		{
 			$$('._magindex').each(function(it){it.checked=t});
 			updateIndexes();
-			
+
 		}
 
 		updateIndexes=function()

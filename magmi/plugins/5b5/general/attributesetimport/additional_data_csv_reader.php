@@ -5,20 +5,20 @@
  *
  */
 class AdditionalDataCSVReader extends Magmi_CSVReader {
-    
+
     /**
      * Only used when using addWildcardData functions.
      * Stores all used values in original (CSV) data for each column.
      * @var array (column name => array of values)
      */
     private $_availableValuesPerColumn=null;
-    
+
     /**
      * Array storing the manually added data.
      * @var array of records( array ( column name => column data ) )
      */
     private $_addedData=array();
-    
+
     /**
      * Index for iteration.
      * @var integer
@@ -67,7 +67,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
         }
         return array($record);
     }
-    
+
     /**
      * <p>Calls expandWildcardsSingle for each record in the given array and merges the results into one array.</p>
      * @param array $records array of records
@@ -84,7 +84,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
     /**
      * <p>Adds the given data (given as a csv formatted string with headers in first line)
      * to the CSV Reader data. Wildcards ("*") are allowed to inflate data for every possible value in this column.</p>
-     * 
+     *
      * @param string $csv data to add as a csv formatted multiline string
      */
     public function addWildcardDataCSV($csv) {
@@ -103,7 +103,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
     /**
      * <p>Adds the given data (given as an array of records (each by itself an associative array of the form column name => column value)) to the CSV Reader data.
      * Wildcards ("*") are allowed to inflate data for every possible value in this column.</p>
-     * 
+     *
      * @param string $csv data to add as a csv formatted multiline string
      */
     public function addWildcardData($data) {

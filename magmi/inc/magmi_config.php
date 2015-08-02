@@ -4,9 +4,9 @@ require_once ("properties.php");
 /**
  * Directory based configuration object
  * Uses a property file
- * 
+ *
  * @author dweeves
- *        
+ *
  */
 class DirbasedConfig extends Properties
 {
@@ -55,7 +55,7 @@ class DirbasedConfig extends Properties
         {
             $name = $this->inifile;
         }
-        
+
         if (!file_exists($name))
         {
             $this->save();
@@ -209,7 +209,7 @@ class Magmi_Config extends DirbasedConfig
              $this->_default=true;
         }
 
-      
+
         return $this;
     }
 

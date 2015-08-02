@@ -37,7 +37,7 @@ $epc->setPropsFromFlatArray(
         "PLUGINS_ITEMPROCESSORS:classes"=>$iplist));
 if ($epc->save())
 {
-    
+
     // saving plugins params
     foreach ($pflist as $pclass => $pfamily)
     {
@@ -47,7 +47,7 @@ if ($epc->save())
             $paramlist = $plinst->getPluginParamNames();
             $sarr = $plinst->getPluginParams($_REQUEST);
             $parr = $plinst->getPluginParamsNoCurrent($_REQUEST);
-            
+
             foreach ($paramlist as $pname)
             {
                 if (!isset($parr[$pname]))

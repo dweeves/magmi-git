@@ -48,11 +48,11 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $this->_link_type_id = $this->selectone($sql, array("super"), "link_type_id");
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_pos_attr_id = $this->selectone($sql, array($this->_link_type_id,'position'), 
+        $this->_super_pos_attr_id = $this->selectone($sql, array($this->_link_type_id,'position'),
             'product_link_attribute_id');
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_qty_attr_id = $this->selectone($sql, array($this->_link_type_id,'qty'), 
+        $this->_super_qty_attr_id = $this->selectone($sql, array($this->_link_type_id,'qty'),
             'product_link_attribute_id');
     }
 
@@ -79,9 +79,9 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     /**
      * Links the simple products to the group
      *
-     * @param type $pid            
-     * @param type $cond            
-     * @param type $conddata            
+     * @param type $pid
+     * @param type $cond
+     * @param type $conddata
      */
     public function dolink($pid, $cond, $gr = true, $conddata = array())
     {
@@ -105,7 +105,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             $sskus[$skuinfo[0]] = count($skuinfo) > 1 ? $skuinfo[1] : $i;
             $conddata[$i] = $skuinfo[0];
         }
-        
+
         // if group reset
         if ($gr)
         {
@@ -118,7 +118,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             $this->delete($sql, array($pid));
         }
         // recreate associations
-        $sql = "INSERT IGNORE INTO $cpsl (`parent_id`,`product_id`) 
+        $sql = "INSERT IGNORE INTO $cpsl (`parent_id`,`product_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
@@ -129,13 +129,13 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             $sql = "select link_type_id from $cplt where code=?";
             $this->_linktype = $this->selectone($sql, 'super', 'link_type_id');
         }
-        $sql = "INSERT IGNORE INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`) 
+        $sql = "INSERT IGNORE INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id, ?
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
             WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge(array($this->_linktype), $conddata, array($pid)));
-        $sql = "INSERT IGNORE INTO $cpr (`parent_id`,`child_id`) 
+        $sql = "INSERT IGNORE INTO $cpr (`parent_id`,`child_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
@@ -170,7 +170,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * Wrapper for dolink
      *
      * @see dolink($pid, $cond, $conddata = array())
-     * @param type $pid            
+     * @param type $pid
      */
     public function autoLink($pid, $gr = true)
     {
@@ -210,8 +210,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * Wrapper for dolink
      *
      * @see dolink($pid, $cond, $conddata = array())
-     * @param type $pid            
-     * @param type $skulist            
+     * @param type $pid
+     * @param type $skulist
      */
     public function fixedLink($pid, $skulist, $gr = true)
     {
@@ -224,7 +224,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      * Determines which method is being used for linking the simple products
      * to the group
      *
-     * @param type $item            
+     * @param type $item
      * @return string
      */
     public function getMatchMode($item)
@@ -261,7 +261,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             }
             return true;
         }
-        
+
         $pid = $params["product_id"];
         $groupreset = !isset($item['group_reset']) || $item['group_reset'] == 1;
         $matchmode = $this->getMatchMode($item);

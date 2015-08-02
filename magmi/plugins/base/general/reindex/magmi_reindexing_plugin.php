@@ -25,14 +25,14 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
         $tables = array("catalog_product_entity_varchar","catalog_product_entity_int","catalog_product_entity_text",
             "catalog_product_entity_decimal","catalog_product_entity_datetime","catalog_product_entity_media_gallery",
             "catalog_product_entity_tier_price");
-        
+
         $cpe = $this->tablename('catalog_product_entity');
         $this->log("Optmizing EAV Tables...", "info");
         foreach ($tables as $t)
         {
             $this->log("Optmizing $t....", "info");
             $sql = "DELETE ta.* FROM " . $this->tablename($t) . " as ta
-			LEFT JOIN $cpe as cpe on cpe.entity_id=ta.entity_id 
+			LEFT JOIN $cpe as cpe on cpe.entity_id=ta.entity_id
 			WHERE ta.store_id=0 AND cpe.entity_id IS NULL";
             $this->delete($sql);
             $this->log("$t optimized", "info");
@@ -49,7 +49,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             // removing records in flat tables that are no more linked to entries in catalog_product_entity table
             // for some reasons, this seem to happen
             $sql = "DELETE cpf.* FROM $tname as cpf
-			LEFT JOIN " . $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id 
+			LEFT JOIN " . $this->tablename('catalog_product_entity') . " as cpe ON cpe.entity_id=cpf.entity_id
 			WHERE cpe.entity_id IS NULL";
             $this->delete($sql);
         }
@@ -84,7 +84,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
         {
             $tstart = microtime(true);
             $this->log("Reindexing $idx....", "info");
-            
+
             // Execute Reindex command, and specify that it should be ran from Magento directory
             $out = $this->_mdh->exec_cmd($cl, "--reindex $idx", $this->_mdh->getMagentoDir());
             $this->log($out, "info");

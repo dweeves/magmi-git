@@ -37,7 +37,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $ea = $this->tablename("eav_attribute");
         $result = $this->selectAll(
             "SELECT cs.store_id,csg.website_id,cce.entity_type_id,cce.path,ccev.value as name
-								FROM $cs as cs 
+								FROM $cs as cs
 								JOIN $csg as csg on csg.group_id=cs.group_id
 								JOIN $t as cce ON cce.entity_id=csg.root_category_id
 								JOIN $ea as ea ON ea.attribute_code='name' AND ea.entity_type_id=cce.entity_type_id
@@ -96,7 +96,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $sql = "SELECT cet.entity_id FROM $cet as cet
 			  JOIN $cetv as cetv ON cetv.entity_id=cet.entity_id AND cetv.attribute_id=? AND cetv.value=?
 			  WHERE cet.parent_id=? ";
-        $catid = $this->selectone($sql, 
+        $catid = $this->selectone($sql,
             array($this->_cattrinfos["varchar"]["name"]["attribute_id"],$cattr["name"],$parentid), "entity_id");
         return $catid;
     }
@@ -129,7 +129,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $data = array($info["entity_type_id"],$info["attribute_set_id"],$parentid,$info["position"],$info["level"],"",0);
         // insert in db,get cat id
         $catid = $this->insert($sql, $data);
-        
+
         unset($data);
         // set category path with inserted category id
         $sql = "UPDATE $cet SET path=?,created_at=NOW(),updated_at=NOW() WHERE entity_id=?";
@@ -142,7 +142,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             $inserts = array();
             $data = array();
             $tb = $this->tablename("catalog_category_entity_$tp");
-            
+
             foreach ($attinfo as $attrcode => $attdata)
             {
                 if (isset($attdata["attribute_id"]))
@@ -155,7 +155,7 @@ class CategoryImporter extends Magmi_ItemProcessor
                     $data[] = $cattrs[$attrcode];
                 }
             }
-            
+
             $sql = "INSERT INTO $tb (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " .
                  implode(",", $inserts) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
             $this->insert($sql, $data);
@@ -172,7 +172,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $clist = array();
         foreach ($cdefs as $cdef)
         {
-            
+
             $parts = explode("::", $cdef);
             $cp = count($parts);
             $cname = trim($parts[0]);
@@ -222,10 +222,10 @@ class CategoryImporter extends Magmi_ItemProcessor
             $catpos[] = (count($a) > 1 ? $a[1] : "0");
             // remove position to build catpart array
         }
-        
+
         // build a position free category def
         $catdef = implode($this->_tsep, $catparts);
-        
+
         // if full def is in cache, use it
         if ($this->isInCache($catdef, $srp))
         {
@@ -236,7 +236,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             // category ids
             $catids = array();
             $lastcached = array();
-            
+
             // path as array , basepath is always "/" separated
             $basearr = explode("/", $srdefs[$srp]["path"]);
             // for each cat tree branch
@@ -295,7 +295,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         {
             $catids[$i] .= "::" . $catpos[$i];
         }
-        
+
         return $catids;
     }
 
@@ -358,7 +358,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         if (preg_match_all("|\[(.*?)\]|", $item["categories"], $matches))
         {
             $cm1 = count($matches[1]);
-            
+
             for ($i = 0; $i < $cm1; $i++)
             {
                 $rootpaths['__error__'] = $matches[1];
@@ -367,7 +367,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $sids = array_keys($this->_catroots);
         $srp = $this->_catroots[$sids[0]];
         $rootpaths["%RP:base%"] = array("path"=>$srp["path"],"rootarr"=>$srp["rootarr"]);
-        
+
         return $rootpaths;
     }
 
@@ -383,7 +383,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             // handle escaping
             $icats = $this->processEscaping($item["categories"]);
             // first apply category root on each category
-            
+
             $root = $this->getParam("CAT:baseroot", "");
             if ($root != "")
             {
@@ -401,10 +401,10 @@ class CategoryImporter extends Magmi_ItemProcessor
             }
             // get store root category paths, this may modify categories !!!!!
             $rootpaths = $this->getStoreRootPaths($item);
-            
+
             // process escaping at the end
             $icats = $this->processEscaping($item["categories"]);
-            
+
             if (count($rootpaths["__error__"]) > 0)
             {
                 $this->log("Cannot find site root with names : " . implode(",", $rootpaths["__error__"]), "error");
@@ -424,7 +424,7 @@ class CategoryImporter extends Magmi_ItemProcessor
                 }
                 $catids = array_unique(array_merge($catids, $cdef));
             }
-            
+
             // assign to category roots
             if ($this->getParam("CAT:lastonly", 0) == 0)
             {
@@ -460,7 +460,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         // automatically update all children_count for catalog categories
         $cce = $this->tablename("catalog_category_entity");
         $sql = "UPDATE  $cce as cce
-		LEFT JOIN 
+		LEFT JOIN
 			(SELECT s1.entity_id as cid, COALESCE( COUNT( s2.entity_id ) , 0 ) AS cnt
 				FROM $cce AS s1
 				LEFT JOIN $cce AS s2 ON s2.parent_id = s1.entity_id

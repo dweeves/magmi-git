@@ -8,12 +8,12 @@ require_once ("name2id_decoding.php");
 
 /**
  * Attribute/Attribute Set/Attribute Set Associations importer plugin for Magmi framework
- * 
+ *
  * This Plugin imports attributes, attribute sets with groups and the corresponding attribute-to-set associations from 3 different csv files to the magento database before the product update will start.
  * It lets you choose for each entity type (attributes, sets, associations) if you want to update existing, create new, delete marked records and/or prune all records which were not given in your import data.
  *
  * @author 5byfive GmbH (T.Rosenstiel) based on code (Magmi framework, particularly CSVReader and CSV Options) by Dweeves
- * 
+ *
  * Copyright (C) 2015 by 5byfive GmbH (T. Rosenstiel) and Dweeves (S.BRACQUEMONT)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,10 +22,10 @@ require_once ("name2id_decoding.php");
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,7 +41,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * @var integer
      */
     protected $_prod_etype;
-    
+
     /**
      * Config parameters for call to updateGeneric when processing attributes.
      * @var array
@@ -55,7 +55,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     'verbose'=>true,
                     'fetchSystemAttributeIdsSql'=>"select attribute_id from ##eav_attribute## where is_user_defined = 0"
             ];
-    
+
     /**
      * Config parameters for call to updateGeneric when processing attribute sets.
      * @var array
@@ -68,7 +68,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     'elementPrefix'=>'5B5ASI',
                     'verbose'=>true
     ];
-    
+
     /**
      * Config parameters for call to updateGeneric when processing attribute set associations.
      * @var array
@@ -82,7 +82,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     'verbose'=>true,
                     'fetchSystemAttributeIdsSql'=>"select entity_attribute_id from ##eav_entity_attribute## where attribute_id in (select attribute_id from ##eav_attribute## where is_user_defined = 0)"
     ];
-    
+
     /**
      * Configuration for the Name2IdDecoder used for attribute associations "decoding".
      * @var array
@@ -108,7 +108,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                     'additionalIdColumn' => 'attribute_set_id'
                                 ]
     ];
-    
+
     /**
      * Config parameters for call to updateGeneric when processing attribute set groups.
      * @var array
@@ -121,14 +121,14 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 'elementPrefix'=>'5B5AGI',
                 'verbose'=>false
     ];
-    
+
     public function initialize($params)
     {
     }
 
     /**
      * Copied from CSV_Datasource (redesign class structure?)
-     * 
+     *
      * @param string $prefix the prefix to use when retreiving options values from configuration (without ':')
      * @param string $resolve if set to true,return associated realpath
      */
@@ -191,7 +191,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         {
             $fg->setCookie($cookies);
         }
-        
+
         $this->log("Fetching $prefix: $url", "startup");
         // output filename (current dir+remote filename)
         $csvdldir = dirname(__FILE__) . "/downloads";
@@ -200,7 +200,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             @mkdir($csvdldir);
             @chmod($csvdldir, Magmi_Config::getInstance()->getDirMask());
         }
-        
+
         $outname = $csvdldir . "/" . basename($url);
         $ext = substr(strrchr($outname, '.'), 1);
         if ($ext != "txt" && $ext != "csv")
@@ -220,12 +220,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             }
         }
         $fg->copyRemoteFile($url, $outname);
-        
+
         // return the csv filename
         return $outname;
     }
-    
-    
+
+
     /**
      * <p>Gets the options for the import file from the plugin options (uses options with given prefix),
      * initializes and opens the CSVReader for further processing.
@@ -234,7 +234,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      */
     private function prepareCSV($prefix) {
         $csvreader = new Magmi_CSVReader();
-        
+
         // for attribute asociations use AdditionalDataCSVReader
         if($prefix == '5B5AAI') $csvreader = new AdditionalDataCSVReader();
         $csvreader->bind($this);
@@ -247,7 +247,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             $csvreader->initialize($this->_params);
         }
         $csvreader->checkCSV();
-        
+
         // add additional (wildcarded) data for attribute associations
         if($prefix == '5B5AAI') {
             $this->log('Appending/inflating data with configured data...','startup');
@@ -258,7 +258,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         $csvreader->getColumnNames();
         return $csvreader;
     }
-    
+
     /**
      * Performs the attribute import.
      */
@@ -279,7 +279,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         $etiCondition = ['entity_type_id' => $this->_prod_etype];
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_SET_ARGS,$etiCondition,$etiCondition);
     }
-    
+
     /**
      * Performs the attribute associations import.
      */
@@ -287,16 +287,16 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
         $etiCondition = ['entity_type_id' => $this->_prod_etype];
-        
+
         // dynamically add product entity type id to decoder options
         $decoderArgs = array_merge_recursive($this->ATTRIBUTE_SET_ASSOCIATION_DECODER_ARGS,
                 ['attribute_set_name'=>['conditions' =>['entity_type_id' => $this->_prod_etype]],
                         'attribute_code'=>['conditions' =>['entity_type_id' => $this->_prod_etype]]]);
-        
+
         $decoder = new Name2IdDecoder($this,$decoderArgs);
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_SET_ASSOCIATION_ARGS,$etiCondition,$etiCondition,$decoder);
     }
-    
+
     /**
      * (non-PHPdoc)
      * The import logic is implemented in beforeImport because the attribute import should be done BEFORE importing the products.
@@ -306,7 +306,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     {
         $this->log('Attribute Set Importer started...','startup');
         $startTime = microtime(true);
-        
+
         // perform attribute import (if enabled)
         if($this->getParam('5B5ATI:enable','on')=='on') {
             $csvreader = $this->prepareCSV('5B5ATI');
@@ -314,7 +314,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             $csvreader->closeCSV();
             unset($csvreader);
         }
-        
+
         // perform attribute set import (if enabled)
         if($this->getParam('5B5ASI:enable','on')=='on') {
             $csvreader = $this->prepareCSV('5B5ASI');
@@ -322,7 +322,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             $csvreader->closeCSV();
             unset($csvreader);
         }
-        
+
         // perform attribute associations import (if enabled)
         if($this->getParam('5B5AAI:enable','on')=='on') {
             $csvreader = $this->prepareCSV('5B5AAI');
@@ -331,27 +331,27 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             unset($myreader);
             unset($csvreader);
         }
-        
+
         // and that's it!
         $timediff = microtime(true) - $startTime;
         $this->log("Attribute Set Importer finished after $timediff seconds.",'startup');
-        
+
     }
-    
+
     /**
      * <p>Fetches data from given table returning an associative MultiDimArray which uses the values of the columns given in  $nameColumnNames as keys
      * and the value from $idColumnName as values.</p>
      * @param string $tableName name of the table to fetch data from (without table prefix)
      * @param string $idColumnName name of table column to use as values for resulting array
      * @param array $nameColumnNames names of columns to use as keys for resulting array
-     * @param array $conditions associative array defining conditions key is the column name, value the condition value (SQL: ... WHERE $key = $value... ) 
+     * @param array $conditions associative array defining conditions key is the column name, value the condition value (SQL: ... WHERE $key = $value... )
      */
     public function fetchName2Ids($tableName,$idColumnName,$nameColumnNames,$conditions) {
-        
+
         // prepare array names $allColumns with all coumns to fetch from database
         $allColumns = $nameColumnNames;
         array_unshift($allColumns,$idColumnName);
-        
+
         // fetch data
         $data = $this->fetch ($tableName,$allColumns,$conditions);
 
@@ -368,14 +368,14 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         unset($data);
         return $resultByName;
     }
-    
+
     /**
      * <p>Executes a select which could be described with the following preudo SQL:<br/>
      * <code>SELECT $columns FROM $tableName WHERE [for each entry in $conditions:] $key = $value</code><br/>
      * and returns the result.</p>
      * @param string $tableName name of the table to fetch data from. (without table prefix)
      * @param array $columns names of the table columns to fetch.
-     * @param array $conditions associative array defining conditions key is the column name, value the condition value (SQL: ... WHERE $key = $value... ) 
+     * @param array $conditions associative array defining conditions key is the column name, value the condition value (SQL: ... WHERE $key = $value... )
      */
     private function fetch($tableName,$columns,$conditions) {
         $sql = "SELECT ".(isset($columns)?implode(',',$columns):"*")." FROM ".$this->tablename($tableName);
@@ -400,7 +400,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * @param string $idColumnName name of table column of the primary key column (in ALL tables!)
      * @param array $nameColumnNames names of columns to use as keys for resulting array (all of which must belong to first table)
      * @param array $conditions associative array defining conditions key is the column name, value the condition value (SQL: ... WHERE $key = $value... ). All used columns MUST belong to first table!
-     */ 
+     */
     private function fetchGeneric($tables,$idColName,$nameColNames,$conditions) {
         $resultByNames = new MultiDimArray();
         $namesById = array();
@@ -432,11 +432,11 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         unset($namesById);
         return $resultByNames;
     }
-    
+
     /**
      * <p>Uses data given via a CSVReader or another class implementing getLinesCount(), getColumnNames() and getNextRecord() to update / insert / delete / and prune
      * data into/from table(s) given in $config, according to the configured plugin options.</p>
-     * 
+     *
      * <p>Generally, this is done in the following steps:
      * <ol>
      * <li>Fetch already existing data from database table(s) (see fetchGeneric()) into an associative array having the records "names" as key. (see section "names concept" below)</li>
@@ -460,7 +460,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      *     </ol></li>
      * <li>DONE!</li>
      * </ol></p>
-     * 
+     *
      * <h3>The "names" concept:</h3>
      * <p>As records in import files are normally given without a primary key database id (and even cannot be given with an id if the record is new ;) ) there
      * must be some sort of concept to identify, which record in import data corresponds to which record in the database table.
@@ -468,7 +468,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * In some cases it is more difficult: An attribute group still can be identified by a single column (attribute_group_name) but only within one single attribute set!
      * But an attribute association can only be identified by three columns ('attribute_set_id','attribute_id' and 'attribute_group_id') if you don't know the 'entity_attribute_id'.
      * Therefore the records are matched between import datasource and database using a "names array" which holds the values of all identifying fields (in most cases just one but sometimes three).</p>
-     * 
+     *
      * <h3>The $config parameter</h3>
      * <p>The $config parameter is an associative array which contains most options needed for this function:
      * <ul>
@@ -491,13 +491,13 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         // extract the following variables from $config:
         // entityName,tables,idColName,nameColNames,elementPrefix,verbose,fetchSystemAttributeIdsSql
         extract($config);
-        
+
         //is this an attribute set import? -> this flag triggers attribute set group update later on
         $isASImport = $elementPrefix == '5B5ASI';
-        
+
         $givenRecordCount = $csvreader->getLinesCount();
         if($verbose) $this->log("Will update ${entityName}s...($givenRecordCount records given)",'startup');
-        
+
         // fetch data from database: result is a MultiDimArray with the record "names" as key(s)
         $dbDataByName = $this->fetchGeneric($tables,$idColName,$nameColNames,$fetchConditions); // fetch attribute sets from db
         $dbRecordCount = sizeof($dbDataByName);
@@ -510,7 +510,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         if(isset($defaults) || isset($paramDefaults)) {
             $mergedDefaults = array_merge((array)$paramDefaults,(array)$defaults);
         }
-        
+
         /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------
         *  Insert/update loop
         *  ---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -519,7 +519,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         $lastReportTime = time(); // initialize report time -> to be able to report progress every second
         $currentRecordNo = 0; // just for counting...
         $givenNameValues = new MultiDimArray(); // store given Attribute names for faster pruning in second loop
-        
+
         // iterate over all given records from CSV
         while($record = $csvreader->getNextRecord()) {
             try {
@@ -532,7 +532,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 $insertedRecord = false;
                 $nothingToUpdateRecord = false;
                 $doubledRecord = false;
-                
+
                 // apply default values to current record
                 foreach($mergedDefaults as $key => $value) {
                     // don't overwrite, only set if not previously given
@@ -540,18 +540,18 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                         $record[$key] = $value;
                     }
                 }
-                
+
                 // if a decoder is given, decode given names to corresponding ids first
                 // default values are given as names so this must be done AFTER defaults are applied,
                 // otherwise defaults would have to be given as ids.
                 if(isset($decoder)) {
                     $record = $decoder->decode($record);
                 }
-                
+
                 // prepare the $currentNames array -> this array contains the record's "name" value(s)
                 $currentNames = array();
                 foreach($nameColNames as $nameColName) $currentNames[] = $record[$nameColName];
-                
+
                 // was a record with same "names" already given?
                 // if yes -> log the names to simplify searching doubled entries or errors in CSV generation
                 // (logged to php error_log to avoid spamming the normal "startup" log entries)
@@ -559,10 +559,10 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     error_log("Doubled record: ". print_r($currentNames,true));
                     $doubledRecord = true; // just for statistics to inform user
                 }
-                
+
                 // if magmi_delete option is set and current record has magmi:delete set to 1 delete record from database
                 if($this->getParam($elementPrefix.":magmi_delete","off")=="on" && isset($record['magmi:delete']) && $record['magmi:delete'] == 1) {
-                    
+
                     // record existing in database?
                     $dbRecord = $dbDataByName[$currentNames];
                     if(isset($dbRecord)) {
@@ -578,12 +578,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 } else {
                     // found a record (which will not be deleted) so add it to the $givenNameValues
                     $givenNameValues[$currentNames] = 1;
-                    
+
                     // names existing in database? -> if yes this is an update else an insert
                     if(!isset($dbDataByName[$currentNames])) {
                         // record not existing yet, is create option enabled?
                         if($this->getParam($elementPrefix.":create",'on')=='on') {
-                            
+
                             // create option is enabled, so create the record in each table from $tables
                             foreach($tables as $tableName) {
                                 $columnNames = $this->cols($tableName);
@@ -597,7 +597,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                         $questionMarks[] = "?";
                                     }
                                 }
-                                
+
                                 // store database ID of created record (if there are more than one table in $tables, the id is needed for further tables)
                                 // therefore the "main" table must always be the FIRST one in $tables
                                 $newId = $this->insert("INSERT INTO ".$this->tablename($tableName)." (".implode(",",$usedColumnNames).") VALUES (".implode(",",$questionMarks).")",$usedValues);
@@ -624,7 +624,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                             // now update all tables from $tables
                             foreach($tables as $tableName) {
                                 $columnNames = $this->cols($tableName);
-                                
+
                                 // put together values and set for current table
                                 // (only with changed columns)
                                 $setClauses = array();
@@ -635,7 +635,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                         $usedValues[] = $record[$columnName];
                                     }
                                 }
-                                
+
                                 // is there at least one setClause (has at least one column changed?)
                                 // -> then update!
                                 if(sizeof($setClauses) > 0) {
@@ -647,7 +647,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                     $nothingToUpdateRecord=true;
                                 }
                             }
-                            
+
                             // if this is an attribute set import (and record has a "magmi:groups" value),
                             // also update the groups of the current set based on the values given in "magmi:groups" and "magmi:default_group"
                             if($isASImport && isset($record['magmi:groups'])) {
@@ -657,7 +657,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                         }
                     }
                 }
-                
+
                 // now update statistics values
                 if($insertedRecord) $statistics->inserted++;
                 if($deletedRecord) $statistics->deleted++;
@@ -681,15 +681,15 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 $this->trace($e,"Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record,true));
             }
         }
-        
-        
+
+
         /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------
          *  Prune loop
          *  ---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-        
+
         // is prune option switched on?
         if($this->getParam($elementPrefix.":prune","on")=="on") {
-            
+
             // parse option "PREFIX:prune_keep".
             // For entities identified by a single name this is easy: The names to keep are given in a simple comma-separated list.
             // For entities identified by more than one name/column, it is more complex:
@@ -703,7 +703,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             //     [["Default"],["Set1","name"],["Set2","name","Group1"]]
             //     this could be translated to keep all associations for set "Default", keep all associations for attribute "name" in "Set1" (regardless of group)
             //     and keep association for attribute "name" in "Set2" if it is in group "Group1"
-            
+
             // fetch value from option "PREFIX:prune_keep
             $keepNamesString = trim($this->getParam($elementPrefix.":prune_keep",""));
             // if value starts with a '[' this is a JSON array...
@@ -717,7 +717,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     $keepNames[] = array(trim($part));
                 }
             }
-            
+
             // now set all elements of given array of arrays (-> each single array entry)
             // in a new MultiDimArray to 1 for easy and fast comparison
             // see documentation of "multiSet" and "offsetExistsPartly" functions of MultiDimArray
@@ -728,18 +728,18 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             // decode the keys of the $keepNamesArray to the respective database ids
             if(isset($decoder)) {
                 $newKeepNamesArray = new MultiDimArray();
-                
+
                 // iterate over all array keys of MultiDimArray
                 // (using rewind(), valid(), next() offsetSet() because the short notation and foreach do not like array indexes)
                 $keepNamesArray->rewind();
                 while($keepNamesArray->valid()) {
-                    $entry = $keepNamesArray->key();                    
+                    $entry = $keepNamesArray->key();
                     $newKeepNamesArray->offsetSet($decoder->decode($entry),1);
                     $keepNamesArray->next();
                 }
                 $keepNamesArray = $newKeepNamesArray;
             }
-            
+
 
             // prepare array with database ids as keys for entries which should not be pruned as the elements are related to system attributes
             $keepSystemIds = array();
@@ -751,10 +751,10 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     $keepSystemIds[reset($record)] = 1;
                 }
             }
-            
+
             // just for counting records...
             $currentRecordNo = 0;
-            
+
             // now loop aver all records from database...
             // again use rewind(), valid(), next() and offsetSet() because the short notation and foreach do not like array indexe
             $dbDataByName->rewind();
@@ -765,7 +765,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     $dbRecord = $dbDataByName->current();
                     // database id of current record
                     $currentId = $dbRecord[$idColName];
-                    
+
                     // statistics flags
                     $prunedRecord = false;
                     $keptRecord = false;
@@ -782,11 +782,11 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     } else {
                         $keptRecord=true;
                     }
-                    
+
                     // update statistics
                     if($prunedRecord) $statistics->pruned++;
                     else if ($keptRecord) $statistics->kept++;
-                    
+
                     // again, if there is a time() difference between now and $lastReportTime (which means
                     // $lastReportTime was at least one second ago (because time() uses seconds))
                     // then output the progress
@@ -806,16 +806,16 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         if($verbose && $isASImport) $this->log("Groups: $groupStatistics",'startup');
         return $statistics;
     }
-    
+
     /**
-     * <p>Updates 
+     * <p>Updates
      * @param integer $asId attribute_set_id of attribute set to update groups for
      * @param string $groupString string containing group names and sort orders in format: "<groupname>[:<sortorder>],<groupname>[:<sortorder>],<groupname>[:<sortorder>],..." where <groupname> is a string and <sortorder> an integer, if sortorders are not given, the order number is increased by 1 for each entry
      * @param string $defaultGroup name of the default group, defaults to "General"
      */
     private function updateAttributeSetGroups($asId,$groupString,$defaultGroup="General") {
         $asgTableName = $this->tablename('eav_attribute_group');
-        
+
         // givenGroups will be filled with the appropriate values and will later on serve as datasource for the attribute group updateGeneric() call
         $givenGroups = array();
         $index = 0;
@@ -832,8 +832,8 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     $sortOrder = intval(trim($groupNameAndSortOrder[1]));
                 } catch(Exception $e){}
             }
-            
-            $isDefault = $groupName == $defaultGroup; 
+
+            $isDefault = $groupName == $defaultGroup;
             $givenGroups[] = array(
                     'attribute_group_name' => $groupName,
                     'sort_order' => $sortOrder,
@@ -845,7 +845,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         // prepare ArrayReader out of $givenGroups
         $datasource = new ArrayReader();
         $datasource->initialize($givenGroups);
-        
+
         // current attribute set id must be set for defaults and fetchConditions we only want to update groups for the current attribute set.
         $condition = ['attribute_set_id'=>$asId];
 
@@ -857,7 +857,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     {
         // intentionally left blank...
     }
-    
+
     /**
      * Fetches the entity_type_id from database and stores it to $this->_prod_etype
      */
@@ -869,7 +869,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     "catalog_product", "entity_type_id");
         }
     }
-    
+
     /**
      * Calls the engine's trace function with the plugin's name and version as a prefix.
      * @param Exception $e the exception to trace
@@ -887,7 +887,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
  */
 class Statistics {
     public $pruned=0,$kept=0,$inserted=0,$updated=0,$nothingToUpdate=0,$deleted=0,$doubled=0;
-    
+
     /**
      * <p>Adds the calues of another Statistics instance to thie instance's counters.</p>
      * @param Statistics $otherStatistics Statistics instance with values to add to $this instance's values.
@@ -901,7 +901,7 @@ class Statistics {
         $this->deleted+=$otherStatistics->deleted;
         $this->doubled+=$otherStatistics->doubled;
     }
-    
+
     /**
      * <p>Returns a string containing all values for output/logging purposes.</p>
      * @return string
@@ -910,5 +910,5 @@ class Statistics {
     {
         return "Deleted: $this->deleted, Updated: $this->updated, Doubled: $this->doubled, Nothing to update: $this->nothingToUpdate, Inserted: $this->inserted, Pruned: $this->pruned, Kept: $this->kept";
     }
-    
+
 }

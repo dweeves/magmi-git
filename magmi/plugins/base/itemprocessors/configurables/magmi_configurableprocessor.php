@@ -18,7 +18,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     /**
      *
-     * @param unknown $asid            
+     * @param unknown $asid
      * @return multitype:
      */
     public function getConfigurableOptsFromAsId($asid)
@@ -29,7 +29,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $eea = $this->tablename("eav_entity_attribute");
             $eas = $this->tablename("eav_attribute_set");
             $eet = $this->tablename("eav_entity_type");
-            
+
             $sql = "SELECT ea.attribute_code FROM `$ea` as ea
 		JOIN $eet as eet ON eet.entity_type_id=ea.entity_type_id AND eet.entity_type_id=?
 		JOIN $eas as eas ON eas.entity_type_id=eet.entity_type_id AND eas.attribute_set_id=?
@@ -46,7 +46,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             }
             $sql .= " WHERE $cond
 			GROUP by ea.attribute_id";
-            
+
             $result = $this->selectAll($sql, array($this->getProductEntityType(),$asid));
             foreach ($result as $r)
             {
@@ -66,13 +66,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 				WHERE cpsl.parent_id=?";
         $this->delete($sql, array($pid));
         // recreate associations
-        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id  
-				  FROM $cpe as cpec 
+        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id
+				  FROM $cpe as cpec
 				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
 			  	  WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
-        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id  
-				  FROM $cpe as cpec 
+        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id
+				  FROM $cpe as cpec
 				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
 			  	  WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
@@ -92,7 +92,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $attinfo = $this->getAttrInfo("visibility");
             $sql = "UPDATE " . $this->tablename("catalog_product_entity_int") . " as cpei
 			JOIN " . $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
-			JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id 
+			JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id
 			SET cpei.value=?
 			WHERE cpei.entity_id=cpe.entity_id AND attribute_id=?";
             $this->update($sql, array($pid,$vis,$attinfo["attribute_id"]));
@@ -175,7 +175,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             }
             return true;
         }
-        
+
         // check for explicit configurable attributes
         if (isset($item["configurable_attributes"]))
         {
@@ -204,7 +204,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         if (count($confopts) == 0)
         {
             $this->log(
-                "No configurable attributes found for configurable sku: " . $item["sku"] . " cannot link simples.", 
+                "No configurable attributes found for configurable sku: " . $item["sku"] . " cannot link simples.",
                 "warning");
             return true;
         }
@@ -214,14 +214,14 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $this->update($sql, $params["product_id"]);
         // matching mode
         // if associated skus
-        
+
         $matchmode = $this->getMatchMode($item);
-        
+
         // check if item has exising options
         $pid = $params["product_id"];
         $cpsa = $this->tablename("catalog_product_super_attribute");
         $cpsal = $this->tablename("catalog_product_super_attribute_label");
-        
+
         // process configurable options
         $ins_sa = array();
         $data_sa = array();
@@ -230,11 +230,11 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $idx = 0;
         foreach ($confopts as $confopt)
         {
-            
+
             $attrinfo = $this->getAttrInfo($confopt);
             $attrid = $attrinfo["attribute_id"];
             $psaid = NULL;
-            
+
             // try to get psaid for attribute
             $sql = "SELECT product_super_attribute_id as psaid FROM `$cpsa` WHERE product_id=? AND attribute_id=?";
             $psaid = $this->selectOne($sql, array($pid,$attrid), "psaid");
@@ -245,7 +245,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 // inserting new options
                 $psaid = $this->insert($sql, array($pid,$attrid,$idx));
             }
-            
+
             // for all stores defined for the item
             $sids = $this->getItemStoreIds($item, 0);
             $data = array();
@@ -337,7 +337,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             case "cursimples":
                 $this->fixedLink($pid, $this->_currentsimples);
                 $this->updSimpleVisibility($pid);
-                
+
                 break;
             case "fixed":
                 $sskus = explode(",", $item["simples_skus"]);

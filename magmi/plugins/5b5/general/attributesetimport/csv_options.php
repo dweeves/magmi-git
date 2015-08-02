@@ -9,7 +9,7 @@
 					<?php if($self->getParam("$prefix:importmode","local")=="remote"){?>
 					selected="selected" <?php }?>>Remote</option>
 		</select>
-	
+
 	</ul>
 
 	<div id="<?php echo $prefix ?>:localcsv"

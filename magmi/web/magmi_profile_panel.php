@@ -5,7 +5,7 @@ if (isset($_REQUEST["profile"]))
 }
 else
 {
-    
+
     if (isset($_SESSION["last_runned_profile"]))
     {
         $profile = $_SESSION["last_runned_profile"];
@@ -101,7 +101,7 @@ foreach ($order as $k)
 		<div class="grid_12 col">
 			<h3><?php echo ucfirst($k)?></h3>
 		<?php
-    
+
     if ($k == "datasources")
     {
         ?>
@@ -110,8 +110,8 @@ foreach ($order as $k)
 			<div class="pluginselect" style="float: left">
 
 				<select name="PLUGINS_DATASOURCES:class" class="pl_<?php echo $k?>">
-			
-			
+
+
 			<?php
             $sinst = null;
             foreach ($pinf as $pclass)
@@ -119,7 +119,7 @@ foreach ($order as $k)
                 $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
                 if ($sinst == null)
                 {
-                    
+
                     $sinst = $pinst;
                 }
                 $pinfo = $pinst->getPluginInfo();
@@ -133,7 +133,7 @@ foreach ($order as $k)
 			<?php
             }
             ?>
-			
+
 			</select>
 			</div>
 			<?php if(isset($pinfo["url"])){?>
@@ -149,7 +149,7 @@ foreach ($order as $k)
         else
         {
             $conf_ok = 0;
-            
+
             ?>
 			Magmi needs a datasource plugin, please install one
 			<?php }?>
@@ -160,14 +160,14 @@ foreach ($order as $k)
         foreach ($pcats as $pcat => $pclasslist)
         {
             ?>
-								
+
 				<?php
             $catopen = false;
             $pinf = $plugins[$k];
             ?>
-		
+
 				<?php
-            
+
             foreach ($pinf as $pclass)
             {
                 if (!in_array($pclass, $pclasslist))
@@ -198,7 +198,7 @@ foreach ($order as $k)
 							<?php } else {?>
 								<input type="checkbox" class="pl_<?php echo $k?>"
 								name="<?php echo $pclass?>" disabled="disabled">
-							<?php }?>	
+							<?php }?>
 							<span
 								class="pluginname <?php if(isset($pinfo['sponsorinfo'])){ ?> sponsored <?php } ?>"><?php echo $pinfo["name"]." v".$pinfo["version"];?></span>
 						</div>
@@ -208,12 +208,12 @@ foreach ($order as $k)
 								<div class="plugindata">
 									<ul>
 									<?php
-                    
+
                     $sp = isset($pinfo["sponsorinfo"]);
                     foreach ($pinfo as $pik => $piv)
                     {
                         ?>
-										
+
 										<li <?php if(isset($sp)){ ?> class='sponsored' <?php } ?>><?php
                         if ($pik == "url")
                         {
@@ -222,10 +222,10 @@ foreach ($order as $k)
 												href="<?php echo $piv?>" target="_blank">Wiki entry</a></span>
 											<?php
                         }
-                        else 
+                        else
                             if ($pik == "sponsorinfo")
                             {
-                                
+
                                 ?>
 													<span class="sponsor">Sponsored By</span>: <span>
 													<?php if(isset($piv['url']))  { ?>
@@ -247,7 +247,7 @@ foreach ($order as $k)
 												<span><?php echo $pik?></span>:<span><?php echo $piv ?></span>
 											<?php
                             }
-                        
+
                         ?>
 										</li>
 								<?php
@@ -274,14 +274,14 @@ foreach ($order as $k)
 							<a href="<?php echo $pinfo["url"]?>" target="magmi_doc">documentation</a>
 						</div>
 							<?php }?>
-	
+
 							<div class="pluginconfpanel">
 							<?php if($enabled){echo $pinst->getOptionsPanel()->getHtml();}?>
 							</div>
 					</li>
 				</ul>
 			<?php }?>
-		<?php }?>	
+		<?php }?>
 		<?php if($catopen){?></div><?php }?>
 		<?php }}?>
 	</div>
@@ -373,13 +373,13 @@ handleRunChoice=function(radioname,changeinfo)
 
 cancelimport=function()
 {
- $('overlay').hide();	
+ $('overlay').hide();
 }
 
 updatelastsaved=function()
-{ 
+{
  gatherclasses(['DATASOURCES','GENERAL','ITEMPROCESSORS']);
- window.lastsaved=$H($('saveprofile_form').serialize(true));	
+ window.lastsaved=$H($('saveprofile_form').serialize(true));
 };
 
 comparelastsaved=function()
@@ -455,11 +455,11 @@ showConfLink=function(maincont)
 	var cfgdiv=maincont.select('.pluginconf');
 	if(cfgdiv.length>0)
 	 {
-	 
+
 	cfgdiv=cfgdiv[0];
 	cfgdiv.show();
 	 }
-	
+
 };
 
 loadConfigPanel=function(container,profile,plclass,pltype)
@@ -496,7 +496,7 @@ initAjaxConf=function(profile)
 	{
 		var del=pls.firstDescendant();
 		var evname=(del.tagName=="SELECT"?'change':'click');
-			
+
 		//check the click
 		del.observe(evname,function(ev)
 		{
@@ -505,7 +505,7 @@ initAjaxConf=function(profile)
 			var elclasses=el.classNames();
 			var pltype="";
 			elclasses.each(function(it){if(it.substr(0,3)=="pl_"){pltype=it.substr(3);}});
-			var doload=(el.tagName=="SELECT")?true:el.checked;	
+			var doload=(el.tagName=="SELECT")?true:el.checked;
 			var targets=$(pls.parentNode).select(".pluginconfpanel");
 			var container=targets[0];
 			if(doload)
@@ -517,7 +517,7 @@ initAjaxConf=function(profile)
 				removeConfigPanel(container);
 			}
 		});
-	});			
+	});
 };
 
 initDefaultPanels=function()
@@ -543,7 +543,7 @@ saveProfile=function(confok,onsuccess)
 			  	$('profileconf_msg').show();
 			  }}
 	  		});
-	
+
 };
 
 initAjaxConf('<?php echo $profile?>');
@@ -553,7 +553,7 @@ initDefaultPanels();
 $('saveprofile').observe('click',function()
 								{
 									saveProfile(<?php echo $conf_ok?1:0 ?>,function(){$('chooseprofile').submit();});
-									});	
+									});
 
 $('runmagmi').observe('submit',function(ev){
 
@@ -562,7 +562,7 @@ $('runmagmi').observe('submit',function(ev){
 	{
 		 $('overlaycontent').update($(ls.target));
 		 $$('#overlaycontent > div').each(function(el){el.show()});
-		 $('overlay').show();			
+		 $('overlay').show();
 		 ev.stop();
 	}
 	});

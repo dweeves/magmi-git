@@ -54,7 +54,7 @@ function getRelative(&$val)
         $val = substr($val, 1);
         $dir = "-";
     }
-    else 
+    else
         if ($val[0] == "+")
         {
             $val = substr($val, 1);
@@ -93,7 +93,7 @@ function abspath($path, $basepath = "", $resolve = true)
             {
                 array_pop($outparts);
             }
-            else 
+            else
                 if ($inparts[$i] != '.')
                 {
                     $outparts[] = $inparts[$i];
@@ -160,7 +160,7 @@ class Slugger
         'õ'=>'o','ö'=>'o','ø'=>'o','ù'=>'u','ú'=>'u','û'=>'u','ý'=>'y','ý'=>'y','þ'=>'b','ÿ'=>'y','ƒ'=>'f','Č'=>'C',
         'č'=>'c','Ľ'=>'L','ľ'=>'l','Ĺ'=>'L','Ť'=>'T','ť'=>'t','Ň'=>'N','ň'=>'n','Ŕ'=>'R','ŕ'=>'r','Ř'=>'R','ř'=>'r',
         'Ő'=>'O','ő'=>'o','Ű'=>'U','ű'=>'u','ü'=>'u');
-    
+
     // Stripping accents
     public static function stripAccents($text)
     {

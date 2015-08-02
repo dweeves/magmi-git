@@ -8,15 +8,15 @@ class Magmi_ValueParser
         $matches = array();
         $rep = "";
         $renc = "<-XMagmi_Enc->";
-        
+
         foreach ($dictarray as $key => $vals)
         {
             // Unsure of cause for NULL $vals, but this avoids messages in the error log
             if ($vals === NULL)
             {
-                continue;   
+                continue;
             }
-            
+
             $ik = array_keys($vals);
             // replace base values
             while (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches))
@@ -39,7 +39,7 @@ class Magmi_ValueParser
                 unset($matches);
             }
         }
-        
+
         // replacing expr values
         while (preg_match("|\{\{\s*(.*?)\s*\}\}|s", $pvalue, $matches))
         {
@@ -49,7 +49,7 @@ class Magmi_ValueParser
                 {
                     $code = trim($match);
                     $code = str_replace($renc, '"', $code);
-                    
+
                     $rep = eval("return ($code);");
                     // escape potential "{{xxx}}" values in interpreted target
                     // so that they won't be reparsed in next round
@@ -58,7 +58,7 @@ class Magmi_ValueParser
                 }
             }
         }
-        
+
         // unescape matches
         $pvalue = preg_replace("|____(.*?)____|s", '{{$1}}', $pvalue);
         // single replaced values

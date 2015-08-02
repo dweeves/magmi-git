@@ -4,7 +4,7 @@ if ($files !== false && count($files) > 0)
 {
     ?>
 <select name="<?php echo $prefix ?>:filename" id="<?php echo $prefix ?>:csvfile">
-	<?php foreach($files as $fname){ ?>	
+	<?php foreach($files as $fname){ ?>
 		<option <?php if($fname==$self->getParam("$prefix:filename")){?>
 		selected=selected <?php }?> value="<?php echo $fname?>"><?php echo basename($fname)?></option>
 	<?php }?>

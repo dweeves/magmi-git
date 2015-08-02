@@ -11,7 +11,7 @@ require_once ("magmi_pluginhelper.php");
  * A magmi engine is a class that performs operations on DB
  *
  * @author dweeves
- *        
+ *
  */
 abstract class Magmi_Engine extends DbHelper
 {
@@ -83,7 +83,7 @@ abstract class Magmi_Engine extends DbHelper
     {
         return $this->_conf->get("MAGENTO", "version");
     }
-    
+
     /**
      * checks the magento version
      */
@@ -142,7 +142,7 @@ abstract class Magmi_Engine extends DbHelper
     public function getBuiltinPluginClasses()
     {
         $bplarr = array();
-        
+
         foreach ($this->_builtinplugins as $pfamily => $pdef)
         {
             $plinfo = explode("::", $pdef);
@@ -165,7 +165,7 @@ abstract class Magmi_Engine extends DbHelper
     {
         return $this->_pluginclasses;
     }
-    
+
     /*
      * Return the list of active plugin instances for a given plugin family @param $family : plugin family to get instances from, defaults to null (all plugins)
      */
@@ -184,7 +184,7 @@ abstract class Magmi_Engine extends DbHelper
         }
         return $pil;
     }
-    
+
     /*
      * Force Builtin plugin classes list with a list of classes for a given plugin family @param $family : family of builtin plugins to set @param $pclasses : array of plugin class names to set as buitin for this engine
      */
@@ -192,7 +192,7 @@ abstract class Magmi_Engine extends DbHelper
     {
         $this->_builtinplugins[$pfamily] = $pclasses;
     }
-    
+
     /*
      * Plugin sorting callback for call order in the same execution step. Sorts by filename
      */
@@ -210,7 +210,7 @@ abstract class Magmi_Engine extends DbHelper
         }
         return strcmp($m1["file"], $m2["file"]);
     }
-    
+
     /*
      * Create plugin instances for a given profile @param $profile : profile name to create plugins for @param $params : configuration parameters for the profile (all plugins)
      */
@@ -232,7 +232,7 @@ abstract class Magmi_Engine extends DbHelper
                 unset($this->_pluginclasses[$pfamily]);
             }
         }
-        
+
         // Iterate on final plugin classes list
         foreach ($this->_pluginclasses as $pfamily => $pclasses)
         {
@@ -253,7 +253,7 @@ abstract class Magmi_Engine extends DbHelper
             usort($this->_activeplugins[$pfamily], array(&$this,"sortPlugins"));
         }
     }
-    
+
     /*
      * Retrieve all active plugins instances for a give plugin class name
      */
@@ -273,7 +273,7 @@ abstract class Magmi_Engine extends DbHelper
         }
         return $inst;
     }
-    
+
     /*
      * Get a plugin instance in a family based on it's execution order
      */
@@ -285,7 +285,7 @@ abstract class Magmi_Engine extends DbHelper
         }
         return $this->_activeplugins[$family][$order];
     }
-    
+
     /*
      * Plugin call generic callback for engine @param $types : plugin types to call @param $callback : processing step to call @param $data : (reference) , data to pass to plugin processing @param $params : extra parameters for processing step @param $break : flag to stop calling chain at first plugin returning false (defaults to true)
      */
@@ -306,10 +306,10 @@ abstract class Magmi_Engine extends DbHelper
                 $types = array_keys($this->_activeplugins);
             }
         }
-        
+
         // Timing initialization (global processing step)
        // $this->_timecounter->initTime($callback, get_class($this));
-        
+
         // Iterate on plugin types (families)
         foreach ($types as $ptype)
         {
@@ -494,7 +494,7 @@ abstract class Magmi_Engine extends DbHelper
         catch (Exception $e)
         {
             $this->disconnectFromMagento();
-            
+
             $this->handleException($e);
         }
     }
@@ -524,7 +524,7 @@ abstract class Magmi_Engine extends DbHelper
     	// et database infos from properties
         if (!$this->_connected)
         {
-        	
+
             $conn = $this->getProp("DATABASE", "connectivity", "net");
             $debug = $this->getProp("DATABASE", "debug",false);
             $socket = $this->getProp("DATABASE", "unix_socket");

@@ -21,7 +21,7 @@ if (file_exists($postinst))
     if (function_exists("magmi_post_install"))
     {
         $result = magmi_post_install();
-        
+
         if ($result["OK"] != "")
         {
             ?>
@@ -51,7 +51,7 @@ foreach (array("../state","../conf","../plugins") as $dirname)
 if (count($badrights) == 0)
 {
     $state = Magmi_StateManager::getState();
-    
+
     if ($state == "running" || (isset($_REQUEST["run"]) && $_REQUEST["run"] == "import"))
     {
         require_once ("magmi_import_run.php");
@@ -73,7 +73,7 @@ else
 			Directory permissions not compatible with Mass Importer operations
 			<ul>
 		<?php
-    
+
     foreach ($badrights as $dirname)
     {
         $trname = str_replace("..", "magmi", $dirname);

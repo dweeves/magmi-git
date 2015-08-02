@@ -19,7 +19,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
             "catalog_product_entity_tier_price","catalog_product_entity_varchar","catalog_product_link",
             "catalog_product_link_attribute_decimal","catalog_product_link_attribute_int",
             "catalog_product_link_attribute_varchar",
-            
+
             // "catalog_product_link_attribute",
             // "catalog_product_link_type",
             "catalog_product_option","catalog_product_option_price","catalog_product_option_title",
@@ -38,47 +38,47 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
             "sales_bestsellers_aggregated_yearly","report_viewed_product_index",
 
             "review","review_detail","review_entity_summary","review_store");
-        
+
         if ($this->checkMagentoVersion("1.7.x", ">="))
         {
             $tables[] = "report_viewed_product_aggregated_daily";
             $tables[] = "report_viewed_product_aggregated_monthly";
             $tables[] = "report_viewed_product_aggregated_yearly";
         }
-        
+
         // clear flat catalogs index
         $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", NULL, false);
         while ($row = $stmt->fetch(PDO::FETCH_NUM))
         {
             $this->exec_stmt("TRUNCATE TABLE " . $row[0]);
         }
-        
+
         // clear flat category index
         $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_category_flat') . "%'", NULL, false);
         while ($row = $stmt->fetch(PDO::FETCH_NUM))
         {
             $this->exec_stmt("TRUNCATE TABLE " . $row[0]);
         }
-        
+
         foreach ($tables as $table)
         {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
-        
+
         $sql = "SET FOREIGN_KEY_CHECKS = 1";
         $this->exec_stmt($sql);
-        
+
         //safely remove all non root categories (not destroying structural categories)
         //all sub values would be removed by cascading triggers.
         $sql="DELETE FROM ".$this->tablename('catalog_category_entity')." WHERE level>1";
 		 $this->exec_stmt($sql);
-        
+
         //default cat stock
         $sql = "insert  into " . $this->tablename("cataloginventory_stock") . " ";
         $sql .= "(stock_id,stock_name) values ";
         $sql .= "(1,'Default')";
         $this->exec_stmt($sql);
-        
+
         echo "Catalog and categories cleared";
     }
 

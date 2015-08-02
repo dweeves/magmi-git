@@ -17,7 +17,7 @@ class CleanEav extends Magmi_UtilityPlugin
             $sql = "DELETE FROM $tname WHERE value IS NULL";
             $this->delete($sql);
         }
-        
+
         echo "EAV Cleaned";
     }
 
@@ -30,7 +30,7 @@ class CleanEav extends Magmi_UtilityPlugin
         {
             $tname = $this->tablename("catalog_product_entity_$type");
             $sql = "SELECT COUNT(t1.value_id) as total,COUNT(t2.value_id) as empty,ROUND(COUNT(t2.value_id)*100/COUNT(t1.value_id),3) as pc
-				  FROM `$tname`as t1 
+				  FROM `$tname`as t1
 				  LEFT JOIN `$tname`as t2 ON t2.value_id=t1.value_id AND t2.value IS NULL";
             $result = $this->selectAll($sql);
             $result = $result[0];

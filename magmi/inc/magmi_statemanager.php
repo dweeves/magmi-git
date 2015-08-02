@@ -38,7 +38,7 @@ class Magmi_StateManager
         {
             return;
         }
-        
+
         self::$_state = $state;
         $f = fopen(self::getStateFile(), "w");
         fwrite($f, self::$_state);

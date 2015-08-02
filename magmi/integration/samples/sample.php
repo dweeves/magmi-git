@@ -87,7 +87,7 @@ for ($sku = 0; $sku < 5000; $sku++)
             {
                 $csell[] = $rsku;
             }
-            
+
             // on each 10 before, cross relate
             if ($i % 10 == 0)
             {
@@ -116,4 +116,3 @@ for ($sku = 0; $sku < 5000; $sku++)
 }
 /* end import session, will run post import plugins */
 $dp->endImportSession();
- 

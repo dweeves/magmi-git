@@ -13,10 +13,10 @@ ScrollBox.JUMP_ACTION	= 2;	//Jump to the position on the bar that was clicked
 
 Object.extend(ScrollBox.prototype, {
 	initialize: function(element, options){
-		
+
 		this.element = element;
 		Element.addClassName(this.element, 'scrollbox');
-		
+
 		this.opts = {
 			scroll_increment: 30,				//How many pixels to scroll per click/button press/etc
 			hold_delay: 500,					//The delay when holding the mouse down before it starts auto scrolling
@@ -27,7 +27,7 @@ Object.extend(ScrollBox.prototype, {
 			bar_action: ScrollBox.PAGE_ACTION	//What happens when you click the empty part of the scrollbar?
 		};
 		Object.extend(this.opts, options);
-		
+
 		//Move content into content div
 		this.content_div = document.createElement('div');
 		Element.addClassName(this.content_div, 'scrollbox_content');
@@ -43,7 +43,7 @@ Object.extend(ScrollBox.prototype, {
 		this.scrollbar.style.position = 'absolute';
 		this.scrollbar.style.top = '0';
 		this.scrollbar.style.right = '0';
-		
+
 		//Add up button
 		this.up_button = document.createElement('div');
 		Element.addClassName(this.up_button, 'scrollbox_up_button');
@@ -52,7 +52,7 @@ Object.extend(ScrollBox.prototype, {
 		this.up_button.style.top = '0';
 		this.up_button.style.right = '0';
 		this.scrollbar.appendChild(this.up_button);
-		
+
 		//Add down button
 		this.down_button = document.createElement('div');
 		Element.addClassName(this.down_button, 'scrollbox_down_button');
@@ -61,7 +61,7 @@ Object.extend(ScrollBox.prototype, {
 		this.down_button.style.bottom = '0';
 		this.down_button.style.right = '0';
 		this.scrollbar.appendChild(this.down_button);
-		
+
 		//Add Scroll Handle
 		this.handle = document.createElement('div');
 		Element.addClassName(this.handle, 'scrollbox_handle');
@@ -73,34 +73,34 @@ Object.extend(ScrollBox.prototype, {
 		//Setup State Info
 		this.scroll_pos = 0;
 		this.setSizes();
-		
+
 		//buttons actions
 		Event.observe(this.up_button, 'mousedown', function(e){this.buttonDown(e, this.scrollUp.bind(this));}.bindAsEventListener(this));
 		Event.observe(this.down_button, 'mousedown', function(e){this.buttonDown(e, this.scrollDown.bind(this));}.bindAsEventListener(this));
 		Event.observe(document, 'mouseup', this.buttonUp.bindAsEventListener(this));
-		
+
 		//handle actions
 		Event.observe(document, 'mousemove', this.setMousePos.bindAsEventListener(this));
 		Event.observe(this.handle, 'mousedown', this.handleDown.bindAsEventListener(this));
 		this.handle_update_interval = setInterval(this.updateCheck.bind(this), this.opts.update_check_interval);
-		
+
 		//bar actions
 		Event.observe(this.up_button, 'click', function(e){Event.stop(e);}.bindAsEventListener(this));
 		Event.observe(this.down_button, 'click', function(e){Event.stop(e);}.bindAsEventListener(this));
 		Event.observe(this.handle, 'click', function(e){Event.stop(e);}.bindAsEventListener(this));
 		Event.observe(this.scrollbar, 'click', this.scrollBarClick.bindAsEventListener(this));
-		
+
 		//handle keypress events
 		this.keyboard_events = [
 			[document, 'keypress', this.keyboardEvent.bindAsEventListener(this)]
 		];
 		Event.observe(this.element, 'click', this.enableKeyboardEvents.bindAsEventListener(this));
 		Event.observe(document, 'click', this.disableKeyboardEvents.bindAsEventListener(this));
-		
+
 		//handle scroll wheel
 		Event.observe(this.content_div, 'mousewheel', this.scrollWheel.bindAsEventListener(this), true);
 		Event.observe(this.content_div, 'DOMMouseScroll', this.scrollWheel.bindAsEventListener(this), true);
-		
+
 	},
 	scrollDown: function(){
 		if(this.scroll_pos  < this.scroll_max){
@@ -160,7 +160,7 @@ Object.extend(ScrollBox.prototype, {
 		else{
 			this.handle_height = this.bar_height;
 		}
-		
+
 		if(this.opts.auto_hide){
 			if(this.handle_height == this.bar_height){
 				this.scrollbar.style.visibility = 'hidden';
@@ -177,7 +177,7 @@ Object.extend(ScrollBox.prototype, {
 			this.handle_pos = handle_top + Math.floor(bar_dist_height * (this.scroll_pos / this.scroll_max));
 		else
 			this.handle_pos = handle_top;
-		
+
 		this.handle.style.height = this.handle_height + 'px';
 		this.handle.style.top = this.handle_pos + 'px';
 	},
@@ -194,9 +194,9 @@ Object.extend(ScrollBox.prototype, {
 			tempY = event.clientY + document.body.scrollTop;
 		} else {  // grab the x-y pos.s if browser is NS
 			tempY = e.pageY;
-		}  
+		}
 		// catch possible negative values
-		if (tempY < 0){tempY = 0;}  
+		if (tempY < 0){tempY = 0;}
 
 		this.raw_mouse_pos = tempY;
 		this.mouse_pos = Math.floor((tempY - this.scrollbar_top) * this.scroll_height_ratio);
@@ -269,7 +269,7 @@ Object.extend(ScrollBox.prototype, {
 		if(this.content_div.scrollTop != this.scroll_pos){
 			this.scrollTo(this.content_div.scrollTop);
 		}
-		
+
 		if(this.scroll_max != this.content_div.scrollHeight - this.content_div.offsetHeight){
 			this.setSizes();
 		}
@@ -280,7 +280,7 @@ Object.extend(ScrollBox.prototype, {
 		this.keyboard_events.each(function(ke){
 			Event.observe(ke[0], ke[1], ke[2]);
 		});
-		
+
 		this.within_enable_event = true;
 	},
 	disableKeyboardEvents: function(event){
