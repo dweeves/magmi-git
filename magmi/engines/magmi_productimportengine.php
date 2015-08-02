@@ -358,6 +358,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
 
         $this->fetchProdEType();
+        $tname = $this->tablename("eav_entity_attribute");
         $sql = "SELECT  ea.attribute_set_id,ea.attribute_id
                 FROM    $tname AS ea
                 WHERE   ea.entity_type_id = ?";
