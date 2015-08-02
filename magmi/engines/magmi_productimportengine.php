@@ -106,10 +106,21 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function initProdType()
     {
-        $tname = $this->tablename("eav_entity_type");
-        $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
-            "catalog_product", "entity_type_id");
+        $this->fetchProdEType();
         $this->default_asid = $this->getAttributeSetId('Default');
+    }
+
+    /**
+     * Fetches the entity type for "catalog_product" and stores it to $this->prod_etype (if not already done).
+     */
+    private function fetchProdEType() {
+        if ($this->prod_etype == null)
+        {
+            // Find product entity type
+            $tname = $this->tablename("eav_entity_type");
+            $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
+                                                 "catalog_product", "entity_type_id");
+        }
     }
 
     public function getPluginFamilies()
@@ -467,19 +478,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         /*
          * now we have 2 index arrays 1. $this->attrinfo which has the following structure: key : attribute_code value : attribute_properties 2. $this->attrbytype which has the following structure: key : attribute backend type value : array of : data => array of attribute_properties ,one for each attribute that match the backend type ids => list of attribute ids of the backend type
          */
-    }
-
-    /**
-     * Fetches the entity type for "catalog_product" and stores it to $this->prod_etype (if not already done).
-     */
-    private function fetchProdEType() {
-        if ($this->prod_etype == null)
-        {
-            // Find product entity type
-            $tname = $this->tablename("eav_entity_type");
-            $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
-                                                 "catalog_product", "entity_type_id");
-        }
     }
 
     /**
@@ -1156,7 +1154,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             unset($inserts);
             unset($deletes);
         }
-        unset($fmap);
         //if new attributes are to be processed, return them
         return $this->_extra_attrs;
     }
