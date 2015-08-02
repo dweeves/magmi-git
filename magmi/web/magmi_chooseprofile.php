@@ -10,7 +10,7 @@ if ($currentprofile == "default")
 $newprofile = $_REQUEST["newprofile"];
 if ($newprofile != "")
 {
-    
+
     $bcfg = new EnabledPlugins_Config($currentprofile);
     $confdir = Magmi_Config::getInstance()->getConfDir();
     $npdir = $confdir . DIRSEP . $newprofile;

@@ -54,7 +54,7 @@ class TagProcessor extends Magmi_ItemProcessor
         }
         return $tagid;
     }
-    
+
     // clearing tags associated to item
     public function clearItemTags($item, $pid, $sids)
     {
@@ -63,7 +63,7 @@ class TagProcessor extends Magmi_ItemProcessor
              $this->arr2values($sids) . ")";
         $this->delete($sql, array_merge(array($pid), $sids));
     }
-    
+
     // handleItemTags
     public function handleItemTags($item, $pid, $sids, $addtags, $remtags, $hasrel)
     {
@@ -86,7 +86,7 @@ class TagProcessor extends Magmi_ItemProcessor
                 $this->insert($sql, $tdata);
             }
         }
-        
+
         // iterate on tag removal
         $tids = array();
         $uids = array();
@@ -113,7 +113,7 @@ class TagProcessor extends Magmi_ItemProcessor
         $this->log("Cleaning orphan tags", "info");
         $tr = $this->tablename("tag_relation");
         $ta = $this->tablename("tag");
-        $sql = "DELETE ta.* FROM $ta as ta 
+        $sql = "DELETE ta.* FROM $ta as ta
 					LEFT JOIN $tr as tr ON tr.tag_id=ta.tag_id
 					WHERE tr.tag_id IS NULL";
         $this->delete($sql);
@@ -190,7 +190,7 @@ class TagProcessor extends Magmi_ItemProcessor
                 break;
             }
         }
-        
+
         // iterate on tags
         $addtags = array();
         $remtags = array();
@@ -199,7 +199,7 @@ class TagProcessor extends Magmi_ItemProcessor
             $tag = trim($tag);
             $dir = getRelative($tag);
             $taginfo = $this->parseTag($tag);
-            
+
             if ($dir == "+")
             {
                 $addtags[] = $taginfo;
@@ -209,7 +209,7 @@ class TagProcessor extends Magmi_ItemProcessor
                 $remtags[] = $taginfo;
             }
         }
-        
+
         $sids = $this->getItemStoreIds($item);
         // we need a real store id , not admin so let's find one
         if (count($sids) == 1 && $sids[0] == 0)
@@ -223,7 +223,7 @@ class TagProcessor extends Magmi_ItemProcessor
             }
         }
         $pid = $params["product_id"];
-        
+
         $this->handleItemTags($item, $pid, $sids, $addtags, $remtags, $hasrel);
     }
 }

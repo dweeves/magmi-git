@@ -93,7 +93,7 @@ class Name2IdDecoder {
         }
     }
 
-    /** 
+    /**
      * Returns the given list of column names, but replacing mapped column names with their corresponding mapping target names.
      * @return the given list of column names, but replacing mapped column names with their corresponding mapping target names.
      */

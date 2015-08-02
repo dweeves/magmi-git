@@ -34,7 +34,7 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
         self::$_dldir = __DIR__ . '/tmp';
         @mkdir(self::$_dldir, 0755);
     }
-    
+
     public static function tearDownAfterClass()
     {
         rmrf(self::$_dldir);
@@ -77,13 +77,13 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
     public function testHttpAmazonS3NoLookup()
     {
         $rfg = self::$_rfg;
-        $rfg->copyRemoteFile('https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png', 
+        $rfg->copyRemoteFile('https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png',
             self::$_dldir . '/Logo.png');
         $errs = $rfg->getErrors();
         $this->assertCount(0, $errs);
         $this->assertFileExists(self::$_dldir . '/Logo.png');
     }
-    
+
     public function testFtpAuthenticatedKO()
     {
         $rfg = self::$_rfg;
@@ -94,15 +94,15 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('exception', $errs);
         $this->assertFileNotExists(self::$_dldir . '/ruby-2.1.1.tar.gz');
     }
-    
+
     public function testBug81()
     {
     	$rfg = self::$_rfg;
     	$rfg->copyRemoteFile("http://be.eurocircuits.com/imgdownload.aspx?id=120291-91&type=articleimage&index=0&size=Large&name=120291-91", self::$_dldir."/test.jpg");
     	$errs = $rfg->getErrors();
     	$this->assertCount(0,$errs);
-    }    
-    
+    }
+
     public function testFtpAuthenticatedOK()
     {
         $rfg = self::$_rfg;
@@ -115,8 +115,8 @@ class RemoteFileGetterTest extends PHPUnit_Framework_TestCase
             echo $errs["message"];
         }
         $this->assertCount(0, $errs);
-        
+
         $this->assertFileExists(self::$_dldir . '/ruby-2.1.1.tar.gz');
-        
+
     }
 }

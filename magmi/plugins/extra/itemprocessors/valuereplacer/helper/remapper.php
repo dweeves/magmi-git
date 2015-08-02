@@ -42,7 +42,7 @@ class ValueRemapper
         }
         return isset($targetmap[$tval]) ? $targetmap[$tval] : $val;
     }
-    
+
     /*
      * Map a multivalue given a separator
      */

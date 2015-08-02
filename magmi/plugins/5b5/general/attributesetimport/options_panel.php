@@ -1,9 +1,9 @@
-<?php 
+<?php
 
     function csvOptions($self,$prefix) {
         require('csv_options.php');
     }
-    
+
     function checkbox($self,$prefix,$name,$default,$description) {
         require('checkbox.php');
     }
@@ -11,23 +11,23 @@
     function text($self,$prefix,$name,$default,$description) {
         require('text.php');
     }
-    
+
     function textarea($self,$prefix,$name,$default,$description) {
         require('textarea.php');
     }
-    
+
     function javascript($self,$prefix,$withCsvOptions,$plugin) {
         require('javascript.php');
     }
-    
+
     function startDiv($self,$prefix,$name,$show=true) {
         $fullName = "$prefix:$name";
-        ?><div id="<?php echo $fullName ?>"<?php if(!$show) {?>style="display:none;"<?php }?>><?php 
+        ?><div id="<?php echo $fullName ?>"<?php if(!$show) {?>style="display:none;"<?php }?>><?php
     }
     function endDiv($self) {
         ?></div><?php
     }
-    
+
     function options($self,$title,$prefix,$entityName,$withCsvOptions,$withMagmiDelete,$withEnable,$withDefaults,$pruneKeepDefaultValue,$sourceText,$plugin) {
         $default_rows_for_sets = "attribute_set_name,attribute_code,attribute_group_name
 *,name,General
@@ -69,8 +69,8 @@
 *,page_layout,Design
 *,options_container,Design
 *,gift_message_available,Gift Options";
-        
-        
+
+
         if(isset($title)) {
             ?><h3><?php echo $title ?></h3><?php
         }
@@ -107,7 +107,7 @@
             endDiv($self);
         javascript($self,$prefix,$withCsvOptions,$plugin);
     }
-        
+
     ?>
 <div class="plugin_description">
 	This plugin imports (inserts, updates, deletes) a list of attribute sets before the products will be updated.

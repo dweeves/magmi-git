@@ -4,7 +4,7 @@
  * Class SampleItemProcessor
  * @author dweeves
  *
- * This class is a sample for item processing   
+ * This class is a sample for item processing
 */
 class SampleCustomItemProcessor extends Magmi_ItemProcessor
 {
@@ -37,7 +37,7 @@ class SampleCustomItemProcessor extends Magmi_ItemProcessor
     {
         return true;
     }
-    
+
     /*
      * public function processItemException(&$item,$params=null) { }
      */

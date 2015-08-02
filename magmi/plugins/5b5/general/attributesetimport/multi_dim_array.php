@@ -93,7 +93,7 @@ class MultiDimArray extends ArrayIterator {
 
     /**
      * Returns true, if the given offset exists. Offsets can also be given
-     * partly e.g.:<br/> 
+     * partly e.g.:<br/>
      * <code>
      * offsetExists(array(1,2)) will return true, too, if offset array(1,2,3) is set to a value<br/>
      * but<br/>
@@ -111,7 +111,7 @@ class MultiDimArray extends ArrayIterator {
      * only a part of the given $name array exists e.g.:<br/>
      * <code>
      * offsetExistsPartly(array(1,2,3,4),true) will additionally return true if one of the following offsets exists: array(1), array(1,2), array(1,2,3)<br/></code>
-     * 
+     *
      * @param unknown $name
      * @param string $partlyOk
      * @return void|boolean|string
@@ -221,7 +221,7 @@ class MultiDimArray extends ArrayIterator {
             }
         }
     }
-    
+
     public function count ($mode = null) {
         $count = 0;
         foreach($this as $item) $count++;

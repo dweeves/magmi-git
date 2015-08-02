@@ -4,7 +4,7 @@
  * Class SampleItemProcessor
  * @author dweeves
  *
- * This class is a sample for item processing   
+ * This class is a sample for item processing
 */
 class ColumnMappingItemProcessor extends Magmi_ItemProcessor
 {

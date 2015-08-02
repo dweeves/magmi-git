@@ -145,8 +145,8 @@ $('IMG:remoteauth').observe('click',function()
 			else
 			{
 				$('imgremoteauth').hide();
-			}				
+			}
 		});
-		
+
 </script>
 

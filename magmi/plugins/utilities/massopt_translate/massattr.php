@@ -32,7 +32,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
             $attrinfos = $this->selectAll($sql, $attrcode);
             if (count($attrinfos) == 0)
             {
-                
+
                 $attrinfos = array();
             }
             else
@@ -41,7 +41,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
             }
             $this->_attrinfos[$attrcode] = $attrinfos;
         }
-        
+
         return $this->_attrinfos[$attrcode];
     }
 
@@ -74,7 +74,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
         while ($item = $this->_csvreader->getNextRecord())
         {
             $attinfos = $this->getOptAttributeInfos(trim($item["attribute_code"]));
-            
+
             if (count($attinfos) > 0)
             {
                 $attid = $attinfos["attribute_id"];
@@ -160,13 +160,13 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
         {
             $this->updateOptionPos($optid, $pos);
         }
-        
+
         $values = array();
         $ins = array();
-        
+
         $values = array_merge($values, array($optid,0,$valadm));
         $ins[] = "(?,?,?)";
-        
+
         foreach ($storevals as $store_code => $sval)
         {
             $store_id = $this->getStoreId($store_code);
@@ -176,7 +176,7 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
                 $ins[] = "(?,?,?)";
             }
         }
-        
+
         $valstr = $this->arr2values($values);
         $sql = "INSERT INTO $eaov (option_id,store_id,value)
 		VALUES " . join(",", $ins) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";

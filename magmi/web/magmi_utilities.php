@@ -13,7 +13,7 @@ require_once ("../engines/magmi_utilityengine.php");
 			plugintype:'utilities',
 			profile:'__utilities__'};
 		getPluginParams(params,pparams);
-		
+
 		new Ajax.Updater("pluginoptions:"+pclass,"ajax_pluginconf.php",{parameters:params});
 	};
 
@@ -21,16 +21,16 @@ require_once ("../engines/magmi_utilityengine.php");
 	{
 		Object.extend(pcontainer,$(pclass+"_params").serialize(true));
 	}
-	
+
 	runUtility=function(pclass)
 	{
 		var pparams={
 				token: '<?php echo $_SESSION["token"]; ?>',
 				engine:'magmi_utilityengine:Magmi_UtilityEngine',
-				pluginclass:pclass,	
+				pluginclass:pclass,
 				};
 		getPluginParams(pclass,pparams);
-		
+
 		new Ajax.Updater("plugin_run:"+pclass+"_res",
 						 "magmi_run.php",
 						 {parameters:pparams,
@@ -40,7 +40,7 @@ require_once ("../engines/magmi_utilityengine.php");
 			  				updatePanel(pclass);}
 						});
 	};
-	
+
 	togglePanel=function(pclass)
 	{
 		var target="pluginoptions:"+pclass;

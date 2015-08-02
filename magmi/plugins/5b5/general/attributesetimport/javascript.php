@@ -4,7 +4,7 @@ handle_auth=function()
 	{
 		if($('<?php echo $prefix ?>:remoteauth').checked)
 		{
-			$('<?php echo $prefix ?>:remoteauth').show();	
+			$('<?php echo $prefix ?>:remoteauth').show();
 		}
 		else
 		{
@@ -24,7 +24,7 @@ handle_auth=function()
 	$('<?php echo $prefix ?>:malformed_cb').observe('click',function(ev){
 		if($('<?php echo $prefix ?>:malformed_cb').checked)
 		{
-			$('<?php echo $prefix ?>:malformed').show();	
+			$('<?php echo $prefix ?>:malformed').show();
 		}
 		else
 		{
@@ -57,7 +57,7 @@ handle_auth=function()
 	$('<?php echo $prefix ?>:remoteauth').observe('click',handle_auth);
 	$('<?php echo $prefix ?>:remoteurl').observe('blur',handle_auth);
 <?php } ?>
-	
+
 	$('<?php echo $prefix ?>:prune_cb').observe('click',function() {
 		if($('<?php echo $prefix ?>:prune_cb').checked)
 			$('<?php echo $prefix ?>:prune_opts').show();
@@ -83,5 +83,5 @@ handle_auth=function()
 	};
 	$('<?php echo $prefix ?>:create_cb').observe('click',showHideAttributeGroups);
 	$('<?php echo $prefix ?>:update_cb').observe('click',showHideAttributeGroups);
-<?php } ?>	
+<?php } ?>
 </script>

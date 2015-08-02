@@ -4,7 +4,7 @@ var magmi_multifield=function(listfield,dyncontainer,linetpl,vlist)
 	this.listfield=listfield;
 	this.dyncontainer=dyncontainer;
 	this.linetpl=linetpl;
-	
+
 	this.getinputline=function(fieldname,dvalue,linetpl)
 	{
 		linetpl=linetpl.replace('{fieldname}',fieldname).replace('{value}',dvalue).replace('{fieldname.enc}',encodeURIComponent(fieldname));
@@ -22,7 +22,7 @@ var magmi_multifield=function(listfield,dyncontainer,linetpl,vlist)
 	 	var arr=value.split(",");
 	 	for(var i=0;i<arr.length;i++)
 	 	{
-	 	 arr[i]=arr[i].trim();	
+	 	 arr[i]=arr[i].trim();
 	 	}
 	  	var farr=[];
 	 	 arr.each(function(it){

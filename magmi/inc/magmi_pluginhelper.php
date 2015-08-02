@@ -78,7 +78,7 @@ class Magmi_PluginHelper
         {
             self::scanPlugins($pltypes);
         }
-        
+
         if (isset($filter))
         {
             $out = array();
@@ -112,7 +112,7 @@ class Magmi_PluginHelper
         {
             if (!isset(self::$_plugins_cache[$pltype]))
             {
-                self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0], 
+                self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0],
                     $this->_plmeta[$pltype][1]);
             }
         }
@@ -125,7 +125,7 @@ class Magmi_PluginHelper
             self::scanPlugins($ptype);
         }
         $plinst = new $pclass();
-        
+
         $plinst->pluginInit($mmi, $this->getPluginMeta($plinst), $params, ($mmi != null), $this->_profile);
         return $plinst;
     }
@@ -142,7 +142,7 @@ class Magmi_PluginHelper
         {
             self::scanPlugins();
         }
-        
+
         foreach (self::$_plugins_cache as $t => $l)
         {
             foreach ($l as $pdesc)

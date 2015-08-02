@@ -32,7 +32,7 @@ class SQL_Datasource extends Magmi_Datasource
         if ($cdbtype == "other")
         {
             $cdbpdostr = $this->getParam("SQL:pdostr", "");
-            
+
             $this->dbh->initDBPDOStr($cdbusr, $cdbpass, $cdbpdostr);
         }
         else
@@ -91,7 +91,7 @@ class SQL_Datasource extends Magmi_Datasource
             $sql = "SELECT COUNT(*) as cnt FROM (" . str_replace("\n", " ", $this->extractsql) . ") as t1";
         }
         $cnt = $this->dbh->selectone($sql, null, "cnt");
-        
+
         return $cnt;
     }
 

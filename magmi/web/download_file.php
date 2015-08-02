@@ -12,11 +12,11 @@ if ($err == null)
 {
     // Extract the type of file which will be sent to the browser as a header
     $type = filetype($file);
-    
+
     // Get a date and timestamp
     $today = date("F j, Y, g:i a");
     $time = time();
-    
+
     // Send file headers
     header("Content-type: $type");
     header("Content-Disposition: attachment;filename=" . basename($file));

@@ -49,7 +49,7 @@ class ItemIndexer extends Magmi_ItemProcessor
      */
     public function getItemCategoryIds($pid)
     {
-        $sql = "SELECT cce.path FROM {$this->tns["ccp"]} as ccp 
+        $sql = "SELECT cce.path FROM {$this->tns["ccp"]} as ccp
 		JOIN {$this->tns["cce"]} as cce ON ccp.category_id=cce.entity_id
 		WHERE ccp.product_id=?";
         $result = $this->selectAll($sql, $pid);
@@ -70,8 +70,8 @@ class ItemIndexer extends Magmi_ItemProcessor
     public function getItemCategoryPaths($pid)
     {
         $sql = "SELECT cce.path as cpath,SUBSTR(cce.path,LOCATE('/',cce.path,3)+1) as cshortpath,csg.default_store_id as store_id,cce.entity_id as catid
-			  FROM {$this->tns["ccp"]} as ccp 
-			  JOIN {$this->tns["cce"]} as cce ON cce.entity_id=ccp.category_id 
+			  FROM {$this->tns["ccp"]} as ccp
+			  JOIN {$this->tns["cce"]} as cce ON cce.entity_id=ccp.category_id
 			  JOIN {$this->tns["csg"]} as csg ON csg.root_category_id=SUBSTR(SUBSTRING_INDEX(cce.path,'/',2),LOCATE('/',SUBSTRING_INDEX(cce.path,'/',2))+1)
 			  WHERE ccp.product_id=?";
         $result = $this->selectAll($sql, $pid);
@@ -104,15 +104,15 @@ class ItemIndexer extends Magmi_ItemProcessor
         }
         array_shift($catidlist);
         // get all category ids on which the product is affected
-        
+
         // let's make a IN placeholder string with that
         $catidin = $this->arr2values($catidlist);
         // first delete lines where last inserted product was
         $sql = "DELETE FROM {$this->tns["ccpi"]} WHERE product_id=?";
         $this->delete($sql, $pid);
         // then add lines for index
-        $sqlsel = "INSERT IGNORE INTO {$this->tns["ccpi"]} 
-				 SELECT cce.entity_id as category_id,ccp.product_id,ccp.position,IF(cce.entity_id=ccp.category_id,1,0) as is_parent,csg.default_store_id,cpei.value as visibility 
+        $sqlsel = "INSERT IGNORE INTO {$this->tns["ccpi"]}
+				 SELECT cce.entity_id as category_id,ccp.product_id,ccp.position,IF(cce.entity_id=ccp.category_id,1,0) as is_parent,csg.default_store_id,cpei.value as visibility
 				 FROM {$this->tns["ccp"]} as ccp
 				 JOIN {$this->tns["cpe"]} as cpe ON ccp.product_id=cpe.entity_id
 				 JOIN {$this->tns["cpei"]} as cpei ON cpei.attribute_id=? AND cpei.entity_id=cpe.entity_id
@@ -142,17 +142,17 @@ class ItemIndexer extends Magmi_ItemProcessor
         foreach ($catpathlist as $storeid => $paths)
         {
             $catids = array();
-            
+
             foreach ($paths as $pathinfo)
             {
                 $catids = array_unique(array_merge($catids, explode("/", $pathinfo["cshortpath"])));
             }
-            
+
             $catin = $this->arr2values($catids);
-            
+
             // use tricky double join on eav_attribute to find category related 'name' attribute using 'children' category only attr to distinguish on category entity_id
-            $sql = "SELECT cce.entity_id as catid,COALESCE(ccev.value,ccevd.value) as value 
-				FROM {$this->tns["cce"]} as cce 
+            $sql = "SELECT cce.entity_id as catid,COALESCE(ccev.value,ccevd.value) as value
+				FROM {$this->tns["cce"]} as cce
 			  	JOIN {$this->tns["ea"]} as ea1 ON ea1.attribute_code='children'
 			 	JOIN {$this->tns["ea"]} as ea2 ON ea2.attribute_code ='name' AND ea2.entity_type_id=ea1.entity_type_id
 			  	JOIN {$this->tns["ccev"]} as ccevd ON ccevd.attribute_id=ea2.attribute_id AND ccevd.entity_id=cce.entity_id AND ccevd.store_id=0
@@ -160,14 +160,14 @@ class ItemIndexer extends Magmi_ItemProcessor
 			  	WHERE cce.entity_id IN ($catin) AND cce.level>1
 			  	GROUP BY cce.entity_id";
             $result = $this->selectAll($sql, array_merge(array($storeid), $catids));
-            
+
             // iterate on all names
             foreach ($result as $row)
             {
                 $catid = $row["catid"];
                 $cnames[$catid] = $row["value"];
             }
-            
+
             foreach ($paths as $pinfo)
             {
                 $sp = $pinfo["cshortpath"];
@@ -251,7 +251,7 @@ class ItemIndexer extends Magmi_ItemProcessor
     {
 
         //new url
-        $sql = "SELECT ea.attribute_code,cpei.value,cpev.attribute_id,cpev.value 
+        $sql = "SELECT ea.attribute_code,cpei.value,cpev.attribute_id,cpev.value
 			  FROM {$this->tns["cpe"]} AS cpe
 			  JOIN {$this->tns["ea"]} as ea ON ea.attribute_code IN ('url_key','name')
 			  JOIN {$this->tns["cpev"]} as cpev ON cpev.entity_id=cpe.entity_id AND cpev.attribute_id=ea.attribute_id
@@ -288,7 +288,7 @@ class ItemIndexer extends Magmi_ItemProcessor
             }
             unset($data);
         }
-        
+
         $candidate = $baseurl.$urlend;
         $index = 0;
         while(isset($this->usedurls[$candidate]) && $this->usedurls[$candidate] != $pid) {
@@ -398,22 +398,22 @@ class ItemIndexer extends Magmi_ItemProcessor
 											MIN(cped.value) as min_price,
 											MIN(cped.value) as max_price,
 											cpetp2.value as tier_price
-				FROM $cpe as cpe 
+				FROM $cpe as cpe
 				JOIN $cs as cs ON cs.store_id!=0
 				JOIN $cped as cped ON cped.store_id=cs.store_id AND cped.entity_id=cpe.entity_id
 				JOIN $cg as cg
-				JOIN $ea as ead ON ead.entity_type_id=?  AND ead.attribute_code IN('price','special_price','minimal_price') AND cped.attribute_id=ead.attribute_id 
-				JOIN $ea as eai ON eai.entity_type_id=ead.entity_type_id AND eai.attribute_code='tax_class_id' 
-				LEFT JOIN $cpetp as cpetp ON cpetp.entity_id=cped.entity_id 
+				JOIN $ea as ead ON ead.entity_type_id=?  AND ead.attribute_code IN('price','special_price','minimal_price') AND cped.attribute_id=ead.attribute_id
+				JOIN $ea as eai ON eai.entity_type_id=ead.entity_type_id AND eai.attribute_code='tax_class_id'
+				LEFT JOIN $cpetp as cpetp ON cpetp.entity_id=cped.entity_id
 				LEFT JOIN $cpetp as cpetp2 ON cpetp2.entity_id=cped.entity_id AND cpetp2.customer_group_id=cg.customer_group_id
-				LEFT JOIN $cpei as cpei ON cpei.entity_id=cpe.entity_id AND cpei.attribute_id=eai.attribute_id 
+				LEFT JOIN $cpei as cpei ON cpei.entity_id=cpe.entity_id AND cpei.attribute_id=eai.attribute_id
 				WHERE cpe.entity_id=?
 				GROUP by cs.website_id,cg.customer_group_id
 				ORDER by cg.customer_group_id,cs.website_id
 		";
         $this->insert($sql, array($pet,$pid));
     }
-    
+
 
     public function processItemAfterImport(&$item, $params = null)
     {

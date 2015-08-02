@@ -12,18 +12,18 @@ class ConfigTest extends  PHPUnit_Framework_TestCase
         $conf->load(__DIR__."/test.ini");
         $this->assertEquals($conf->getMagentoDir(), "/data/mag_18");
     }
-    
-    
+
+
     public function testProfileConfigFromCustomFile()
     {
         $conf=Magmi_Config::getInstance();
         $conf->load(__DIR__."/test.ini");
         $dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
         $dp->beginImportSession("testdummyprofile","create");
-        $dp->endImportSession(); 
+        $dp->endImportSession();
         $this->assertFileExists(__DIR__."/testdummyprofile/plugins.conf");
     }
-    
+
     public function testExistingProfileFromCustomFile()
     {
         $conf=Magmi_Config::getInstance();
@@ -35,8 +35,8 @@ class ConfigTest extends  PHPUnit_Framework_TestCase
         $this->assertContains('ImageAttributeItemProcessor',$ep['itemprocessors']);
         $this->assertContains('ItemIndexer',$ep['itemprocessors']);
         $this->assertContains('GenericMapperProcessor',$ep['itemprocessors']);
-         
+
         $dp->endImportSession();
-         
+
     }
 }

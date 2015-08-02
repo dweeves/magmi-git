@@ -41,7 +41,7 @@ if (Magmi_StateManager::getState() !== "running")
     {
         $mmi_imp->setLogger(new EchoLogger());
     }
-    
+
     $mmi_imp->run($params);
 }
 else

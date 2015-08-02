@@ -51,7 +51,7 @@ for ($sku = 0; $sku <= 200; $sku++)
         "description"=>"test" . $sku,"price"=>rand(1, 500),"min_qty"=>3,"qty"=>"+7");
     // color : radom c0/c10
     $item["color"] = "c" . strval(rand(0, 10));
-    
+
     // now some fun, every 100 items, create some relations
     if ($sku > 99 && $sku % 100 == 0)
     {
@@ -70,10 +70,9 @@ for ($sku = 0; $sku <= 200; $sku++)
         // star relate all skus ending with 1
         $item["*re_skus"] = "re::.*1$";
     }
-    
+
     /* import current item */
     $dp->ingest($item);
 }
 /* end import session, will run post import plugins */
 $dp->endImportSession();
- 

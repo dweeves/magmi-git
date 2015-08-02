@@ -18,7 +18,7 @@ class Magmi_DataPumpFactory
         {
             $pumpfile = $arr[0];
             $pumpclass = $arr[1];
-            
+
             try
             {
                 require_once (dirname(__FILE__) . DIRSEP . "$pumpfile.php");

@@ -237,14 +237,14 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         $this->_config = new Magmi_PluginConfig(get_class($this), $profile);
         $this->_config->load();
         $this->_magmiconfig = Magmi_Config::getInstance();
-        
+
         $this->_params = ($params != null ? array_merge($this->_config->getConfig(), $params) : $this->_config->getConfig());
-        
+
         if (isset($mmi))
         {
             $this->pluginHello();
         }
-        
+
         if ($doinit)
         {
             $this->initialize($this->_params);
@@ -311,7 +311,7 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         $info = null;
         if (preg_match('|<div class="plugin_description">(.*?)</div>|smi', $panel, $match))
         {
-            
+
             $info = $match[1];
             $delims = array(".",":");
             foreach ($delims as $delim)

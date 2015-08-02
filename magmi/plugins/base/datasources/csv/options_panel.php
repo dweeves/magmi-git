@@ -18,7 +18,7 @@
 					<?php if($this->getParam("CSV:importmode","local")=="remote"){?>
 					selected="selected" <?php }?>>Remote</option>
 		</select>
-	
+
 	</ul>
 
 	<div id="localcsv"
@@ -132,14 +132,14 @@ Malformed CSV (column list line not at top of file)
 	{
 		if($('CSV:remoteauth').checked)
 		{
-			$('remoteauth').show();	
+			$('remoteauth').show();
 		}
 		else
 		{
 			$('remoteauth').hide();
 		}
 	}
-	
+
 	$('CSV:basedir').observe('blur',function()
 			{
 			new Ajax.Updater('csvds_filelist','ajax_pluginconf.php',{
@@ -152,7 +152,7 @@ Malformed CSV (column list line not at top of file)
 	$('malformedcb').observe('click',function(ev){
 		if($('malformedcb').checked)
 		{
-			$('malformed').show();	
+			$('malformed').show();
 		}
 		else
 		{
