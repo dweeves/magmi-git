@@ -359,7 +359,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
         $this->fetchProdEType();
         $sql = "SELECT  ea.attribute_set_id,ea.attribute_id
-                FROM    $tname AS ea
+                FROM    eav_entity_attribute AS ea
                 WHERE   ea.entity_type_id = ?";
         $result = $this->selectAll($sql,$this->prod_etype);
         foreach($result as $row)
