@@ -277,6 +277,24 @@ $cansock = !($dmysqlsock === false);
 				<li class="value"><input type="text" name="GLOBAL:filemask" size="3"
 					value="<?php echo $conf->get("GLOBAL","filemask","644")?>"></input></li>
 			</ul>
+			<h3>Backward compatibility</h3>
+			<ul class="formline" id="noattsetupdate">
+				<li class="label">Disable attribute set update:</li>
+				<li class="value">
+					<input type="checkbox" id="noattsetupdate_cb"
+						<?php if($conf->get("GLOBAL","noattsetupdate","off")=="on"){?>
+						checked="checked" <?php }?>>
+						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" value="<?php echo $conf->get("GLOBAL","noattsetupdate","off") ?>"/>
+						<script type="text/javascript">
+						$('noattsetupdate_cb').observe('click',function(){
+							if($('noattsetupdate_cb').checked) {
+								$('noattsetupdate_hf').value = 'on';
+							} else {
+								$('noattsetupdate_hf').value = 'off';
+							}
+						});
+					</script></li>
+			</ul>
 
 		</div>
 		<div class="clear"></div>

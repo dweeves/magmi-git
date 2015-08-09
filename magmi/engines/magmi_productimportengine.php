@@ -29,9 +29,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     //attribute info by type
     public $attrbytype = array();
     //attribute set cache
-    public $attribute_sets = array();
+    public $attribute_sets = null;
     //attribute set to attribute relation cache
-    public $attribute_set_infos = array();
+    public $attribute_set_infos = null;
     //product entity type
     public $prod_etype;
     //default attribute set id
@@ -108,19 +108,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     {
         $this->getProductEntityType();
         $this->default_asid = $this->getAttributeSetId('Default');
-    }
-
-    /**
-     * Fetches the entity type for "catalog_product" and stores it to $this->prod_etype (if not already done).
-     */
-    private function fetchProdEType() {
-        if ($this->prod_etype == null)
-        {
-            // Find product entity type
-            $tname = $this->tablename("eav_entity_type");
-            $this->prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
-                                                 "catalog_product", "entity_type_id");
-        }
     }
 
     public function getPluginFamilies()
@@ -363,9 +350,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      *
      */
     public function initAttrSetInfos() {
-        if(sizeof($this->attribute_set_infos) > 0)
+        if(isset($this->attribute_set_infos))
         {
-            return;
+            return; // already initialized
         }
 
         $tname = $this->tablename("eav_entity_attribute");
@@ -376,6 +363,15 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         foreach($result as $row)
         {
             $this->attribute_set_infos[$row["attribute_set_id"]][$row["attribute_id"]] = 1;
+        }
+        unset($result);
+        $tname = $this->tablename("eav_attribute_set");
+        $result = $this->selectAll(
+                "SELECT attribute_set_id,attribute_set_name FROM $tname WHERE entity_type_id=?", 
+                array($this->getProductEntityType()));
+        $this->attribute_sets = array();
+        foreach($result as $row) {
+            $this->attribute_sets[$row['attribute_set_name']] = $row['attribute_set_id'];
         }
         unset($result);
         $this->log("Initialized attribute_set_infos!");
@@ -508,14 +504,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getAttributeSetId($asname)
     {
-        if (!isset($this->attribute_sets[$asname]))
-        {
-            $tname = $this->tablename("eav_attribute_set");
-            $asid = $this->selectone(
-                "SELECT attribute_set_id FROM $tname WHERE attribute_set_name=? AND entity_type_id=?",
-                array($asname,$this->prod_etype), 'attribute_set_id');
-            $this->attribute_sets[$asname] = $asid;
-        }
+        $this->initAttrSetInfos();
         return $this->attribute_sets[$asname];
     }
 
@@ -1694,6 +1683,21 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
         else
         {
+            // only change attribute sets if disable option is OFF
+            if($this->getProp("GLOBAL", "noattsetupdate", "off") == "off") {
+                // if attribute set name is given and changed
+                // compared to attribute set in db -> change!
+                $asName = $item['attribute_set'];
+                if(isset($asName)) {
+                    $newAsId = $this->getAttributeSetId($asName);
+                    if(isset($newAsId) && $newAsId != $asid) {
+                        // attribute set changed!
+                        $item['attribute_set_id'] = $newAsId;
+                        $asid = $newAsId;
+                        $itemids['asid'] = $newAsId;
+                    }
+                }
+            }
             $this->updateProduct($item, $pid);
         }
 
@@ -1880,6 +1884,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->log("Import Profile:$this->_profile", "startup");
         $this->log("Import Mode:$this->mode", "startup");
         $this->log("step:" . $this->getProp("GLOBAL", "step", 0.5) . "%", "step");
+        $this->log("Attributeset update is ".($this->getProp("GLOBAL","noattsetupdate","off") == "on"?"dis":"en")."abled.", "startup");
         // intialize store id cache
         $this->connectToMagento();
         try
@@ -2016,6 +2021,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->log("Import Profile:$this->_profile", "startup");
         $this->log("Import Mode:$this->mode", "startup");
         $this->log("step:" . $this->getProp("GLOBAL", "step", 0.5) . "%", "step");
+        $this->log("Attributeset update is ".($this->getProp("GLOBAL","noattsetupdate","off") == "on"?"dis":"en")."abled.", "startup");
         $this->createPlugins($this->_profile, $params);
         $this->datasource = $this->getDataSource();
         $this->callPlugins("datasources,general", "beforeImport");
