@@ -66,7 +66,29 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     'idColName'=>'attribute_set_id',
                     'nameColNames'=>['attribute_set_name'],
                     'elementPrefix'=>'5B5ASI',
-                    'verbose'=>true
+                    'verbose'=>true,
+                    'inner' => [
+                            'magmi:groups' => [
+                                    'label' => 'Groups',
+                                    'recordSeparator' => ',',
+                                    'valueSeparator' => ':',
+                                    'columnNames' => [
+                                            'attribute_group_name',
+                                            'default_group_id',
+                                            'sort_order'
+                                    ],
+                                    'applyDefaultsFromParent' => ['attribute_set_id'],
+                                    'applyConditionsFromParent' => ['attribute_set_id'],
+                                    'config' => [
+                                            'entityName'=>"attribute group",
+                                            'tables'=>['eav_attribute_group'],
+                                            'idColName'=>'attribute_group_id',
+                                            'nameColNames'=>['attribute_group_name'],
+                                            'elementPrefix'=>'5B5AGI',
+                                            'verbose'=>false
+                                    ] 
+                            ]
+                    ]
     ];
 
     /**
@@ -107,19 +129,6 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                     'idColumnName' => 'attribute_group_id',
                                     'additionalIdColumn' => 'attribute_set_id'
                                 ]
-    ];
-
-    /**
-     * Config parameters for call to updateGeneric when processing attribute set groups.
-     * @var array
-     */
-    private $ATTRIBUTE_GROUP_ARGS = [
-                'entityName'=>"attribute group",
-                'tables'=>['eav_attribute_group'],
-                'idColName'=>'attribute_group_id',
-                'nameColNames'=>['attribute_group_name'],
-                'elementPrefix'=>'5B5AGI',
-                'verbose'=>false
     ];
 
     public function initialize($params)
@@ -169,7 +178,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Attribute Set Importer","author"=>"5byfive GmbH","version"=>"0.0.1","url"=>$this->pluginDocUrl("Attribute_set_importer"));
+        return array("name"=>"Attribute Set Importer","author"=>"5byfive GmbH","version"=>"0.0.2","url"=>$this->pluginDocUrl("Attribute_set_importer"));
     }
 
     /**
@@ -487,13 +496,10 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * @param Name2IdDecoder $decoder instance of Name2IdDecoder, that decodes all given names into ids before data is handled, may be null for "no decoding", necessary when names have to fetched from different tables to process.
      * @return Statistics object containing the amounts of updated/inserted/deleted... records.
      */
-    private function updateGeneric($csvreader,$config,$defaults,$fetchConditions,$decoder=null) {
+    private function updateGeneric($csvreader,&$config,$defaults,$fetchConditions,$decoder=null) {
         // extract the following variables from $config:
-        // entityName,tables,idColName,nameColNames,elementPrefix,verbose,fetchSystemAttributeIdsSql
+        // entityName,tables,idColName,nameColNames,elementPrefix,verbose,fetchSystemAttributeIdsSql,inner
         extract($config);
-
-        //is this an attribute set import? -> this flag triggers attribute set group update later on
-        $isASImport = $elementPrefix == '5B5ASI';
 
         $givenRecordCount = $csvreader->getLinesCount();
         if($verbose) $this->log("Will update ${entityName}s...($givenRecordCount records given)",'startup');
@@ -515,7 +521,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         *  Insert/update loop
         *  ---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
         $statistics = new Statistics(); // keeps statistics information
-        $groupStatistics = new Statistics(); // accumulates statistics information for all attribute set group updates (only attribute set import)
+        $innerStats = array();
+        if(isset($inner)) {
+            foreach($inner as $innerColName => $innerConfig) {
+                $innerStats[$innerColName] = new Statistics(); // accumulates statistics information for "inner" updates
+            }
+        }
         $lastReportTime = time(); // initialize report time -> to be able to report progress every second
         $currentRecordNo = 0; // just for counting...
         $givenNameValues = new MultiDimArray(); // store given Attribute names for faster pruning in second loop
@@ -544,7 +555,9 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 // if a decoder is given, decode given names to corresponding ids first
                 // default values are given as names so this must be done AFTER defaults are applied,
                 // otherwise defaults would have to be given as ids.
+                $originalRecord = null;
                 if(isset($decoder)) {
+                    $originalRecord = $record;
                     $record = $decoder->decode($record);
                 }
 
@@ -607,12 +620,15 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                     $record[$idColName] = $newId;
                                 }
                             }
-
-                            // if this is an attribute set import (and record has a "magmi:groups" value),
-                            // also update the groups of the current set based on the values given in "magmi:groups" and "magmi:default_group"
-                            if($isASImport && isset($record['magmi:groups'])) {
-                                $result = $this->updateAttributeSetGroups($record[$idColName],$record['magmi:groups'],isset($record['magmi:default_group'])?$record['magmi:default_group']:null);
-                                $groupStatistics->add($result);
+                            
+                            // if configured, perform "inner" import 
+                            if(isset($inner)) {
+                                foreach($inner as $innerColName => $innerConfig) {
+                                    if(isset($record[$innerColName])) {
+                                        $result = $this->updateInner($record,$record[$innerColName],$innerConfig);
+                                        $innerStats[$innerColName]->add($result);
+                                    }
+                                }
                             }
                         }
                     } else {
@@ -621,6 +637,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                         if($this->getParam($elementPrefix.":update",'on')=='on') {
                             // get database id of existing database record
                             $id = $dbDataByName[$currentNames][$idColName];
+                            $record[$idColName] = $id;
                             // now update all tables from $tables
                             foreach($tables as $tableName) {
                                 $columnNames = $this->cols($tableName);
@@ -648,11 +665,14 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                                 }
                             }
 
-                            // if this is an attribute set import (and record has a "magmi:groups" value),
-                            // also update the groups of the current set based on the values given in "magmi:groups" and "magmi:default_group"
-                            if($isASImport && isset($record['magmi:groups'])) {
-                                $result = $this->updateAttributeSetGroups($id,isset($record['magmi:groups'])?$record['magmi:groups']:'',isset($record['magmi:default_group'])?$record['magmi:default_group']:null);
-                                $groupStatistics->add($result);
+                            // if configured, perform "inner" import 
+                            if(isset($inner)) {
+                                foreach($inner as $innerColName => $innerConfig) {
+                                    if(isset($record[$innerColName])) {
+                                        $result = $this->updateInner($record,$record[$innerColName],$innerConfig);
+                                        $innerStats[$innerColName]->add($result);
+                                    }
+                                }
                             }
                         }
                     }
@@ -677,8 +697,8 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 }
             } catch(Exception $e) {
                 // exception within loop -> log Exception
-                $this->log("Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record,true)."\nsee trace log!",'startup');
-                $this->trace($e,"Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record,true));
+                $this->log("Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record,true).(isset($originalRecord)?"\noriginal record data:".print_r($originalRecord,true):"")."\nsee trace log!",'startup');
+                $this->trace($e,"Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record,true).(isset($originalRecord)?"\noriginal record data:".print_r($originalRecord,true):""));
             }
         }
 
@@ -803,54 +823,64 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             }
         }
         if($verbose) $this->log("Finished updating ".$entityName."s: $statistics",'startup');
-        if($verbose && $isASImport) $this->log("Groups: $groupStatistics",'startup');
+        if($verbose && isset($inner)) {
+            foreach($inner as $innerColName => $innerConfig) {
+                $this->log($innerConfig['label'].": ".$innerStats[$innerColName],'startup');
+            }
+        }
         return $statistics;
     }
 
     /**
-     * <p>Updates
-     * @param integer $asId attribute_set_id of attribute set to update groups for
-     * @param string $groupString string containing group names and sort orders in format: "<groupname>[:<sortorder>],<groupname>[:<sortorder>],<groupname>[:<sortorder>],..." where <groupname> is a string and <sortorder> an integer, if sortorders are not given, the order number is increased by 1 for each entry
-     * @param string $defaultGroup name of the default group, defaults to "General"
+     * <p>Updates data from a single field taken from the parent record by applying the "innerConfig" (so the contents of the field can be seen as a complete CSV datasource by themselves):</p>
+     * <p>innerConfig is an associative array with the following keys:<ul>
+     * <li>label: human-readable identifier, used for statistics output only</li>
+     * <li>recordSeparator: String used in field content to separate records, e.g. ';'</li>
+     * <li>valueSeparator: String used in field content to separate values from one another (values must be given in order of 'columnNames'</li>
+     * <li>columnNames: array containing columnNames for evaluation of contents</li>
+     * <li>applyDefaultsFromParent: array containing field names for which the default value will be take from the parent record.</li>
+     * <li>applyConditionsFromParent: array containing field names for which there will be a condition with the value from the parent record.</li>
+     * <li>config: config array to be passed on to the inner updateGeneric call. (see updateGeneric documentation)</li>
+     * @param array $parentRecord the parent record's data as an associative array
+     * @param string $fieldContent the string content of the field
+     * @param array $innerConfig the innerConfig (see above)
      */
-    private function updateAttributeSetGroups($asId,$groupString,$defaultGroup="General") {
-        $asgTableName = $this->tablename('eav_attribute_group');
-
-        // givenGroups will be filled with the appropriate values and will later on serve as datasource for the attribute group updateGeneric() call
-        $givenGroups = array();
-        $index = 0;
-        // separate groupString into substrings in format "<groupname>:<sortorder>" and iterate over the results
-        foreach(explode(',',$groupString) as $group) {
-            $groupNameAndSortOrder = explode(':',$group,2);
-            $groupName = trim($groupNameAndSortOrder[0]);
-
-            // sortorder defaults to $index
-            $sortOrder = $index;
-            // if the group string has a sortorder -> use sortorder from string
-            if(isset($groupNameAndSortOrder[1])) {
-                try {
-                    $sortOrder = intval(trim($groupNameAndSortOrder[1]));
-                } catch(Exception $e){}
+    private function updateInner(&$parentRecord,$fieldContent,&$innerConfig) {
+        extract($innerConfig);
+        // extract label,recordSeparator,valueSeparator,columnNames,applyDefaultsFromParent,applyConditionsFromParent,config
+        
+        // datasource will be filled with the appropriate values and will later on serve as datasource for the updateGeneric() call
+        $data = array();
+        // separate field content into substrings for each record and iterate over the results
+        foreach(explode($recordSeparator,$fieldContent) as $entireRecord) {
+            $recorddata = explode($valueSeparator,$entireRecord);
+            $index = 0;
+            $record = array();
+            foreach($recorddata as $value) {
+                if(is_numeric($value)) {
+                    $value = 0+$value;
+                }
+                $record[$columnNames[$index]] = $value;
+                $index++;
             }
-
-            $isDefault = $groupName == $defaultGroup;
-            $givenGroups[] = array(
-                    'attribute_group_name' => $groupName,
-                    'sort_order' => $sortOrder,
-                    'default_id' => $isDefault?1:0);
-
-            $index=$sortOrder+1;
+            $data[] = $record;
         }
 
         // prepare ArrayReader out of $givenGroups
         $datasource = new ArrayReader();
-        $datasource->initialize($givenGroups);
+        $datasource->initialize($data);
 
-        // current attribute set id must be set for defaults and fetchConditions we only want to update groups for the current attribute set.
-        $condition = ['attribute_set_id'=>$asId];
+        $conditions = array();
+        foreach($applyConditionsFromParent as $columnName) {
+            $conditions[$columnName] = $parentRecord[$columnName];
+        }
+        $defaults = array();
+        foreach($applyDefaultsFromParent as $columnName) {
+            $defaults[$columnName] = $parentRecord[$columnName];
+        }
 
         // call updateGeneric with prepared data
-        return $this->updateGeneric($datasource,$this->ATTRIBUTE_GROUP_ARGS,$condition,$condition);
+        return $this->updateGeneric($datasource,$config,$defaults,$conditions);
     }
 
     public function afterImport()
