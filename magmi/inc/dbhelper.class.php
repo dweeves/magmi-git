@@ -21,6 +21,7 @@ class DBHelper
     protected $_timecounter = null;
     protected $_tcats;
     protected $_tables2columns = array();
+    protected $_dbname;
 
     public function __construct()
     {
@@ -65,6 +66,7 @@ class DBHelper
 
         // set database debug mode to trace if necessary
         $this->_debug = $debug;
+        $this->_dbname = $dbname;
         $this->prepared = array();
     }
 
@@ -669,7 +671,7 @@ class DBHelper
             return $this->_tables2columns[$tablename];
         } else {
             $columnNames = array();
-            $data = $this->select("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?",array($this->tablename($tablename)));
+            $data = $this->select("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?",array($this->tablename($tablename),$this->_dbname));
             foreach($data as $record) {
                 $columnNames[] = $record['COLUMN_NAME'];
             }
