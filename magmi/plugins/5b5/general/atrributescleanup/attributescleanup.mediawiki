@@ -1,0 +1,48 @@
+== What it does ==
+This plugin removes unreferenced attributes from products. This is useful if you're<br/>
+a) changing the attribute set of one or more products while product import
+b) updating attribute associations within existing attribute sets (e.g. with Attribute set importer).
+
+=== Where do 'unreferenced' attributes come from? ===
+''Example 1:''
+If you're changing the attribute set of a product and the new attribute set doesn't contain some attributes the old one contained, the values for the old attributes will still be in the database (and because they don't fit to the products' current attribute set might cause some problems).
+
+''Example 2:''
+It you're removing attribute-to-set associations (with Attribute set importer), but not remove the attributes itself, the products using the respective attribute set might also have some values for attributes which are no longer in the attribute set.
+
+This plugin removes all attribute values from all products, which are not in the products' current attribute set after the product import is finished.
+
+''This means, you normally will not need to use this plugin, if you don't ever change the attribute set of an existing product and you're not using the Attribute set importer plugin.''
+
+== Datapump functionality ==
+The datapump functionality is included in the datapump extension provided by the attribute set import plugin.
+ $dp=Magmi_DataPumpFactory::getDataPumpInstance("attributesetimport");
+ 
+You can call the cleanup functionality by calling the function
+ cleanupAttributes();
+
+The used import profile must have the Attributes Cleanup Plugin configured!
+
+Example (based on default DataPump example):
+ <?php
+ // assuming that your script file is located in magmi/integration/scripts/somedirectory/myscript.php,
+ // include "magmi_defs.php" , once done, you will be able to use any magmi includes without specific path.
+ require_once("../../../inc/magmi_defs.php");
+ //Datapump include
+ require_once("magmi_datapump.php");
+ 
+ // Difference to "normal" datapump!!! Create an Attribute Set import Datapump using Magmi_DatapumpFactory
+ $dp=Magmi_DataPumpFactory::getDataPumpInstance("attributesetimport");
+ 
+ // Begin import session with a profile & running mode, here profile is "default" & running mode is "create".
+ // Available modes: "create" creates and updates items, "update" updates only, "xcreate creates only.
+ // Important: for values other than "default" profile has to be an existing magmi profile (profile must have cleanup plugin configured!)
+ $dp->beginImportSession("default","create");
+ 
+ // perform cleanup
+ // Now ingest item(s) into magento
+ $dp->cleanupAttributes();
+ 
+ // End import Session
+ $dp->endImportSession();
+ ?>

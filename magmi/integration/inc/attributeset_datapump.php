@@ -26,5 +26,9 @@ class Magmi_AttributeSet_DataPump extends Magmi_ProductImport_DataPump {
         $this->_engine->callPlugins("general", "importAttributeAssociations", $reader);
     }
 
+    public function cleanupAttributes() 
+    {
+        $this->_engine->callPlugins("general","deleteUnreferencedAttributes");
+    }
 }
 ?>

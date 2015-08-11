@@ -281,7 +281,7 @@ class DBHelper
      */
     public function delete($sql, $params = null)
     {
-        $this->exec_stmt($sql, $params);
+        return $this->exec_stmt($sql, $params)->rowCount();
     }
 
     /**
@@ -294,7 +294,7 @@ class DBHelper
      */
     public function update($sql, $params = null)
     {
-        $this->exec_stmt($sql, $params);
+        return $this->exec_stmt($sql, $params)->rowCount();
     }
 
     /**

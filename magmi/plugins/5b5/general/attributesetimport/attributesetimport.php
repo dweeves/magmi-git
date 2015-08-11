@@ -37,12 +37,6 @@ require_once ("name2id_decoding.php");
 class AttributeSetImporter extends Magmi_GeneralImportPlugin
 {
     /**
-     * Variable storing the entity type id (dynamically fetched from database in fetchProdEType() )
-     * @var integer
-     */
-    protected $_prod_etype;
-
-    /**
      * Config parameters for call to updateGeneric when processing attributes.
      * @var array
      */
@@ -274,7 +268,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributes($csvreader) {
         $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->_prod_etype];
+        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_ARGS,$etiCondition,$etiCondition);
     }
 
@@ -285,7 +279,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributeSets($csvreader) {
         $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->_prod_etype];
+        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_SET_ARGS,$etiCondition,$etiCondition);
     }
 
@@ -295,12 +289,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributeAssociations($csvreader) {
         $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->_prod_etype];
+        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
 
         // dynamically add product entity type id to decoder options
         $decoderArgs = array_merge_recursive($this->ATTRIBUTE_SET_ASSOCIATION_DECODER_ARGS,
-                ['attribute_set_name'=>['conditions' =>['entity_type_id' => $this->_prod_etype]],
-                        'attribute_code'=>['conditions' =>['entity_type_id' => $this->_prod_etype]]]);
+                ['attribute_set_name'=>['conditions' =>['entity_type_id' => $this->getProductEntityType()]],
+                        'attribute_code'=>['conditions' =>['entity_type_id' => $this->getProductEntityType()]]]);
 
         $decoder = new Name2IdDecoder($this,$decoderArgs);
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_SET_ASSOCIATION_ARGS,$etiCondition,$etiCondition,$decoder);
@@ -886,18 +880,6 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function afterImport()
     {
         // intentionally left blank...
-    }
-
-    /**
-     * Fetches the entity_type_id from database and stores it to $this->_prod_etype
-     */
-    private function fetchProdEType()
-    {
-        if($this->_prod_etype == null) {
-            $tname = $this->tablename("eav_entity_type");
-            $this->_prod_etype = $this->selectone("SELECT entity_type_id FROM $tname WHERE entity_type_code=?",
-                    "catalog_product", "entity_type_id");
-        }
     }
 
     /**
