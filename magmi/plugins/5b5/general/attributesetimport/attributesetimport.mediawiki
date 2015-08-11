@@ -2,6 +2,10 @@
 It imports attributes, attribute sets with groups and the corresponding attribute-to-set associations from 3 different csv files to the magento database before the product update will start.
 It lets you choose for each entity type (attributes, sets, associations) if you want to update existing, create new, delete marked records and/or prune all records which were not given in your import data.
 
+'''Please note before using this plugin:''' Always test your attribute set importer setup properly (and, of course, backup your systems properly)! Wrong configuration or wrong import data can cause severe loss of data in your database!
+* Example 1: If the prune option is enabled and an import file is incomplete all missing data will be pruned from database.
+* Example 2: If attribute sets are deleted by this plugin, products using the respective attribute sets will also be deleted because of the referential integrity contraints in the database! So if you want to use the prune or delete options please think twice and TEST!
+
 == Usage ==
 
 === Configuration options ===
@@ -57,16 +61,15 @@ If the switch is not active, records which are already in database will be ignor
 Groups import is only enabled if either the create or the update switch is active for entity type "attribute sets".
 The options for groups import are the same as for the other imports, the only difference is, groups belong to an attribute set and therefore, groups are given with each attribute set record.
 Within attribute set CSV data a column "magmi:groups" may be added. The format of this column's data is as follows:
-<group name>:<sort order>,<group name>:<sort order>,<group name>:<sort order>
-So, if you want to set three groups for an attribute set named "Group1", "Group2" and "Group3", you would probably set
- Group1:1,Group2:2,Group3:3
+<group name>:<default_id>:<sort order>,<group name>:<default_id>:<sort order>,<group name>:<default_id>:<sort order>
+So, if you want to set three groups for an attribute set named "Group1", "Group2" and "Group3" with Group2 as the default, you would probably set
+ Group1:0:1,Group2:1:2,Group3:0:3
 as the value for "magmi:groups" column in the atrribute set's CSV row.
-The colon and following sort order may be omitted, the sort order is calculated as <sort order of previous element plus 1>, if no sort order is given for the first element, it will obtain sort order 0. So this
- Group1,Group2,Group3:6,Group4
+Values can be omitted from the right, the respective columns will be filled with the default values.
+So this
+ Group1,Group2:1,Group3:6,Group4
 would be equivalent to 
- Group1:0,Group2:1,Group3:6,Group4:7
-
-One of the groups may optionally be set as the default group by giving its name in an extra column "magmi:default_group".
+ Group1:0:0,Group2:1:0,Group3:0:0,Group4:0:0
 
 ''All options for group import have a "per attribute set" focus, so will only have effect for updated/imported attribute sets.''
 
@@ -94,6 +97,8 @@ All further columns will be inserted/updated if given or just ignored if not. (F
 All other column names from the respective database tables can be used as columns in the CSV data, just don't use the primary key columns! The records are identified by the "names" and using primary keys columns in CSV could or most likely will lead to destroyed data in your database! If column names don't match between CSV and database, the data will be ignored (there will be no error message). In other words: extra columns are ignored.
 There are a few extra columns defined by this plugin: "magmi:delete" (all entity types, see [[#magmi_delete|Delete <entity type> marked "magmi:delete" = 1]]), "magmi:groups" and "magmi:default_group" (only for attribute sets, see [[#Attribute Set Groups import|Attribute Set Groups import]]).
 
+'''Be careful about what to import into the tables!''' There are some dependencies between some of the columns (e.g. configurable attributes typically have is_global = 1, source_model = 'eav/entity_attribute_source_table', frontend_input = 'select' and backend_type = 'int', otherwise there will be problems using these attributes).
+'''The plugin does NOT check such dependencies!'''
 
 ==== Entity type "Attribute" ====
 Updates database tables '''eav_attribute''' and '''catalog_eav_attribute'''.
