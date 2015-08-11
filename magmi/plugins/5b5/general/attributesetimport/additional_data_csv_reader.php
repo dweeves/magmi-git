@@ -57,10 +57,12 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
         foreach($record as $columnName => $value) {
             if($value === "*") {
                 $expandedRecords = array();
-                foreach($this->_availableValuesPerColumn[$columnName] as $value => $ignore) {
-                    $newRecord = $record;
-                    $newRecord[$columnName] = $value;
-                    $expandedRecords[] = $newRecord;
+                if(isset($this->_availableValuesPerColumn[$columnName])) {
+                    foreach($this->_availableValuesPerColumn[$columnName] as $value => $ignore) {
+                        $newRecord = $record;
+                        $newRecord[$columnName] = $value;
+                        $expandedRecords[] = $newRecord;
+                    }
                 }
                 return $this->inflateWildcards($expandedRecords);
             }
