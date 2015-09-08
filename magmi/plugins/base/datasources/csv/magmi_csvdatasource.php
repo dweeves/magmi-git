@@ -75,7 +75,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
         {
             $fg->setCookie($cookies);
         }
-        
+
         $this->log("Fetching CSV: $url", "startup");
         // output filename (current dir+remote filename)
         $csvdldir = dirname(__FILE__) . "/downloads";
@@ -84,7 +84,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
             @mkdir($csvdldir);
             @chmod($csvdldir, Magmi_Config::getInstance()->getDirMask());
         }
-        
+
         $outname = $csvdldir . "/" . basename($url);
         $ext = substr(strrchr($outname, '.'), 1);
         if ($ext != "txt" && $ext != "csv")
@@ -104,7 +104,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
             }
         }
         $fg->copyRemoteFile($url, $outname);
-        
+
         // return the csv filename
         return $outname;
     }

@@ -15,7 +15,7 @@ if (file_exists($logfile))
     $parser = new DefaultProgressParser();
     $parser->setFile($logfile);
     $parser->parse();
-    
+
     $count = $parser->getData("itime:count");
     if ($count)
     {
@@ -59,7 +59,7 @@ else
 						$(dtype+'_link').update("Hide Details");
 						$(detdiv).show();
 						},evalScripts:true});
-	
+
 		}
 	};
 </script>
@@ -73,7 +73,7 @@ else
 
 <div class="col">
 	<h3>Startup</h3>
-		
+
 <?php foreach($parser->getData("startup") as $sinfo):?>
 <div class="log_standard"><?php echo $sinfo?></div>
 <?php endforeach?>
@@ -164,8 +164,8 @@ if(count($info)>0):?>
 	</div>
 </div>
 <?php endif?>
-	
-	
+
+
 <?php
 $skipped = $parser->getData("skipped");
 if (!is_array($skipped) && $skipped > 0)
@@ -180,7 +180,7 @@ if (!is_array($skipped) && $skipped > 0)
 	<span><a href='magmi.php'>Back to Configuration Page</a></span>
 </div>
 <script type="text/javascript">endImport();</script>
-<?php else:?>	
+<?php else:?>
 	<?php if($parser->getData("ended")):?>
 <div
 	class='log_end <?php if(count($parser->getData("error"))>0){?> log_error<?php }?>'>

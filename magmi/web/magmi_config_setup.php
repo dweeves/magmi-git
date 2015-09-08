@@ -15,7 +15,7 @@ if (isset($_REQUEST["profile"]))
 }
 else
 {
-    
+
     if (isset($_SESSION["last_runned_profile"]))
     {
         $profile = $_SESSION["last_runned_profile"];
@@ -48,12 +48,12 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 			<input type="file" name="magmi_package"></input> <input type="submit"
 				value="Upload Magmi Release"></input>
 		<?php
-    
+
     if (isset($_SESSION["magmi_install"]))
     {
         $type = $_SESSION["magmi_install"][0];
         $msg = $_SESSION["magmi_install"][1];
-        ?>	
+        ?>
 		<div class="mgupload_<?php echo $type?>">
 				<?php echo $msg;?>
 		</div>
@@ -74,7 +74,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 			<input type="file" name="plugin_package"></input> <input
 				type="submit" value="Upload Plugins"></input>
 <?php
-    
+
     if (isset($_SESSION["plugin_install"]))
     {
         $type = $_SESSION["plugin_install"][0];
@@ -197,7 +197,7 @@ $cansock = !($dmysqlsock === false);
 							<?php if($curconn != "socket"){?> style="display: none" <?php  }?>>
 							<ul class="formline">
 								<li class="label">Unix Socket:</li>
-					
+
 					<?php
 					    $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
 					    if (!file_exists($mysqlsock))
@@ -209,7 +209,7 @@ $cansock = !($dmysqlsock === false);
 									value="<?php echo $mysqlsock?>"></input></li>
 					</ul>
 			</div>
-			<?php }?>	
+			<?php }?>
 			<div id="connectivity_extra" <?php echo $curconn == 'localxml' ? 'style="display: none;"' : ''; ?>>
 				<hr />
 				<ul class="formline">
@@ -217,7 +217,7 @@ $cansock = !($dmysqlsock === false);
 					<li class="value"><input type="text" name="DATABASE:dbname"
 						value="<?php echo $conf->get("DATABASE","dbname")?>"></input></li>
 				</ul>
-	
+
 				<ul class="formline">
 					<li class="label">Username:</li>
 					<li class="value"><input type="text" name="DATABASE:user"
@@ -277,6 +277,24 @@ $cansock = !($dmysqlsock === false);
 				<li class="value"><input type="text" name="GLOBAL:filemask" size="3"
 					value="<?php echo $conf->get("GLOBAL","filemask","644")?>"></input></li>
 			</ul>
+			<h3>Backward compatibility</h3>
+			<ul class="formline" id="noattsetupdate">
+				<li class="label">Disable attribute set update:</li>
+				<li class="value">
+					<input type="checkbox" id="noattsetupdate_cb"
+						<?php if($conf->get("GLOBAL","noattsetupdate","off")=="on"){?>
+						checked="checked" <?php }?>>
+						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" value="<?php echo $conf->get("GLOBAL","noattsetupdate","off") ?>"/>
+						<script type="text/javascript">
+						$('noattsetupdate_cb').observe('click',function(){
+							if($('noattsetupdate_cb').checked) {
+								$('noattsetupdate_hf').value = 'on';
+							} else {
+								$('noattsetupdate_hf').value = 'off';
+							}
+						});
+					</script></li>
+			</ul>
 
 		</div>
 		<div class="clear"></div>
@@ -305,14 +323,14 @@ $('save_commonconf').observe('click',function()
 				 "magmi_saveconfig.php",
 				 {parameters:$('commonconf_form').serialize('true'),
 				  onSuccess:function(){$('commonconf_msg').show();}
-	  			});							
+	  			});
 });
 <?php if($conf_ok){?>
 $('runprofile').observe('change',function(ev)
 		{
 			document.location='magmi.php?profile='+Event.element(ev).value;
 		});
-<?php }?>	
+<?php }?>
 
 $('DATABASE:connectivity').observe('change',function(ev)
 		{

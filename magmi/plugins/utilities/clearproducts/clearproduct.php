@@ -26,14 +26,14 @@ class ClearProductUtility extends Magmi_UtilityPlugin
             "catalog_product_relation","catalog_product_enabled_index","catalog_product_website",
             "catalog_category_product_index","catalog_category_product","cataloginventory_stock_item",
             "cataloginventory_stock_status");
-        
+
         // clear flat catalogs index
         $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", NULL, false);
         while ($row = $stmt->fetch(PDO::FETCH_NUM))
         {
             $this->exec_stmt("TRUNCATE TABLE " . $row[0]);
         }
-        
+
         foreach ($tables as $table)
         {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
@@ -42,9 +42,9 @@ class ClearProductUtility extends Magmi_UtilityPlugin
         //clean url rewrites for products
         $sql="DELETE FROM ".$this->tablename("core_url_rewrite")." WHERE product_id IS NOT NULL AND is_system=1";
         $this->delete($sql);
-        
+
         $sql = "SET FOREIGN_KEY_CHECKS = 1";
-        
+
         $this->exec_stmt($sql);
         echo "Catalog cleared";
     }

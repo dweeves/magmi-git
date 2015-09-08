@@ -23,21 +23,21 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
         $headers .= "Message-ID: <" . time() . "-" . $from . ">\n";
         $headers .= "Date: " . date('r', time()) . "\n"; // Wed, 15 Jan 2014 11:00:13 +0000
         $headers .= "X-Mailer: PHP v" . phpversion();
-        
+
         $msg_txt = "";
         $email_txt = $message . "\n";
-        
+
         $semi_rand = md5(time());
         $mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
-        
+
         $headers .= "\nMIME-Version: 1.0\n" . "Content-Type: multipart/mixed;\n" . " boundary=\"{$mime_boundary}\"";
-        
+
         $email_txt .= $msg_txt;
         $email_message = $email_txt;
         $email_message .= "This is a multi-part message in MIME format.\n\n" . "--{$mime_boundary}\n" .
              "Content-Type:text/html; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . $email_txt .
              "\n\n";
-        
+
         $attachments = $this->_attach;
         if ($attachments !== false)
         {
@@ -50,19 +50,19 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
                     $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
                         $attachments[$i], '/') + 1;
                     $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
-                    
+
                     $file = fopen($fileatt, 'rb');
                     $data = fread($file, filesize($fileatt));
                     fclose($file);
-                    
+
                     $data = chunk_split(base64_encode($data));
-                    
+
                     $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
                          " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
                 }
             }
         }
-        
+
         $email_message .= "--{$mime_boundary}--\n";
         $this->log("Sending report to : $to", "info");
         $ok = mail($to, $subject, $email_message, $headers);
@@ -102,16 +102,16 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
                     $this->addAttachment($csvfile);
                 }
             }
-            
+
             if ($this->getParam("EMAILREP:attachlog", false) == true)
             {
                 // copy magmi report
                 $pfile = Magmi_StateManager::getProgressFile(true);
                 $this->addAttachment($pfile);
             }
-            
-            $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"), 
-                $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"), 
+
+            $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"),
+                $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"),
                 $this->getParam("EMAILREP:body", "report attached"), $this->_attach);
             if (!$ok)
             {

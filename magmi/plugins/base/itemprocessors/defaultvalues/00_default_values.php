@@ -4,7 +4,7 @@
  * Class SampleItemProcessor
  * @author dweeves
  *
- * This class is a sample for item processing   
+ * This class is a sample for item processing
 */
 class DefaultValuesItemProcessor extends Magmi_ItemProcessor
 {
@@ -42,7 +42,7 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
     {
         return true;
     }
-    
+
     /*
      * public function processItemException(&$item,$params=null) { }
      */
@@ -82,7 +82,7 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
             }
         }
         $this->log("Adding Columns " . implode(",", $dcols), "startup");
-        
+
         return true;
     }
 

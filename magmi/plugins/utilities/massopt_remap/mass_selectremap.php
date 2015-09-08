@@ -32,7 +32,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
             $attrinfos = $this->selectAll($sql, $attrcode);
             if (count($attrinfos) == 0)
             {
-                
+
                 $attrinfos = array();
             }
             else
@@ -41,7 +41,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
             }
             $this->_attrinfos[$attrcode] = $attrinfos;
         }
-        
+
         return $this->_attrinfos[$attrcode];
     }
 
@@ -56,21 +56,21 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
         }
         if (!preg_match("/re::(.*)/", $from, $matches))
         {
-            $where = "(SELECT eao.option_id FROM 
-			$eao as eao 
+            $where = "(SELECT eao.option_id FROM
+			$eao as eao
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
 			WHERE eao.attribute_id=? and eaov.value REGEXP ? $csmode)";
             $from = $matches[1];
         }
         else
         {
-            $where = "(SELECT eao.option_id FROM 
-			$eao as eao 
+            $where = "(SELECT eao.option_id FROM
+			$eao as eao
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
 			WHERE eao.attribute_id=? and eaov.value=? $csmode)";
         }
-        $sql = "UPDATE $cpei SET value=(SELECT eao.option_id 
-			FROM $eao as eao 
+        $sql = "UPDATE $cpei SET value=(SELECT eao.option_id
+			FROM $eao as eao
 			JOIN $eaov as eaov ON eaov.option_id=eao.option_id
 			WHERE eao.attribute_id=? and eaov.value=? COLLATE utf8_bin)
 			WHERE value IN $where";
@@ -99,10 +99,10 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
             $this->log("invalid csv : column names must be src_value & dest_value");
             return false;
         }
-        
+
         while ($item = $this->_csvreader->getNextRecord())
         {
-            
+
             $this->remapAttrVal($attinfos["attribute_id"], $item["src_value"], $item["dest_value"]);
         }
         $this->_csvreader->closeCSV();

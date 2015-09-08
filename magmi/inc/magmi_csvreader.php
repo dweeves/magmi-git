@@ -19,27 +19,29 @@ class Magmi_CSVReader extends Magmi_Mixin
     protected $_nhcols;
     protected $_cenc;
     protected $_ignored = array();
+    protected $_prefix;
 
-    public function initialize($params=null)
+    public function initialize($params=null,$prefix='CSV')
     {
+    	$this->_prefix = $prefix;
     	if(isset($params))
     	{
     		$this->_params=$params;
     	}
-        $this->_filename = $this->getParam("CSV:filename");
-        $this->_csep = $this->getParam("CSV:separator", ",");
+        $this->_filename = $this->getParam($this->_prefix.":filename");
+        $this->_csep = $this->getParam($this->_prefix.":separator", ",");
         $this->_dcsep = $this->_csep;
-        
+
         if ($this->_csep == "\\t")
         {
             $this->_csep = "\t";
         }
-        
-        $this->_cenc = $this->getParam("CSV:enclosure", '"');
-        $this->_buffersize = $this->getParam("CSV:buffer", 0);
-        $this->_ignored = explode(",", $this->getParam("CSV:ignore"));
+
+        $this->_cenc = $this->getParam($this->_prefix.":enclosure", '"');
+        $this->_buffersize = $this->getParam($this->_prefix.":buffer", 0);
+        $this->_ignored = explode(",", $this->getParam($this->_prefix.":ignore"));
     }
-    
+
     public function getParam($paramname,$default='')
     {
     	return (isset($this->_params[$paramname]) && $this->_params[$paramname] != "")?$this->_params[$paramname]:$default;
@@ -49,7 +51,7 @@ class Magmi_CSVReader extends Magmi_Mixin
     {
         // open csv file
         $f = fopen($this->_filename, "rb");
-        if ($this->getParam("CSV:noheader", false) == true)
+        if ($this->getParam($this->_prefix.":noheader", false) == true)
         {
             $count = 0;
         }
@@ -60,7 +62,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         if ($f != false)
         {
             $line = 1;
-            while ($line < $this->getParam("CSV:headerline", 1))
+            while ($line < $this->getParam($this->_prefix.":headerline", 1))
             {
                 $line++;
                 fgetcsv($f, $this->_buffersize, $this->_csep, $this->_cenc);
@@ -94,7 +96,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         {
             throw new Magmi_CSVException("{$this->_filename} not found");
         }
-        $this->log("Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]", 
+        $this->log("Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]",
             "startup");
     }
 
@@ -123,21 +125,21 @@ class Magmi_CSVReader extends Magmi_Mixin
         if ($prescan == true)
         {
             $this->openCSV();
-            $this->_csep = $this->getParam("CSV:separator", ",");
+            $this->_csep = $this->getParam($this->_prefix.":separator", ",");
             $this->_dcsep = $this->_csep;
-            
+
             if ($this->_csep == "\\t")
             {
                 $this->_csep = "\t";
             }
-            
-            $this->_cenc = $this->getParam("CSV:enclosure", '"');
-            $this->_buffersize = $this->getParam("CSV:buffer", 0);
+
+            $this->_cenc = $this->getParam($this->_prefix.":enclosure", '"');
+            $this->_buffersize = $this->getParam($this->_prefix.":buffer", 0);
         }
-        
+
         $line = 1;
-        
-        while ($line < $this->getParam("CSV:headerline", 1))
+
+        while ($line < $this->getParam($this->_prefix.":headerline", 1))
         {
             $line++;
             $dummy = fgetcsv($this->_fh, $this->_buffersize, $this->_csep, $this->_cenc);
@@ -145,7 +147,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         }
         $cols = fgetcsv($this->_fh, $this->_buffersize, $this->_csep, $this->_cenc);
         // if csv has no headers,use column number as column name
-        if ($this->getParam("CSV:noheader", false) == true)
+        if ($this->getParam($this->_prefix.":noheader", false) == true)
         {
             $kl = array_merge(array("dummy"), $cols);
             unset($kl[0]);
@@ -164,7 +166,7 @@ class Magmi_CSVReader extends Magmi_Mixin
         {
             $this->_cols[$i] = trim($this->_cols[$i]);
         }
-        
+
         if ($prescan == true)
         {
             fclose($this->_fh);
@@ -189,7 +191,7 @@ class Magmi_CSVReader extends Magmi_Mixin
     public function getNextRecord()
     {
         $row = null;
-        $allowtrunc = $this->getParam("CSV:allowtrunc", false);
+        $allowtrunc = $this->getParam($this->_prefix.":allowtrunc", false);
         while ($row !== false)
         {
             $row = fgetcsv($this->_fh, $this->_buffersize, $this->_csep, $this->_cenc);
@@ -206,7 +208,7 @@ class Magmi_CSVReader extends Magmi_Mixin
                 {
                     // if strict matching, warning & continue
                     $this->log(
-                        "warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped", 
+                        "warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped",
                         "warning");
                     continue;
                 }
@@ -224,7 +226,7 @@ class Magmi_CSVReader extends Magmi_Mixin
             }
             else
             {
-                
+
                 // relax mode, recompose keys from read columns , others will be left unset
                 $ncols = count($row);
                 $cols = array_slice($this->_cols, 0, $ncols);

@@ -11,29 +11,29 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
     }
 
     public function getPluginParams($params)
-    
+
     {
-    
+
         $pp=array();
-    
+
         foreach($params as $k=>$v)
-    
+
         {
-    
+
             if(preg_match("/^SKUF:.*$/",$k))
-    
+
             {
-    
+
                 $pp[$k]=$v;
-    
+
             }
-    
+
         }
-    
+
         return $pp;
-    
+
     }
-   
+
     public function processItemBeforeId(&$item, $params = null)
     {
         $matchfield = trim($this->getParam("SKUF:matchfield"));
@@ -60,7 +60,7 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
             }
             if ($attinfo["backend_type"] == "static")
             {
-                $this->log("$matchfield is " . $attinfo["backend_type"] . ", it cannot be used as sku matching field.", 
+                $this->log("$matchfield is " . $attinfo["backend_type"] . ", it cannot be used as sku matching field.",
                     "error");
                 $item["__MAGMI_LAST__"] = 1;
                 return false;
@@ -68,14 +68,14 @@ class SkuFinderItemProcessor extends Magmi_ItemProcessor
             if ($attinfo["frontend_input"] == "select" || $attinfo["frontend_input"] == "multiselect")
             {
                 $this->log(
-                    "$matchfield is " . $attinfo["frontend_input"] . ", it cannot be used as sku matching field.", 
+                    "$matchfield is " . $attinfo["frontend_input"] . ", it cannot be used as sku matching field.",
                     "error");
                 $item["__MAGMI_LAST__"] = 1;
                 return false;
             }
             $this->_compchecked = true;
         }
-        
+
         // no item data for selected matching field, skipping
         if (!isset($item[$matchfield]) && trim($item["matchfield"]) !== '')
         {

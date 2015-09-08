@@ -139,7 +139,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
             $this->_lasterror = $r->error;
             return $r->error['message'];
         }
-        
+
         return $r->result;
     }
 

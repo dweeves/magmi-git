@@ -18,7 +18,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
   	WHERE testid.sku NOT LIKE '%re::%'
   	HAVING esku IS NULL";
             $result = $this->selectAll($sql, $rinfo["direct"]);
-            
+
             $to_delete = array();
             foreach ($result as $row)
             {
@@ -36,7 +36,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $csell = isset($item["cs_skus"]) ? $item["cs_skus"] : null;
         $pid = $params["product_id"];
         $new = $params["new"];
-        
+
         if (isset($usell) && trim($usell) != "")
         {
             $rinf = $this->getRelInfos($usell);
@@ -80,7 +80,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $j2 = $joininfo["join"]["cpe2.sku"];
         if ($j2 != "")
         {
-            
+
             $sql = "DELETE cplai.*,cpl.*
  		  FROM " . $this->tablename("catalog_product_entity") . " as cpe
 		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
@@ -122,7 +122,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
                     $relskusdel["direct"][] = $rinf[0];
                 }
             }
-            
+
             if (count($rinf) == 2)
             {
                 $dir = $this->getDirection($rinf[0]);
@@ -146,7 +146,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
                 }
             }
         }
-        
+
         return array("add"=>$relskusadd,"del"=>$relskusdel);
     }
 
@@ -192,14 +192,14 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     public function setUSellItems($item, $rinfo)
     {
         if ($this->checkRelated($rinfo) > 0)
-        
+
         {
             $joininfo = $this->buildJoinCond($item, $rinfo, "cpe2.sku");
             $jinf = $joininfo["join"]["cpe2.sku"];
             if ($jinf != "")
             {
                 // insert into link table
-                $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id 
+                $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
 			JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $jinf
 			JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='up_sell'
@@ -216,14 +216,14 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     public function setCSellItems($item, $rinfo)
     {
         if ($this->checkRelated($rinfo) > 0)
-        
+
         {
             $joininfo = $this->buildJoinCond($item, $rinfo, "cpe2.sku");
             $j2 = $joininfo["join"]["cpe2.sku"];
             if ($j2 != "")
             {
                 // insert into link table
-                $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id 
+                $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
 			JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.entity_id!=cpe.entity_id AND $j2
 			JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
@@ -257,13 +257,13 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     {
         // remove maybe inserted doubles
         $cplai = $this->tablename("catalog_product_link_attribute_int");
-        $sql = "DELETE cplaix FROM $cplai as cplaix 
- 		  WHERE cplaix.value_id IN 
- 		  (SELECT s1.value_id FROM 
- 		  	(SELECT cplai.link_id,cplai.value_id,MAX(cplai.value_id) as latest 
- 		  		FROM $cplai as cplai 
+        $sql = "DELETE cplaix FROM $cplai as cplaix
+ 		  WHERE cplaix.value_id IN
+ 		  (SELECT s1.value_id FROM
+ 		  	(SELECT cplai.link_id,cplai.value_id,MAX(cplai.value_id) as latest
+ 		  		FROM $cplai as cplai
  		  		GROUP BY cplai.link_id
-				HAVING cplai.value_id!=latest) 
+				HAVING cplai.value_id!=latest)
 			as s1)";
         $this->delete($sql);
     }

@@ -52,7 +52,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $values = array($pid,$opt['type'],$opt['is_require'],$opt['sort_order'],$opt['sku']);
         $f = "product_id, type, is_require,sort_order,sku";
         $i = "?,?,?,?,?";
-        
+
         foreach (array("max_characters","file_extension","image_size_x","image_size_y") as $extra)
         {
             if (isset($opt[$extra]))
@@ -62,7 +62,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                 $f .= ",$extra";
             }
         }
-        
+
         $optionId = $this->getOptId($opt['__field']);
         if (!isset($optionId))
         {
@@ -74,7 +74,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $tins = array();
         $pvals = array();
         $pins = array();
-        
+
         foreach ($sids as $sid)
         {
             $tins[] = "(?,?,?)";
@@ -96,10 +96,10 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                 break;
             }
         }
-        
+
         $sql = "INSERT IGNORE INTO $t2 (option_id, store_id, title) VALUES " . implode(",", $tins);
         $this->insert($sql, $tvals);
-        
+
         if (count($pins) > 0)
         {
             $sql = "INSERT IGNORE INTO $t3 (option_id, store_id, price, price_type) VALUES " . implode(",", $pins);
@@ -117,13 +117,13 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $t4 = $this->tablename('catalog_product_option_type_value');
         $t5 = $this->tablename('catalog_product_option_type_title');
         $t6 = $this->tablename('catalog_product_option_type_price');
-        
+
         $ttvals = array();
         $ttins = array();
         $tpvals = array();
         $tpins = array();
         $optid = $this->getOptId($field);
-        
+
         $optionTypeIds = $this->getOptTypeIds($field);
         $optionTypeId = null;
         $cvalarr = count($valarr);
@@ -160,12 +160,12 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                 }
             }
         }
-        
+
         $this->setOptTypeIds($field, $optionTypeIds);
-        
+
         $sql = "INSERT IGNORE INTO $t5 (option_type_id, store_id, title) VALUES " . implode(",", $ttins);
         $this->insert($sql, $ttvals);
-        
+
         $sql = "INSERT IGNORE INTO $t6 (option_type_id, store_id, price, price_type) VALUES " . implode(",", $tpins);
         $this->insert($sql, $tpvals);
     }
@@ -187,9 +187,9 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $title = ucfirst(str_replace('_', ' ', $title));
         $opt = array('__field'=>$field,'is_delete'=>0,'title'=>$title,'previous_group'=>'','previous_type'=>'',
             'type'=>$type,'is_require'=>$is_required,'sort_order'=>$sort_order,'values'=>array());
-        
+
         $values = explode('|', $value);
-        
+
         foreach ($values as $v)
         {
             $ovalues = array();
@@ -208,16 +208,16 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             {
                 $opt['title'] = ($parts[0] != '' ? $parts[0] : $title);
             }
-            
+
             $c = count($parts);
             $price_type = ($c > 1) ? ($parts[1] != '' ? $parts[1] : 'fixed') : 'fixed';
             $price = ($c > 2) ? $parts[2] : 0;
             $sku = ($c > 3) ? $parts[3] : '';
             $sort_order = ($c > 4) ? $parts[4] : 0;
-            
+
             switch ($type)
             {
-                
+
                 case 'file':
                     if ($c > 5)
                     {
@@ -267,7 +267,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $requiredOptions = 0;
         $custom_options = array();
         $itemCopy = $item;
-        
+
         foreach ($itemCopy as $field => $value)
         {
             $fieldParts = explode(':', $field);
@@ -281,7 +281,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             }
             unset($fieldParts);
         }
-        
+
         // create new custom options
         if (count($custom_options) > 0)
         {
@@ -326,7 +326,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
             {
                 $sids = array_unique(array_merge(array(0), $sids));
             }
-            
+
             foreach ($custom_options as $option)
             {
                 $opt = $this->createOption($pid, $sids, $option);
@@ -336,7 +336,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         unset($custom_options);
         return true;
     }
-    
+
     /*
      * public function processItemException(&$item,$params=null) { }
      */

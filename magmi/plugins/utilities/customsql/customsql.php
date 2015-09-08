@@ -61,7 +61,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
                 }
             }
         }
-        
+
         $hasp = preg_match_all('|\[\[(tn:.*?)\]\]|msi', $stmt, $matches);
         if ($hasp)
         {
@@ -132,7 +132,7 @@ class CustomSQLUtility extends Magmi_UtilityPlugin
             }
             else
             {
-                
+
                 for ($i = 0; $i < $cres; $i++)
                 {
                     $str = "";

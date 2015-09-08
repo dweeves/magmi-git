@@ -123,15 +123,15 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
         curl_setopt($context, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($context, CURLOPT_CUSTOMREQUEST, 'HEAD');
         curl_setopt($context, CURLOPT_NOBODY, true);
-        
+
         /* Get the HTML or whatever is linked in $url. */
         $response = curl_exec($context);
-        
+
         /* Check for 404 (file not found). */
         $httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
         $exists = ($httpCode == 200);
         /* retry on error */
-        
+
         if ($httpCode == 503 or $httpCode == 403)
         {
             /* wait for a half second */
@@ -199,7 +199,7 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
             $this->_errors = array("type"=>"target error","message"=>"URL $remoteurl is unreachable");
             return false;
         }
-        
+
         $ok = @copy($url, $dest);
         if (!$ok)
         {
@@ -277,14 +277,14 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
     public function file_exists($filename)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $filename));
-        
+
         return file_exists($mp);
     }
 
     public function mkdir($path, $mask = null, $rec = false)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
-        
+
         if ($mask == null)
         {
             $mask = octdec('755');
@@ -300,7 +300,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
     public function chmod($path, $mask)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
-        
+
         if ($mask == null)
         {
             $mask = octdec('755');
@@ -522,21 +522,21 @@ function buildError($errname, $errdata)
 
 if (!class_exists('Magmi_Plugin'))
 {
-    
+
     if (!isset($_REQUEST['api']))
     {
         header('Status 406 : Unauthorized call', true, 406);
         exit();
     }
-    
+
     $api = $_REQUEST['api'];
-    
+
     if (!in_array($api, array_keys(Magmi_RemoteAgent::$apidesc)))
     {
         header('Status 406 : Unauthorized call', true, 406);
         exit();
     }
-    
+
     $missing = Magmi_RemoteAgent::checkParams($_REQUEST, $api);
     if (count($missing) > 0)
     {

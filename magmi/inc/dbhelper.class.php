@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * This class is a Database Operation Helper based on PDO library
  * It provides shortcuts for common DB CRUD operations and some advanced templated requests operations
  * @author dweeves
@@ -20,6 +20,8 @@ class DBHelper
     protected $prepared = array();
     protected $_timecounter = null;
     protected $_tcats;
+    protected $_tables2columns = array();
+    protected $_dbname;
 
     public function __construct()
     {
@@ -55,22 +57,23 @@ class DBHelper
         {
         	$pdostr = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
         }
-        
+
         $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"));
         // use exception error mode
         $this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->_db->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_NATURAL);
         $this->_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        
+
         // set database debug mode to trace if necessary
         $this->_debug = $debug;
+        $this->_dbname = $dbname;
         $this->prepared = array();
     }
 
     /**
      * store output in some debug file
      *
-     * @param unknown_type $data            
+     * @param unknown_type $data
      */
     public function logdebug($data)
     {
@@ -116,7 +119,7 @@ class DBHelper
         try
         {
             $mysqlsock = ini_get("mysql.default_socket");
-            
+
             if (isset($mysqlsock) && !@file_exists($mysqlsock))
             {
                 if (error_get_last() !== null)
@@ -160,7 +163,7 @@ class DBHelper
     /**
      * Returns database statistics
      *
-     * @param unknown_type $nbreq            
+     * @param unknown_type $nbreq
      */
     public function collectDbqStats(&$nbreq)
     {
@@ -170,8 +173,8 @@ class DBHelper
     /**
      * cache sorting comparison method
      *
-     * @param unknown_type $a            
-     * @param unknown_type $b            
+     * @param unknown_type $a
+     * @param unknown_type $b
      */
     public function cachesort($a, $b)
     {
@@ -179,7 +182,7 @@ class DBHelper
     }
 
     /**
-     * Garbages statement cache if above 500 , removes less used statements    
+     * Garbages statement cache if above 500 , removes less used statements
      */
     public function garbageStmtCache()
     {
@@ -253,7 +256,7 @@ class DBHelper
         }
         else
         {
-            
+
             $stmt->execute();
         }
         if ($close)
@@ -278,7 +281,7 @@ class DBHelper
      */
     public function delete($sql, $params = null)
     {
-        $this->exec_stmt($sql, $params);
+        return $this->exec_stmt($sql, $params)->rowCount();
     }
 
     /**
@@ -291,7 +294,7 @@ class DBHelper
      */
     public function update($sql, $params = null)
     {
-        $this->exec_stmt($sql, $params);
+        return $this->exec_stmt($sql, $params)->rowCount();
     }
 
     /**
@@ -340,13 +343,13 @@ class DBHelper
         $stmt = $this->select($sql, $params);
         $this->_timecounter->initTime("indb", null, $this->_tcats);
         $t0 = microtime(true);
-        
+
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
         $this->_timecounter->exitTime("indb", null, $this->_tcats);
-        
+
         $t1 = microtime(true);
-        
+
         $this->_indbtime += $t1 - $t0;
         $v = (is_array($r) ? $r[$col] : null);
         unset($r);
@@ -365,13 +368,13 @@ class DBHelper
     {
         $stmt = $this->select($sql, $params);
         $this->_timecounter->initTime("indb", null, $this->_tcats);
-        
+
         $t0 = microtime(true);
-        
+
         $r = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
         $this->_timecounter->exitTime("indb", null, $this->_tcats);
-        
+
         $t1 = microtime(true);
         $this->_indbtime += $t1 - $t0;
         return $r;
@@ -430,7 +433,7 @@ class DBHelper
     /**
      * transform an array of values into equivalent comma separated list of unnamed placeholders.
      *
-     * @param array $arr            
+     * @param array $arr
      */
     public function arr2values($arr)
     {
@@ -488,8 +491,8 @@ class DBHelper
     /**
      * Filters a key value array over a list of keys , replacing __NULL__ magic value with true null
      *
-     * @param unknown_type $kvarr            
-     * @param unknown_type $keys            
+     * @param unknown_type $kvarr
+     * @param unknown_type $keys
      */
     public function filterkvarr($kvarr, $keys)
     {
@@ -556,8 +559,8 @@ class DBHelper
      * - NameSpaces:
      * tn : tablename, this namespace ensures replacement of given name with defined DB prefix so, parameterized request can use generic names to define their ops
      *
-     * @param unknown_type $stmt            
-     * @param unknown_type $rparams            
+     * @param unknown_type $stmt
+     * @param unknown_type $rparams
      */
     public function replaceParams(&$stmt, &$rparams)
     {
@@ -630,7 +633,7 @@ class DBHelper
                 $subs = explode(";\n", "--" . $sqlline);
                 foreach ($subs as $sub)
                 {
-                    
+
                     if (trim($sub) != "" && substr($sub, 0, 2) != "--")
                     {
                         $stmts[] = $sub;
@@ -656,6 +659,24 @@ class DBHelper
         if ($return)
         {
             return $results;
+        }
+    }
+
+    /**
+     * Returns an array of columns names for the given table name.
+     * @param string $tablename name of the table (without table prefix, as it will be applied)
+     */
+    public function cols($tablename) {
+        if(isset($this->_tables2columns[$tablename])) {
+            return $this->_tables2columns[$tablename];
+        } else {
+            $columnNames = array();
+            $data = $this->select("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?",array($this->tablename($tablename),$this->_dbname));
+            foreach($data as $record) {
+                $columnNames[] = $record['COLUMN_NAME'];
+            }
+            $this->_tables2columns[$tablename] = $columnNames;
+            return $columnNames;
         }
     }
 }

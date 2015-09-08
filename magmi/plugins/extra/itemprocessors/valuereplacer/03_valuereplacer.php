@@ -4,7 +4,7 @@
  * Class SampleItemProcessor
  * @author dweeves
  *
- * This class is a sample for item processing   
+ * This class is a sample for item processing
 */
 class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 {
@@ -20,9 +20,9 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
     public function processItemBeforeId(&$item, $params = null)
     {
         $cbefore = count($this->_before);
-        
+
         // only check for "before" compatible fields
-        
+
         for ($i = 0; $i < $cbefore; $i++)
         {
             $attname = $this->_before[$i];
@@ -69,7 +69,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
         }
         $this->initHelpers();
     }
-    
+
     // auto add columns if not set
     public function processColumnList(&$cols)
     {

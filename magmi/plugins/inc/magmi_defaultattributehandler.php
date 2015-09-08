@@ -37,7 +37,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * callback for column list processing
      *
-     * @param unknown $cols            
+     * @param unknown $cols
      */
     public function processColumnList(&$cols)
     {
@@ -58,7 +58,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * initializes extra columns if needed
      *
-     * @param unknown $item            
+     * @param unknown $item
      */
     public function initializeBaseCols(&$item)
     {
@@ -71,7 +71,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * Initialized base attributes to retrieve from a given item description
      *
-     * @param unknown $item            
+     * @param unknown $item
      */
     public function initializeBaseAttrs(&$item)
     {
@@ -96,8 +96,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             if($this->checkMagentoVersion("1.7.x", ">") && empty($item['url_key']))
             {
                $item["url_key"]=Slugger::slug($item["name"]);
-            } 
-        
+            }
+
         }
         else
         {
@@ -236,7 +236,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * check if a value is integer
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return true if integer, false if not
      */
     public function checkInt($value)
@@ -260,7 +260,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      * @param mixed $ivalue
      *            : input value to import
      * @return new int value to set
-     *        
+     *
      *         Many attributes are int typed, so we need to handle all cases like :
      *         - select
      *         - tax id
@@ -278,7 +278,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return intval($dval);
         }
-        
+
         $attid = $attrdesc["attribute_id"];
         // if we've got a select type value
         if ($attrdesc["frontend_input"] == "select")
@@ -307,7 +307,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
                     {
                         $ovalue = 4;
                     }
-                    
+
                     break;
                 // if it's tax_class, get tax class id from item value
                 case "tax/class_source_product":
@@ -350,7 +350,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      * @param mixed $ivalue
      *            : input value to import
      * @return new int value to set
-     *        
+     *
      */
     public function handleUrl_keyAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
@@ -380,7 +380,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      * @param mixed $ivalue
      *            : input value to import
      * @return new int value to set
-     *        
+     *
      *         Special case for multiselect
      */
     public function handleVarcharAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
@@ -402,7 +402,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         {
             return $dval;
         }
-        
+
         $ovalue = $ivalue;
         $attid = $attrdesc["attribute_id"];
         // --- Contribution From mennos , optimized by dweeves ----
@@ -423,7 +423,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             $ovalue = implode(",", array_values($oids));
             unset($oids);
         }
-        
+
         return $ovalue;
     }
 }

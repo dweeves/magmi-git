@@ -8,10 +8,10 @@ $startout = false;
 while (!feof($f))
 {
     $line = fgets($f);
-    
+
     if (preg_match("/--- TRACE :\s+(\d+).*?/", $line, $match))
     {
-        
+
         $trid = $match[1];
         if ($trid == $tid)
         {

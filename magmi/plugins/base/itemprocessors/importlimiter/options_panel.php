@@ -47,7 +47,7 @@ You should put column names, comma separated ie : sku,qty
 			<pre>
 sku::00.*  : exclude all skus that begin with 00
 !name::.*blue.* : exclude all items with name not blue (see the  ! before the "name" field to negate the filter)
-sku:00.*;;!name::.*blue.* : exclude all items with skus that begin with 00 which name does not contain blue 
+sku:00.*;;!name::.*blue.* : exclude all items with skus that begin with 00 which name does not contain blue
 </pre>
 		</div>
 	</div>

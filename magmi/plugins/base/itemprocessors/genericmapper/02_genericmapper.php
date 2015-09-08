@@ -71,7 +71,7 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
     public function initialize($params)
     {
         $this->_mapping = array();
-        
+
         $dlist = glob(dirname(__file__) . "/mappings/default/*.csv");
         if ($dlist == false)
         {
