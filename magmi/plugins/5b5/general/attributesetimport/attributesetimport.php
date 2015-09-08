@@ -266,7 +266,6 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * Performs the attribute import.
      */
     public function importAttributes($csvreader) {
-        $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
         $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_ARGS,$etiCondition,$etiCondition);
@@ -277,7 +276,6 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * Performs the attribute set import.
      */
     public function importAttributeSets($csvreader) {
-        $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
         $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
         $this->updateGeneric($csvreader,$this->ATTRIBUTE_SET_ARGS,$etiCondition,$etiCondition);
@@ -287,7 +285,6 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * Performs the attribute associations import.
      */
     public function importAttributeAssociations($csvreader) {
-        $this->fetchProdEType();
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
         $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
 
