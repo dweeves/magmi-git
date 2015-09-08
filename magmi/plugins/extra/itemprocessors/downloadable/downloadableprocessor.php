@@ -48,9 +48,9 @@ class DownloadableProcessor extends Magmi_ItemProcessor
             {
                 $arr_link = explode(",", $str_link);
                 $link = array();
-                foreach ($arr_link as $str_link)
+                foreach ($arr_link as $astr_link)
                 {
-                    $val = preg_split('/[\s:]+[\s]*/', $str_link, 2);
+                    $val = preg_split('/[\s:]+[\s]*/', $astr_link, 2);
                     $link[$val[0]] = $val[1];
                 }
                 $links[] = $link;
