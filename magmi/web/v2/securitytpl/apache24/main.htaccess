@@ -1,0 +1,6 @@
+#MAGMI SECURITY FILE
+AuthName "Magmi Secure"
+AuthType Basic
+AuthBasicProvider file
+AuthUserFile [magmi_root]/.htmagmipass
+Require user [magmi_user]
