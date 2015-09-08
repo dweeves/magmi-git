@@ -224,7 +224,7 @@ class TimeCounter
     /**
      * closes a timer for a given phase on a given category for a given source
      *
-     * @param unknown $phase
+     * @param string $phase
      *            : time phase to exit
      * @param string $src
      *            : source tag
