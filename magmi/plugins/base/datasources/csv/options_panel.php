@@ -28,7 +28,7 @@
 			<li class="label">CSVs base directory</li>
 			<li class="value"><input type="text" name="CSV:basedir"
 				id="CSV:basedir"
-				value="<?php echo $this->getParam("CSV:basedir","var/import")?>"></input>
+				value="<?php echo $this->getParam("CSV:basedir","var/import")?>">
 				<div class="fieldinfo">Relative paths are relative to magento base
 					directory , absolute paths will be used as is</div></li>
 		</ul>
@@ -48,7 +48,7 @@
 			<li class="value"><input type="text" name="CSV:remoteurl"
 				id="CSV:remoteurl"
 				value="<?php echo $this->getParam("CSV:remoteurl","")?>"
-				style="width: 400px"></input> <input type="checkbox"
+				style="width: 400px"><input type="checkbox"
 				id="CSV:forcedl" name="CSV:forcedl"
 				<?php if($this->getParam("CSV:forcedl",false)==true){?>
 				checked="checked" <?php }?>>Force Download</li>
@@ -95,10 +95,10 @@
 	<h3>CSV options</h3>
 	<span class="">CSV separator:</span><input type="text" maxlength="3"
 		size="3" name="CSV:separator"
-		value="<?php echo $this->getParam("CSV:separator")?>"></input> <span
+		value="<?php echo $this->getParam("CSV:separator")?>"><span
 		class="">CSV Enclosure:</span><input type="text" maxlength="3"
 		size="3" name="CSV:enclosure"
-		value='<?php echo $this->getParam("CSV:enclosure")?>'></input>
+		value='<?php echo $this->getParam("CSV:enclosure")?>'>
 </div>
 
 <div class="">
@@ -125,7 +125,7 @@ Malformed CSV (column list line not at top of file)
 	<?php }?>>
 	<span class="">CSV Header at line:</span><input type="text"
 		id="CSV:headerline" name="CSV:headerline" maxlength="7" size="7"
-		value="<?php echo $hdline?>"></input>
+		value="<?php echo $hdline?>">
 </div>
 <script type="text/javascript">
 	handle_auth=function()
@@ -145,6 +145,7 @@ Malformed CSV (column list line not at top of file)
 			new Ajax.Updater('csvds_filelist','ajax_pluginconf.php',{
 			parameters:{file:'csvds_filelist.php',
 						plugintype:'datasources',
+                        token:'<?php echo $_SESSION['token']?>',
 					    pluginclass:'<?php echo get_class($this->_plugin)?>',
 					    profile:'<?php echo $this->getConfig()->getProfile()?>',
 					    'CSV:basedir':$F('CSV:basedir')}});

@@ -498,7 +498,7 @@ div.log_error {
 div.trace {
 	font-size: small;
 	font-family: courier, monospace;
-	background-color: #;
+	background-color: #fff;
 	border: 1px solid #cc0000;
 }
 

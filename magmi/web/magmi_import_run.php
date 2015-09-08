@@ -19,7 +19,7 @@ foreach ($_REQUEST as $k => $v)
 	<div class="section_title grid_12">
 		<span>Importing using profile (<?php echo $profile?>)...</span> <span><input
 			id="cancel_button" type="button" value="cancel"
-			onclick="cancelImport()"></input></span>
+			onclick="cancelImport()"></span>
 		<div id="progress_container">
 			&nbsp;
 			<div id="import_progress"></div>
@@ -36,7 +36,7 @@ foreach ($_REQUEST as $k => $v)
 
 	updateTime=function(tdiv,xprefix)
 	{
-		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix},
+		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix,token:'<?php echo $_SESSION['token']?>'},
 			onComplete:function(){$(tdiv).show();}});
 	};
 
@@ -92,7 +92,7 @@ foreach ($_REQUEST as $k => $v)
 			window._sr=null;
 		}*/
 				new Ajax.Updater("runlog","magmi_progress.php",{evalScripts:true,
-					parameters:{logfile:imp_params['logfile']}
+					parameters:{logfile:imp_params['logfile'],token:'<?php echo $_SESSION['token']?>'}
 				});;
 	};
 

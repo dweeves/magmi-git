@@ -15,7 +15,7 @@ session_write_close();
 	}
 	else
 	{
-		 new Ajax.Updater('trace_'+traceid,'trace_details.php',{parameters:{'traceid':traceid},onComplete:function(){$('trace_'+traceid).show()}});
+		 new Ajax.Updater('trace_'+traceid,'trace_details.php',{parameters:{'traceid':traceid,token:'<?php echo $_SESSION['token']?>'},onComplete:function(){$('trace_'+traceid).show()}});
  	}
  }
 </script>
