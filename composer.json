@@ -1,6 +1,5 @@
 {
     "name": "dweeves/magmi",
-    "type": "magento-module",
     "description": "Magento Mass Importer",
     "license": "MIT License",
     "homepage": "http://sourceforge.net/projects/magmi/",
@@ -8,8 +7,5 @@
         {
             "name":"Sebastien Bracquemont"
         }
-    ],
-    "require": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+    ]
 }

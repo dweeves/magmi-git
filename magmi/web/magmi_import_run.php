@@ -1,43 +1,45 @@
-	<?php 
-	ini_set('magic_gpc_quotes',0);
-	$profile=isset($_REQUEST["profile"])?$_REQUEST["profile"]:'default';
-	$_SESSION["last_runned_profile"]=$profile;
-	session_write_close();
-	?>
-	<script type="text/javascript">
-	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine'};
-	<?php 
-		foreach($_REQUEST as $k=>$v)
-		{
-			echo "imp_params['$k']='$v';\n";	
-		}
-	?>
+	<?php
+ini_set('gpc_magic_quotes', 0);
+    require_once("security.php");
+$profile = isset($_REQUEST["profile"]) ? strip_tags($_REQUEST["profile"]) : 'default';
+$_SESSION["last_runned_profile"] = $profile;
+session_write_close();
+?>
+<script type="text/javascript">
+	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine',token:'<?php echo $_SESSION["token"]?>'};
+	<?php
+foreach ($_REQUEST as $k => $v)
+{
+    echo "imp_params['$k']='$v';\n";
+}
+?>
 	</script>
-	<div class="clear"></div>
-	<div id="import_log" class="container_12">
-		<div class="section_title grid_12">
-			<span>Importing using profile (<?php echo $profile?>)...</span>
-			<span><input id="cancel_button" type="button" value="cancel" onclick="cancelImport()"></input></span>
-			<div id="progress_container">
-				&nbsp;
-				<div id="import_progress"></div>
-				<div id="import_current">&nbsp;</div>
-			</div>
+<div class="clear"></div>
+<div id="import_log" class="container_12">
+	<div class="section_title grid_12">
+		<span>Importing using profile (<?php echo $profile?>)...</span> <span><input
+			id="cancel_button" type="button" value="cancel"
+			onclick="cancelImport()"></span>
+		<div id="progress_container">
+			&nbsp;
+			<div id="import_progress"></div>
+			<div id="import_current">&nbsp;</div>
 		</div>
-		<div class='grid_12 log_info' style="display:none" id='startimport_div'></div>
-		<div id="runlog" class="grid_12">
-		</div>
-		<div class='grid_12 log_info' style="display:none" id='endimport_div'></div>
 	</div>
+	<div class='grid_12 log_info' style="display: none"
+		id='startimport_div'></div>
+	<div id="runlog" class="grid_12"></div>
+	<div class='grid_12 log_info' style="display: none" id='endimport_div'></div>
+</div>
 <script type="text/javascript">
 	var pcall=0;
 
 	updateTime=function(tdiv,xprefix)
 	{
-		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix},
+		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix,token:'<?php echo $_SESSION['token']?>'},
 			onComplete:function(){$(tdiv).show();}});
 	};
-	
+
 	endImport=function(t)
 	{
 		if(window.upd!=null)
@@ -47,7 +49,7 @@
 			window.upd=null;
 			updateTime('endimport_div','Import Ended');
 			if(window._sr!=null)
-			{		
+			{
 				window._sr.transport.abort();
 				window._sr=null;
 			}
@@ -59,10 +61,10 @@
 		window.upd=new Ajax.PeriodicalUpdater("runlog","magmi_progress.php",{frequency:1,evalScripts:true,parameters:{
 		logfile:imp_params['logfile']}});
 	};
-	
+
 	startImport=function(imp_params)
 	{
-		
+
 		if(window._sr==null)
 		{
 			updateTime('startimport_div','Import Started');
@@ -70,11 +72,11 @@
 								 parameters:imp_params,
 								onCreate:function(r){window._sr=r;},
 								onLoading:function(r){
-													 startProgress(imp_params).delay(0.2);
+													 startProgress.delay(0.3,imp_params);
 													}});
 		}
 	};
-	
+
 	setProgress=function(pc)
 	{
 		$('import_current').setStyle({width:''+pc+'%'});
@@ -90,7 +92,7 @@
 			window._sr=null;
 		}*/
 				new Ajax.Updater("runlog","magmi_progress.php",{evalScripts:true,
-					parameters:{logfile:imp_params['logfile']}
+					parameters:{logfile:imp_params['logfile'],token:'<?php echo $_SESSION['token']?>'}
 				});;
 	};
 

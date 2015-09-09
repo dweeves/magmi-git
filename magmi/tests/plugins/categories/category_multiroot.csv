@@ -1,0 +1,5 @@
+"sku","store","categories","name","short_description","price"
+"test01","en","[en_root]/cat1","test1","test1","10.00"
+"test02","en,us","[en_root]/cat1;;[us_root]/cat1","test2","test2","10.00"
+"test03","us","[us_root]/cat2","test3","test3","10.00"
+"test04","us","__MAGMI_IGNORE__","test4","test4",14

@@ -1,7 +1,9 @@
 <div class="plugin_description">
-This plugin provides a textarea that gives the wget or curl command line (or just url if you want) that will run magmi with
-current settings.
-<p>this area is refreshed each time you leave any field of this import config page.</p>
+	This plugin provides a textarea that gives the wget or curl command
+	line (or just url if you want) that will run magmi with current
+	settings.
+	<p>this area is refreshed each time you leave any field of this import
+		config page.</p>
 </div>
 <select id="GETURL:mode">
 	<option value="wget">wget</option>
@@ -15,8 +17,7 @@ current settings.
 <div id="GETURL:urlcontainer">
 	<textarea id="GETURL:url" cols="100" rows="5"></textarea>
 </div>
-<div class="fieldinfo">
-</div>
+<div class="fieldinfo"></div>
 <script type="text/javascript">
 
 magmi_getimporturl=function()
@@ -50,14 +51,14 @@ magmi_getimporturl=function()
 		}
 		$('GETURL:url').update(content);
 	}
-	
-		
+
+
 	$('runmagmi').getElements().each(function(it){
 				it.observe('blur',magmi_getimporturl);
 		});
 	$('GETURL:mode').observe('change',magmi_getimporturl);
 	magmi_getimporturl();
-		
-	
-	
+
+
+
 </script>

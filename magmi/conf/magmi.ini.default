@@ -17,5 +17,5 @@ basedir="../.."
 ;enabled_status_label="Enabled"
 [GLOBAL]
 ;---- Uncomment the following line to have a custom import report step, defaults to 100 
-step=100
+step=0.5
 

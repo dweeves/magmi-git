@@ -1,67 +1,13 @@
+------------------------------------------------
+-     RELEASE NOTES FOR MAGMI 0.7.19           -
 -------------------------------------------------
--     RELEASE NOTES FOR MAGMI 0.7.18beta1    -
--------------------------------------------------
 
 
-##########
-#Bugfix
-#########
-- fixed case insensitive matching for options
+This is the new official magmi release , it has too many improvements to be listed.
 
+Most of the reported bugs were fixed, a big code cleaning has been done & some important refactoring.
 
-##########
-#Core
-##########
+The package now includes all plugins.
 
+Seem to work ok with magento 1.8 & 1.9 unless proven otherwise.
 
-* ProductImportEngine
-- added support for category item positioning
-- better behaviour on unmatched category id in category_ids (if not existing, warning instead of exception) 
-- autodefaulting of store column to "admin" if omitted
-
-* Magmi_config
-- support for alternate global configuration files
-
-* Magmi_cli
-- support for profile chaining in magmi.cli.php 
-- magmi.cli.php could be now more easily integrated as include in other scripts.
-
-* Magmi_utils
-- added utility functions to detect remote urls
-
-############
-# UI
-############
-
-- fixed cache sensivity of magmi run from UI
-- use of google CDN url for prototype.js lib 
-
-#########
-#Plugins
-#########
-
-Base:
-------
-
-* Remote Agent:
-Enable connecting to remote magento installs (put ftp://user:pass@host/magento_base_dir) as magento base directory
-Enable to perform remote filesystem operations
-need DB connectivity between magento host & magmi host.
-
-*Grouped Products:
-- added support for any type of subproducts
-
-* CSV Datasource
-
-Extra
------ 
-
-* Categories
- - added support for multiple root assignment in a single line
- - added support for tree separator escaping
- - added support for item position in each branch of the tree
- 
- Utilities
----------
-
-Mass Option Remapper : enable to remap select attribute values using input csv.. 

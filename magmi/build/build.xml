@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ====================================================================== 
-     15 sept. 2010 15:13:44                                                        
+<!-- ======================================================================
+     15 sept. 2010 15:13:44
 
-     magmi    
+     magmi
      Magmi project
-                   
-     seb                                                                
+
+     seb
      ====================================================================== -->
 <project name="magmi" default="default">
     <description>
             Magmi project
     </description>
-	
-    <!-- ================================= 
-          target: default              
+
+    <!-- =================================
+          target: default
          ================================= -->
-    <target name="default" depends="depends" description="Magmi project">
-    	
+    <target name="default" depends="depends" description="Magmi base">
+
 
     	<zip destfile="magmi_${target_version}.zip" update="no">
-        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project"  prefix="magmi"/>
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
            	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
             <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
@@ -27,8 +27,20 @@
     		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
     		<zipfileset dir=".." includes="**/plugins/inc/**" prefix="magmi" dirmode="777"/>
         	<zipfileset dir=".." includes="**/plugins/base/**" excludes="**/plugins/base/datasources/csv/downloads/**" prefix="magmi" dirmode="777"/>
+
         </zip>
-    	
+    </target>
+    <target name="full" depends="depends" description="Magmi full">
+        <zip destfile="magmi_full_${target_version}.zip" update="no">
+        	<zipfileset dir=".." excludes="**/web/js/prototype/**,**/webgrind/**,**/phpDoc/**,**/build/**,**/state/**,**/conf/**,**/integration/**,.svn,.idea/**,.buildpath,.settings/**,.htaccess,**/plugins/**,**/tests/**,.project,.git"  prefix="magmi"/>
+           	<zipfileset dir=".." includes="**/state"  prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/conf/*.ini.default" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/inc/*" prefix="magmi" dirmode="777"/>
+            <zipfileset dir=".." includes="**/integration/samples/*" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/integration/scripts" prefix="magmi" dirmode="777"/>
+    		<zipfileset dir=".." includes="**/plugins/**" prefix="magmi" dirmode="777"/>
+			<zipfileset dir=".." includes="**/tests/**" prefix="magmi" dirmode="777"/>
+        </zip>
 
     </target>
 	 <tstamp>
@@ -51,9 +63,9 @@
 	  	</zip>
 	</target>
 
-	
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: depends                      
+
+	<!-- - - - - - - - - - - - - - - - - -
+          target: depends
          - - - - - - - - - - - - - - - - - -->
     <target name="depends">
     	<input message="target version" addproperty="target_version"/>

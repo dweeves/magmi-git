@@ -1,0 +1,472 @@
+== What it does ==
+It imports attributes, attribute sets with groups and the corresponding attribute-to-set associations from 3 different csv files to the magento database before the product update will start.
+It lets you choose for each entity type (attributes, sets, associations) if you want to update existing, create new, delete marked records and/or prune all records which were not given in your import data.
+
+'''Please note before using this plugin:''' Always test your attribute set importer setup properly (and, of course, backup your systems properly)! Wrong configuration or wrong import data can cause severe loss of data in your database!
+* Example 1: If the prune option is enabled and an import file is incomplete all missing data will be pruned from database.
+* Example 2: If attribute sets are deleted by this plugin, products using the respective attribute sets will also be deleted because of the referential integrity contraints in the database! So if you want to use the prune or delete options please think twice and TEST!
+
+== Usage ==
+
+=== Configuration options ===
+The plugin offers nearly the same configuration options for each of the three entity types:
+
+==== Enable <entity type> import  ====
+The import for each entity type can be separately switched on/off.
+
+==== CSV import mode / CSV options ====
+These are exactly the same as for the product import datasources configuration (because the plugin uses the same CSVReader class).
+These options handle the CSV options for each entity type separately. (Because there should be a CSV file each.)
+
+==== Default values ====
+Default values are used if all imported entries should have the same values for one or more columns. You can save the column in your CSV file and just set a default value.
+The default values for non-existing columns are given as a JSON-style Object:
+e.g. if you want to set "is_user_defined" and "is_visible" to 1 and "default_value" to "Test" by default, you would enter:
+ {"is_user_defined":1,"is_visible":1,"default_value":"Test"}
+
+==== Switch "Prune <entity type> which are not given" ====
+If you activate this switch, the import will first update/insert the records from your CSV file and afterwards iterate over all existing records in the database and delete all of them, which are not given in the CSV file. This is a good option if you always export the full list of records and want to keep your database clean. This is not intended for incremental updates, of course...
+
+If this switch is activated, there are some more options:
+===== Don't touch non-user attributes (only attributes and associations) =====
+If this switch is activated, the pruning will only affect attributes which have "is_user_defined" set to 1.
+
+===== Keep <entity type> when pruning =====
+For attributes and attribute sets this is straight forward:
+Just enter attribute codes or attribute set names (separated by comma) which shall be spared from pruning.
+ name,description,price,sku
+
+For associations this is slightly more complex:
+If you enter a comma-separated list like with the other two entity types, the values will be interpreted as attribute set names. All associations for these attribute sets are spared from pruning.
+There is also a second possibility:
+If you use JSON-style array notation there is more control over what will be kept and what will be pruned, e.g.:
+ [['Default'],['Set1','name'],['Set2','name','Group1']]
+will keep ALL associations of any attribute to attribute set 'Default', the association of attribute 'name' with attribute set 'Set1' regardless of in which group the attribute is, and the association of attribute 'name' with attribute set 'Set2' but only if it is in group 'Group1'.
+The inner arrays are ordered, the order is always 'set name','attribute code','group name' and values can only be omitted from the right.
+If you need more flexibility, also have a look at the [[#Add these attribute associations to given CSV data|Add these attribute associations to given CSV data]] option!
+
+<div id="magmi_delete"/>
+==== Delete <entity type> marked "magmi:delete" = 1 ====
+'''magmi:delete''' is used just like in the Product Deleter plugin. If this option is activated and you add a column named "magmi:delete" to your CSV file, each record having a "1" in this column will be deleted.
+
+==== Create <entity type> from CSV which are not in database ====
+If this switch is active, records from CSV wich don't exist in the database will be created according to the given data.
+If the switch is not active, records which are not already in the database will be ignored.
+
+==== Update <entity type> from CSV which are already in database ====
+If this switch is enabled, records from CSV wich already exist in the database will be compared to the given data from your CSV file and if there are changes, the database record will be updated.
+If the switch is not active, records which are already in database will be ignored, regardless if they have the same or different content as in the database.
+
+==== Attribute Set Groups import ====
+Groups import is only enabled if either the create or the update switch is active for entity type "attribute sets".
+The options for groups import are the same as for the other imports, the only difference is, groups belong to an attribute set and therefore, groups are given with each attribute set record.
+Within attribute set CSV data a column "magmi:groups" may be added. The format of this column's data is as follows:
+<group name>:<default_id>:<sort order>,<group name>:<default_id>:<sort order>,<group name>:<default_id>:<sort order>
+So, if you want to set three groups for an attribute set named "Group1", "Group2" and "Group3" with Group2 as the default, you would probably set
+ Group1:0:1,Group2:1:2,Group3:0:3
+as the value for "magmi:groups" column in the atrribute set's CSV row.
+Values can be omitted from the right, the respective columns will be filled with the default values.
+So this
+ Group1,Group2:1,Group3:6,Group4
+would be equivalent to 
+ Group1:0:0,Group2:1:0,Group3:0:0,Group4:0:0
+
+''All options for group import have a "per attribute set" focus, so will only have effect for updated/imported attribute sets.''
+
+==== Add these attribute associations to given CSV data ====
+This text area allows to add more records which will be appended before import. A fixed CSV format is used (comma-separated, optionally enclosed by "). 
+The first line should therefore contain the column names (attribute_set_name,attribute_code,attribute_group_name) in your preferred order.
+The following lines contain the additional data rows (obviously in the same order).
+
+Seems easy but not very useful, though?
+There is one specialty: A single asterisk "*" may be used as value for attribute set names to denote "add this attribute to each attribute set given within the original attribute associations CSV file".
+This allows to define a default set of attributes for each attribute set without putting these default attributes in the CSV file on each export.
+
+If you entered this into the textarea
+ attribute_set_name,attribute_code,attribute_group_name
+ *,sku,General
+ *,name,General
+ *,description,General
+ MySet,MyAttribute,MyGroup
+the Attribute Set Importer would add the attributes "sku", "name" and "description" in ''each'' given attribute set in your attribute associations CSV file. (So there must be at least one association for each respective set in the CSV file for this to take effect! ) Whereas "MyAttribute" will only be added to "MySet"...
+
+=== CSV data format ===
+==== General considerations about import files ====
+From the plugin's perspective, the only mandatory columns in the CSV files are the "name" columns identifying the record (attribute_code for attributes, attribute_set_name for attribute sets, both of them plus attribute_group_name for associations).
+All further columns will be inserted/updated if given or just ignored if not. (Further columns would nevertheless be mandatory if the value is not nullable AND there is no default value in database, fortunately this is not the case.).
+All other column names from the respective database tables can be used as columns in the CSV data, just don't use the primary key columns! The records are identified by the "names" and using primary keys columns in CSV could or most likely will lead to destroyed data in your database! If column names don't match between CSV and database, the data will be ignored (there will be no error message). In other words: extra columns are ignored.
+There are a few extra columns defined by this plugin: "magmi:delete" (all entity types, see [[#magmi_delete|Delete <entity type> marked "magmi:delete" = 1]]), "magmi:groups" and "magmi:default_group" (only for attribute sets, see [[#Attribute Set Groups import|Attribute Set Groups import]]).
+
+'''Be careful about what to import into the tables!''' There are some dependencies between some of the columns (e.g. configurable attributes typically have is_global = 1, source_model = 'eav/entity_attribute_source_table', frontend_input = 'select' and backend_type = 'int', otherwise there will be problems using these attributes).
+'''The plugin does NOT check such dependencies!'''
+
+==== Entity type "Attribute" ====
+Updates database tables '''eav_attribute''' and '''catalog_eav_attribute'''.
+Identified by '''attribute_code'''
+
+{| cellpadding="5" cellspacing="0" border="1"
+!Column name
+!type
+!mandatory
+!default value (on insert if column is omitted)
+!COMMENT
+|-
+|attribute_id
+|smallint
+|DON'T USE!
+|auto
+|Don't use! This is the primary key.
+|-
+|entity_type_id
+|smallint
+|DON'T USE!
+|depends...
+|The plugin already cares for the correct value!
+|-
+|attribute_code
+|varchar
+|YES
+| --
+|This is how the attribute is identified by the plugin.
+|-
+|attribute_model
+|varchar
+|NO
+|null
+|
+|-
+|backend_model
+|varchar
+|NO
+|null
+|
+|-
+|backend_type
+|varchar
+|NO
+|"static"
+|
+|-
+|backend_table
+|varchar
+|NO
+|null
+|
+|-
+|frontend_model
+|varchar
+|NO
+|null
+|
+|-
+|frontend_input
+|varchar
+|NO
+|null
+|
+|-
+|frontend_label
+|varchar
+|NO
+|null
+|
+|-
+|frontend_class
+|varchar
+|NO
+|null
+|
+|-
+|source_model
+|varchar
+|NO
+|null
+|
+|-
+|is_required
+|smallint
+|NO
+|0
+|
+|-
+|is_user_defined
+|smallint
+|NO
+|0
+|
+|-
+|default_value
+|text
+|NO
+|null
+|
+|-
+|is_unique
+|smallint
+|NO
+|0
+|
+|-
+|note
+|varchar
+|NO
+|null
+|
+|-
+|frontend_input_renderer
+|varchar
+|NO
+|null
+|
+|-
+|is_global
+|smallint
+|NO
+|1
+|
+|-
+|is_visible
+|smallint
+|NO
+|1
+|
+|-
+|is_searchable
+|smallint
+|NO
+|0
+|
+|-
+|is_filterable
+|smallint
+|NO
+|0
+|
+|-
+|is_comparable
+|smallint
+|NO
+|0
+|
+|-
+|is_visible_on_front
+|smallint
+|NO
+|0
+|
+|-
+|is_html_allowed_on_front
+|smallint
+|NO
+|0
+|
+|-
+|is_used_for_price_rules
+|smallint
+|NO
+|0
+|
+|-
+|is_filterable_in_search
+|smallint
+|NO
+|0
+|
+|-
+|used_in_product_listing
+|smallint
+|NO
+|0
+|
+|-
+|used_for_sort_by
+|smallint
+|NO
+|0
+|
+|-
+|is_configurable
+|smallint
+|NO
+|1
+|
+|-
+|apply_to
+|varchar
+|NO
+|null
+|
+|-
+|is_visible_in_advanced_search
+|smallint
+|NO
+|0
+|
+|-
+|position
+|int
+|NO
+|0
+|
+|-
+|is_wysiwyg_enabled
+|smallint
+|NO
+|0
+|
+|-
+|is_used_for_promo_rules
+|smallint
+|NO
+|0
+|
+|-
+|magmi:delete
+|smallint
+|NO
+|0
+|
+|-
+|}
+
+==== Entity type "Attribute Set" ====
+Updates database table '''eav_attribute_set'''
+Identified by '''attribute_set_name'''
+
+{| cellpadding="5" cellspacing="0" border="1"
+!Column name
+!type
+!mandatory
+!default value (on insert if column is omitted)
+!COMMENT
+|-
+|attribute_set_id
+|smallint
+|DON'T USE!
+|auto
+|Don't use! This is the primary key.
+|-
+|entity_type_id
+|smallint
+|DON'T USE!
+|depends...
+|The plugin already cares for the correct value!
+|-
+|attribute_set_name
+|varchar
+|YES
+| --
+|This is how the attribute set is identified by the plugin.
+|-
+|sort_order
+|smallint
+|NO
+|0
+|
+|}
+
+==== Entity type "Attribute to attribute set association" ====
+Updates database table '''eav_entity_attribute'''
+Identified by '''attribute_set_name''', '''attribute_code''' and '''attribute_group_name'''
+
+{| cellpadding="5" cellspacing="0" border="1"
+!Column name
+!type
+!mandatory
+!default value (on insert if column is omitted)
+!COMMENT
+|-
+|entity_attribute_id
+|smallint
+|DON'T USE!
+|auto
+|Don't use! This is the primary key.
+|-
+|entity_type_id
+|smallint
+|DON'T USE!
+|depends...
+|The plugin already cares for the correct value!
+|-
+|attribute_set_id
+|smallint
+|NO
+| --
+|Don't use this, unless you want to give the database id of the attribute set, use 'attribute_set_name' instead!
+|-
+|attribute_set_name
+|smallint
+|YES (unless you use attribute_set_id)
+| --
+|Will be transformed to attribute_set_id on the fly while plugin execution.
+|-
+|attribute_id
+|smallint
+|NO
+| --
+|Don't use this, unless you want to give the database id of the attribute, use 'attribute_code' instead!
+|-
+|attribute_code
+|smallint
+|YES (unless you use attribute_id)
+| --
+|Will be transformed to attribute_id on the fly while plugin execution.
+|-
+|attribute_group_id
+|smallint
+|NO
+| --
+|Don't use this, unless you want to give the datbase id of the group, use 'attribute_group_name' instead!
+|-
+|attribute_group_name
+|smallint
+|YES (unless you use attribute_group_id)
+| --
+|Will be transformed to attribute_group_id on the fly while plugin execution.
+|-
+|sort_order
+|smallint
+|NO
+|0
+|
+|}
+
+== Datapump functionality ==
+'''''CAUTION! This functionality is almost untested!'''''
+
+There is an extension to the DataPump API which can be obtained by using
+ $dp=Magmi_DataPumpFactory::getDataPumpInstance("attributesetimport");
+
+This extension works exactly the same as the normal DataPump API (you could even also import products with the ingest() function), it just defines the additional functions
+ ingestAttributes($arrayWithAttributes);
+ ingestAttributeSets($arrayWithAttributeSets);
+ ingestAttributeAssociations($arrayWithAttributeAssociations);
+
+Other than the product data ingest function these functions don't take a single record in a single associative array, but an array of arrays (records) which is necessary to be able to use the "prune" functionality.
+All CSV related options will simply be ignored when using DataPump API. The "import behavior" options stay active!
+
+Example (based on default DataPump example):
+ <?php
+ // assuming that your script file is located in magmi/integration/scripts/somedirectory/myscript.php,
+ // include "magmi_defs.php" , once done, you will be able to use any magmi includes without specific path.
+ require_once("../../../inc/magmi_defs.php");
+ //Datapump include
+ require_once("magmi_datapump.php");
+ 
+ // Difference to "normal" datapump!!! Create an Attribute Set import Datapump using Magmi_DatapumpFactory
+ $dp=Magmi_DataPumpFactory::getDataPumpInstance("attributesetimport");
+ 
+ // Begin import session with a profile & running mode, here profile is "default" & running mode is "create".
+ // Available modes: "create" creates and updates items, "update" updates only, "xcreate creates only.
+ // Important: for values other than "default" profile has to be an existing magmi profile
+ $dp->beginImportSession("default","create");
+ 
+ // attribute datapump function take an array of arrays (submitting multiple records at once)
+ $testitems=array(array("attribute_set_name"=>"datapump test"),array("attribute_set_name"=>"datapump test2"));
+ 
+ // Now ingest item(s) into magento
+ $dp->ingestAttributeSets($testitems);
+ 
+ // End import Session
+ $dp->endImportSession();
+ ?>
