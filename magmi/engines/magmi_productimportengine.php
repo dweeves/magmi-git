@@ -1063,13 +1063,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
                     else
                     // if handled value is a "DELETE" or a NULL , which will also be removed
-                    if ($ovalue == '__MAGMI_DELETE__' || $ovalue=='__NULL__')
+                    if ($ovalue == '__MAGMI_DELETE__' )
                     {
                         $deletes[] = $attid;
                         // do not handle value in insert
                         $ovalue = null;
                     }
-
                     // if we have something to do with this value
                     if ($ovalue !== false && $ovalue != null)
                     {
@@ -1078,7 +1077,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         $data[] = $attid;
                         $data[] = $store_id;
                         $data[] = $pid;
-                        $data[] = $ovalue;
+                        $data[] = $ovalue=='__NULL__'?null:$ovalue;
                         $insstr = "(?,?,?,?,?)";
                         $inserts[] = $insstr;
                     }
@@ -1687,9 +1686,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             if($this->getProp("GLOBAL", "noattsetupdate", "off") == "off") {
                 // if attribute set name is given and changed
                 // compared to attribute set in db -> change!
-                $asName = $item['attribute_set'];
-                if(isset($asName)) {
-                    $newAsId = $this->getAttributeSetId($asName);
+                if(isset($item['attribute_set'])) {
+                    $newAsId = $this->getAttributeSetId($item['attribute_set']);
                     if(isset($newAsId) && $newAsId != $asid) {
                         // attribute set changed!
                         $item['attribute_set_id'] = $newAsId;
