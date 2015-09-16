@@ -252,7 +252,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      *            : image file name (relative to /products/media in magento dir)
      * @return bool : if image is already present in gallery for a given product id
      */
-    public function getImageId($pid, $attid, $imgname, $refid = null)
+    public function getImageId($pid, $attid, $imgname, $refid = null, $store_id = 0)
     {
         $t = $this->tablename('catalog_product_entity_media_gallery');
 
@@ -261,8 +261,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         {
             $vc = $this->tablename('catalog_product_entity_varchar');
             $sql .= " JOIN $vc ON $t.entity_id=$vc.entity_id AND $t.value=$vc.value AND $vc.attribute_id=?
-					WHERE $t.entity_id=?";
-            $imgid = $this->selectone($sql, array($refid,$pid), 'value_id');
+					WHERE $t.entity_id=? AND $vc.store_id=?";
+            $imgid = $this->selectone($sql, array($refid,$pid,$store_id), 'value_id');
         }
         else
         {
@@ -322,7 +322,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $gal_attinfo = $this->getAttrInfo("media_gallery");
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
-        $vid = $this->getImageId($pid, $gal_attinfo["attribute_id"], $imgname, $refid);
+        $vid = $this->getImageId($pid, $gal_attinfo["attribute_id"], $imgname, $refid, $storeid);
         if ($vid != null)
         {
 
