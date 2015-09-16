@@ -1026,8 +1026,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $store_ids = $this->getItemStoreIds($item, $scope);
 
 
-                // do not handle empty generic int values in create mode
-                if ($ivalue == "" && $this->mode != "update" && $tp == "int")
+                // do not handle empty generic int values for new items
+                if ($ivalue == "" && $isnew && $tp == "int")
                 {
                     continue;
                 }
