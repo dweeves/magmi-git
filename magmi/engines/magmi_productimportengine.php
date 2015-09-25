@@ -1329,6 +1329,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // ow we have verified ids
             foreach ($cdata as $catid => $catpos)
             {
+            	if(empty($catid)) {
+            	    continue;
+            	}
+            	
                 $inserts[] = "(?,?,?)";
                 $data[] = $catid;
                 $data[] = $pid;
