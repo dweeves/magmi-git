@@ -16,7 +16,7 @@
 		<li class="label">CSVs base directory</li>
 		<li class="value"><input type="text" name="CSV:basedir"
 			id="CSV:basedir"
-			value="<?php echo $this->getParam("CSV:basedir","var/import")?>">
+			value="<?php echo $this->getParam("CSV:basedir", "var/import")?>">
 			<div class="fieldinfo">Relative paths are relative to magento base
 				directory , absolute paths will be used as is</div></li>
 	</ul>

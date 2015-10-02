@@ -2,7 +2,6 @@
 
 class CrossUpsellProducts extends Magmi_ItemProcessor
 {
-
     public function getPluginInfo()
     {
         return array("name"=>"Cross/Upsell Importer","author"=>"Dweeves","version"=>"1.0.3",
@@ -11,8 +10,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
 
     public function checkRelated(&$rinfo)
     {
-        if (count($rinfo["direct"]) > 0)
-        {
+        if (count($rinfo["direct"]) > 0) {
             $sql = "SELECT testid.sku,cpe.sku as esku FROM " . $this->arr2select($rinfo["direct"], "sku") . " AS testid
   	LEFT JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.sku=testid.sku
   	WHERE testid.sku NOT LIKE '%re::%'
@@ -20,8 +18,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
             $result = $this->selectAll($sql, $rinfo["direct"]);
 
             $to_delete = array();
-            foreach ($result as $row)
-            {
+            foreach ($result as $row) {
                 $this->log("Unknown related sku " . $row["sku"], "warning");
                 $to_delete[] = $row["sku"];
             }
@@ -37,20 +34,16 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $pid = $params["product_id"];
         $new = $params["new"];
 
-        if (isset($usell) && trim($usell) != "")
-        {
+        if (isset($usell) && trim($usell) != "") {
             $rinf = $this->getRelInfos($usell);
-            if ($new == false)
-            {
+            if ($new == false) {
                 $this->deleteUsellItems($item, $rinf["del"]);
             }
             $this->setUsellItems($item, $rinf["add"]);
         }
-        if (isset($csell) && trim($csell) != "")
-        {
+        if (isset($csell) && trim($csell) != "") {
             $rinf = $this->getRelInfos($csell);
-            if ($new == false)
-            {
+            if ($new == false) {
                 $this->deleteCSellItems($item, $rinf["del"]);
             }
             $this->setCSellItems($item, $rinf["add"]);
@@ -61,8 +54,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     {
         $joininfo = $this->buildJoinCond($item, $inf, "cpe2.sku");
         $j2 = $joininfo["join"]["cpe2.sku"];
-        if ($j2 != "")
-        {
+        if ($j2 != "") {
             $sql = "DELETE cplai.*,cpl.*
  		  FROM " . $this->tablename("catalog_product_entity") . " as cpe
  		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='up_sell'
@@ -78,9 +70,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     {
         $joininfo = $this->buildJoinCond($item, $inf, "cpe2.sku");
         $j2 = $joininfo["join"]["cpe2.sku"];
-        if ($j2 != "")
-        {
-
+        if ($j2 != "") {
             $sql = "DELETE cplai.*,cpl.*
  		  FROM " . $this->tablename("catalog_product_entity") . " as cpe
 		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='cross_sell'
@@ -95,8 +85,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
     public function getDirection(&$inf)
     {
         $dir = "+";
-        if ($inf[0] == "-" || $inf[0] == "+")
-        {
+        if ($inf[0] == "-" || $inf[0] == "+") {
             $dir = $inf[0];
             $inf = substr($inf, 1);
         }
@@ -108,37 +97,26 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $relinfos = explode(",", $relationdef);
         $relskusadd = array("direct"=>array(),"re"=>array());
         $relskusdel = array("direct"=>array(),"re"=>array());
-        foreach ($relinfos as $relinfo)
-        {
+        foreach ($relinfos as $relinfo) {
             $rinf = explode("::", $relinfo);
-            if (count($rinf) == 1)
-            {
-                if ($this->getDirection($rinf[0]) == "+")
-                {
+            if (count($rinf) == 1) {
+                if ($this->getDirection($rinf[0]) == "+") {
                     $relskusadd["direct"][] = $rinf[0];
-                }
-                else
-                {
+                } else {
                     $relskusdel["direct"][] = $rinf[0];
                 }
             }
 
-            if (count($rinf) == 2)
-            {
+            if (count($rinf) == 2) {
                 $dir = $this->getDirection($rinf[0]);
-                if ($dir == "+")
-                {
-                    switch ($rinf[0])
-                    {
+                if ($dir == "+") {
+                    switch ($rinf[0]) {
                         case "re":
                             $relskusadd["re"][] = $rinf[1];
                             break;
                     }
-                }
-                else
-                {
-                    switch ($rinf[0])
-                    {
+                } else {
+                    switch ($rinf[0]) {
                         case "re":
                             $relskusdel["re"][] = $rinf[1];
                             break;
@@ -155,34 +133,26 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $joinconds = array();
         $joins = array();
         $klist = explode(",", $keys);
-        foreach ($klist as $key)
-        {
+        foreach ($klist as $key) {
             $data[$key] = array();
             $joinconds[$key] = array();
-            if (count($rinfo["direct"]) > 0)
-            {
+            if (count($rinfo["direct"]) > 0) {
                 $joinconds[$key][] = "$key IN (" . $this->arr2values($rinfo["direct"]) . ")";
                 $data[$key] = array_merge($data[$key], $rinfo["direct"]);
             }
-            if (count($rinfo["re"]) > 0)
-            {
-                foreach ($rinfo["re"] as $rinf)
-                {
-                    if ($rinf != ".*")
-                    {
+            if (count($rinfo["re"]) > 0) {
+                foreach ($rinfo["re"] as $rinf) {
+                    if ($rinf != ".*") {
                         $joinconds[$key][] = "$key REGEXP ?";
                         $data[$key][] = $rinf;
-                    }
-                    else
-                    {
+                    } else {
                         $joinconds[$key][] = "?";
                         $data[$key][] = 1;
                     }
                 }
             }
             $joins[$key] = implode(" OR ", $joinconds[$key]);
-            if ($joins[$key] != "")
-            {
+            if ($joins[$key] != "") {
                 $joins[$key] = "({$joins[$key]})";
             }
         }
@@ -191,13 +161,10 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
 
     public function setUSellItems($item, $rinfo)
     {
-        if ($this->checkRelated($rinfo) > 0)
-
-        {
+        if ($this->checkRelated($rinfo) > 0) {
             $joininfo = $this->buildJoinCond($item, $rinfo, "cpe2.sku");
             $jinf = $joininfo["join"]["cpe2.sku"];
-            if ($jinf != "")
-            {
+            if ($jinf != "") {
                 // insert into link table
                 $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
@@ -215,13 +182,10 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
 
     public function setCSellItems($item, $rinfo)
     {
-        if ($this->checkRelated($rinfo) > 0)
-
-        {
+        if ($this->checkRelated($rinfo) > 0) {
             $joininfo = $this->buildJoinCond($item, $rinfo, "cpe2.sku");
             $j2 = $joininfo["join"]["cpe2.sku"];
-            if ($j2 != "")
-            {
+            if ($j2 != "") {
                 // insert into link table
                 $bsql = "SELECT cplt.link_type_id,cpe.entity_id as product_id,cpe2.entity_id as linked_product_id
 			FROM " . $this->tablename("catalog_product_entity") . " as cpe
@@ -250,7 +214,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
 		   WHERE cpe.sku=?";
         $sql = "INSERT IGNORE INTO " . $this->tablename("catalog_product_link_attribute_int") .
              " (link_id,product_link_attribute_id,value) $bsql";
-        $this->insert($sql, array($reltype,$sku));
+        $this->insert($sql, array($reltype, $sku));
     }
 
     public function afterImport()
@@ -268,7 +232,7 @@ class CrossUpsellProducts extends Magmi_ItemProcessor
         $this->delete($sql);
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Related Products";
     }

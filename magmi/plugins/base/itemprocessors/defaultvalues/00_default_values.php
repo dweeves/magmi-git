@@ -31,8 +31,7 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
      */
     public function processItemBeforeId(&$item, $params = null)
     {
-        foreach ($this->_dcols as $col)
-        {
+        foreach ($this->_dcols as $col) {
             $item[$col] = $this->_dset[$col];
         }
         return true;
@@ -48,10 +47,8 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
      */
     public function initialize($params)
     {
-        foreach ($params as $k => $v)
-        {
-            if (preg_match_all("/^DEFAULT:(.*)$/", $k, $m) && $k != "DEFAULT:columnlist")
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match_all("/^DEFAULT:(.*)$/", $k, $m) && $k != "DEFAULT:columnlist") {
                 $this->_dset[$m[1][0]] = $params[$k];
             }
         }
@@ -60,10 +57,8 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
     public function getPluginParams($params)
     {
         $pp = array();
-        foreach ($params as $k => $v)
-        {
-            if (preg_match("/^DEFAULT:.*$/", $k))
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match("/^DEFAULT:.*$/", $k)) {
                 $pp[$k] = $v;
             }
         }
@@ -73,10 +68,8 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
     public function processColumnList(&$cols, $params = null)
     {
         $dcols = array_diff(array_keys($this->_dset), array_intersect($cols, array_keys($this->_dset)));
-        foreach ($dcols as $col)
-        {
-            if (!empty($this->_dset[$col]))
-            {
+        foreach ($dcols as $col) {
+            if (!empty($this->_dset[$col])) {
                 $cols[] = $col;
                 $this->_dcols[] = $col;
             }
@@ -86,7 +79,7 @@ class DefaultValuesItemProcessor extends Magmi_ItemProcessor
         return true;
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Input Data Preprocessing";
     }

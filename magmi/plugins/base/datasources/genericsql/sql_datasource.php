@@ -1,9 +1,8 @@
 <?php
-require_once ("dbhelper.class.php");
+require_once("dbhelper.class.php");
 
 class ExtDBHelper extends DBHelper
 {
-
     public function initDBMysql($dbname, $host, $user, $pass)
     {
         $this->_db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
@@ -29,26 +28,20 @@ class SQL_Datasource extends Magmi_Datasource
         $cdbtype = $this->getParam("SQL:dbtype");
         $cdbusr = $this->getParam("SQL:dbuser");
         $cdbpass = $this->getParam("SQL:dbpass");
-        if ($cdbtype == "other")
-        {
+        if ($cdbtype == "other") {
             $cdbpdostr = $this->getParam("SQL:pdostr", "");
 
             $this->dbh->initDBPDOStr($cdbusr, $cdbpass, $cdbpdostr);
-        }
-        else
-        {
+        } else {
             $cdbname = $this->getParam("SQL:dbname");
             $cdbhost = $this->getParam("SQL:dbhost");
             $extra = $this->getParam("SQL:dbextra");
             $this->dbh->initDbMysql($cdbname, $cdbhost, $cdbusr, $cdbpass);
         }
         // handle extra initial commands
-        if (isset($extra) && $extra != "")
-        {
-            foreach (explode(";\n", $extra) as $st)
-            {
-                if ($st != "")
-                {
+        if (isset($extra) && $extra != "") {
+            foreach (explode(";\n", $extra) as $st) {
+                if ($st != "") {
                     $this->dbh->exec_stmt($st);
                 }
             }
@@ -70,7 +63,8 @@ class SQL_Datasource extends Magmi_Datasource
     }
 
     public function startImport()
-    {}
+    {
+    }
 
     public function getSQLFileList()
     {
@@ -82,12 +76,10 @@ class SQL_Datasource extends Magmi_Datasource
     {
         $sql = null;
         // optimized count query
-        if (file_exists($this->sqlfile . ".count"))
-        {
+        if (file_exists($this->sqlfile . ".count")) {
             $sql = file_get_contents($this->sqlfile . ".count");
         }
-        if (!isset($sql))
-        {
+        if (!isset($sql)) {
             $sql = "SELECT COUNT(*) as cnt FROM (" . str_replace("\n", " ", $this->extractsql) . ") as t1";
         }
         $cnt = $this->dbh->selectone($sql, null, "cnt");
@@ -107,21 +99,21 @@ class SQL_Datasource extends Magmi_Datasource
 
     public function getNextRecord()
     {
-        if (!isset($this->stmt))
-        {
+        if (!isset($this->stmt)) {
             $this->stmt = $this->dbh->select($this->extractsql);
         }
         $data = $this->stmt->fetch();
-        if (!$data)
-        {
+        if (!$data) {
             return false;
         }
         return $data;
     }
 
     public function endImport()
-    {}
+    {
+    }
 
     public function afterImport()
-    {}
+    {
+    }
 }

@@ -5,6 +5,6 @@
 <ul class="formline">
 	<li class="label"><span>sku find attribute code</span></li>
 	<li class="value"><input type="text" name="SKUF:matchfield"
-		value="<?php echo $this->getParam("SKUF:matchfield","")?>"></li>
+		value="<?php echo $this->getParam("SKUF:matchfield", "")?>"></li>
 
 </ul>

@@ -10,19 +10,16 @@ require_once("magmi_utils.php");
 require_once("../utils.php");
 session_start();
 $conf= $_REQUEST['magmiconf'];
-if($conf!=='') {
+if ($conf!=='') {
     if (!isabspath($conf)) {
         $conf = MAGMI_BASEDIR . DIRECTORY_SEPARATOR . $conf;
     }
     if (!file_exists($conf)) {
-        setMessage("ERROR" ,"invalid file : $conf not found","magmiconf");
-    }
-    else {
+        setMessage("ERROR", "invalid file : $conf not found", "magmiconf");
+    } else {
         $_SESSION['MAGMI_CONFIG_FILE'] = $conf;
-        setMessage("OK","using magmi configuration file : $conf ","magmiconf");
+        setMessage("OK", "using magmi configuration file : $conf ", "magmiconf");
     }
-}
-else
-{
+} else {
     unset($_SESSION['MAGMI_CONFIG_FILE']);
 }

@@ -1,5 +1,5 @@
 <?php
-require_once ("magmi_productimportengine.php");
+require_once("magmi_productimportengine.php");
 
 class Magmi_ProductImport_DataPump
 {
@@ -59,8 +59,7 @@ class Magmi_ProductImport_DataPump
     {
         $item = array_merge($this->_defaultvalues, $item);
         $diff = array_diff(array_keys($item), $this->_importcolumns);
-        if (count($diff) > 0)
-        {
+        if (count($diff) > 0) {
             $this->_importcolumns = array_keys($item);
             // process columns
             $this->_engine->callPlugins("itemprocessors", "processColumnList", $this->_importcolumns);
@@ -79,8 +78,7 @@ class Magmi_ProductImport_DataPump
             $this->_stats["lastdbtime"], $this->stats["lastrec"]);
         $skustats = $this->_engine->getSkuStats();
         $this->_engine->log("Skus imported OK:" . $skustats["ok"] . "/" . $skustats["nsku"], "info");
-        if ($skustats["ko"] > 0)
-        {
+        if ($skustats["ko"] > 0) {
             $this->_engine->log("Skus imported KO:" . $skustats["ko"] . "/" . $skustats["nsku"], "warning");
         }
 

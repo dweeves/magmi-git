@@ -48,11 +48,11 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $this->_link_type_id = $this->selectone($sql, array("super"), "link_type_id");
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_pos_attr_id = $this->selectone($sql, array($this->_link_type_id,'position'),
+        $this->_super_pos_attr_id = $this->selectone($sql, array($this->_link_type_id, 'position'),
             'product_link_attribute_id');
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_qty_attr_id = $this->selectone($sql, array($this->_link_type_id,'qty'),
+        $this->_super_qty_attr_id = $this->selectone($sql, array($this->_link_type_id, 'qty'),
             'product_link_attribute_id');
     }
 
@@ -95,11 +95,9 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $sskus = array();
         $qtys = array();
         $ccond = count($conddata);
-        for ($i = 0; $i < $ccond; $i++)
-        {
+        for ($i = 0; $i < $ccond; $i++) {
             $skuinfo = explode("::", $conddata[$i]);
-            if (count($skuinfo) > 2)
-            {
+            if (count($skuinfo) > 2) {
                 $qtys[$skuinfo[0]] = $skuinfo[2];
             }
             $sskus[$skuinfo[0]] = count($skuinfo) > 1 ? $skuinfo[1] : $i;
@@ -107,8 +105,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         }
 
         // if group reset
-        if ($gr)
-        {
+        if ($gr) {
             $sql = "DELETE cpsl.*,cpsr.* FROM $cpsl as cpsl
             	JOIN $cpr as cpsr ON cpsr.parent_id=cpsl.parent_id
             	WHERE cpsl.parent_id=?";
@@ -124,8 +121,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             JOIN $cpe as cpes ON cpes.sku $cond
             WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
-        if ($this->_linktype == NULL)
-        {
+        if ($this->_linktype == null) {
             $sql = "select link_type_id from $cplt where code=?";
             $this->_linktype = $this->selectone($sql, 'super', 'link_type_id');
         }
@@ -151,8 +147,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $this->insert($sql, array_merge(array($this->_super_pos_attr_id), $conddata, array($pid)));
         unset($sskus);
         // qties
-        if (count($qtys) > 0)
-        {
+        if (count($qtys) > 0) {
             $qw = $this->arr2case($qtys, 'cpes.sku');
             $cplad = $this->tablename('catalog_product_link_attribute_decimal');
             $sql = "INSERT INTO $cplad (product_link_attribute_id,link_id,value) SELECT ?,cpl.link_id,$qw as value
@@ -182,8 +177,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $res = $this->selectAll($sql, array($pid));
         $sskus = array();
         $cres = count($res);
-        for ($i = 0; $i < $cres; $i++)
-        {
+        for ($i = 0; $i < $cres; $i++) {
             $sskus[$i] = $res[$i]["sku"];
         }
         unset($res);
@@ -194,15 +188,14 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     public function updSimpleVisibility($pid)
     {
         $vis = $this->getParam("APIGRP:updgroupedvis", 0);
-        if ($vis != 0)
-        {
+        if ($vis != 0) {
             $attinfo = $this->getAttrInfo("visibility");
             $sql = "UPDATE " . $this->tablename("catalog_product_entity_int") . " as cpei
                 JOIN " . $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
                 JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id
                 SET cpei.value=?
                 WHERE cpei.entity_id=cpe.entity_id AND attribute_id=?";
-            $this->update($sql, array($pid,$vis,$attinfo["attribute_id"]));
+            $this->update($sql, array($pid, $vis, $attinfo["attribute_id"]));
         }
     }
 
@@ -215,7 +208,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
      */
     public function fixedLink($pid, $skulist, $gr = true)
     {
-        if(!empty($skulist)) {
+        if (!empty($skulist)) {
             $this->dolink($pid, "IN (" . $this->arr2values($skulist) . ")", $gr, $skulist);
         }
     }
@@ -230,20 +223,14 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     public function getMatchMode($item)
     {
         $matchmode = "auto";
-        if ($this->getParam('APIGRP:nolink', 0))
-        {
+        if ($this->getParam('APIGRP:nolink', 0)) {
             $matchmode = "none";
-        }
-        else
-        {
-            if ($this->getParam("APIGRP:groupedbeforegrp") == 1)
-            {
+        } else {
+            if ($this->getParam("APIGRP:groupedbeforegrp") == 1) {
                 $matchmode = "cursimples";
             }
             //fix for empty grouped skus support => no link
-            if (isset($item["grouped_skus"]))
-            {
-
+            if (isset($item["grouped_skus"])) {
                 $matchmode = (trim($item["grouped_skus"]) != "")?"fixed":"none";
             }
         }
@@ -253,10 +240,8 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     public function processItemAfterId(&$item, $params = null)
     {
         // if item is not grouped, nothing to do
-        if ($item["type"] !== "grouped")
-        {
-            if ($this->getParam("APIGRP:groupedbeforegrp") == 1)
-            {
+        if ($item["type"] !== "grouped") {
+            if ($this->getParam("APIGRP:groupedbeforegrp") == 1) {
                 $this->_currentgrouped[] = $item["sku"];
             }
             return true;
@@ -265,8 +250,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $pid = $params["product_id"];
         $groupreset = !isset($item['group_reset']) || $item['group_reset'] == 1;
         $matchmode = $this->getMatchMode($item);
-        switch ($matchmode)
-        {
+        switch ($matchmode) {
             case "none":
                 break;
             case "auto":
@@ -290,8 +274,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
                 break;
         }
         // always clear current simples
-        if (count($this->_currentgrouped) > 0)
-        {
+        if (count($this->_currentgrouped) > 0) {
             unset($this->_currentgrouped);
             $this->_currentgrouped = array();
         }
@@ -303,7 +286,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         return array("APIGRP:groupedbeforegrp","APIGRP:updgroupedvis","APIGRP:nolink");
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Product Type Import";
     }
@@ -311,8 +294,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
     private function trimarray(&$arr)
     {
         $carr = count($arr);
-        for ($i = 0; $i < $carr; $i++)
-        {
+        for ($i = 0; $i < $carr; $i++) {
             $arr[$i] = trim($arr[$i]);
         }
     }

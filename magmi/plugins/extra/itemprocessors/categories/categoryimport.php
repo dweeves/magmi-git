@@ -17,10 +17,8 @@ class CategoryImporter extends Magmi_ItemProcessor
         $this->initCats();
         $this->_cattrinfos = array("varchar"=>array("name"=>array(),"url_key"=>array(),"url_path"=>array()),
             "int"=>array("is_active"=>array(),"is_anchor"=>array(),"include_in_menu"=>array()));
-        foreach ($this->_cattrinfos as $catype => $attrlist)
-        {
-            foreach (array_keys($attrlist) as $catatt)
-            {
+        foreach ($this->_cattrinfos as $catype => $attrlist) {
+            foreach (array_keys($attrlist) as $catatt) {
                 $this->_cattrinfos[$catype][$catatt] = $this->getCatAttributeInfos($catatt);
             }
         }
@@ -43,14 +41,12 @@ class CategoryImporter extends Magmi_ItemProcessor
 								JOIN $ea as ea ON ea.attribute_code='name' AND ea.entity_type_id=cce.entity_type_id
 								JOIN $ccev as ccev ON ccev.attribute_id=ea.attribute_id AND ccev.entity_id=cce.entity_id
 		 ");
-        foreach ($result as $row)
-        {
+        foreach ($result as $row) {
             $rootinfo = array("path"=>$row["path"],"etid"=>$row["entity_type_id"],"name"=>$row["name"],
                 "rootarr"=>explode("/", $row["path"]));
             $this->_catroots[$row["store_id"]] = $rootinfo;
             $this->_catrootw[$row["website_id"]][] = $row["store_id"];
-            if ($this->_cat_eid == null)
-            {
+            if ($this->_cat_eid == null) {
                 $this->_cat_eid = $row["entity_type_id"];
             }
         }
@@ -60,7 +56,7 @@ class CategoryImporter extends Magmi_ItemProcessor
     {
         $t = $this->tablename("eav_attribute");
         $sql = "SELECT * FROM $t WHERE entity_type_id=? AND attribute_code=?";
-        $info = $this->selectAll($sql, array($this->_cat_eid,$attcode));
+        $info = $this->selectAll($sql, array($this->_cat_eid, $attcode));
         return $info[0];
     }
 
@@ -97,7 +93,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 			  JOIN $cetv as cetv ON cetv.entity_id=cet.entity_id AND cetv.attribute_id=? AND cetv.value=?
 			  WHERE cet.parent_id=? ";
         $catid = $this->selectone($sql,
-            array($this->_cattrinfos["varchar"]["name"]["attribute_id"],$cattr["name"],$parentid), "entity_id");
+            array($this->_cattrinfos["varchar"]["name"]["attribute_id"], $cattr["name"], $parentid), "entity_id");
         return $catid;
     }
 
@@ -107,8 +103,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         // get exisiting cat id
         $catid = $this->getExistingCategory($parentpath, $cattrs);
         // if found , return it
-        if ($catid != null)
-        {
+        if ($catid != null) {
             return $catid;
         }
         // otherwise, get new category values from parent & siblings
@@ -137,16 +132,13 @@ class CategoryImporter extends Magmi_ItemProcessor
         $this->update($sql, $data);
         unset($data);
         // set category attributes
-        foreach ($this->_cattrinfos as $tp => $attinfo)
-        {
+        foreach ($this->_cattrinfos as $tp => $attinfo) {
             $inserts = array();
             $data = array();
             $tb = $this->tablename("catalog_category_entity_$tp");
 
-            foreach ($attinfo as $attrcode => $attdata)
-            {
-                if (isset($attdata["attribute_id"]))
-                {
+            foreach ($attinfo as $attrcode => $attdata) {
+                if (isset($attdata["attribute_id"])) {
                     $inserts[] = "(?,?,?,?,?)";
                     $data[] = $info["entity_type_id"];
                     $data[] = $attdata["attribute_id"];
@@ -170,9 +162,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $cdefs = explode($this->_tsep, $catdef);
         $odefs = array();
         $clist = array();
-        foreach ($cdefs as $cdef)
-        {
-
+        foreach ($cdefs as $cdef) {
             $parts = explode("::", $cdef);
             $cp = count($parts);
             $cname = trim($parts[0]);
@@ -189,11 +179,9 @@ class CategoryImporter extends Magmi_ItemProcessor
     public function getCategoryIdsFromDef($pcatdef, $srdefs)
     {
         $srp = "%RP:base%";
-        foreach (array_keys($srdefs) as $tsrp)
-        {
+        foreach (array_keys($srdefs) as $tsrp) {
             // check which root we have
-            if (substr($pcatdef, 0, strlen($tsrp)) == $tsrp)
-            {
+            if (substr($pcatdef, 0, strlen($tsrp)) == $tsrp) {
                 $srp = $tsrp;
                 break;
             }
@@ -204,19 +192,16 @@ class CategoryImporter extends Magmi_ItemProcessor
         // cleaning parts (trimming, removing empty)
         $pcatparts = array();
         $czcatparts = count($zcatparts);
-        for ($i = 0; $i < $czcatparts; $i++)
-        {
+        for ($i = 0; $i < $czcatparts; $i++) {
             $cp = trim($zcatparts[$i]);
-            if ($cp != "")
-            {
+            if ($cp != "") {
                 $pcatparts[] = $cp;
             }
         }
         $catparts = array();
         $catpos = array();
         // build a position table to restore after cat ids will be created
-        foreach ($pcatparts as $cp)
-        {
+        foreach ($pcatparts as $cp) {
             $a = explode("::", $cp);
             $catparts[] = $a[0];
             $catpos[] = (count($a) > 1 ? $a[1] : "0");
@@ -227,12 +212,9 @@ class CategoryImporter extends Magmi_ItemProcessor
         $catdef = implode($this->_tsep, $catparts);
 
         // if full def is in cache, use it
-        if ($this->isInCache($catdef, $srp))
-        {
+        if ($this->isInCache($catdef, $srp)) {
             $catids = $this->getCache($catdef, $srp);
-        }
-        else
-        {
+        } else {
             // category ids
             $catids = array();
             $lastcached = array();
@@ -241,27 +223,23 @@ class CategoryImporter extends Magmi_ItemProcessor
             $basearr = explode("/", $srdefs[$srp]["path"]);
             // for each cat tree branch
             $pdef = array();
-            foreach ($catparts as $catpart)
-            {
+            foreach ($catparts as $catpart) {
                 // ignore empty
-                if ($catpart == "")
-                {
+                if ($catpart == "") {
                     continue;
                 }
                 // add it to the current tree level
                 $pdef[] = $catpart;
                 $ptest = implode($this->_tsep, $pdef);
                 // test for tree level in cache
-                if ($this->isInCache($ptest, $srp))
-                {
+                if ($this->isInCache($ptest, $srp)) {
                     // if yes , set current known cat ids to corresponding cached branch
                     $catids = $this->getCache($ptest, $srp);
                     // store last cached branch
                     $lastcached = $pdef;
-                }
-                else
-                // no more tree info in cache,stop further retrieval, we need to create missing levels
-                {
+                } else {
+                    // no more tree info in cache,stop further retrieval, we need to create missing levels
+
                     break;
                 }
             }
@@ -272,10 +250,8 @@ class CategoryImporter extends Magmi_ItemProcessor
             $ccatids = count($catids);
             $ccatparts = count($catparts);
             // iterate on missing levels.
-            for ($i = $ccatids; $i < $ccatparts; $i++)
-            {
-                if ($catparts[$i] == "")
-                {
+            for ($i = $ccatids; $i < $ccatparts; $i++) {
+                if ($catparts[$i] == "") {
                     continue;
                 }
                 // retrieve category id (by creating it if needed from categories attributes)
@@ -291,8 +267,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         }
         $ccatparts = count($catparts);
         // added position handling
-        for ($i = 0; $i < $ccatparts; $i++)
-        {
+        for ($i = 0; $i < $ccatparts; $i++) {
             $catids[$i] .= "::" . $catpos[$i];
         }
 
@@ -312,36 +287,29 @@ class CategoryImporter extends Magmi_ItemProcessor
         $sids = $this->getItemStoreIds($item, 2);
         //$trimroot = "";
         // remove admin from store ids (no category root on it)
-        if ($sids[0] == 0)
-        {
+        if ($sids[0] == 0) {
             array_shift($sids);
         }
         // only admin store set,use websites store roots
-        if (count($sids) == 0)
-        {
+        if (count($sids) == 0) {
             $wsids = $this->getItemWebsites($item);
-            foreach ($wsids as $wsid)
-            {
+            foreach ($wsids as $wsid) {
                 $sids = array_merge($sids, $this->_catrootw[$wsid]);
             }
         }
         $rootpaths["__error__"] = array();
         // If using explicit root assignment , identify which root it is
-        if (preg_match_all("|\[(.*?)\]|", $item["categories"], $matches))
-        {
+        if (preg_match_all("|\[(.*?)\]|", $item["categories"], $matches)) {
             $cm1 = count($matches[1]);
             // for each found explicit root
-            for ($i = 0; $i < $cm1; $i++)
-            {
+            for ($i = 0; $i < $cm1; $i++) {
                 // test store matching
-                foreach ($sids as $sid)
-                {
+                foreach ($sids as $sid) {
                     $srp = $this->_catroots[$sid];
                     $rname = $matches[1][$i];
                     $cmatch = (trim($rname) == $srp["name"]);
                     // found a store match
-                    if ($cmatch)
-                    {
+                    if ($cmatch) {
                         // set a specific store key
                         $k = "%RP:$sid%";
                         // store root path definitions
@@ -355,12 +323,10 @@ class CategoryImporter extends Magmi_ItemProcessor
             }
             // now finding unmatched replaces
         }
-        if (preg_match_all("|\[(.*?)\]|", $item["categories"], $matches))
-        {
+        if (preg_match_all("|\[(.*?)\]|", $item["categories"], $matches)) {
             $cm1 = count($matches[1]);
 
-            for ($i = 0; $i < $cm1; $i++)
-            {
+            for ($i = 0; $i < $cm1; $i++) {
                 $rootpaths['__error__'] = $matches[1];
             }
         }
@@ -378,21 +344,17 @@ class CategoryImporter extends Magmi_ItemProcessor
 
     public function processItemAfterId(&$item, $params = null)
     {
-        if (isset($item["categories"]))
-        {
+        if (isset($item["categories"])) {
             // handle escaping
             $icats = $this->processEscaping($item["categories"]);
             // first apply category root on each category
 
             $root = $this->getParam("CAT:baseroot", "");
-            if ($root != "")
-            {
+            if ($root != "") {
                 $catlist = explode(";;", $icats);
                 $ccatlist = count($catlist);
-                for ($i = 0; $i < $ccatlist; $i++)
-                {
-                    if (trim($catlist[$i]) != "")
-                    {
+                for ($i = 0; $i < $ccatlist; $i++) {
+                    if (trim($catlist[$i]) != "") {
                         $catlist[$i] = $root . $this->_tsep . $catlist[$i];
                     }
                 }
@@ -405,8 +367,7 @@ class CategoryImporter extends Magmi_ItemProcessor
             // process escaping at the end
             $icats = $this->processEscaping($item["categories"]);
 
-            if (count($rootpaths["__error__"]) > 0)
-            {
+            if (count($rootpaths["__error__"]) > 0) {
                 $this->log("Cannot find site root with names : " . implode(",", $rootpaths["__error__"]), "error");
                 return false;
             }
@@ -415,30 +376,25 @@ class CategoryImporter extends Magmi_ItemProcessor
             // categories may have been changed , use escaping
             $catlist = explode(";;", $icats);
             $catids = array();
-            foreach ($catlist as $catdef)
-            {
+            foreach ($catlist as $catdef) {
                 $cdef = $this->getCategoryIdsFromDef($catdef, $rootpaths);
-                if ($this->getParam("CAT:lastonly", 0) == 1)
-                {
+                if ($this->getParam("CAT:lastonly", 0) == 1) {
                     $cdef = array($cdef[count($cdef) - 1]);
                 }
                 $catids = array_unique(array_merge($catids, $cdef));
             }
 
             // assign to category roots
-            if ($this->getParam("CAT:lastonly", 0) == 0)
-            {
-                foreach ($rootpaths as $base=>$ra)
-                {
+            if ($this->getParam("CAT:lastonly", 0) == 0) {
+                foreach ($rootpaths as $base=>$ra) {
                     //find root lenght
                     $bl=strlen($base);
                     //for each part of category list to include upwards , match up to local root
-                    foreach($catlist as $catdef)
-                    {
-                        if(substr($catdef,0,$bl)==$base) {
+                    foreach ($catlist as $catdef) {
+                        if (substr($catdef, 0, $bl)==$base) {
                             $rootpath=$ra['rootarr'];
                             array_shift($rootpath);
-                            $catids= array_merge($catids,$rootpath);
+                            $catids= array_merge($catids, $rootpath);
                         }
                     }
                 }

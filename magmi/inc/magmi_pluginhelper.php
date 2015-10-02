@@ -1,11 +1,11 @@
 <?php
-require_once ("magmi_config.php");
-require_once ("fshelper.php");
+require_once("magmi_config.php");
+require_once("fshelper.php");
 
 class Magmi_PluginHelper
 {
-    static $_plugins_cache = array();
-    static $_instances = array();
+    public static $_plugins_cache = array();
+    public static $_instances = array();
     public $base_dir;
     public $plugin_dir;
     protected $_profile;
@@ -22,17 +22,16 @@ class Magmi_PluginHelper
         set_include_path(
             ini_get("include_path") . PATH_SEPARATOR . "$this->plugin_dir/inc" . PATH_SEPARATOR . "$this->base_dir");
         // add base classes in context
-        require_once ("magmi_item_processor.php");
-        require_once ("magmi_datasource.php");
-        require_once ("magmi_generalimport_plugin.php");
-        require_once ("magmi_utility_plugin.php");
+        require_once("magmi_item_processor.php");
+        require_once("magmi_datasource.php");
+        require_once("magmi_generalimport_plugin.php");
+        require_once("magmi_utility_plugin.php");
     }
 
     public static function getInstance($profile = null)
     {
         $key = ($profile == null ? "default" : $profile);
-        if (!isset(self::$_instances[$key]))
-        {
+        if (!isset(self::$_instances[$key])) {
             self::$_instances[$key] = new Magmi_PluginHelper($profile);
         }
         return self::$_instances[$key];
@@ -46,19 +45,15 @@ class Magmi_PluginHelper
     public function initPluginInfos($baseclass, $basedir = "*/*")
     {
         $candidates = glob("$this->plugin_dir/$basedir/*/*.php");
-        usort($candidates, array("Magmi_PluginHelper","fnsort"));
+        usort($candidates, array("Magmi_PluginHelper", "fnsort"));
         $pluginclasses = array();
-        foreach ($candidates as $pcfile)
-        {
+        foreach ($candidates as $pcfile) {
             $dirname = dirname(substr($pcfile, strlen($this->plugin_dir)));
-            if (substr(basename($dirname), 0, 2) != '__')
-            {
+            if (substr(basename($dirname), 0, 2) != '__') {
                 $content = file_get_contents($pcfile);
-                if (preg_match_all("/class\s+(.*?)\s+extends\s+$baseclass/mi", $content, $matches, PREG_SET_ORDER))
-                {
-                    require_once ($pcfile);
-                    foreach ($matches as $match)
-                    {
+                if (preg_match_all("/class\s+(.*?)\s+extends\s+$baseclass/mi", $content, $matches, PREG_SET_ORDER)) {
+                    require_once($pcfile);
+                    foreach ($matches as $match) {
                         $pluginclasses[] = array("class"=>$match[1],"dir"=>$dirname,"file"=>basename($pcfile));
                     }
                 }
@@ -74,29 +69,22 @@ class Magmi_PluginHelper
 
     public function getPluginsInfo($pltypes, $filter = null)
     {
-        if (self::$_plugins_cache == null)
-        {
+        if (self::$_plugins_cache == null) {
             self::scanPlugins($pltypes);
         }
 
-        if (isset($filter))
-        {
+        if (isset($filter)) {
             $out = array();
-            foreach (self::$_plugins_cache as $k => $arr)
-            {
-                if (!isset($out[$k]))
-                {
+            foreach (self::$_plugins_cache as $k => $arr) {
+                if (!isset($out[$k])) {
                     $out[$k] = array();
                 }
-                foreach ($arr as $desc)
-                {
+                foreach ($arr as $desc) {
                     $out[$k][] = $desc[$filter];
                 }
             }
             $plugins = $out;
-        }
-        else
-        {
+        } else {
             $plugins = self::$_plugins_cache;
         }
         return $plugins;
@@ -104,14 +92,11 @@ class Magmi_PluginHelper
 
     public function scanPlugins($pltypes)
     {
-        if (!is_array($pltypes))
-        {
+        if (!is_array($pltypes)) {
             $pltypes = array($pltypes);
         }
-        foreach ($pltypes as $pltype)
-        {
-            if (!isset(self::$_plugins_cache[$pltype]))
-            {
+        foreach ($pltypes as $pltype) {
+            if (!isset(self::$_plugins_cache[$pltype])) {
                 self::$_plugins_cache[$pltype] = self::initPluginInfos($this->_plmeta[$pltype][0],
                     $this->_plmeta[$pltype][1]);
             }
@@ -120,8 +105,7 @@ class Magmi_PluginHelper
 
     public function createInstance($ptype, $pclass, $params = null, $mmi = null)
     {
-        if (!isset(self::$_plugins_cache[$ptype]))
-        {
+        if (!isset(self::$_plugins_cache[$ptype])) {
             self::scanPlugins($ptype);
         }
         $plinst = new $pclass();
@@ -138,17 +122,13 @@ class Magmi_PluginHelper
 
     public function getPluginMeta($pinst)
     {
-        if (self::$_plugins_cache == null)
-        {
+        if (self::$_plugins_cache == null) {
             self::scanPlugins();
         }
 
-        foreach (self::$_plugins_cache as $t => $l)
-        {
-            foreach ($l as $pdesc)
-            {
-                if ($pdesc["class"] == get_class($pinst))
-                {
+        foreach (self::$_plugins_cache as $t => $l) {
+            foreach ($l as $pdesc) {
+                if ($pdesc["class"] == get_class($pinst)) {
                     $out = $pdesc;
                     $out["dir"] = $this->plugin_dir . $pdesc["dir"];
                     return $out;
@@ -161,27 +141,20 @@ class Magmi_PluginHelper
     {
         $zip = new ZipArchive();
         $res = $zip->open($pkgname);
-        if ($res === TRUE)
-        {
+        if ($res === true) {
             $zip->extractTo($this->plugin_dir);
             $zip->close();
             return array("plugin_install"=>"OK");
-        }
-        else
-        {
+        } else {
             return array("plugin_install"=>"ERROR","ERROR"=>"Invalid Plugin Package Archive");
         }
         $packages = glob("$this->plugin_dir/*");
-        foreach ($packages as $pdir)
-        {
-            if (file_exists($pdir . DIRSEP . "obsolete.txt"))
-            {
+        foreach ($packages as $pdir) {
+            if (file_exists($pdir . DIRSEP . "obsolete.txt")) {
                 $content = file_get_contents($pdir . DIRSEP . "obsolete.txt");
                 $obsolete = explode("\n", $content);
-                foreach ($obsolete as $todelete)
-                {
-                    if ($todelete != "")
-                    {
+                foreach ($obsolete as $todelete) {
+                    if ($todelete != "") {
                         @unlink($pdir . DIRSEP . $todelete);
                     }
                 }

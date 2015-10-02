@@ -33,17 +33,25 @@
 			Option Type</label></li>
 	<li class="value"><select id="bndl_option_type" name="BNDL:option_type">
 			<option value="select"
-				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'select') { ?>
-				selected="selected" <?php } ?>>Drop-down</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'select') {
+    ?>
+				selected="selected" <?php 
+} ?>>Drop-down</option>
 			<option value="radio"
-				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'radio') { ?>
-				selected="selected" <?php } ?>>Radio Buttons</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'radio') {
+    ?>
+				selected="selected" <?php 
+} ?>>Radio Buttons</option>
 			<option value="checkbox"
-				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'checkbox') { ?>
-				selected="selected" <?php } ?>>Checkbox</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'checkbox') {
+    ?>
+				selected="selected" <?php 
+} ?>>Checkbox</option>
 			<option value="multi"
-				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'multi') { ?>
-				selected="selected" <?php } ?>>Multiple Select</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'multi') {
+    ?>
+				selected="selected" <?php 
+} ?>>Multiple Select</option>
 	</select></li>
 </ul>
 
@@ -53,11 +61,15 @@
 	<li class="value"><select id="bndl_option_required"
 		name="BNDL:option_required">
 			<option value="1"
-				<?php if ($plugin->getConfiguredDefault('option', 'required') == '1') { ?>
-				selected="selected" <?php } ?>>Yes</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'required') == '1') {
+    ?>
+				selected="selected" <?php 
+} ?>>Yes</option>
 			<option value="0"
-				<?php if ($plugin->getConfiguredDefault('option', 'required') == '0') { ?>
-				selected="selected" <?php } ?>>No</option>
+				<?php if ($plugin->getConfiguredDefault('option', 'required') == '0') {
+    ?>
+				selected="selected" <?php 
+} ?>>No</option>
 	</select></li>
 </ul>
 
@@ -86,11 +98,15 @@
 	<li class="value"><select id="bndl_sku_selection_can_change_qty"
 		name="BNDL:sku_selection_can_change_qty">
 			<option value="1"
-				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '1') { ?>
-				selected="selected" <?php } ?>>Yes</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '1') {
+    ?>
+				selected="selected" <?php 
+} ?>>Yes</option>
 			<option value="0"
-				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '0') { ?>
-				selected="selected" <?php } ?>>No</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '0') {
+    ?>
+				selected="selected" <?php 
+} ?>>No</option>
 	</select></li>
 </ul>
 
@@ -109,11 +125,15 @@
 	<li class="value"><select id="bndl_sku_is_default"
 		name="BNDL:sku_is_default">
 			<option value="1"
-				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '1') { ?>
-				selected="selected" <?php } ?>>Yes</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '1') {
+    ?>
+				selected="selected" <?php 
+} ?>>Yes</option>
 			<option value="0"
-				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '0') { ?>
-				selected="selected" <?php } ?>>No</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '0') {
+    ?>
+				selected="selected" <?php 
+} ?>>No</option>
 	</select></li>
 </ul>
 
@@ -133,10 +153,14 @@
 	<li class="value"><select id="bndl_sku_selection_price_type"
 		name="BNDL:sku_selection_price_type">
 			<option value="0"
-				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '0') { ?>
-				selected="selected" <?php } ?>>Fixed</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '0') {
+    ?>
+				selected="selected" <?php 
+} ?>>Fixed</option>
 			<option value="1"
-				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '1') { ?>
-				selected="selected" <?php } ?>>Percent</option>
+				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '1') {
+    ?>
+				selected="selected" <?php 
+} ?>>Percent</option>
 	</select></li>
 </ul>

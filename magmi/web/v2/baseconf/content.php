@@ -10,12 +10,13 @@ $cf=isset($_SESSION['MAGMI_CONFIG_FILE'])?$_SESSION['MAGMI_CONFIG_FILE']:'';
     require_once("magmi_choose_conf.php");
 ?>
 <?php
-   if($conf->isDefault()){
-    ?>
+   if ($conf->isDefault()) {
+       ?>
        <div class="alert alert-danger">
            You have not configured any magmi base configuration yet, please fill the following fields & click the "save" button.
        </div>
     <?php
+
    }?>
 <h2>Magento Directory</h2>
     <div id="magdir_msg"><?php show_messages("magentodir")?></div>
@@ -24,9 +25,9 @@ $cf=isset($_SESSION['MAGMI_CONFIG_FILE'])?$_SESSION['MAGMI_CONFIG_FILE']:'';
     <input type="text" id="magentodir" name="magentodir" class="form-control" placeholder="enter where magento directory is located" aria-describedby="magentodirlabel" value="<?php echo $conf->getMagentoDir()?>">
 </div>
     <div id="magentoinfo">
-        <?php if($conf->get('MAGENTO','basedir')) {
-            require_once('magentoinfo.php');
-        }
+        <?php if ($conf->get('MAGENTO', 'basedir')) {
+    require_once('magentoinfo.php');
+}
         ?>
     </div>
         <h2>Database Connectivity Configuration</h2>

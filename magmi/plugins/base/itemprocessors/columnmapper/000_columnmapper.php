@@ -33,25 +33,19 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
         $icols = $cols;
         $ocols = array();
         $scols = array();
-        foreach ($icols as $cname)
-        {
-            if (isset($this->_dcols[$cname]))
-            {
+        foreach ($icols as $cname) {
+            if (isset($this->_dcols[$cname])) {
                 $mlist = array_unique(explode(",", $this->_dcols[$cname]));
                 $ncol = array_shift($mlist);
                 $ocols[] = $ncol;
-                if ($ncol != $cname)
-                {
+                if ($ncol != $cname) {
                     $this->log("Replacing Column $cname by $ncol", "startup");
                 }
-                if (count($mlist) > 0)
-                {
+                if (count($mlist) > 0) {
                     $scols = array_merge($scols, $mlist);
                     $this->log("Replicating Column $cname to " . implode(",", $mlist), "startup");
                 }
-            }
-            else
-            {
+            } else {
                 $ocols[] = $cname;
             }
         }
@@ -62,18 +56,14 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
 
     public function processItemBeforeId(&$item, $params = null)
     {
-        foreach ($this->_dcols as $oname => $mnames)
-        {
-            if (isset($item[$oname]))
-            {
+        foreach ($this->_dcols as $oname => $mnames) {
+            if (isset($item[$oname])) {
                 $mapped = explode(",", $mnames);
-                foreach ($mapped as $mname)
-                {
+                foreach ($mapped as $mname) {
                     $mnane = trim($mname);
                     $item[$mname] = $item[$oname];
                 }
-                if (!in_array($oname, $mapped))
-                {
+                if (!in_array($oname, $mapped)) {
                     unset($item[$oname]);
                 }
             }
@@ -83,10 +73,8 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
 
     public function initialize($params)
     {
-        foreach ($params as $k => $v)
-        {
-            if (preg_match_all("/^CMAP:(.*)$/", $k, $m) && $k != "CMAP:columnlist")
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match_all("/^CMAP:(.*)$/", $k, $m) && $k != "CMAP:columnlist") {
                 $colname = rawurldecode($m[1][0]);
                 $this->_dcols[$colname] = $params[$k];
             }
@@ -96,17 +84,15 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
     public function getPluginParams($params)
     {
         $pp = array();
-        foreach ($params as $k => $v)
-        {
-            if (preg_match("/^CMAP:.*$/", $k))
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match("/^CMAP:.*$/", $k)) {
                 $pp[$k] = $v;
             }
         }
         return $pp;
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Input Data Preprocessing";
     }

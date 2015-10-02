@@ -2,7 +2,6 @@
 
 class ClearProductUtility extends Magmi_UtilityPlugin
 {
-
     public function getPluginInfo()
     {
         return array("name"=>"Clear Catalog","author"=>"Dweeves","version"=>"1.0.4");
@@ -28,14 +27,12 @@ class ClearProductUtility extends Magmi_UtilityPlugin
             "cataloginventory_stock_status");
 
         // clear flat catalogs index
-        $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", NULL, false);
-        while ($row = $stmt->fetch(PDO::FETCH_NUM))
-        {
+        $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", null, false);
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $this->exec_stmt("TRUNCATE TABLE " . $row[0]);
         }
 
-        foreach ($tables as $table)
-        {
+        foreach ($tables as $table) {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
 

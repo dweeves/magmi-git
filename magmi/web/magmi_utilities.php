@@ -1,6 +1,6 @@
 <?php
-require_once ("header.php");
-require_once ("../engines/magmi_utilityengine.php");
+require_once("header.php");
+require_once("../engines/magmi_utilityengine.php");
 
 ?>
 <script type="text/javascript">
@@ -62,21 +62,24 @@ $plist = $mmi->getPluginInstances("utilities");
 ?>
 	<?php
 
-foreach ($plist as $pinst)
-{
+foreach ($plist as $pinst) {
     $pclass = $pinst->getPluginClass();
     $pinfo = $pinst->getPluginInfo();
     $info = $pinst->getShortDescription();
     ?>
 	<div class="grid_12 col utility">
-		<h3 class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"];?></h3>
+		<h3 class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"];
+    ?></h3>
 		<?php
     ?>
 		<div>
 			<div class="plugindescription">
-			<?php if($info!==null){?>
+			<?php if ($info!==null) {
+    ?>
 				<?php echo $info?>
-			<?php }?>
+			<?php 
+}
+    ?>
 		</div>
 			<div class="plugininfo" style="float: right">
 				<a href="javascript:togglePanel('<?php echo $pclass?>')">Options</a>
@@ -93,7 +96,8 @@ foreach ($plist as $pinst)
 
 		<div id="plugin_run:<?php echo $pclass?>" class="pluginrun_results"
 			style="display: none">
-			<h3><?php echo $pinfo["name"]." v".$pinfo["version"];?> Results</h3>
+			<h3><?php echo $pinfo["name"]." v".$pinfo["version"];
+    ?> Results</h3>
 			<div id="plugin_run:<?php echo $pclass?>_res"></div>
 		</div>
 
@@ -103,7 +107,8 @@ foreach ($plist as $pinst)
 				href="javascript:runUtility('<?php echo $pclass?>')">Run Utility</a>
 		</div>
 	</div>
-	<?php }?>
+	<?php 
+}?>
 </div>
 
 <div class="container_12">
@@ -116,12 +121,12 @@ foreach ($plist as $pinst)
 	<?php
 
 $warn = $pinst->getWarning();
-if ($warn != null)
-{
+if ($warn != null) {
     $pclass = $pinst->getPluginClass();
     ?>
 		warntargets.push({target:'plrun_<?php echo $pclass?>',msg:'<?php echo $warn?>'});
 	<?php
+
 }
 ?>
 	warntargets.each(function(it){

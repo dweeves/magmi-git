@@ -53,8 +53,9 @@ class AttributeCleanup extends Magmi_GeneralImportPlugin
     }
     
 
-    public function deleteUnreferencedAttributes() {
-        $this->log('Will delete unreferenced attribute values.','startup');
+    public function deleteUnreferencedAttributes()
+    {
+        $this->log('Will delete unreferenced attribute values.', 'startup');
         $tables = array(
         //                 'catalog_category_entity_datetime'
         //                 ,'catalog_category_entity_decimal'
@@ -93,9 +94,9 @@ class AttributeCleanup extends Magmi_GeneralImportPlugin
                 ,['catalog_product_super_attribute','product_id']
         );
 
-        foreach($tables as $table) {
+        foreach ($tables as $table) {
             $tableEntityFieldName = "entity_id";
-            if(is_array($table)) {
+            if (is_array($table)) {
                 $tableEntityFieldName = $table[1];
                 $table = $table[0];
             }
@@ -108,14 +109,16 @@ class AttributeCleanup extends Magmi_GeneralImportPlugin
             WHERE       ##eav_attribute##.entity_type_id = ?
             AND         ##eav_attribute##.is_user_defined = 1
             AND         ##eav_entity_attribute##.attribute_id IS NULL";
-            $sql = preg_replace_callback('/(##[a-zA-Z_]*##)/Uis',function($ms){foreach($ms as $m){return str_replace('##','',$this->tablename($m));}},$deleteSql);
+            $sql = preg_replace_callback('/(##[a-zA-Z_]*##)/Uis', function ($ms) { foreach ($ms as $m) {
+    return str_replace('##', '', $this->tablename($m));
+}}, $deleteSql);
     
-            $count = $this->delete($sql,array($this->getProductEntityType()));
-            if($count > 0) {
-                $this->log("Deleted $count records from table $table.",'startup');
+            $count = $this->delete($sql, array($this->getProductEntityType()));
+            if ($count > 0) {
+                $this->log("Deleted $count records from table $table.", 'startup');
             }
         }
-        $this->log('Done deleting unreferenced attribute values.','startup');
+        $this->log('Done deleting unreferenced attribute values.', 'startup');
     }
     
     
@@ -124,10 +127,10 @@ class AttributeCleanup extends Magmi_GeneralImportPlugin
      * @param Exception $e the exception to trace
      * @param string $message message
      */
-    public function trace($e,$message="no message") {
+    public function trace($e, $message="no message")
+    {
         $pinf = $this->getPluginInfo();
         $data = "{$pinf["name"]} v{$pinf["version"]} - ".$message;
-        $this->_caller_trace($e,$data);
+        $this->_caller_trace($e, $data);
     }
 }
-

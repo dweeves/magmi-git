@@ -5,17 +5,19 @@
  * it simply does not read data from a CSV file but from an array.</p>
  *
  */
-class ArrayReader {
+class ArrayReader
+{
     protected $_array;
     protected $_leftKeys;
     protected $_currentKey=null;
     protected $_columnNames = array();
 
-    public function initialize($array) {
+    public function initialize($array)
+    {
         $this->_array = $array;
         $this->_leftKeys = array_keys($array);
         $this->_currentKey = array_shift($this->_leftKeys);
-        if(isset($currentKey)) {
+        if (isset($currentKey)) {
             $this->_columnNames = array_keys($this->_array[$this->_currentKey]);
         }
     }
@@ -32,7 +34,7 @@ class ArrayReader {
 
     public function getNextRecord()
     {
-        if(!isset($this->_currentKey)) {
+        if (!isset($this->_currentKey)) {
             return null;
         } else {
             $record = $this->_array[$this->_currentKey];
@@ -42,6 +44,6 @@ class ArrayReader {
     }
 
     public function onException($e)
-    {}
+    {
+    }
 }
-?>

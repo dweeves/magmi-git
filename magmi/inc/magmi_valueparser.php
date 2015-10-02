@@ -2,35 +2,26 @@
 
 class Magmi_ValueParser
 {
-
     public static function parseValue($pvalue, $dictarray)
     {
         $matches = array();
         $rep = "";
         $renc = "<-XMagmi_Enc->";
 
-        foreach ($dictarray as $key => $vals)
-        {
+        foreach ($dictarray as $key => $vals) {
             // Unsure of cause for NULL $vals, but this avoids messages in the error log
-            if ($vals === NULL)
-            {
+            if ($vals === null) {
                 continue;
             }
 
             $ik = array_keys($vals);
             // replace base values
-            while (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches))
-            {
-                foreach ($matches as $match)
-                {
-                    if ($match != $matches[0])
-                    {
-                        if (in_array($match, $ik))
-                        {
+            while (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches)) {
+                foreach ($matches as $match) {
+                    if ($match != $matches[0]) {
+                        if (in_array($match, $ik)) {
                             $rep = $renc . str_replace('"', '\\"', $dictarray[$key][$match]) . $renc;
-                        }
-                        else
-                        {
+                        } else {
                             $rep = "";
                         }
                         $pvalue = str_replace($matches[0], $rep, $pvalue);
@@ -41,12 +32,9 @@ class Magmi_ValueParser
         }
 
         // replacing expr values
-        while (preg_match("|\{\{\s*(.*?)\s*\}\}|s", $pvalue, $matches))
-        {
-            foreach ($matches as $match)
-            {
-                if ($match != $matches[0])
-                {
+        while (preg_match("|\{\{\s*(.*?)\s*\}\}|s", $pvalue, $matches)) {
+            foreach ($matches as $match) {
+                if ($match != $matches[0]) {
                     $code = trim($match);
                     $code = str_replace($renc, '"', $code);
 

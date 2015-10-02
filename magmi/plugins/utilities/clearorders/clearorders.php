@@ -2,7 +2,6 @@
 
 class ClearOrdersUtility extends Magmi_UtilityPlugin
 {
-
     public function getPluginInfo()
     {
         return array("name"=>"Clear Orders","author"=>"www.blinkdata.com","version"=>"1.0.1");
@@ -22,8 +21,7 @@ class ClearOrdersUtility extends Magmi_UtilityPlugin
             "sales_flat_creditmemo","sales_flat_creditmemo_comment","sales_flat_creditmemo_grid",
             "sales_flat_creditmemo_item","downloadable_link_purchased","downloadable_link_purchased_item");
 
-        foreach ($tables as $table)
-        {
+        foreach ($tables as $table) {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
 

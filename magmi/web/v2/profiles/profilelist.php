@@ -11,15 +11,17 @@
             <?php
                 $conf=getSessionConfig();
                 $pflist=$conf->getProfileList();
-                array_push($pflist,'Default');
-                foreach($pflist as $prof){?>
+                array_push($pflist, 'Default');
+                foreach ($pflist as $prof) {
+                    ?>
                     <tr>
                         <td><?php echo $prof?></td>
                         <td>
                                 <a href="profile_edit.php" title="Edit"><span aria-hidden="true" class="glyphicon glyphicon-pencil"></span></a>
                         </td>
                     </tr>
-                <?php }?>
+                <?php 
+                }?>
             </tbody>
         </table>
 </div>

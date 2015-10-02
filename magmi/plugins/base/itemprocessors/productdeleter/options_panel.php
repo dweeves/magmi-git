@@ -2,7 +2,9 @@
 	existing products</div>
 <ul class="formline">
 	<li><input type="checkbox" name="PDEL:delsimples"
-		<?php if($this->getParam("PDEL:delsimples",false)==true){?>
-		checked="checked" <?php }?>>Delete children products</li>
+		<?php if ($this->getParam("PDEL:delsimples", false)==true) {
+    ?>
+		checked="checked" <?php 
+}?>>Delete children products</li>
 
 </ul>

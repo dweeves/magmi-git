@@ -1,18 +1,12 @@
 <?php
-if (isset($_REQUEST["profile"]))
-{
+if (isset($_REQUEST["profile"])) {
     $profile = strip_tags($_REQUEST["profile"]);
-}
-else
-{
-
-    if (isset($_SESSION["last_runned_profile"]))
-    {
+} else {
+    if (isset($_SESSION["last_runned_profile"])) {
         $profile = $_SESSION["last_runned_profile"];
     }
 }
-if ($profile == "")
-{
+if ($profile == "") {
     $profile = "default";
 }
 $profilename = ($profile != "default" ? $profile : "Default");
@@ -28,17 +22,20 @@ $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
 $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 ?>
-<span class="saveinfo<?php if(!$conf_ok){?> log_warning<?php }?>"
+<span class="saveinfo<?php if (!$conf_ok) {
+    ?> log_warning<?php 
+}?>"
 			id="profileconf_msg">
-<?php if($conf_ok){?>
+<?php if ($conf_ok) {
+    ?>
 Saved:<?php echo $eplconf->getLastSaved("%c")?>
 <?php
-}
-else
-{
+
+} else {
     ?>
 <?php echo $profilename?> Profile Config not saved yet
 <?php
+
 }
 ?>
 </span>
@@ -51,12 +48,19 @@ else
 				<li class="label">Current Magmi Profile:</li>
 				<li class="value"><select name="profile"
 					onchange="$('chooseprofile').submit()">
-						<option <?php if(null==$profile){?> selected="selected" <?php }?>
+						<option <?php if (null==$profile) {
+    ?> selected="selected" <?php 
+}?>
 							value="default">Default</option>
-			<?php foreach($profilelist as $profname){?>
-			<option <?php if($profname==$profile){?> selected="selected"
-							<?php }?> value="<?php echo $profname?>"><?php echo $profname?></option>
-			<?php }?>
+			<?php foreach ($profilelist as $profname) {
+    ?>
+			<option <?php if ($profname==$profile) {
+    ?> selected="selected"
+							<?php 
+}
+    ?> value="<?php echo $profname?>"><?php echo $profname?></option>
+			<?php 
+}?>
 			</select></li>
 			</ul>
 			<ul class="formline">
@@ -65,18 +69,15 @@ else
 			</ul>
 			<input type="submit" value="Copy Profile &amp; switch">
 	<?php
-require_once ("magmi_pluginhelper.php");
+require_once("magmi_pluginhelper.php");
 $order = array("datasources","general","itemprocessors");
 $plugins = Magmi_PluginHelper::getInstance('main')->getPluginClasses($order);
 $pcats = array();
-foreach ($plugins as $k => $pclasslist)
-{
-    foreach ($pclasslist as $pclass)
-    {
+foreach ($plugins as $k => $pclasslist) {
+    foreach ($pclasslist as $pclass) {
         // invoke static method, using call_user_func (5.2 compat mode)
-        $pcat = call_user_func(array($pclass,"getCategory"));
-        if (!isset($pcats[$pcat]))
-        {
+        $pcat = call_user_func(array($pclass, "getCategory"));
+        if (!isset($pcats[$pcat])) {
             $pcats[$pcat] = array();
         }
         $pcats[$pcat][] = $pclass;
@@ -92,21 +93,21 @@ foreach ($plugins as $k => $pclasslist)
 			value="<?php echo $profile?>">
 	<?php
 
-foreach ($order as $k)
-{
+foreach ($order as $k) {
     ?>
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
-			value="<?php echo implode(",",$eplconf->getEnabledPluginClasses($k))?>"
+			value="<?php echo implode(",", $eplconf->getEnabledPluginClasses($k))?>"
 			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
 		<div class="grid_12 col">
 			<h3><?php echo ucfirst($k)?></h3>
 		<?php
 
-    if ($k == "datasources")
-    {
+    if ($k == "datasources") {
         ?>
-			<?php $pinf=$plugins[$k];?>
-			<?php if(count($pinf)>0){?>
+			<?php $pinf=$plugins[$k];
+        ?>
+			<?php if (count($pinf)>0) {
+    ?>
 			<div class="pluginselect" style="float: left">
 
 				<select name="PLUGINS_DATASOURCES:class" class="pl_<?php echo $k?>">
@@ -114,51 +115,54 @@ foreach ($order as $k)
 
 			<?php
             $sinst = null;
-            foreach ($pinf as $pclass)
-            {
-                $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-                if ($sinst == null)
-                {
-
-                    $sinst = $pinst;
-                }
-                $pinfo = $pinst->getPluginInfo();
-                if ($eplconf->isPluginEnabled($k, $pclass))
-                {
-                    $sinst = $pinst;
-                }
-                ?>
-				<option value="<?php echo $pclass?>" <?php  if($sinst==$pinst){?>
-						selected="selected" <?php }?>><?php echo $pinfo["name"]." v".$pinfo["version"]?></option>
+    foreach ($pinf as $pclass) {
+        $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+        if ($sinst == null) {
+            $sinst = $pinst;
+        }
+        $pinfo = $pinst->getPluginInfo();
+        if ($eplconf->isPluginEnabled($k, $pclass)) {
+            $sinst = $pinst;
+        }
+        ?>
+				<option value="<?php echo $pclass?>" <?php  if ($sinst==$pinst) {
+     ?>
+						selected="selected" <?php 
+ }
+        ?>><?php echo $pinfo["name"]." v".$pinfo["version"]?></option>
 			<?php
-            }
-            ?>
+
+    }
+    ?>
 
 			</select>
 			</div>
-			<?php if(isset($pinfo["url"])){?>
+			<?php if (isset($pinfo["url"])) {
+    ?>
 			<div class="plugindoc">
 				<a href="<?php echo $pinfo["url"]?>" target="magmi_doc">documentation</a>
 			</div>
-			<?php }?>
+			<?php 
+}
+    ?>
 			<div class="pluginconfpanel selected">
-			<?php echo $sinst->getOptionsPanel()->getHtml();?>
+			<?php echo $sinst->getOptionsPanel()->getHtml();
+    ?>
 			</div>
 			<?php
-        }
-        else
-        {
-            $conf_ok = 0;
 
-            ?>
+} else {
+    $conf_ok = 0;
+
+    ?>
 			Magmi needs a datasource plugin, please install one
-			<?php }?>
+			<?php 
+}
+        ?>
 			<?php
-    }
-    else
-    {
-        foreach ($pcats as $pcat => $pclasslist)
-        {
+
+    } else {
+        foreach ($pcats as $pcat => $pclasslist) {
             ?>
 
 				<?php
@@ -168,19 +172,18 @@ foreach ($order as $k)
 
 				<?php
 
-            foreach ($pinf as $pclass)
-            {
-                if (!in_array($pclass, $pclasslist))
-                {
+            foreach ($pinf as $pclass) {
+                if (!in_array($pclass, $pclasslist)) {
                     continue;
-                }
-                else
-                {
+                } else {
                     ?>
-						<?php if(!$catopen){$catopen=true?>
+						<?php if (!$catopen) {
+    $catopen=true?>
 						<div class="grid_12 group">
 				<h1><?php echo $pcat?></h1>
-						<?php }?>
+						<?php 
+}
+                    ?>
 						<ul>
 						<?php
                     $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
@@ -190,17 +193,29 @@ foreach ($order as $k)
                     $enabled = $eplconf->isPluginEnabled($k, $pclass)?>
 						<li>
 						<div class="pluginselect">
-							<?php if($plrunnable[0]){?>
+							<?php if ($plrunnable[0]) {
+    ?>
 								<input type="checkbox" class="pl_<?php echo $k?>"
 								name="<?php echo $pclass?>"
-								<?php if($eplconf->isPluginEnabled($k,$pclass)){?>
-								checked="checked" <?php }?>>
-							<?php } else {?>
+								<?php if ($eplconf->isPluginEnabled($k, $pclass)) {
+    ?>
+								checked="checked" <?php 
+}
+    ?>>
+							<?php 
+} else {
+    ?>
 								<input type="checkbox" class="pl_<?php echo $k?>"
 								name="<?php echo $pclass?>" disabled="disabled">
-							<?php }?>
+							<?php 
+}
+                    ?>
 							<span
-								class="pluginname <?php if(isset($pinfo['sponsorinfo'])){ ?> sponsored <?php } ?>"><?php echo $pinfo["name"]." v".$pinfo["version"];?></span>
+								class="pluginname <?php if (isset($pinfo['sponsorinfo'])) {
+    ?> sponsored <?php 
+}
+                    ?>"><?php echo $pinfo["name"]." v".$pinfo["version"];
+                    ?></span>
 						</div>
 						<div class="plugininfo">
 							<span>info</span>
@@ -210,47 +225,49 @@ foreach ($order as $k)
 									<?php
 
                     $sp = isset($pinfo["sponsorinfo"]);
-                    foreach ($pinfo as $pik => $piv)
-                    {
+                    foreach ($pinfo as $pik => $piv) {
                         ?>
 
-										<li <?php if(isset($sp)){ ?> class='sponsored' <?php } ?>><?php
-                        if ($pik == "url")
-                        {
+										<li <?php if (isset($sp)) {
+    ?> class='sponsored' <?php 
+}
+                        ?>><?php
+                        if ($pik == "url") {
                             ?>
 												<span><?php echo $pik?></span>:<span><a
 												href="<?php echo $piv?>" target="_blank">Wiki entry</a></span>
 											<?php
-                        }
-                        else
-                            if ($pik == "sponsorinfo")
-                            {
 
-                                ?>
+                        } elseif ($pik == "sponsorinfo") {
+                            ?>
 													<span class="sponsor">Sponsored By</span>: <span>
-													<?php if(isset($piv['url']))  { ?>
+													<?php if (isset($piv['url'])) {
+    ?>
 													<a href="<?php echo $piv['url']?>" target="_blank">
 													<?php
-                                }
-                                echo $piv["name"];
-                                if (isset($piv['url']))
-                                {
-                                    ?>
+
+}
+                            echo $piv["name"];
+                            if (isset($piv['url'])) {
+                                ?>
 													</a>
-													<?php } ?>
+													<?php 
+                            }
+                            ?>
 													</span>
 											<?php
-                            }
-                            else
-                            {
-                                ?>
+
+                        } else {
+                            ?>
 												<span><?php echo $pik?></span>:<span><?php echo $piv ?></span>
 											<?php
-                            }
+
+                        }
 
                         ?>
 										</li>
 								<?php
+
                     }
                     ?>
 										</ul>
@@ -258,39 +275,64 @@ foreach ($order as $k)
 											<?php echo $info?>
 										</div>
 								</div>
-								<?php if(!$plrunnable[0]){?>
+								<?php if (!$plrunnable[0]) {
+    ?>
 									<div class="error">
 									<pre><?php echo $plrunnable[1]?></pre>
 								</div>
-								<?php }?>
+								<?php 
+}
+                    ?>
 								</div>
 						</div>
-						<div class="pluginconf" <?php if(!$enabled){?>
-							style="display: none" <?php }?>>
+						<div class="pluginconf" <?php if (!$enabled) {
+    ?>
+							style="display: none" <?php 
+}
+                    ?>>
 							<span><a href="javascript:void(0)">configure</a></span>
 						</div>
-							<?php if(isset($pinfo["url"])){?>
+							<?php if (isset($pinfo["url"])) {
+    ?>
 							<div class="plugindoc">
 							<a href="<?php echo $pinfo["url"]?>" target="magmi_doc">documentation</a>
 						</div>
-							<?php }?>
+							<?php 
+}
+                    ?>
 
 							<div class="pluginconfpanel">
-							<?php if($enabled){echo $pinst->getOptionsPanel()->getHtml();}?>
+							<?php if ($enabled) {
+    echo $pinst->getOptionsPanel()->getHtml();
+}
+                    ?>
 							</div>
 					</li>
 				</ul>
-			<?php }?>
-		<?php }?>
-		<?php if($catopen){?></div><?php }?>
-		<?php }}?>
+			<?php 
+                }
+                ?>
+		<?php 
+            }
+            ?>
+		<?php if ($catopen) {
+    ?></div><?php 
+}
+            ?>
+		<?php 
+        }
+    }
+    ?>
 	</div>
-	<?php }?>
+	<?php 
+}?>
 </form>
 	<div class="grid_12">
 		<div style="float: right">
 			<a id="saveprofile" class="actionbutton" href="javascript:void(0)"
-				<?php if(!$conf_ok){?> disabled="disabled" <?php }?>>Save Profile (<?php echo $profilename?>)</a>
+				<?php if (!$conf_ok) {
+    ?> disabled="disabled" <?php 
+}?>>Save Profile (<?php echo $profilename?>)</a>
 		</div>
 	</div>
 </div>

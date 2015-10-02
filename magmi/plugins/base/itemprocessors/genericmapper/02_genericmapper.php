@@ -30,24 +30,17 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
      */
     public function processItemBeforeId(&$item, $params = null)
     {
-        foreach (array_keys($item) as $k)
-        {
+        foreach (array_keys($item) as $k) {
             $mapped = false;
-            if (isset($this->_mapping["$k.csv"]))
-            {
+            if (isset($this->_mapping["$k.csv"])) {
                 $mpd = $this->_mapping["$k.csv"]["DIRECT"];
-                if (isset($mpd[$item[$k]]))
-                {
+                if (isset($mpd[$item[$k]])) {
                     $item[$k] = $mpd[$item[$k]];
                     $mapped = true;
-                }
-                else
-                {
+                } else {
                     $mpr = $this->_mapping["$k.csv"]["RE"];
-                    foreach ($mpr as $re => $value)
-                    {
-                        if (preg_match("|$re|msi", $item[$k]))
-                        {
+                    foreach ($mpr as $re => $value) {
+                        if (preg_match("|$re|msi", $item[$k])) {
                             $item[$k] = preg_replace("|$re|", $value, $item[$k]);
                             $mapped = true;
                             break;
@@ -56,11 +49,9 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
                 }
             }
             // f not found,try common mappings
-            if (!$mapped)
-            {
+            if (!$mapped) {
                 $mpd = $this->_mapping["__common__.csv"]["DIRECT"];
-                if (isset($mpd[$item[$k]]))
-                {
+                if (isset($mpd[$item[$k]])) {
                     $item[$k] = $mpd[$item[$k]];
                 }
             }
@@ -73,35 +64,27 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
         $this->_mapping = array();
 
         $dlist = glob(dirname(__file__) . "/mappings/default/*.csv");
-        if ($dlist == false)
-        {
+        if ($dlist == false) {
             $dlist = array();
             $this->log("No default mapping found", "warning");
         }
         $slist = glob(dirname(__file__) . "/mappings/*.csv");
-        if ($slist == false)
-        {
+        if ($slist == false) {
             $slist = array();
             $this->log("No custom mapping found", "startup");
         }
         $flist = array_merge($dlist, $slist);
-        foreach ($flist as $fname)
-        {
+        foreach ($flist as $fname) {
             $idx = basename($fname);
-            if (!isset($this->_mapping[$idx]))
-            {
+            if (!isset($this->_mapping[$idx])) {
                 $this->_mapping[$idx] = array("DIRECT"=>array(),"RE"=>array());
             }
             $mf = fopen("$fname", "r");
-            while (($data = fgetcsv($mf, 1000, ",")) !== FALSE)
-            {
-                if (substr($data[0], 0, 4) == "_RE:")
-                {
+            while (($data = fgetcsv($mf, 1000, ",")) !== false) {
+                if (substr($data[0], 0, 4) == "_RE:") {
                     $target = "RE";
                     $key = substr($data[0], 4);
-                }
-                else
-                {
+                } else {
                     $target = "DIRECT";
                     $key = $data[0];
                 }
@@ -110,9 +93,8 @@ class GenericMapperProcessor extends Magmi_ItemProcessor
         }
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Input Data Preprocessing";
     }
 }
-

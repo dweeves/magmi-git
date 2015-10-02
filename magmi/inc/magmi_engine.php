@@ -1,10 +1,10 @@
 <?php
-require_once ("dbhelper.class.php");
-require_once ("magmi_config.php");
-require_once ("magmi_version.php");
-require_once ("magmi_utils.php");
-require_once ("magmi_statemanager.php");
-require_once ("magmi_pluginhelper.php");
+require_once("dbhelper.class.php");
+require_once("magmi_config.php");
+require_once("magmi_version.php");
+require_once("magmi_utils.php");
+require_once("magmi_statemanager.php");
+require_once("magmi_pluginhelper.php");
 
 /**
  * This class is the mother class for magmi engines
@@ -49,10 +49,9 @@ abstract class Magmi_Engine extends DbHelper
     /**
      * Engine initialization @param params : key/value array of initialization parameters
      */
-    public final function initialize($params = array())
+    final public function initialize($params = array())
     {
-        try
-        {
+        try {
             // Retrieving master config file
             $this->_conf = Magmi_Config::getInstance();
             $this->_conf->load();
@@ -61,9 +60,7 @@ abstract class Magmi_Engine extends DbHelper
             $this->_excid = 0;
             $this->_initialized = true;
             $this->_exceptions = array();
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             die("Error initializing Engine:{$this->_conf->getConfigFilename()} \n" . $e->getMessage());
         }
     }
@@ -143,14 +140,12 @@ abstract class Magmi_Engine extends DbHelper
     {
         $bplarr = array();
 
-        foreach ($this->_builtinplugins as $pfamily => $pdef)
-        {
+        foreach ($this->_builtinplugins as $pfamily => $pdef) {
             $plinfo = explode("::", $pdef);
             $pfile = $plinfo[0];
             $pclass = $plinfo[1];
-            require_once ($pfile);
-            if (!isset($bplarr[$pfamily]))
-            {
+            require_once($pfile);
+            if (!isset($bplarr[$pfamily])) {
                 $bplarr[$pfamily] = array();
             }
             $bplarr[$pfamily][] = $pclass;
@@ -173,13 +168,11 @@ abstract class Magmi_Engine extends DbHelper
     {
         $pil = null;
         // if no family set, return all active plugins
-        if ($family == null)
-        {
+        if ($family == null) {
             $pil = $this->_activeplugins();
-        }
-        else
-        // filter active plugins by family
-        {
+        } else {
+            // filter active plugins by family
+
             $pil = (isset($this->_activeplugins[$family]) ? $this->_activeplugins[$family] : array());
         }
         return $pil;
@@ -199,13 +192,11 @@ abstract class Magmi_Engine extends DbHelper
     public function sortPlugins($p1, $p2)
     {
         $m1 = $p1->getPluginMeta();
-        if ($m1 == null)
-        {
+        if ($m1 == null) {
             return 1;
         }
         $m2 = $p2->getPluginMeta();
-        if ($m2 == null)
-        {
+        if ($m2 == null) {
             return -1;
         }
         return strcmp($m1["file"], $m2["file"]);
@@ -221,11 +212,9 @@ abstract class Magmi_Engine extends DbHelper
         // Merge Builtin Plugin classes with current plugin classes
         $this->_pluginclasses = array_merge_recursive($this->_pluginclasses, $this->getBuiltinPluginClasses());
         // Iterate on plugin classes by family
-        foreach ($this->_pluginclasses as $pfamily => $pclasses)
-        {
+        foreach ($this->_pluginclasses as $pfamily => $pclasses) {
             // If family name starts with *
-            if ($pfamily[0] == "*")
-            {
+            if ($pfamily[0] == "*") {
                 // use the real family name (after *)
                 $this->_pluginclasses[substr($pfamily, 1)] = $pclasses;
                 // clear the * pseudo family
@@ -234,23 +223,20 @@ abstract class Magmi_Engine extends DbHelper
         }
 
         // Iterate on final plugin classes list
-        foreach ($this->_pluginclasses as $pfamily => $pclasses)
-        {
+        foreach ($this->_pluginclasses as $pfamily => $pclasses) {
             // If there is no active plugins in the current family
-            if (!isset($this->_activeplugins[$pfamily]))
-            {
+            if (!isset($this->_activeplugins[$pfamily])) {
                 // initialize active plugins for plugin family
                 $this->_activeplugins[$pfamily] = array();
             }
             // For all plugin classes in current family
-            foreach ($pclasses as $pclass)
-            {
+            foreach ($pclasses as $pclass) {
                 // Create a new instance of plugin with parameters
                 // Add it to the list of active plugins in the current family
                 $this->_activeplugins[$pfamily][] = $plhelper->createInstance($pfamily, $pclass, $params, $this);
             }
             // Sort family plugins with plugin sorting callback
-            usort($this->_activeplugins[$pfamily], array(&$this,"sortPlugins"));
+            usort($this->_activeplugins[$pfamily], array(&$this, "sortPlugins"));
         }
     }
 
@@ -260,12 +246,9 @@ abstract class Magmi_Engine extends DbHelper
     public function getPluginInstanceByClassName($pfamily, $pclassname)
     {
         $inst = null;
-        if (isset($this->_activeplugins[$pfamily]))
-        {
-            foreach ($this->_activeplugins[$pfamily] as $pinstance)
-            {
-                if (get_class($pinstance) == $pclassname)
-                {
+        if (isset($this->_activeplugins[$pfamily])) {
+            foreach ($this->_activeplugins[$pfamily] as $pinstance) {
+                if (get_class($pinstance) == $pclassname) {
                     $inst = $pinstance;
                     break;
                 }
@@ -279,8 +262,7 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function getPluginInstance($family, $order = -1)
     {
-        if ($order < 0)
-        {
+        if ($order < 0) {
             $order += count($this->_activeplugins[$family]);
         }
         return $this->_activeplugins[$family][$order];
@@ -294,15 +276,11 @@ abstract class Magmi_Engine extends DbHelper
         $result = true;
       //  $tclass=get_class($this);
         // If plugin type list is not an array , process it as string
-        if (!is_array($types))
-        {
+        if (!is_array($types)) {
             // If plugin is not wildcard , build array of types based on comma separated string
-            if ($types != "*")
-            {
+            if ($types != "*") {
                 $types = explode(",", $types);
-            }
-            else
-            {
+            } else {
                 $types = array_keys($this->_activeplugins);
             }
         }
@@ -311,18 +289,14 @@ abstract class Magmi_Engine extends DbHelper
        // $this->_timecounter->initTime($callback, get_class($this));
 
         // Iterate on plugin types (families)
-        foreach ($types as $ptype)
-        {
+        foreach ($types as $ptype) {
             // If there is at least one active plugin in this family
-            if (isset($this->_activeplugins[$ptype]))
-            {
+            if (isset($this->_activeplugins[$ptype])) {
                 // For all instances in the family
-                foreach ($this->_activeplugins[$ptype] as $pinst)
-                {
+                foreach ($this->_activeplugins[$ptype] as $pinst) {
                     $pclass=get_class($pinst);
                     // If the plugin has a hook for the defined processing step
-                    if (method_exists($pinst, $callback))
-                    {
+                    if (method_exists($pinst, $callback)) {
                         // Timing initialization for current plugin in processing step
                         //$this->_timecounter->initTime($callback, get_class($pinst));
                         // Perform plugin call
@@ -333,14 +307,12 @@ abstract class Magmi_Engine extends DbHelper
                         // End Timing for current plugin in current step
                         //$this->_timecounter->exitTime($callback, get_class($pinst));
                         // if plugin call result is false with data set
-                        if ($callres === false && $data != null)
-                        {
+                        if ($callres === false && $data != null) {
                             // final result is false
                             $result = false;
                         }
                         // If there is a register callback for the plugin processing loop
-                        if (isset($this->_ploop_callbacks[$callback]))
-                        {
+                        if (isset($this->_ploop_callbacks[$callback])) {
                             $cb = $this->_ploop_callbacks[$callback];
                             // Call the plugin processing loop callback , time it
                             //$this->_timecounter->initTime($callback, $pclass);
@@ -348,8 +320,7 @@ abstract class Magmi_Engine extends DbHelper
                            // $this->_timecounter->exitTime($callback, $pclass);
                         }
                         // if last result plugin is false & break flag
-                        if ($result === false && $break)
-                        {
+                        if ($result === false && $break) {
                             break;
                         }
                     }
@@ -382,15 +353,14 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function microDateTime()
     {
-        list($microSec,$timeStamp) = explode(" ", microtime());
+        list($microSec, $timeStamp) = explode(" ", microtime());
         return date('Y-m-d h:i:', $timeStamp) . (date('s', $timeStamp) + $microSec);
     }
 
     public function log($data, $type = "default", $logger = null)
     {
         $usedlogger = ($logger == null ? $this->logger : $logger);
-        if (isset($usedlogger))
-        {
+        if (isset($usedlogger)) {
             $usedlogger->log($data, $type);
         }
     }
@@ -405,30 +375,24 @@ abstract class Magmi_Engine extends DbHelper
     {
         $this->_excid++;
         $trstr = "";
-        foreach ($traces as $trace)
-        {
-            if (isset($trace["file"]))
-            {
+        foreach ($traces as $trace) {
+            if (isset($trace["file"])) {
                 $fname = str_replace(dirname(dirname(__FILE__)), "", $trace["file"]);
                 $trstr .= $fname . ":" . (isset($trace["line"]) ? $trace["line"] : "?") . " - ";
-                if (isset($trace["class"]))
-                {
+                if (isset($trace["class"])) {
                     $trstr .= $trace["class"] . "->";
-                    if (isset($trace["function"]))
-                    {
+                    if (isset($trace["function"])) {
                         $trstr .= $trace["function"];
                     }
                     $trstr .= "\n----------------------------------------\n";
-                    if (isset($trace["args"]))
-                    {
+                    if (isset($trace["args"])) {
                         $trstr .= print_r($trace["args"], true);
                     }
                     $trstr .= "\n";
                 }
             }
         }
-        if (!isset($this->_exceptions[$tk]))
-        {
+        if (!isset($this->_exceptions[$tk])) {
             $this->_exceptions[$tk] = array(0,$this->_excid);
         }
         $this->_exceptions[$tk][0]++;
@@ -444,23 +408,17 @@ abstract class Magmi_Engine extends DbHelper
         $f = fopen(Magmi_StateManager::getTraceFile(), "a");
         fwrite($f, "---- TRACE : $this->_excid -----\n");
         fwrite($f, "---- DATE : " . date('Y-m-d H:i:s') . " ------\n");
-        try
-        {
-            if ($traceinfo[1] == true)
-            {
+        try {
+            if ($traceinfo[1] == true) {
                 fwrite($f, $traceinfo[0]);
                 fwrite($f, "+++++++++++++++++++++++++++++\nCONTEXT DUMP\n+++++++++++++++++++++++++++++\n");
                 fwrite($f, print_r($this, true));
                 fwrite($f, "\n+++++++++++++++++++++++++++++\nEND CONTEXT DUMP\n+++++++++++++++++++++++++++++\n");
-            }
-            else
-            {
+            } else {
                 $tnum = $traceinfo[2];
                 fwrite($f, "Duplicated exception - same trace as TRACE : $tnum\n");
             }
-        }
-        catch (Exception $te)
-        {
+        } catch (Exception $te) {
             fwrite($f, "Exception occured during trace:" . $te->getMessage());
         }
         fwrite($f, "---- ENDTRACE : $this->_excid -----\n");
@@ -473,26 +431,22 @@ abstract class Magmi_Engine extends DbHelper
      * @param array $params
      *            - run parameters
      */
-    public final function run($params = array())
+    final public function run($params = array())
     {
-        try
-        {
+        try {
             $f = fopen(Magmi_StateManager::getTraceFile(), "w");
             fclose($f);
             $enginf = $this->getEngineInfo();
             $this->log("MAGMI by dweeves - version:" . Magmi_Version::$version, "title");
             $this->log("Running {$enginf["name"]} v${enginf["version"]} by ${enginf["author"]}", "startup");
-            if (!$this->_initialized)
-            {
+            if (!$this->_initialized) {
                 $this->initialize($params);
             }
             $this->connectToMagento();
             $this->engineInit($params);
             $this->engineRun($params);
             $this->disconnectFromMagento();
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             $this->disconnectFromMagento();
 
             $this->handleException($e);
@@ -502,8 +456,7 @@ abstract class Magmi_Engine extends DbHelper
     public function handleException($e)
     {
         $this->logException($e);
-        if (method_exists($this, "onEngineException"))
-        {
+        if (method_exists($this, "onEngineException")) {
             $this->onEngineException($e);
         }
     }
@@ -521,33 +474,30 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function connectToMagento()
     {
-    	// et database infos from properties
-        if (!$this->_connected)
-        {
-
+        // et database infos from properties
+        if (!$this->_connected) {
             $conn = $this->getProp("DATABASE", "connectivity", "net");
-            $debug = $this->getProp("DATABASE", "debug",false);
+            $debug = $this->getProp("DATABASE", "debug", false);
             $socket = $this->getProp("DATABASE", "unix_socket");
             if ($conn == 'localxml') {
-            	$baseDir = $this->getProp('MAGENTO', 'basedir');
-            	$xmlPath = $baseDir.'/app/etc/local.xml';
-                if (!file_exists($xmlPath))
-                {
+                $baseDir = $this->getProp('MAGENTO', 'basedir');
+                $xmlPath = $baseDir.'/app/etc/local.xml';
+                if (!file_exists($xmlPath)) {
                     throw new Exception("Cannot load xml from path '$xmlPath'");
                 }
-            	$xml = new SimpleXMLElement(file_get_contents($xmlPath));
-            	$default_setup = $xml->global->resources->{$this->getProp('DATABASE', 'resource', 'default_setup')}->connection;
-            	$host = $default_setup->host;
-            	$dbname = $default_setup->dbname;
-            	$user = $default_setup->username;
-            	$pass = $default_setup->password;
-            	$port = $default_setup->port;
+                $xml = new SimpleXMLElement(file_get_contents($xmlPath));
+                $default_setup = $xml->global->resources->{$this->getProp('DATABASE', 'resource', 'default_setup')}->connection;
+                $host = $default_setup->host;
+                $dbname = $default_setup->dbname;
+                $user = $default_setup->username;
+                $pass = $default_setup->password;
+                $port = $default_setup->port;
             } else {
-            	$host = $this->getProp("DATABASE", "host", "localhost");
-            	$dbname = $this->getProp("DATABASE", "dbname", "magento");
-            	$user = $this->getProp("DATABASE", "user");
-            	$pass = $this->getProp("DATABASE", "password");
-            	$port = $this->getProp("DATABASE", "port", "3306");
+                $host = $this->getProp("DATABASE", "host", "localhost");
+                $dbname = $this->getProp("DATABASE", "dbname", "magento");
+                $user = $this->getProp("DATABASE", "user");
+                $pass = $this->getProp("DATABASE", "password");
+                $port = $this->getProp("DATABASE", "port", "3306");
             }
             $this->initDb($host, $dbname, $user, $pass, $port, $socket, $conn, $debug);
             // suggested by pastanislas
@@ -559,8 +509,7 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function disconnectFromMagento()
     {
-        if ($this->_connected)
-        {
+        if ($this->_connected) {
             $this->exitDb();
         }
     }
@@ -576,7 +525,7 @@ abstract class Magmi_Engine extends DbHelper
         return $this->tprefix . $magname;
     }
 
-    public abstract function engineInit($params);
+    abstract public function engineInit($params);
 
-    public abstract function engineRun($params);
+    abstract public function engineRun($params);
 }
