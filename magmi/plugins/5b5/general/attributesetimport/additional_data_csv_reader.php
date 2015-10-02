@@ -4,8 +4,8 @@
  * <p>Extension of Magmi_CSVReader which allows to manually add records.</p>
  *
  */
-class AdditionalDataCSVReader extends Magmi_CSVReader {
-
+class AdditionalDataCSVReader extends Magmi_CSVReader
+{
     /**
      * Only used when using addWildcardData functions.
      * Stores all used values in original (CSV) data for each column.
@@ -28,13 +28,14 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
     /**
      * Reads all CSV data into $this->_availableValuesPerColumn.
      */
-    private function readValues() {
+    private function readValues()
+    {
         $this->openCSV();
         $this->getColumnNames();
         $this->_availableValuesPerColumn=[];
-        while($record = $this->getNextRecord()) {
-            foreach($record as $columnName => $value) {
-                if(!isset($this->_availableValuesPerColumn[$columnName])) {
+        while ($record = $this->getNextRecord()) {
+            foreach ($record as $columnName => $value) {
+                if (!isset($this->_availableValuesPerColumn[$columnName])) {
                     $this->_availableValuesPerColumn[$columnName] = array();
                 }
                 $this->_availableValuesPerColumn[$columnName][$value] = 1;
@@ -53,12 +54,13 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      * @param array $record as associative array (column name => column value)
      * @return array of generated/expanded records
      */
-    private function inflateWildcardsSingle($record) {
-        foreach($record as $columnName => $value) {
-            if($value === "*") {
+    private function inflateWildcardsSingle($record)
+    {
+        foreach ($record as $columnName => $value) {
+            if ($value === "*") {
                 $expandedRecords = array();
-                if(isset($this->_availableValuesPerColumn[$columnName])) {
-                    foreach($this->_availableValuesPerColumn[$columnName] as $value => $ignore) {
+                if (isset($this->_availableValuesPerColumn[$columnName])) {
+                    foreach ($this->_availableValuesPerColumn[$columnName] as $value => $ignore) {
                         $newRecord = $record;
                         $newRecord[$columnName] = $value;
                         $expandedRecords[] = $newRecord;
@@ -75,10 +77,11 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      * @param array $records array of records
      * @return array of expanded records
      */
-    private function inflateWildcards($records) {
+    private function inflateWildcards($records)
+    {
         $newRecords = array();
-        foreach($records as $record) {
-            $newRecords = array_merge($newRecords,$this->inflateWildcardsSingle($record));
+        foreach ($records as $record) {
+            $newRecords = array_merge($newRecords, $this->inflateWildcardsSingle($record));
         }
         return $newRecords;
     }
@@ -89,12 +92,13 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      *
      * @param string $csv data to add as a csv formatted multiline string
      */
-    public function addWildcardDataCSV($csv) {
+    public function addWildcardDataCSV($csv)
+    {
         $records = array();
-        $lines = explode("\n",$csv);
+        $lines = explode("\n", $csv);
         $firstLine = array_shift($lines);
         $columnNames = str_getcsv($firstLine);
-        while(sizeof($lines) > 0) {
+        while (sizeof($lines) > 0) {
             $currentLine = array_shift($lines);
             $data = str_getcsv($currentLine);
             $records[] = array_combine($columnNames, $data);
@@ -108,8 +112,9 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      *
      * @param string $csv data to add as a csv formatted multiline string
      */
-    public function addWildcardData($data) {
-        if(!isset($this->_availableValuesPerColumn)) {
+    public function addWildcardData($data)
+    {
+        if (!isset($this->_availableValuesPerColumn)) {
             $this->readValues();
         }
         $this->_addedData = $this->inflateWildcards($data);
@@ -119,7 +124,8 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      * (non-PHPdoc)
      * @see Magmi_CSVReader::getLinesCount()
      */
-    public function getLinesCount() {
+    public function getLinesCount()
+    {
         return (parent::getLinesCount()+sizeof($this->_addedData));
     }
 
@@ -127,7 +133,8 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      * (non-PHPdoc)
      * @see Magmi_CSVReader::openCSV()
      */
-    public function openCSV() {
+    public function openCSV()
+    {
         $this->_currentIndex = 0;
         return parent::openCSV();
     }
@@ -136,13 +143,13 @@ class AdditionalDataCSVReader extends Magmi_CSVReader {
      * (non-PHPdoc)
      * @see Magmi_CSVReader::getNextRecord()
      */
-    public function getNextRecord() {
+    public function getNextRecord()
+    {
         $result = parent::getNextRecord();
-        if(!$result && sizeof($this->_addedData) > $this->_currentIndex) {
+        if (!$result && sizeof($this->_addedData) > $this->_currentIndex) {
             $result = $this->_addedData[$this->_currentIndex];
             $this->_currentIndex++;
         }
         return $result;
     }
 }
-?>

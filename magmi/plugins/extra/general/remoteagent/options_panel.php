@@ -4,6 +4,6 @@
 <ul class="formline">
 	<li class="label"><span>HTTP Url for magento base dir</span></li>
 	<li class="value"><input type="text" name="MRAGENT:baseurl"
-		value="<?php echo $this->getParam("MRAGENT:baseurl","")?>"></li>
+		value="<?php echo $this->getParam("MRAGENT:baseurl", "")?>"></li>
 
 </ul>

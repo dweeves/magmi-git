@@ -1,7 +1,6 @@
 <?php
 require_once("utils.php");
-if(session_id()==null)
-{
+if (session_id()==null) {
     session_start();
 }
 /**
@@ -10,14 +9,12 @@ if(session_id()==null)
  * Date: 26/03/15
  * Time: 19:04
  */
-function setMessage($type,$data,$target='_global')
+function setMessage($type, $data, $target='_global')
 {
-    if(!isset($_SESSION["message"][$target]))
-    {
+    if (!isset($_SESSION["message"][$target])) {
         $_SESSION["message"][$target]=array();
     }
-    if(!isset($_SESSION["message"][$target][$type]))
-    {
+    if (!isset($_SESSION["message"][$target][$type])) {
         $_SESSION["message"][$target][$type]=array();
     }
     $_SESSION["message"][$target][$type][]=$data;
@@ -25,33 +22,35 @@ function setMessage($type,$data,$target='_global')
 
 function clearMessages($target="_global")
 {
-    if(isset($_SESSION["message"][$target]))
-    $_SESSION["message"][$target]=array("OK"=>array(),
+    if (isset($_SESSION["message"][$target])) {
+        $_SESSION["message"][$target]=array("OK"=>array(),
         "WARN"=>array(),
         "ERROR"=>array());
+    }
 }
 
-function hasMessages($type,$target="_global")
+function hasMessages($type, $target="_global")
 {
     return isset($_SESSION["message"][$target]) && isset($_SESSION["message"][$target][$type]) && count($_SESSION["message"][$target][$type])>0;
 }
 
-function getMessages($type,$target="_global")
+function getMessages($type, $target="_global")
 {
     return $_SESSION["message"][$target][$type];
 }
 
 function show_messages($target="_global")
 {
-        $mtypes = array("ERROR" => "danger", "WARN" => "warning", "OK" => "success");
-        foreach ($mtypes as $mt => $mcl) {
-            if(hasMessages($mt,$target)){
-                $msgs = getMessages($mt,$target);
-                for ($i = 0; $i < count($msgs); $i++) {
-                    ?>
+    $mtypes = array("ERROR" => "danger", "WARN" => "warning", "OK" => "success");
+    foreach ($mtypes as $mt => $mcl) {
+        if (hasMessages($mt, $target)) {
+            $msgs = getMessages($mt, $target);
+            for ($i = 0; $i < count($msgs); $i++) {
+                ?>
                     <div class="alert alert-<?php echo $mcl ?>" role="alert"><?php echo $msgs[$i] ?></div>
-                <?php }
+                <?php 
             }
         }
-        clearMessages($target);
+    }
+    clearMessages($target);
 }?>

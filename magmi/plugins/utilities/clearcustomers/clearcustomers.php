@@ -2,7 +2,6 @@
 
 class ClearCustomerUtility extends Magmi_UtilityPlugin
 {
-
     public function getPluginInfo()
     {
         return array("name"=>"Clear Customers, Tags and Wishlists","author"=>"www.blinkdata.com","version"=>"1.0.1");
@@ -18,8 +17,7 @@ class ClearCustomerUtility extends Magmi_UtilityPlugin
             "customer_entity_text","customer_entity_varchar","tag","tag_properties","tag_relation","wishlist",
             "wishlist_item","wishlist_item_option","log_customer");
 
-        foreach ($tables as $table)
-        {
+        foreach ($tables as $table) {
             $this->exec_stmt("TRUNCATE TABLE `" . $this->tablename($table) . "`");
         }
 

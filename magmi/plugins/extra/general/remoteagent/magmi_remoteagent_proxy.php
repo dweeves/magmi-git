@@ -1,5 +1,5 @@
 <?php
-require_once ("fshelper.php");
+require_once("fshelper.php");
 
 class RAResponse
 {
@@ -18,13 +18,10 @@ class RAResponse
         $this->parsed = json_decode($this->body, true);
         $this->op = $op;
         $this->parsed = $this->parsed[$op];
-        if (isset($this->parsed['result']))
-        {
+        if (isset($this->parsed['result'])) {
             $this->result = $this->parsed['result'];
             $this->is_error = false;
-        }
-        else
-        {
+        } else {
             $this->error = $this->parsed['error'];
             $this->is_error = true;
         }
@@ -33,7 +30,6 @@ class RAResponse
 
 class RAError extends RAResponse
 {
-
     public function __construct($err)
     {
         $this->is_error = true;
@@ -43,7 +39,7 @@ class RAError extends RAResponse
 
 class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 {
-    protected $_raurl = NULL;
+    protected $_raurl = null;
 
     public function __construct($magurl, $raurl)
     {
@@ -61,33 +57,28 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
     public function doPost($url, $params, $optional_headers = null)
     {
         $ctxparams = array('http'=>array('method'=>'POST','content'=>http_build_query($params)));
-        if ($optional_headers !== null)
-        {
+        if ($optional_headers !== null) {
             $ctxparams['http']['header'] = $optional_headers;
         }
         $ctx = stream_context_create($ctxparams);
         $fp = @fopen($url, 'rb', false, $ctx);
-        if (!$fp)
-        {
+        if (!$fp) {
             return false;
         }
         $meta = stream_get_meta_data($fp);
         $httpinfo = explode(' ', $meta['wrapper_data'][0]);
         $response = @stream_get_contents($fp);
-        if ($response === false)
-        {}
+        if ($response === false) {
+        }
         return array("status"=>$httpinfo,"body"=>$response);
     }
 
     public function doOperation($op, $params = array())
     {
         $hresp = $this->doPost($this->_raurl, array_merge(array("api"=>$op), $params));
-        if ($hresp)
-        {
+        if ($hresp) {
             $resp = new RAResponse($hresp, $op);
-        }
-        else
-        {
+        } else {
             $resp = new RAError("No connection to proxy");
         }
         return $resp;
@@ -95,12 +86,9 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 
     public function getVersion()
     {
-        if ($r = $this->doOperation('getVersion'))
-        {
+        if ($r = $this->doOperation('getVersion')) {
             return $r->result['version'];
-        }
-        else
-        {
+        } else {
             return "0.0.0";
         }
     }
@@ -113,9 +101,8 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 
     public function mkdir($path, $mask = 0755, $rec = false)
     {
-        $r = $this->doOperation('mkdir', array('path'=>$path,'mask'=>$mask,'rec'=>$rec));
-        if ($r->is_error)
-        {
+        $r = $this->doOperation('mkdir', array('path'=>$path, 'mask'=>$mask, 'rec'=>$rec));
+        if ($r->is_error) {
             $this->_lasterror = $r->error;
         }
         return !$r->is_error;
@@ -124,8 +111,7 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
     public function unlink($filepath)
     {
         $r = $this->doOperation('unlink', array('path'=>$filepath));
-        if ($r->is_error)
-        {
+        if ($r->is_error) {
             $this->_lasterror = $r->error;
         }
         return !$r->is_error;
@@ -133,9 +119,8 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 
     public function exec_cmd($cmd, $params, $workingdir = null)
     {
-        $r = $this->doOperation('exec_cmd', array('cmd'=>$cmd,'args'=>$params));
-        if ($r->is_error)
-        {
+        $r = $this->doOperation('exec_cmd', array('cmd'=>$cmd, 'args'=>$params));
+        if ($r->is_error) {
             $this->_lasterror = $r->error;
             return $r->error['message'];
         }
@@ -145,9 +130,8 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 
     public function chmod($path, $mask)
     {
-        $r = $this->doOperation('chmod', array('path'=>$path,'mask'=>$mask));
-        if ($r->is_error)
-        {
+        $r = $this->doOperation('chmod', array('path'=>$path, 'mask'=>$mask));
+        if ($r->is_error) {
             $this->_lasterror = $r->error;
         }
         return !$r->is_error;
@@ -155,9 +139,8 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 
     public function copy($srcpath, $destpath)
     {
-        $r = $this->doOperation('copy', array('src'=>$srcpath,'dest'=>$destpath));
-        if ($r->is_error)
-        {
+        $r = $this->doOperation('copy', array('src'=>$srcpath, 'dest'=>$destpath));
+        if ($r->is_error) {
             $this->_lasterror = $r->error;
         }
         return !$r->is_error;

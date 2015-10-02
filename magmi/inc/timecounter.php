@@ -30,7 +30,7 @@
  *
  * sources are tags. categories are more like containers
  */
-class TimeCounter
+class timecounter
 {
     protected $_timingcats = array();
     protected $_defaultsrc = "";
@@ -55,8 +55,7 @@ class TimeCounter
      */
     public function initTimingCats($tcats)
     {
-        foreach ($tcats as $tcat)
-        {
+        foreach ($tcats as $tcat) {
             $this->_timingcats[$tcat] = array("_counters"=>array(),"_timers"=>array());
         }
     }
@@ -81,8 +80,7 @@ class TimeCounter
     public function getTimers()
     {
         $timers = array();
-        foreach ($this->_timingcats as $cname => $info)
-        {
+        foreach ($this->_timingcats as $cname => $info) {
             $timers[$cname] = $info['_timers'];
         }
         return $timers;
@@ -96,8 +94,7 @@ class TimeCounter
     public function getCounters()
     {
         $counters = array();
-        foreach ($this->_timingcats as $cname => $info)
-        {
+        foreach ($this->_timingcats as $cname => $info) {
             $counters[$cname] = $info['_counters'];
         }
         return $counters;
@@ -113,15 +110,12 @@ class TimeCounter
      */
     public function addCounter($cname, $tcats = null)
     {
-        if ($tcats == null)
-        {
+        if ($tcats == null) {
             $tcats = array_keys($this->_timingcats);
         }
 
-        foreach ($tcats as $tcat)
-        {
-            if (!isset($this->_timingcats[$tcat]))
-            {
+        foreach ($tcats as $tcat) {
+            if (!isset($this->_timingcats[$tcat])) {
                 $this->_timingcats[$tcat] = array("_counters"=>array(),"_timers"=>array());
             }
             $this->_timingcats[$tcat]["_counters"][$cname] = 0;
@@ -138,12 +132,10 @@ class TimeCounter
      */
     public function initCounter($cname, $tcats = null)
     {
-        if ($tcats == null)
-        {
+        if ($tcats == null) {
             $tcats = array_keys($this->_timingcats);
         }
-        foreach ($tcats as $tcat)
-        {
+        foreach ($tcats as $tcat) {
             $this->_timingcats[$tcat]["_counters"][$cname] = 0;
         }
     }
@@ -158,14 +150,11 @@ class TimeCounter
      */
     public function incCounter($cname, $tcats = null)
     {
-        if ($tcats == null)
-        {
+        if ($tcats == null) {
             $tcats = array_keys($this->_timingcats);
         }
-        foreach ($tcats as $tcat)
-        {
-            if (!isset($this->_timingcats[$tcat]["_counters"][$cname]))
-            {
+        foreach ($tcats as $tcat) {
+            if (!isset($this->_timingcats[$tcat]["_counters"][$cname])) {
                 $this->_timingcats[$tcat]["_counters"][$cname] = 0;
             }
             $this->_timingcats[$tcat]["_counters"][$cname]++;
@@ -184,36 +173,29 @@ class TimeCounter
      */
     public function initTime($phase = "global", $src = null, $tcat = null)
     {
-        if (isset($src))
-        {
+        if (isset($src)) {
             array_push($this->_timingcontext, $src);
             $this->_timingcontext = array_values(array_unique($this->_timingcontext));
         }
-        if (count($this->_timingcontext) == 0)
+        if (count($this->_timingcontext) == 0) {
             return;
-
-        if (!isset($tcat))
-        {
-            $tcats = $this->_timingcats;
         }
-        else
-        {
+
+        if (!isset($tcat)) {
+            $tcats = $this->_timingcats;
+        } else {
             $tcats = array($tcat=>$this->_timingcats[$tcat]);
         }
         $t = microtime(true);
 
-        foreach ($tcats as $tcat => $dummy)
-        {
-            if (!isset($this->_timingcats[$tcat]["_timers"][$phase]))
-            {
+        foreach ($tcats as $tcat => $dummy) {
+            if (!isset($this->_timingcats[$tcat]["_timers"][$phase])) {
                 $this->_timingcats[$tcat]["_timers"][$phase] = array();
             }
             $ctxc = count($this->_timingcontext);
-            for ($i = 0; $i < $ctxc; $i++)
-            {
+            for ($i = 0; $i < $ctxc; $i++) {
                 $src = $this->_timingcontext[$i];
-                if (!isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
-                {
+                if (!isset($this->_timingcats[$tcat]["_timers"][$phase][$src])) {
                     $this->_timingcats[$tcat]["_timers"][$phase][$src] = array("init"=>$t,"dur"=>0);
                 }
                 $this->_timingcats[$tcat]["_timers"][$phase][$src]["start"] = $t;
@@ -234,41 +216,32 @@ class TimeCounter
     public function exitTime($phase, $src = null, $tcat = null)
     {
         $targets = $this->_timingcontext;
-        if (count($targets) == 0)
-        {
+        if (count($targets) == 0) {
             return;
         }
-        if (isset($src) && in_array($src, $this->_timingcontext))
-        {
+        if (isset($src) && in_array($src, $this->_timingcontext)) {
             $targets = array($src);
         }
 
         $ctargets = count($targets);
 
-        if ($ctargets == 0)
+        if ($ctargets == 0) {
             return;
-        if ($tcat == null)
-        {
-            $tcats = $this->_timingcats;
         }
-        else
-        {
+        if ($tcat == null) {
+            $tcats = $this->_timingcats;
+        } else {
             $tcats = array($tcat=>$this->_timingcats[$tcat]);
         }
         $end = microtime(true);
-        foreach ($tcats as $tcat => $phasetimes)
-        {
-            for ($i = 0; $i < $ctargets; $i++)
-            {
+        foreach ($tcats as $tcat => $phasetimes) {
+            for ($i = 0; $i < $ctargets; $i++) {
                 $src = $targets[$i];
-                if (isset($this->_timingcats[$tcat]["_timers"][$phase][$src]))
-                {
+                if (isset($this->_timingcats[$tcat]["_timers"][$phase][$src])) {
                     $this->_timingcats[$tcat]["_timers"][$phase][$src]["end"] = $end;
                     $this->_timingcats[$tcat]["_timers"][$phase][$src]["dur"] += $end -
                          $this->_timingcats[$tcat]["_timers"][$phase][$src]["start"];
-                }
-                else
-                {
+                } else {
                     echo "Invalid timing source : $src";
                 }
             }

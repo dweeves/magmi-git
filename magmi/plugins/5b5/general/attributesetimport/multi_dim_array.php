@@ -39,8 +39,8 @@
  * }<br/>
  * </code></p>
  */
-class MultiDimArray extends ArrayIterator {
-
+class MultiDimArray extends ArrayIterator
+{
     private $_inner;
     private $_current;
     private $_currentKey;
@@ -49,18 +49,20 @@ class MultiDimArray extends ArrayIterator {
      * (non-PHPdoc)
      * @see ArrayIterator::offsetGet()
      */
-    public function offsetGet($name) {
-        if(!is_array($name)) {
+    public function offsetGet($name)
+    {
+        if (!is_array($name)) {
             return parent::offsetGet($name);
         } else {
             $key = array_shift($name);
-            if(!parent::offsetExists($key))
+            if (!parent::offsetExists($key)) {
                 return null;
+            }
             $element = parent::offsetGet($key);
-            if(sizeof($name) == 0) {
+            if (sizeof($name) == 0) {
                 return $element;
             } else {
-                if(is_a($element,'MultiDimArray')) {
+                if (is_a($element, 'MultiDimArray')) {
                     return $element->offsetGet($name);
                 } else {
                     return $element;
@@ -73,20 +75,21 @@ class MultiDimArray extends ArrayIterator {
      * (non-PHPdoc)
      * @see ArrayIterator::offsetSet()
      */
-    public function offsetSet($name, $value) {
-        if(!is_array($name)) {
+    public function offsetSet($name, $value)
+    {
+        if (!is_array($name)) {
             return parent::offsetSet($name, $value);
         } else {
             $key = array_shift($name);
-            if(sizeof($name) == 0) {
+            if (sizeof($name) == 0) {
                 parent::offsetSet($key, $value);
             } else {
                 $childArray = parent::offsetExists($key)?parent::offsetGet($key):new MultiDimArray();
-                if(!is_a($childArray,'MultiDimArray')) {
+                if (!is_a($childArray, 'MultiDimArray')) {
                     $childArray = new MultiDimArray();
                 }
                 parent::offsetSet($key, $childArray);
-                $childArray->offsetSet($name,$value);
+                $childArray->offsetSet($name, $value);
             }
         }
     }
@@ -101,8 +104,9 @@ class MultiDimArray extends ArrayIterator {
      * (non-PHPdoc)
      * @see ArrayIterator::offsetExists()
      */
-    public function offsetExists($name) {
-        return $this->offsetExistsPartly($name,false);
+    public function offsetExists($name)
+    {
+        return $this->offsetExistsPartly($name, false);
     }
 
     /**
@@ -116,19 +120,20 @@ class MultiDimArray extends ArrayIterator {
      * @param string $partlyOk
      * @return void|boolean|string
      */
-    public function offsetExistsPartly($name,$partlyOk=true) {
-        if(!is_array($name)) {
+    public function offsetExistsPartly($name, $partlyOk=true)
+    {
+        if (!is_array($name)) {
             return parent::offsetExists($name);
         } else {
             $key = array_shift($name);
-            if(sizeof($name) == 0) {
+            if (sizeof($name) == 0) {
                 return parent::offsetExists($key);
             } else {
-                if(!parent::offsetExists($key)) {
+                if (!parent::offsetExists($key)) {
                     return false;
                 } else {
                     $object = parent::offsetGet($key);
-                    if(is_a($object,'MultiDimArray')) {
+                    if (is_a($object, 'MultiDimArray')) {
                         return $object->offsetExists($name);
                     } else {
                         return $partlyOk;
@@ -138,19 +143,20 @@ class MultiDimArray extends ArrayIterator {
         }
     }
 
-    public function offsetUnset($name) {
-        if(!is_array($name)) {
+    public function offsetUnset($name)
+    {
+        if (!is_array($name)) {
             return parent::offsetUnset($name);
         } else {
             $key = array_shift($name);
-            if(sizeof($name) == 0) {
+            if (sizeof($name) == 0) {
                 return parent::offsetUnset($key);
             } else {
-                if(parent::offsetExists($key)) {
+                if (parent::offsetExists($key)) {
                     $object = parent::offsetGet($key);
-                    if(is_a($object,'MutliDimArray')) {
+                    if (is_a($object, 'MutliDimArray')) {
                         $object->offsetUnset($name);
-                        if($object->sizeof()==0) {
+                        if ($object->sizeof()==0) {
                             parent::offsetUnset($key);
                         }
                     } else {
@@ -161,72 +167,81 @@ class MultiDimArray extends ArrayIterator {
         }
     }
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->_iterator = null;
         parent::rewind();
         $this->setInner();
     }
 
-    public function current() {
-        if(isset($this->_inner)) {
+    public function current()
+    {
+        if (isset($this->_inner)) {
             return $this->_inner->current();
         } else {
             return parent::current();
         }
     }
 
-    private function setInner() {
-        if(parent::valid() && is_a(parent::current(),'MultiDimArray')) {
+    private function setInner()
+    {
+        if (parent::valid() && is_a(parent::current(), 'MultiDimArray')) {
             $this->_inner = parent::current();
             $this->_inner->rewind();
         }
     }
 
-    private function doNext() {
+    private function doNext()
+    {
         $this->inner = null;
         parent::next();
         $this->setInner();
     }
 
-    public function next() {
-        if(isset($this->_inner)) {
+    public function next()
+    {
+        if (isset($this->_inner)) {
             $this->_inner->next();
-            if(!$this->_inner->valid()) {
+            if (!$this->_inner->valid()) {
                 $this->doNext();
             }
         } else {
             $this->doNext();
         }
     }
-    public function key() {
-        if(isset($this->_inner)) {
+    public function key()
+    {
+        if (isset($this->_inner)) {
             $innerKey = $this->_inner->key();
-            array_unshift($innerKey,parent::key());
+            array_unshift($innerKey, parent::key());
             return $innerKey;
         } else {
             return array(parent::key());
         }
     }
 
-    public function valid() {
+    public function valid()
+    {
         return parent::valid();
     }
 
-    public function multiSet($keyArrays, $value) {
-        foreach($keyArrays as $keyArray) {
-            if(is_array($keyArray) && sizeof($keyArray) == 0) {
+    public function multiSet($keyArrays, $value)
+    {
+        foreach ($keyArrays as $keyArray) {
+            if (is_array($keyArray) && sizeof($keyArray) == 0) {
                 // ignore
             } else {
-                $this->offsetSet($keyArray,$value);
+                $this->offsetSet($keyArray, $value);
             }
         }
     }
 
-    public function count ($mode = null) {
+    public function count($mode = null)
+    {
         $count = 0;
-        foreach($this as $item) $count++;
+        foreach ($this as $item) {
+            $count++;
+        }
         return $count;
     }
-
 }
-?>

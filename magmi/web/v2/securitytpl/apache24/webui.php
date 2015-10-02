@@ -6,23 +6,22 @@
  * Time: 16:28
  */
 $mdir="";
-if(isset($_REQUEST["magentodir"]))
-{
+if (isset($_REQUEST["magentodir"])) {
     $mdir=$_REQUEST["magentodir"];
     $this->setMagentoDir($mdir);
-$secure_result=$this->secureServer();
-foreach($secure_result as $type=>$data)
-{
-   for($i=0;$i<count($data);$i++)
-   {
-        setMessage($type,$data[$i],"secureserver");
-   }
-}
-show_messages("secureserver");
-if(hasMessages("ERROR","secureserver"))
-    {?>
+    $secure_result=$this->secureServer();
+    foreach ($secure_result as $type=>$data) {
+        for ($i=0;$i<count($data);$i++) {
+            setMessage($type, $data[$i], "secureserver");
+        }
+    }
+    show_messages("secureserver");
+    if (hasMessages("ERROR", "secureserver")) {
+        ?>
 
-   <?php }else {?>
+   <?php 
+    } else {
+        ?>
 
         <div class="bs-callout bs-callout-success">
             <h4>Security Setup complete</h4>
@@ -33,24 +32,23 @@ if(hasMessages("ERROR","secureserver"))
                 window.location="<?php echo BASE_URL?>/index.php";
             },5000);
         </script>
-        <?php }?>
+        <?php 
+    }
+    ?>
 <?php
 
-
-
-}
-else
-{
-    if(isset($result) && $result["ERROR"]) {
+} else {
+    if (isset($result) && $result["ERROR"]) {
         setMessage("ERROR", $result["ERROR"], "magentodir");
     }
-?>
+    ?>
 
 <div class="bs-callout bs-callout-info">
            <h4>Requiring Magento directory</h4>
            <p>Magmi will secure magmi web interface with Magento Database Credentials stored in the local.xml file of Magento</p>
 </div>
-<?php    show_messages("magentodir");?>
+<?php    show_messages("magentodir");
+    ?>
 
 
     <form name="magentodir_security" role="form" method="POST" class="form-inline">
@@ -64,4 +62,5 @@ else
     <input type="submit" value="Secure Interface" class="btn btn-outline">
 
 </form>
-<?php }?>
+<?php 
+}?>

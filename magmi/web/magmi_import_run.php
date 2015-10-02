@@ -8,8 +8,7 @@ session_write_close();
 <script type="text/javascript">
 	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine',token:'<?php echo $_SESSION["token"]?>'};
 	<?php
-foreach ($_REQUEST as $k => $v)
-{
+foreach ($_REQUEST as $k => $v) {
     echo "imp_params['$k']='$v';\n";
 }
 ?>

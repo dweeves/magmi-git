@@ -10,16 +10,11 @@ require_once(dirname(dirname(__DIR__)).'/inc/magmi_config.php');
 
 function getSessionConfig()
 {
-
     $conf=Magmi_Config::getInstance();
-    if(isset($_SESSION['MAGMI_CONFIG_FILE']))
-    {
+    if (isset($_SESSION['MAGMI_CONFIG_FILE'])) {
         $conf->load($_SESSION['MAGMI_CONFIG_FILE']);
-    }
-    else
-    {
+    } else {
         $conf->load();
     }
     return $conf;
 }
-

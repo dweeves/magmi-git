@@ -1,6 +1,6 @@
 <?php
-require_once (dirname(__FILE__) . "/magmi_remoteagent_proxy.php");
-require_once (dirname(__FILE__) . "/magmi_remoteagent.php");
+require_once(dirname(__FILE__) . "/magmi_remoteagent_proxy.php");
+require_once(dirname(__FILE__) . "/magmi_remoteagent.php");
 
 class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
 {
@@ -22,12 +22,10 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
     public function initialize($params)
     {
         $mbdir = Magmi_Config::getInstance()->get('MAGENTO', 'basedir');
-        if (is_remote_path($mbdir))
-        {
+        if (is_remote_path($mbdir)) {
             $this->_raproxy = new Magmi_RemoteAgent_Proxy($mbdir, $this->getParam("MRAGENT:baseurl"));
         }
-        if (isset($this->_raproxy))
-        {
+        if (isset($this->_raproxy)) {
             $this->log("Remote agent activated for remote magento path : $mbdir", "startup");
         }
     }
@@ -35,21 +33,16 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
     public function checkPluginVersion()
     {
         $pv = $this->_raproxy->getVersion();
-        if ($pv == '0.0.0')
-        {
+        if ($pv == '0.0.0') {
             $this->log("Remote Agent Not found at " . $this->_raproxy->getRemoteAgentUrl(), "startup");
-        }
-        else
-        {
+        } else {
             $this->log("Remote Agent v$pv found at " . $this->_raproxy->getRemoteAgentUrl(), "startup");
         }
         $cv = Magmi_RemoteAgent::getStaticVersion();
-        if ($pv < $cv)
-        {
+        if ($pv < $cv) {
             $this->log("Deploying latest v$cv");
             $ok = $this->deployPlugin(Magmi_Config::getInstance()->getMagentoDir());
-            if ($ok)
-            {
+            if ($ok) {
                 $cpv = $this->_raproxy->getVersion();
                 $this->log("Remote Agent v$cpv deployed at " . $this->_raproxy->getRemoteAgentUrl(), "startup");
             }
@@ -63,8 +56,7 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
         $ctx = stream_context_create(array('ftp'=>array('overwrite'=>true)));
 
         $ok = @copy(dirname(__FILE__) . "/magmi_remoteagent.php", $url . $sep . "magmi_remoteagent.php", $ctx);
-        if ($ok == false)
-        {
+        if ($ok == false) {
             $err = error_get_last();
             $this->log(
                 "Cannot deploy Remote agent to $url (" . $err['message'] . "), remote file operation & indexing disabled",
@@ -83,4 +75,3 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
         return array("MRAGENT:baseurl");
     }
 }
-?>

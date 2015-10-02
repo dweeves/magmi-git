@@ -1,6 +1,6 @@
 <?php
-require_once ("magmi_csvreader.php");
-require_once ("fshelper.php");
+require_once("magmi_csvreader.php");
+require_once("fshelper.php");
 
 class Magmi_CSVDataSource extends Magmi_Datasource
 {
@@ -21,8 +21,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
     public function getScanDir($resolve = true)
     {
         $scandir = $this->getParam("CSV:basedir", "var/import");
-        if (!isabspath($scandir))
-        {
+        if (!isabspath($scandir)) {
             $scandir = abspath($scandir, Magmi_Config::getInstance()->getMagentoDir(), $resolve);
         }
         return $scandir;
@@ -38,10 +37,8 @@ class Magmi_CSVDataSource extends Magmi_Datasource
     public function getPluginParams($params)
     {
         $pp = array();
-        foreach ($params as $k => $v)
-        {
-            if (preg_match("/^CSV:.*$/", $k))
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match("/^CSV:.*$/", $k)) {
                 $pp[$k] = $v;
             }
         }
@@ -59,47 +56,40 @@ class Magmi_CSVDataSource extends Magmi_Datasource
     }
 
     public function getAttributeList()
-    {}
+    {
+    }
 
     public function getRemoteFile($url)
     {
         $fg = RemoteFileGetterFactory::getFGInstance();
-        if ($this->getParam("CSV:remoteauth", false) == true)
-        {
+        if ($this->getParam("CSV:remoteauth", false) == true) {
             $user = $this->getParam("CSV:remoteuser");
             $pass = $this->getParam("CSV:remotepass");
             $fg->setCredentials($user, $pass);
         }
         $cookies = $this->getParam("CSV:remotecookie");
-        if ($cookies)
-        {
+        if ($cookies) {
             $fg->setCookie($cookies);
         }
 
         $this->log("Fetching CSV: $url", "startup");
         // output filename (current dir+remote filename)
         $csvdldir = dirname(__FILE__) . "/downloads";
-        if (!file_exists($csvdldir))
-        {
+        if (!file_exists($csvdldir)) {
             @mkdir($csvdldir);
             @chmod($csvdldir, Magmi_Config::getInstance()->getDirMask());
         }
 
         $outname = $csvdldir . "/" . basename($url);
         $ext = substr(strrchr($outname, '.'), 1);
-        if ($ext != "txt" && $ext != "csv")
-        {
+        if ($ext != "txt" && $ext != "csv") {
             $outname = $outname . ".csv";
         }
         // open file for writing
-        if (file_exists($outname))
-        {
-            if ($this->getParam("CSV:forcedl", false) == true)
-            {
+        if (file_exists($outname)) {
+            if ($this->getParam("CSV:forcedl", false) == true) {
                 unlink($outname);
-            }
-            else
-            {
+            } else {
                 return $outname;
             }
         }
@@ -111,8 +101,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 
     public function beforeImport()
     {
-        if ($this->getParam("CSV:importmode", "local") == "remote")
-        {
+        if ($this->getParam("CSV:importmode", "local") == "remote") {
             $url = $this->getParam("CSV:remoteurl", "");
             $outname = $this->getRemoteFile($url);
             $this->setParam("CSV:filename", $outname);
@@ -122,7 +111,8 @@ class Magmi_CSVDataSource extends Magmi_Datasource
     }
 
     public function afterImport()
-    {}
+    {
+    }
 
     public function startImport()
     {

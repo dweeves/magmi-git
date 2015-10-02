@@ -20,12 +20,16 @@
 	</div>
 </div>
 <div class="formline">
-<?php $lastonly=$this->getParam("CAT:lastonly",0)?>
+<?php $lastonly=$this->getParam("CAT:lastonly", 0)?>
 <span>Assign product to :</span><select name="CAT:lastonly">
-		<option value="0" <?php if($lastonly==0){?> selected="selected"
-			<?php }?>>all categories in tree</option>
-		<option value="1" <?php if($lastonly==1){?> selected="selected"
-			<?php }?>>last category of each branch</option>
+		<option value="0" <?php if ($lastonly==0) {
+    ?> selected="selected"
+			<?php 
+}?>>all categories in tree</option>
+		<option value="1" <?php if ($lastonly==1) {
+    ?> selected="selected"
+			<?php 
+}?>>last category of each branch</option>
 	</select>
 	<div class="fieldinfo">When checked, this options will assign product
 		only to the categories that are located at the last level of the
@@ -34,11 +38,11 @@
 <div class="formline">
 	<span class="label">Tree level separator:</span> <span class="value"><input
 		type="text" name="CAT:treesep" maxlength=3 size=3
-		" value="<?php echo $this->getParam("CAT:treesep","/")?>"></input></span>
+		" value="<?php echo $this->getParam("CAT:treesep", "/")?>"></input></span>
 </div>
 <div class="formline">
 	<span>base category tree:</span><input type="text" name="CAT:baseroot"
-		size="80" value="<?php echo $this->getParam("CAT:baseroot","")?>"></input>
+		size="80" value="<?php echo $this->getParam("CAT:baseroot", "")?>"></input>
 	<div class="fieldinfo">
 		this enable you to import the categories prepending a base root tree
 		to the values found in csv (use same syntax as described above)<br />
@@ -49,7 +53,7 @@
 <div class="formline">
 	<span>url ending:</span><input type="text" name="CAT:urlending"
 		size="80"
-		value="<?php echo $this->getParam("CAT:urlending",".html")?>"></input>
+		value="<?php echo $this->getParam("CAT:urlending", ".html")?>"></input>
 	<div class="fieldinfo">Choose what url ending to put on category page
 		(defaults to .html)</div>
 </div>

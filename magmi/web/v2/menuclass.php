@@ -8,7 +8,6 @@
 function menuclass($script)
 {
     $bn=basename($_SERVER['SCRIPT_FILENAME']);
-    $bn=str_replace('.php','',$bn);
+    $bn=str_replace('.php', '', $bn);
     return ($bn==$script)?"active":"inactive";
-
 }

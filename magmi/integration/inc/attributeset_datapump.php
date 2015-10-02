@@ -1,10 +1,9 @@
 <?php
-require_once ("productimport_datapump.php");
-require_once ("array_reader.php");
+require_once("productimport_datapump.php");
+require_once("array_reader.php");
 
-class Magmi_AttributeSet_DataPump extends Magmi_ProductImport_DataPump {
-
-
+class Magmi_AttributeSet_DataPump extends Magmi_ProductImport_DataPump
+{
     public function ingestAttributes($items = array())
     {
         $reader = new ArrayReader();
@@ -26,9 +25,8 @@ class Magmi_AttributeSet_DataPump extends Magmi_ProductImport_DataPump {
         $this->_engine->callPlugins("general", "importAttributeAssociations", $reader);
     }
 
-    public function cleanupAttributes() 
+    public function cleanupAttributes()
     {
-        $this->_engine->callPlugins("general","deleteUnreferencedAttributes");
+        $this->_engine->callPlugins("general", "deleteUnreferencedAttributes");
     }
 }
-?>

@@ -8,7 +8,8 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     private $_currentsimples = array();
 
     public function initialize($params)
-    {}
+    {
+    }
     /* Plugin info declaration */
     public function getPluginInfo()
     {
@@ -23,8 +24,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
      */
     public function getConfigurableOptsFromAsId($asid)
     {
-        if (!isset($this->_configurable_attrs[$asid]))
-        {
+        if (!isset($this->_configurable_attrs[$asid])) {
             $ea = $this->tablename("eav_attribute");
             $eea = $this->tablename("eav_entity_attribute");
             $eas = $this->tablename("eav_attribute_set");
@@ -35,21 +35,17 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 		JOIN $eas as eas ON eas.entity_type_id=eet.entity_type_id AND eas.attribute_set_id=?
 		JOIN $eea as eea ON eea.attribute_id=ea.attribute_id";
             $cond = "ea.is_user_defined=1";
-            if ($this->checkMagentoVersion("1.3.x", "!="))
-            {
+            if ($this->checkMagentoVersion("1.3.x", "!=")) {
                 $cea = $this->tablename("catalog_eav_attribute");
                 $sql .= " JOIN $cea as cea ON cea.attribute_id=ea.attribute_id AND cea.is_global=1 AND cea.is_configurable=1";
-            }
-            else
-            {
+            } else {
                 $cond .= " AND ea.is_global=1 AND ea.is_configurable=1";
             }
             $sql .= " WHERE $cond
 			GROUP by ea.attribute_id";
 
-            $result = $this->selectAll($sql, array($this->getProductEntityType(),$asid));
-            foreach ($result as $r)
-            {
+            $result = $this->selectAll($sql, array($this->getProductEntityType(), $asid));
+            foreach ($result as $r) {
                 $this->_configurable_attrs[$asid][] = $r["attribute_code"];
             }
         }
@@ -87,15 +83,14 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function updSimpleVisibility($pid)
     {
         $vis = $this->getParam("CFGR:updsimplevis", 0);
-        if ($vis != 0)
-        {
+        if ($vis != 0) {
             $attinfo = $this->getAttrInfo("visibility");
             $sql = "UPDATE " . $this->tablename("catalog_product_entity_int") . " as cpei
 			JOIN " . $this->tablename("catalog_product_super_link") . " as cpsl ON cpsl.parent_id=?
 			JOIN " . $this->tablename("catalog_product_entity") . " as cpe ON cpe.entity_id=cpsl.product_id
 			SET cpei.value=?
 			WHERE cpei.entity_id=cpe.entity_id AND attribute_id=?";
-            $this->update($sql, array($pid,$vis,$attinfo["attribute_id"]));
+            $this->update($sql, array($pid, $vis, $attinfo["attribute_id"]));
         }
     }
 
@@ -108,8 +103,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     {
         $saptable = array();
         $sapentries = explode(",", $sapdesc);
-        foreach ($sapentries as $sapentry)
-        {
+        foreach ($sapentries as $sapentry) {
             $sapinf = explode("::", $sapentry);
             $sapname = $sapinf[0];
             $sapdata = $sapinf[1];
@@ -124,19 +118,16 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function processItemBeforeId(&$item, $params = null)
     {
         // if item is not configurable, nothing to do
-        if ($item["type"] !== "configurable")
-        {
+        if ($item["type"] !== "configurable") {
             return true;
         }
         if ($this->_use_defaultopc ||
-             ($item["options_container"] != "container1" && $item["options_container"] != "container2"))
-        {
+             ($item["options_container"] != "container1" && $item["options_container"] != "container2")) {
             $item["options_container"] = "container2";
         }
         // reset option price info
         $this->_optpriceinfo = array();
-        if (isset($item["super_attribute_pricing"]) && !empty($item["super_attribute_pricing"]))
-        {
+        if (isset($item["super_attribute_pricing"]) && !empty($item["super_attribute_pricing"])) {
             $this->_optpriceinfo = $this->buildSAPTable($item["super_attribute_pricing"]);
             unset($item["super_attribute_pricing"]);
         }
@@ -146,18 +137,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function getMatchMode($item)
     {
         $matchmode = "auto";
-        if ($this->getParam('CFGR:nolink', 0))
-        {
+        if ($this->getParam('CFGR:nolink', 0)) {
             $matchmode = "none";
-        }
-        else
-        {
-            if ($this->getParam("CFGR:simplesbeforeconf") == 1)
-            {
+        } else {
+            if ($this->getParam("CFGR:simplesbeforeconf") == 1) {
                 $matchmode = "cursimples";
             }
-            if (isset($item["simples_skus"]) && trim($item["simples_skus"]) != "")
-            {
+            if (isset($item["simples_skus"]) && trim($item["simples_skus"]) != "") {
                 $matchmode = "fixed";
             }
         }
@@ -167,42 +153,34 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function processItemAfterId(&$item, $params = null)
     {
         // if item is not configurable, nothing to do
-        if ($item["type"] !== "configurable")
-        {
-            if ($this->getParam("CFGR:simplesbeforeconf") == 1)
-            {
+        if ($item["type"] !== "configurable") {
+            if ($this->getParam("CFGR:simplesbeforeconf") == 1) {
                 $this->_currentsimples[] = $item["sku"];
             }
             return true;
         }
 
         // check for explicit configurable attributes
-        if (isset($item["configurable_attributes"]))
-        {
+        if (isset($item["configurable_attributes"])) {
             $confopts = explode(",", $item["configurable_attributes"]);
             $copts = count($confopts);
-            for ($i = 0; $i < $copts; $i++)
-            {
+            for ($i = 0; $i < $copts; $i++) {
                 $confopts[$i] = trim($confopts[$i]);
             }
         } // if not found, try to deduce them
-        else
-        {
+        else {
             $asconfopts = $this->getConfigurableOptsFromAsId($params["asid"]);
             // limit configurable options to ones presents & defined in item
             $confopts = array();
-            foreach ($asconfopts as $confopt)
-            {
-                if (in_array($confopt, array_keys($item)) && trim($item[$confopt]) != "")
-                {
+            foreach ($asconfopts as $confopt) {
+                if (in_array($confopt, array_keys($item)) && trim($item[$confopt]) != "") {
                     $confopts[] = $confopt;
                 }
             }
             unset($asconfotps);
         }
         // if no configurable attributes, nothing to do
-        if (count($confopts) == 0)
-        {
+        if (count($confopts) == 0) {
             $this->log(
                 "No configurable attributes found for configurable sku: " . $item["sku"] . " cannot link simples.",
                 "warning");
@@ -228,50 +206,43 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $ins_sal = array();
         $data_sal = array();
         $idx = 0;
-        foreach ($confopts as $confopt)
-        {
-
+        foreach ($confopts as $confopt) {
             $attrinfo = $this->getAttrInfo($confopt);
             $attrid = $attrinfo["attribute_id"];
-            $psaid = NULL;
+            $psaid = null;
 
             // try to get psaid for attribute
             $sql = "SELECT product_super_attribute_id as psaid FROM `$cpsa` WHERE product_id=? AND attribute_id=?";
-            $psaid = $this->selectOne($sql, array($pid,$attrid), "psaid");
+            $psaid = $this->selectOne($sql, array($pid, $attrid), "psaid");
             // if no entry found, create one
-            if ($psaid == NULL)
-            {
+            if ($psaid == null) {
                 $sql = "INSERT INTO `$cpsa` (`product_id`,`attribute_id`,`position`) VALUES (?,?,?)";
                 // inserting new options
-                $psaid = $this->insert($sql, array($pid,$attrid,$idx));
+                $psaid = $this->insert($sql, array($pid, $attrid, $idx));
             }
 
             // for all stores defined for the item
             $sids = $this->getItemStoreIds($item, 0);
             $data = array();
             $ins = array();
-            foreach ($sids as $sid)
-            {
+            foreach ($sids as $sid) {
                 $data[] = $psaid;
                 $data[] = $sid;
                 $data[] = $attrinfo['frontend_label'];
                 $ins[] = "(?,?,1,?)";
             }
-            if (count($ins) > 0)
-            {
+            if (count($ins) > 0) {
                 // insert/update attribute value for association
                 $sql = "INSERT INTO `$cpsal` (`product_super_attribute_id`,`store_id`,`use_default`,`value`) VALUES " .
                      implode(",", $ins) . "ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
                 $this->insert($sql, $data);
             }
             // if we have price info for this attribute
-            if (isset($this->_optpriceinfo[$confopt]))
-            {
+            if (isset($this->_optpriceinfo[$confopt])) {
                 $cpsap = $this->tablename("catalog_product_super_attribute_pricing");
                 $wsids = $this->getItemWebsites($item);
                 // if admin set as store, website force to 0
-                if (in_array(0, $sids))
-                {
+                if (in_array(0, $sids)) {
                     $wsids = array(0);
                 }
                 $data = array();
@@ -282,37 +253,31 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 $optplist=array();
                 //retrieve all priced options at once to avoid duplication of existing
                 //due to cache miss
-                foreach ($this->_optpriceinfo[$confopt] as $opdef)
-                {
-                   $opinf = explode(":", $opdef);
-                    $vlist=explode('//',$opinf[0]);
-                    $optvlist=array_merge($optvlist,$vlist);
-                    if (count($opinf) < 3)
-                    {
-                       // if optpriceinfo has no is_percent, force to 0
+                foreach ($this->_optpriceinfo[$confopt] as $opdef) {
+                    $opinf = explode(":", $opdef);
+                    $vlist=explode('//', $opinf[0]);
+                    $optvlist=array_merge($optvlist, $vlist);
+                    if (count($opinf) < 3) {
+                        // if optpriceinfo has no is_percent, force to 0
                         $opinf[] = 0;
                     }
-                    foreach($vlist as $v) {
+                    foreach ($vlist as $v) {
                         $optplist[$v] = array($opinf[1],$opinf[2]);
                     }
                 }
                 $optvlist=array_unique($optvlist);
-                $optids = $this->getOptionIds($attrid, 0,$optvlist);
+                $optids = $this->getOptionIds($attrid, 0, $optvlist);
                 unset($optvlist);
 
-                foreach ($optids as $val=>$optid)
-                {
-                       // generate price info for each given website
-                   foreach ($wsids as $wsid)
-                   {
-
-
-                        $data[] = $psaid;
-                        $data[] = $optid;
-                        $data[] = $optplist[$val][0];
-                        $data[] = $optplist[$val][1];
-                        $data[] = $wsid;
-                        $ins[] = "(?,?,?,?,?)";
+                foreach ($optids as $val=>$optid) {
+                    // generate price info for each given website
+                   foreach ($wsids as $wsid) {
+                       $data[] = $psaid;
+                       $data[] = $optid;
+                       $data[] = $optplist[$val][0];
+                       $data[] = $optplist[$val][1];
+                       $data[] = $wsid;
+                       $ins[] = "(?,?,?,?,?)";
                    }
                 }
 
@@ -325,8 +290,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $idx++;
         }
         unset($confopts);
-        switch ($matchmode)
-        {
+        switch ($matchmode) {
             case "none":
                 break;
             case "auto":
@@ -351,8 +315,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 break;
         }
         // always clear current simples
-        if (count($this->_currentsimples) > 0)
-        {
+        if (count($this->_currentsimples) > 0) {
             unset($this->_currentsimples);
             $this->_currentsimples = array();
         }
@@ -361,8 +324,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function processColumnList(&$cols, $params = null)
     {
-        if (!in_array("options_container", $cols))
-        {
+        if (!in_array("options_container", $cols)) {
             $cols = array_unique(array_merge($cols, array("options_container")));
             $this->_use_defaultopc = true;
             $this->log("no options_container set, defaulting to :Block after product info", "startup");
@@ -374,7 +336,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink");
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Product Type Import";
     }

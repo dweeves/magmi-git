@@ -1,6 +1,5 @@
 <?php
-if (!defined("DIRSEP"))
-{
+if (!defined("DIRSEP")) {
     define("DIRSEP", DIRECTORY_SEPARATOR);
 }
 
@@ -36,33 +35,25 @@ class Properties
 
     public function load($file)
     {
-        if (!file_exists($file))
-        {
+        if (!file_exists($file)) {
             return;
             // throw new FileNotFoundException();
         }
-        try
-        {
+        try {
             $this->inifile = $file;
             $this->_props = parse_ini_file($this->inifile, true);
-            foreach ($this->_props as $sec => $data)
-            {
-                foreach ($data as $k => $v)
-                {
-                    foreach ($this->_specialchars as $spch => $alias)
-                    {
+            foreach ($this->_props as $sec => $data) {
+                foreach ($data as $k => $v) {
+                    foreach ($this->_specialchars as $spch => $alias) {
                         $newv = str_replace($alias, $spch, $v);
-                        if ($newv != $v)
-                        {
+                        if ($newv != $v) {
                             break;
                         }
                     }
                     $this->_props[$sec][$k] = $newv;
                 }
             }
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw new InvalidPropertiesException();
         }
     }
@@ -70,11 +61,9 @@ class Properties
     public function getIniStruct($arr)
     {
         $conf = array();
-        foreach ($arr as $k => $v)
-        {
-            list($section,$value) = explode(":", $k, 2);
-            if (!isset($conf[$section]))
-            {
+        foreach ($arr as $k => $v) {
+            list($section, $value) = explode(":", $k, 2);
+            if (!isset($conf[$section])) {
                 $conf[$section] = array();
             }
             $conf[$section][$value] = $v;
@@ -84,8 +73,7 @@ class Properties
 
     public function save($fname = null)
     {
-        if ($fname == null)
-        {
+        if ($fname == null) {
             $fname = $this->inifile;
         }
         return $this->write_ini_file($this->_props, $fname, true);
@@ -93,68 +81,52 @@ class Properties
 
     public function esc($str)
     {
-        foreach ($this->_specialchars as $spch => $alias)
-        {
+        foreach ($this->_specialchars as $spch => $alias) {
             $str = str_replace($spch, $alias, $str);
         }
         return $str;
     }
 
-    public function write_ini_file($assoc_arr, $path, $has_sections = FALSE)
+    public function write_ini_file($assoc_arr, $path, $has_sections = false)
     {
         $content = "";
-        if (count($assoc_arr) > 0)
-        {
-            if ($has_sections)
-            {
-                foreach ($assoc_arr as $key => $elem)
-                {
+        if (count($assoc_arr) > 0) {
+            if ($has_sections) {
+                foreach ($assoc_arr as $key => $elem) {
                     $content .= "[" . $key . "]\n";
-                    foreach ($elem as $key2 => $elem2)
-                    {
-                        if (is_array($elem2))
-                        {
+                    foreach ($elem as $key2 => $elem2) {
+                        if (is_array($elem2)) {
                             $celem2 = count($elem2);
-                            for ($i = 0; $i < $celem2; $i++)
-                            {
+                            for ($i = 0; $i < $celem2; $i++) {
                                 $content .= $key2 . "[] = \"" . $this->esc($elem2[$i]) . "\"\n";
                             }
+                        } elseif ($elem2 == "") {
+                            $content .= $key2 . " = \n";
+                        } else {
+                            $content .= $key2 . " = \"" . $this->esc($elem2) . "\"\n";
                         }
-                        else
-                            if ($elem2 == "")
-                                $content .= $key2 . " = \n";
-                            else
-                                $content .= $key2 . " = \"" . $this->esc($elem2) . "\"\n";
                     }
                 }
-            }
-            else
-            {
-                foreach ($assoc_arr as $key => $elem)
-                {
-                    if (is_array($elem))
-                    {
+            } else {
+                foreach ($assoc_arr as $key => $elem) {
+                    if (is_array($elem)) {
                         $celem = count($elem);
-                        for ($i = 0; $i < $celem; $i++)
-                        {
+                        for ($i = 0; $i < $celem; $i++) {
                             $content .= $key . "[] = \"" . $this->esc($elem[$i]) . "\"\n";
                         }
+                    } elseif ($elem == "") {
+                        $content .= $key . " = \n";
+                    } else {
+                        $content .= $key . " = \"" . $this->esc($elem) . "\"\n";
                     }
-                    else
-                        if ($elem == "")
-                            $content .= $key . " = \n";
-                        else
-                            $content .= $key . " = \"" . $this->esc($elem) . "\"\n";
                 }
             }
         }
 
-        if (!$handle = fopen($path, 'w'))
-        {
+        if (!$handle = fopen($path, 'w')) {
             return false;
         }
-        if (!fwrite($handle, $content))
-        {
+        if (!fwrite($handle, $content)) {
             return false;
         }
         @chmod($path, 0664);
@@ -180,25 +152,19 @@ class Properties
      */
     public function get($secname, $pname, $default = null)
     {
-        if (isset($this->_props[$secname]) && isset($this->_props[$secname][$pname]))
-        {
+        if (isset($this->_props[$secname]) && isset($this->_props[$secname][$pname])) {
             $v = $this->_props[$secname][$pname];
             return $v;
-        }
-        else
-        {
+        } else {
             return $default;
         }
     }
 
     public function getsection($secname)
     {
-        if (isset($this->_props[$secname]))
-        {
+        if (isset($this->_props[$secname])) {
             return $this->_props[$secname];
-        }
-        else
-        {
+        } else {
             return array();
         }
     }
@@ -210,8 +176,7 @@ class Properties
 
     public function removeSection($secname)
     {
-        if ($this->hasSection($secname))
-        {
+        if ($this->hasSection($secname)) {
             unset($this->_props[$secname]);
         }
     }

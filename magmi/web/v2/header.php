@@ -10,7 +10,7 @@ require_once("menuclass.php");?>
       <div class="navbar-header menu-body" >
         <ul class="nav nav-tabs">
         <li><a href="javascript:void(0)" id="baseconf">Setup</a></li>
-        <?php if(file_exists("../../conf/magmi.ini")):?>
+        <?php if (file_exists("../../conf/magmi.ini")):?>
             <li><a href="javascript:void(0)" id="profiles">Profiles</a></li>
         <?php endif; ?>
         </ul>
