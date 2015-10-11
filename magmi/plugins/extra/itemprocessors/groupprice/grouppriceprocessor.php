@@ -20,6 +20,8 @@ class grouppriceprocessor extends Magmi_ItemProcessor
         $table_name = $this->tablename("catalog_product_entity_group_price");
         $group_cols = array_intersect(array_keys($this->_groups), array_keys($item));
 
+        $reusableIds = array();
+        
         if (!empty($group_cols)) {
             $website_ids = $this->_singleStore && $this->_priceScope ? $this->getItemWebsites($item) : array(0);
             $group_ids = array();
@@ -28,8 +30,21 @@ class grouppriceprocessor extends Magmi_ItemProcessor
                     $group_ids[] = $this->_groups[$key]['id'];
                 }
             }
-
+            
             if (!empty($group_ids)) {
+                
+                $sql = 'SELECT * FROM ' . $table_name . '
+                              WHERE entity_id=?
+                                AND customer_group_id IN (' . implode(', ', $group_ids) . ')
+                                AND website_id IN (' . implode(', ', $website_ids) . ')';
+                $rows = $this->select($sql, array($params['product_id']))->fetchAll();
+                
+                foreach ($rows as $row){
+                    $reusableIds[] = $row['value_id'];
+                }
+                
+                
+                //Deleting the records from the table is the best way to do it as we need to handle removed rows, however perhaps we can re-used the IDs...
                 $sql = 'DELETE FROM ' . $table_name . '
                               WHERE entity_id=?
                                 AND customer_group_id IN (' . implode(', ', $group_ids) . ')
@@ -38,7 +53,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
             }
 
             $sql = 'INSERT INTO ' . $table_name .
-            ' (entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
+            ' (value_id,entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
             $data=array();
             $inserts=array();
             foreach ($group_cols as $key) {
@@ -47,7 +62,8 @@ class grouppriceprocessor extends Magmi_ItemProcessor
                     $group_id = $this->_groups[$key]['id'];
 
                     foreach ($website_ids as $website_id) {
-                        $inserts[] = '(?,?,?,?,?)';
+                        $inserts[] = '(?,?,?,?,?,?)';
+                        $data[] = count($reusableIds) == 0 ? 0 : array_pop($reusableIds);
                         $data[] = $params['product_id'];
                         $data[] = 0;
                         $data[] = $group_id;
