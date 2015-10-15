@@ -31,9 +31,10 @@ class Magmi_Auth extends DBHelper {
         $user = $this->_conf->get("DATABASE","user");
         $pass = $this->_conf->get("DATABASE","password");
         $port = $this->_conf->get("DATABASE","port", "3306");
+		$socket = $this->_conf->get("DATABASE","unix_socket", false);
         
 		try {
-			$this->initDb($host, $dbname, $user, $pass, $port);        
+			$this->initDb($host, $dbname, $user, $pass, $port, $socket);        
 			$this->tablename = $this->_conf->get("DATABASE", "table_prefix") . "admin_user";
 			$this->_hasDB = true;
 		}catch (Exception $e){
