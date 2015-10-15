@@ -20,4 +20,9 @@ But devil is in the details and i don't have much time doing an extensive test s
 
 So , if you are using Magento CE 1.8.x or CE 1.9.x , please provide bug reports for any found defects or any incompatibility you might have noticed.
 
+Authentication
+==================
 
+Following previous issues with the mis-use of Magmi in an insecure way, Magmi now contains built-in authentication.
+
+Once you have provided DB details and Magmi can connect to the DB, you will need to login using a set of Magento admin credentials to use Magmi. If Magmi has not yet been configured to connect, then the username and password are both 'magmi'

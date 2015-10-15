@@ -17,6 +17,7 @@ class Magmi_Auth extends DBHelper {
     private $pass;
     private $tablename;
     protected $_conf;
+	protected $_hasDB = false;
     
     public function __construct($user,$pass){
         parent::__construct();
@@ -30,13 +31,21 @@ class Magmi_Auth extends DBHelper {
         $user = $this->_conf->get("DATABASE","user");
         $pass = $this->_conf->get("DATABASE","password");
         $port = $this->_conf->get("DATABASE","port", "3306");
+		$socket = $this->_conf->get("DATABASE","unix_socket", false);
         
-        $this->initDb($host, $dbname, $user, $pass, $port, $socket, $conn, $debug);        
-        $this->tablename = $this->_conf->get("DATABASE", "table_prefix") . "admin_user";
+		try {
+			$this->initDb($host, $dbname, $user, $pass, $port, $socket);        
+			$this->tablename = $this->_conf->get("DATABASE", "table_prefix") . "admin_user";
+			$this->_hasDB = true;
+		}catch (Exception $e){
+			$this->_hasDB = false;
+		}
         
     }
     
     public function authenticate(){
+		if (!$this->_hasDB) return ($this->user == 'magmi' && $this->pass == 'magmi');
+		
         $result = $this->select("SELECT * FROM {$this->tablename} WHERE username = ?",array($this->user))->fetch(PDO::FETCH_ASSOC);
         return $this->validatePass($result['password'],$this->pass);
     }
