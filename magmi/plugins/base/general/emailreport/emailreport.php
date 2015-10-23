@@ -40,22 +40,55 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
 
         $attachments = $this->_attach;
         if ($attachments !== false) {
-            for ($i = 0; $i < count($attachments); $i++) {
-                if (is_file($attachments[$i])) {
-                    $fileatt = $attachments[$i];
+
+            //Should we zip them?
+            $zip = $this->getParam("EMAILREP:attachcsv",false);
+
+	    if ($zip){
+                $archive = new ZipArchive();
+                $fname = sys_get_temp_dir() . '/report.zip';
+		if ($archive->open($fname,ZipArchive::OVERWRITE) === true){
+		    for ($i = 0; $i < count($attachments); $i++){
+			if (!is_file($attachments[$i])) continue;
+			$fileatt_name = explode("/",$attachments[$i]);
+			$fileatt_name = array_pop($fileatt_name);
+			$archive->addFile($attachments[$i],$fileatt_name);
+                    }
+                    $zip->close();
+
+                    $fileatt = $fname;
                     $fileatt_type = "application/octet-stream";
-                    $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
-                        $attachments[$i], '/') + 1;
-                    $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
-
-                    $file = fopen($fileatt, 'rb');
-                    $data = fread($file, filesize($fileatt));
-                    fclose($file);
-
+                    $fileatt_name = "report.zip";
+                    $file = fopen($fileatt,'rb');
+                    $data = fread($file,filesize($fileatt));
+		    fclose($file);
                     $data = chunk_split(base64_encode($data));
 
                     $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
                          " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
+		}else{
+                    $email_message .= "\n\nThere was a problem compressing your report\n\n";
+                }
+
+            }else{
+
+                for ($i = 0; $i < count($attachments); $i++) {
+                    if (is_file($attachments[$i])) {
+                        $fileatt = $attachments[$i];
+                        $fileatt_type = "application/octet-stream";
+                        $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
+                            $attachments[$i], '/') + 1;
+                        $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
+
+                        $file = fopen($fileatt, 'rb');
+                        $data = fread($file, filesize($fileatt));
+                        fclose($file);
+
+                        $data = chunk_split(base64_encode($data));
+
+                        $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
+                             " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
+                    }
                 }
             }
         }
