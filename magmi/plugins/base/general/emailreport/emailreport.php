@@ -50,7 +50,7 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
 		if ($archive->open($fname,ZipArchive::OVERWRITE) === true){
 		    for ($i = 0; $i < count($attachments); $i++){
 			if (!is_file($attachments[$i])) continue;
-			$fileatt_name = explode("/",$attachments[$i]);
+			$fileatt_name = explode(DIRECTORY_SEPARATOR,$attachments[$i]);
 			$fileatt_name = array_pop($fileatt_name);
 			$archive->addFile($attachments[$i],$fileatt_name);
                     }
