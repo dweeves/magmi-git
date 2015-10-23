@@ -54,7 +54,7 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
 			$fileatt_name = array_pop($fileatt_name);
 			$archive->addFile($attachments[$i],$fileatt_name);
                     }
-                    $zip->close();
+                    $archive->close();
 
                     $fileatt = $fname;
                     $fileatt_type = "application/octet-stream";
