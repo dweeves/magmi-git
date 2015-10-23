@@ -43,7 +43,7 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
 
             //Should we zip them?
             $zip = $this->getParam("EMAILREP:attachcsv",false);
-
+	    $this->log("Zip: $zip", "info");	
 	    if ($zip){
                 $archive = new ZipArchive();
                 $fname = sys_get_temp_dir() . '/report.zip';
