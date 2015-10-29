@@ -49,13 +49,11 @@ class Magmi_Auth extends DBHelper {
         $result = $this->select("SELECT * FROM {$this->tablename} WHERE username = ?",array($this->user))->fetch(PDO::FETCH_ASSOC);
         return $this->validatePass($result['password'],$this->pass);
     }
-    
+
     private function validatePass($hash,$pass){
         $hash = explode(":",$hash);
-        
-        $check = md5($hash[1] . $pass);
-        
-        return $check == $hash[0];
+
+        return md5($hash[1] . $pass) == $hash[0] || hash('sha256', $hash[1] . $pass);
     }
     
 }
