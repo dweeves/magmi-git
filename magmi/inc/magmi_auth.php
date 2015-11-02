@@ -53,7 +53,7 @@ class Magmi_Auth extends DBHelper {
     private function validatePass($hash,$pass){
         $hash = explode(":",$hash);
 
-        return md5($hash[1] . $pass) == $hash[0] || hash('sha256', $hash[1] . $pass);
+        return md5($hash[1] . $pass) === $hash[0] || hash('sha256', $hash[1] . $pass) === $hash[0];
     }
     
 }
