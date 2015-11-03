@@ -5,7 +5,7 @@ $conf = Magmi_Config::getInstance();
 $conf->load();
 
 $selected = $conf->get('DATABASE', 'resource');
-$magentoConfig = new SimpleXMLElement(file_get_contents($conf->get('MAGENTO', 'basedir').'app/etc/local.xml'));
+$magentoConfig = new SimpleXMLElement(file_get_contents($conf->get('MAGENTO', 'basedir').'/app/etc/local.xml'));
 foreach ($magentoConfig->global->resources->children() as $resource) {
     $name = $resource->getName();
     if ($name != 'db') {
