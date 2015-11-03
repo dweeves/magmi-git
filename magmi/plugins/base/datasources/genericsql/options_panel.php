@@ -52,8 +52,7 @@ dbt.observe('change',function(ev)
 			new Ajax.Updater('options_container','ajax_pluginconf.php',{
 				parameters:{file:$('SQL:dbtype').value+'_options.php',
 							plugintype:'datasources',
-                            token:'<?php echo $_SESSION['token']?>',
-						    pluginclass:'<?php echo get_class($this->_plugin)?>',
+                            pluginclass:'<?php echo get_class($this->_plugin)?>',
 						    profile:'<?php echo $this->getConfig()->getProfile()?>'
 						    }});
 		}

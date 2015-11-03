@@ -11,8 +11,7 @@ require_once("../engines/magmi_utilityengine.php");
 			engine:'magmi_utilityengine:Magmi_UtilityEngine',
 			pluginclass:pclass,
 			plugintype:'utilities',
-			profile:'__utilities__',
-            token:'<?php echo $_SESSION['token']?>'};
+			profile:'__utilities__'};
 		getPluginParams(params,pparams);
 
 		new Ajax.Updater("pluginoptions:"+pclass,"ajax_pluginconf.php",{parameters:params});
@@ -26,7 +25,6 @@ require_once("../engines/magmi_utilityengine.php");
 	runUtility=function(pclass)
 	{
 		var pparams={
-				token: '<?php echo $_SESSION["token"]; ?>',
 				engine:'magmi_utilityengine:Magmi_UtilityEngine',
 				pluginclass:pclass
 				};

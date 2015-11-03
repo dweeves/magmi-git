@@ -105,7 +105,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 </div>
 <form method="POST" id="runmagmi"
-	action="magmi.php?ts=<?php echo time()?>&token=<?php echo $_SESSION["token"] ?>" <?php if (!$conf_ok) {
+	action="magmi.php?ts=<?php echo time()?>" <?php if (!$conf_ok) {
     ?>
 	style="display: none" <?php 
 }?>>
@@ -168,7 +168,6 @@ $cansock = !($dmysqlsock === false);
 	<div class="container_12" id="common_config">
 		<div class="grid_4 col">
 			<h3>Database</h3>
-	<input type="hidden" name="token" value="<?php echo $_SESSION["token"]?>">
 	<?php $curconn=$conf->get("DATABASE", "connectivity", "net");?>
 			<ul class="formline">
 				<li class="label">Connectivity</li>

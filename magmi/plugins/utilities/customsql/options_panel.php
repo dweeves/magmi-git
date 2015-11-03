@@ -46,8 +46,7 @@ ft.observe('change',function(ev)
 			new Ajax.Updater('fileoptions','ajax_pluginconf.php',{
 				parameters:{file:'filevalues.php',
 							plugintype:'utilities',
-                            token:'<?php echo $_SESSION['token']?>',
-						    pluginclass:'<?php echo get_class($this->_plugin)?>',
+                            pluginclass:'<?php echo get_class($this->_plugin)?>',
 						    profile:'<?php echo $this->getConfig()->getProfile()?>',
 						    'UTCSQL:queryfile':$F('UTCSQL:queryfile')
 						    }});

@@ -6,7 +6,7 @@ $_SESSION["last_runned_profile"] = $profile;
 session_write_close();
 ?>
 <script type="text/javascript">
-	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine',token:'<?php echo $_SESSION["token"]?>'};
+	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine'?>'};
 	<?php
 foreach ($_REQUEST as $k => $v) {
     echo "imp_params['$k']='$v';\n";
@@ -35,7 +35,7 @@ foreach ($_REQUEST as $k => $v) {
 
 	updateTime=function(tdiv,xprefix)
 	{
-		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix,token:'<?php echo $_SESSION['token']?>'},
+		new Ajax.Updater(tdiv,'ajax_gettime.php',{parameters:{prefix:xprefix},
 			onComplete:function(){$(tdiv).show();}});
 	};
 
@@ -91,7 +91,7 @@ foreach ($_REQUEST as $k => $v) {
 			window._sr=null;
 		}*/
 				new Ajax.Updater("runlog","magmi_progress.php",{evalScripts:true,
-					parameters:{logfile:imp_params['logfile'],token:'<?php echo $_SESSION['token']?>'}
+					parameters:{logfile:imp_params['logfile']}
 				});;
 	};
 

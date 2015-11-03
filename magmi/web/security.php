@@ -1,16 +1,23 @@
 <?php
-if (session_id()==null) {
-    session_start();
-    $CLOSE_AFTER_SECURITY_CHECK = true;
+require_once(dirname(dirname(__FILE__))."/inc/magmi_auth.php");
+function authenticate($username="",$password=""){
+
+    $auth = new Magmi_Auth($username,$password);
+
+    return $auth->authenticate();
+}
+
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+    header('WWW-Authenticate:Basic realm="Magmi"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You must be logged in to use Magmi';
+    die();
 } else {
-    $CLOSE_AFTER_SECURITY_CHECK = false;
-}
-if (!isset($_REQUEST["token"]) || !isset($_SESSION["token"]) || $_REQUEST["token"]!==$_SESSION["token"]) {
-    header("HTTP/1.0 404 Not Found");
-    echo "STK:".$_SESSION["token"];
-    echo "RTK:".$_REQUEST["token"];
-    exit;
-}
-if ($CLOSE_AFTER_SECURITY_CHECK) {
-    session_write_close();
+    if (!authenticate($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
+        header('WWW-Authenticate: Basic realm="Magmi"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'You must be logged in to use Magmi';
+        die();
+    }
+
 }

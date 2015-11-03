@@ -45,8 +45,7 @@
 			new Ajax.Updater('csvds_filelist','ajax_pluginconf.php',{
 			parameters:{file:'csvds_filelist.php',
 						plugintype:'utilities',
-                        token:'<?php echo $_SESSION['token']?>',
-					    pluginclass:'<?php echo get_class($this->_plugin)?>',
+                        pluginclass:'<?php echo get_class($this->_plugin)?>',
 					    profile:'<?php echo $this->getConfig()->getProfile()?>',
 					    'CSV:basedir':$F('CSV:basedir')}});
 			});

@@ -46,7 +46,7 @@ if (file_exists($logfile)) {
 		else
 		{
 			new Ajax.Updater(detdiv,'progress_details.php',
-					{parameters:{'key':dtype,'PHPSESSID':'<?php echo session_id()?>',token:'<?php echo $_SESSION['token']?>'},
+					{parameters:{'key':dtype,'PHPSESSID':'<?php echo session_id()?>'},
 					 onComplete:function(f){var sb = new ScrollBox($(detdiv),{auto_hide:true});
 						$(detdiv).addClassName("loaded");
 						$(dtype+'_link').update("Hide Details");

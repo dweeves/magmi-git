@@ -18,8 +18,7 @@ handle_auth=function()
 			new Ajax.Updater('<?php echo $prefix ?>:csvds_filelist','ajax_pluginconf.php',{
 			parameters:{file:'csvds_filelist.php',
 						plugintype:'datasources',
-                        token:'<?php echo $_SESSION['token']?>',
-					    pluginclass:'<?php echo get_class($plugin)?>',
+                        pluginclass:'<?php echo get_class($plugin)?>',
 					    profile:'<?php echo $self->getConfig()->getProfile()?>',
 					    '<?php echo $prefix ?>:basedir':$F('<?php echo $prefix ?>:basedir')}});
 			});
