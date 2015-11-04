@@ -944,9 +944,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
                 $scope=$attrdesc["is_global"];
-                if ($attrdesc["is_configurable"]==1) {
-                    $scope=0;
-                }
+				if ($attrcode != "price" && $attrdesc["is_configurable"]==1) {
+						$scope=0;
+				}
 
                 $store_ids = $this->getItemStoreIds($item, $scope);
 
