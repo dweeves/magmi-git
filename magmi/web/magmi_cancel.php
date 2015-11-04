@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 header('Pragma: public'); // required
 header('Expires: -1'); // no cache
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');

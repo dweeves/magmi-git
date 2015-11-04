@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 require_once("../inc/magmi_statemanager.php");
 $tid = $_REQUEST["traceid"];
 $tracefile = Magmi_StateManager::getTraceFile();

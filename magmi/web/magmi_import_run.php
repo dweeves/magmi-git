@@ -1,4 +1,5 @@
 	<?php
+    require_once("security.php");
 ini_set('gpc_magic_quotes', 0);
     require_once("security.php");
 $profile = isset($_REQUEST["profile"]) ? strip_tags($_REQUEST["profile"]) : 'default';

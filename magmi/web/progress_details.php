@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 session_start();
 $key = $_REQUEST["key"];
 $data = $_SESSION["log_$key"];

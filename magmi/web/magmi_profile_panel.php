@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 if (isset($_REQUEST["profile"])) {
     $profile = strip_tags($_REQUEST["profile"]);
 } else {

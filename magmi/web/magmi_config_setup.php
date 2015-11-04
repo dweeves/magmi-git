@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 require_once("magmi_config.php");
 require_once("magmi_statemanager.php");
 require_once("dbhelper.class.php");

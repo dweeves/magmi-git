@@ -1,4 +1,5 @@
 <?php
+require_once("security.php");
 $profile = $_REQUEST["profile"];
 $dslist = $_REQUEST["PLUGINS_DATASOURCES:class"];
 $genlist = $_REQUEST["PLUGINS_GENERAL:classes"];
