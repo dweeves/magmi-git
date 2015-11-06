@@ -1,4 +1,4 @@
-magmi-git
+magmi-git 0.7.22
 =========
 
 Magmi GitHub
