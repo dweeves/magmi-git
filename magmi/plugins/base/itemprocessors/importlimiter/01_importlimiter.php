@@ -144,7 +144,7 @@ class importlimiter extends Magmi_ItemProcessor
     {
         $this->parseRanges($this->getParam("LIMITER:ranges", ""));
         $this->parseFilters($this->getParam("LIMITER:filters", ""));
-        $this->_col_filter = explode(",", $this->getParam("LIMITER:col_filter"));
+        $this->_col_filter = array_filter(explode(",", $this->getParam("LIMITER:col_filter")));
         return true;
     }
 
