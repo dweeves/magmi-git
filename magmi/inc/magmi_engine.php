@@ -46,6 +46,11 @@ abstract class Magmi_Engine extends DbHelper
         mb_internal_encoding("UTF-8");
     }
 
+    public function __toString()
+    {
+        return 'Magmi_Engine';
+    }
+
     /**
      * Engine initialization @param params : key/value array of initialization parameters
      */
