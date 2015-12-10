@@ -1,0 +1,9 @@
+### php-cgi/fpm under Apache does not pass HTTP Basic user/pass to PHP by default
+
+<IfModule mod_rewrite.c>
+
+RewriteEngine on
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+</IfModule>
