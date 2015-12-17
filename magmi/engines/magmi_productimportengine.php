@@ -1065,7 +1065,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     // if handled value is a "DELETE" or a NULL , which will also be removed
                     if ($ovalue == '__MAGMI_DELETE__' )
                     {
-                        $deletes[] = $attid;
+                        $deletes[$store_id][] = $attid;
                         // do not handle value in insert
                         $ovalue = null;
                     }
@@ -1119,10 +1119,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             //if we have values to delete
             if (!empty($deletes))
             {
-                $sidlist = implode(",", $store_ids);
-                $attidlist = implode(",", $deletes);
-                $sql = "DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
-                $this->delete($sql, array($this->getProductEntityType(),$pid));
+                foreach ($deletes as $store_id => $to_delete)
+                {
+                    $sidlist = $store_id;
+                    $attidlist = implode(",", $to_delete);
+                    $sql = "DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
+                    $this->delete($sql, array($this->getProductEntityType(),$pid));
+                }
             }
             //if no values inserted or deleted on a new item, we have a problem
             if (empty($deletes) && empty($inserts) && $isnew)
