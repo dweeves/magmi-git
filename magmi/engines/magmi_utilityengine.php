@@ -10,13 +10,12 @@
  */
 
 /* use external file for db helper */
-require_once ("magmi_engine.php");
-require_once ("magmi_pluginhelper.php");
+require_once("magmi_engine.php");
+require_once("magmi_pluginhelper.php");
 
 /* Magmi ProductImporter is now a Magmi_Engine instance */
 class Magmi_UtilityEngine extends Magmi_Engine
 {
-
     /**
      * constructor
      *
@@ -64,14 +63,10 @@ class Magmi_UtilityEngine extends Magmi_Engine
         $this->_pluginclasses = array("utilities"=>array($params["pluginclass"]));
 
         $this->createPlugins("__utilities__", $params);
-        foreach ($this->_activeplugins["utilities"] as $pinst)
-        {
-            try
-            {
+        foreach ($this->_activeplugins["utilities"] as $pinst) {
+            try {
                 $pinst->runUtility();
-            }
-            catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 $this->logException($e);
             }
         }

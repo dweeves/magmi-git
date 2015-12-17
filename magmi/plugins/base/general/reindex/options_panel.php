@@ -6,7 +6,7 @@
 <div class="formline">
 	<span class="label">PHP CLI command</span> <span class="value"><input
 		type="text" name="REINDEX:phpcli"
-		value="<?php echo $this->getParam("REINDEX:phpcli","php")?>"></input></span>
+		value="<?php echo $this->getParam("REINDEX:phpcli", "php")?>"></input></span>
 </div>
 <hr />
 <input type="hidden" name="REINDEX:indexes" id="indexes"
@@ -19,13 +19,16 @@
 	<?php
 $idxarr = explode(",", $this->_plugin->getIndexList());
 $indexes = explode(",", $this->getParam("REINDEX:indexes"));
-foreach ($idxarr as $indexname)
-{
+foreach ($idxarr as $indexname) {
     ?>
 		<li><input type="checkbox" name="<?php echo $indexname?>"
-			class="_magindex" <?php if(in_array($indexname,$indexes)){?>
-			checked=checked <?php }?>><?php echo $indexname?></li>
-	<?php }?>
+			class="_magindex" <?php if (in_array($indexname, $indexes)) {
+    ?>
+			checked=checked <?php 
+}
+    ?>><?php echo $indexname?></li>
+	<?php 
+}?>
 	</ul>
 </div>
 <script type="text/javascript">

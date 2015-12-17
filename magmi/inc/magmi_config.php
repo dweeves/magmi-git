@@ -1,5 +1,5 @@
 <?php
-require_once ("properties.php");
+require_once("properties.php");
 
 /**
  * Directory based configuration object
@@ -22,8 +22,7 @@ class DirbasedConfig extends Properties
 
     public function get($secname, $pname, $default = null)
     {
-        if (!isset($this->_props))
-        {
+        if (!isset($this->_props)) {
             $this->load();
         }
         return parent::get($secname, $pname, $default);
@@ -36,12 +35,9 @@ class DirbasedConfig extends Properties
 
     public function getLastSaved($fmt)
     {
-        if(file_exists($this->inifile))
-        {
+        if (file_exists($this->inifile)) {
             $lastsaved=strftime($fmt, filemtime($this->inifile));
-        }
-        else
-        {
+        } else {
             $lastsaved="never";
         }
         return $lastsaved;
@@ -49,25 +45,21 @@ class DirbasedConfig extends Properties
 
     public function load($name = null)
     {
-       if(!isset($this->_props))
-       {
-        if ($name == null)
-        {
-            $name = $this->inifile;
-        }
+        if (!isset($this->_props)) {
+            if ($name == null) {
+                $name = $this->inifile;
+            }
 
-        if (!file_exists($name))
-        {
-            $this->save();
+            if (!file_exists($name)) {
+                $this->save();
+            }
+            parent::load($name);
         }
-        parent::load($name);
-       }
     }
 
     public function save($arr = null)
     {
-        if ($arr != null)
-        {
+        if ($arr != null) {
             $this->setPropsFromFlatArray($arr);
         }
         return parent::save($this->inifile);
@@ -75,8 +67,7 @@ class DirbasedConfig extends Properties
 
     public function saveTo($arr, $newdir)
     {
-        if (!file_exists($newdir))
-        {
+        if (!file_exists($newdir)) {
             mkdir($newdir, Magmi_Config::getInstance()->getDirMask());
         }
         $val = parent::save($newdir . DIRSEP . basename($this->_confname));
@@ -100,8 +91,7 @@ class ProfileBasedConfig extends DirbasedConfig
     {
         $subdir = ($this->_profile == "default" ? "" : DIRSEP . $this->_profile);
         $confdir = Magmi_Config::getInstance()->getConfDir()."$subdir";
-        if (!file_exists($confdir))
-        {
+        if (!file_exists($confdir)) {
             @mkdir($confdir, Magmi_Config::getInstance()->getDirMask());
         }
         return realpath($confdir);
@@ -123,17 +113,14 @@ class Magmi_Config extends DirbasedConfig
 {
     private static $_instance = null;
     public static $conffile = null;
-    protected $_default = TRUE;
+    protected $_default = true;
 
     public function getConfDir()
     {
-        if($this->_confname==null)
-        {
+        if ($this->_confname==null) {
             $confdir = realpath(dirname(dirname(__FILE__)) . DIRSEP . "conf");
             return $confdir;
-        }
-        else
-        {
+        } else {
             return $this->_basedir;
         }
     }
@@ -162,20 +149,17 @@ class Magmi_Config extends DirbasedConfig
     public function getMagentoDir()
     {
         $bd = $this->get("MAGENTO", "basedir");
-        if($bd!=null) {
+        if ($bd!=null) {
             $dp = $bd[0] == "." ? dirname(__FILE__) . "/" . $bd : $bd;
             return realpath($dp);
-        }
-        else
-        {
+        } else {
             return "../..";
         }
     }
 
     public static function getInstance()
     {
-        if (self::$_instance == null)
-        {
+        if (self::$_instance == null) {
             self::$_instance = new Magmi_Config();
         }
         return self::$_instance;
@@ -188,25 +172,20 @@ class Magmi_Config extends DirbasedConfig
 
     public function load($name = null)
     {
-        if($name!=null) {
+        if ($name!=null) {
             $this->inifile=$name;
         }
 
-        if(file_exists($this->inifile))
-        {
-                $conf=$this->inifile;
-                $this->_default=false;
-                parent::load($conf);
-                $this->_confname = basename($conf);
-                if($this->_confname!=$conf)
-                {
-                      $this->_basedir=dirname($conf);
-                }
-
-        }
-        else
-        {
-             $this->_default=true;
+        if (file_exists($this->inifile)) {
+            $conf=$this->inifile;
+            $this->_default=false;
+            parent::load($conf);
+            $this->_confname = basename($conf);
+            if ($this->_confname!=$conf) {
+                $this->_basedir=dirname($conf);
+            }
+        } else {
+            $this->_default=true;
         }
 
 
@@ -215,12 +194,9 @@ class Magmi_Config extends DirbasedConfig
 
     public function save($arr = null)
     {
-        if ($arr !== null)
-        {
-            foreach ($arr as $k => $v)
-            {
-                if (!preg_match("/\w+:\w+/", $k))
-                {
+        if ($arr !== null) {
+            foreach ($arr as $k => $v) {
+                if (!preg_match("/\w+:\w+/", $k)) {
                     unset($arr[$k]);
                 }
             }
@@ -232,11 +208,9 @@ class Magmi_Config extends DirbasedConfig
     {
         $proflist = array();
         $candidates = scandir($this->getConfDir());
-        foreach ($candidates as $candidate)
-        {
+        foreach ($candidates as $candidate) {
             if (is_dir($this->getConfDir() . DIRSEP . $candidate) && $candidate[0] != "." &&
-                 substr($candidate, 0, 2) != "__")
-            {
+                 substr($candidate, 0, 2) != "__") {
                 $proflist[] = $candidate;
             }
         }
@@ -246,7 +220,6 @@ class Magmi_Config extends DirbasedConfig
 
 class EnabledPlugins_Config extends ProfileBasedConfig
 {
-
     public function __construct($profile = "default")
     {
         parent::__construct("plugins.conf", $profile);
@@ -255,12 +228,10 @@ class EnabledPlugins_Config extends ProfileBasedConfig
     public function getEnabledPluginFamilies($typelist)
     {
         $btlist = array();
-        if (!is_array($typelist))
-        {
+        if (!is_array($typelist)) {
             $typelist = explode(",", $typelist);
         }
-        foreach ($typelist as $pfamily)
-        {
+        foreach ($typelist as $pfamily) {
             $btlist[$pfamily] = $this->getEnabledPluginClasses($pfamily);
         }
         return $btlist;
@@ -270,13 +241,10 @@ class EnabledPlugins_Config extends ProfileBasedConfig
     {
         $type = strtoupper($type);
         $cslist = $this->get("PLUGINS_$type", "classes");
-        if ($cslist == null)
-        {
+        if ($cslist == null) {
             $cslist = $this->get("PLUGINS_$type", "class");
             $epc = ($cslist == null ? array() : array($cslist));
-        }
-        else
-        {
+        } else {
             $epc = ($cslist == "" ? array() : explode(",", $cslist));
         }
         return $epc;

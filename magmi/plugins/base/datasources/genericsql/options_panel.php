@@ -7,10 +7,14 @@
 <?php $dbtype=$this->getParam("SQL:dbtype");?>
 <li class="label">Input DB Type</li>
 	<li><select name="SQL:dbtype" id="SQL:dbtype">
-			<option value="mysql" <?php if ($dbtype=="mysql"){?>
-				selected="selected" <?php }?>>MySQL</option>
-			<option value="other" <?php if ($dbtype=="other"){?>
-				selected="selected" <?php }?>>Other</option>
+			<option value="mysql" <?php if ($dbtype=="mysql") {
+    ?>
+				selected="selected" <?php 
+}?>>MySQL</option>
+			<option value="other" <?php if ($dbtype=="other") {
+    ?>
+				selected="selected" <?php 
+}?>>Other</option>
 	</select></li>
 </ul>
 <div id="options_container">
@@ -21,17 +25,24 @@
 	<li class="value">
 <?php $dr=$this->getParam("SQL:queryfile");?>
 <?php $sqlfiles=$this->getSQLFileList();?>
-<?php if(count($sqlfiles)>0){?>
+<?php if (count($sqlfiles)>0) {
+    ?>
 
 <select name="SQL:queryfile">
-	<?php foreach($sqlfiles as $curfile):?>
-	<option <?php if($curfile==$dr){?> selected=selected <?php }?>
+	<?php foreach ($sqlfiles as $curfile):?>
+	<option <?php if ($curfile==$dr) {
+    ?> selected=selected <?php 
+}
+    ?>
 				value="<?php echo $curfile?>"><?php echo basename($curfile)?></option>
 	<?php endforeach?>
 </select>
-<?php }else{?>
+<?php 
+} else {
+    ?>
 	<span class="error">No SQL files detected in <?php echo $this->getPluginDir()."/requests"?></span>
-<?php }?>
+<?php 
+}?>
 </li>
 </ul>
 <script type="text/javascript">
@@ -41,8 +52,7 @@ dbt.observe('change',function(ev)
 			new Ajax.Updater('options_container','ajax_pluginconf.php',{
 				parameters:{file:$('SQL:dbtype').value+'_options.php',
 							plugintype:'datasources',
-                            token:'<?php echo $_SESSION['token']?>',
-						    pluginclass:'<?php echo get_class($this->_plugin)?>',
+                            pluginclass:'<?php echo get_class($this->_plugin)?>',
 						    profile:'<?php echo $this->getConfig()->getProfile()?>'
 						    }});
 		}

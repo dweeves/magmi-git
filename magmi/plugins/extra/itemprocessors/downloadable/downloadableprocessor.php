@@ -1,6 +1,6 @@
 <?php
 
-class DownloadableProcessor extends Magmi_ItemProcessor
+class downloadableprocessor extends Magmi_ItemProcessor
 {
     protected $_filePath;
 
@@ -19,8 +19,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
     public function processItemBeforeId(&$item, $params = null)
     {
         // if item is not configurable, nothing to do
-        if ($item["type"] !== "downloadable")
-        {
+        if ($item["type"] !== "downloadable") {
             return true;
         }
 
@@ -30,26 +29,21 @@ class DownloadableProcessor extends Magmi_ItemProcessor
     public function processItemAfterId(&$item, $params = null)
     {
         // if item is not downloadable, nothing to do
-        if ($item["type"] !== "downloadable")
-        {
+        if ($item["type"] !== "downloadable") {
             return true;
         }
 
         $filename = $item["sku"] . ".zip";
         $sampleFilename = "sample_" . $item["sku"] . ".zip";
         // donnes à importer dans les liens des produits téléchargeable
-        if (isset($item["links"]))
-        {
-
+        if (isset($item["links"])) {
             $this->log($item["links"], "debug");
             $links = array();
             $str_links = explode(";", $item["links"]);
-            foreach ($str_links as $str_link)
-            {
+            foreach ($str_links as $str_link) {
                 $arr_link = explode(",", $str_link);
                 $link = array();
-                foreach ($arr_link as $astr_link)
-                {
+                foreach ($arr_link as $astr_link) {
                     $val = preg_split('/[\s:]+[\s]*/', $astr_link, 2);
                     $link[$val[0]] = $val[1];
                 }
@@ -62,52 +56,43 @@ class DownloadableProcessor extends Magmi_ItemProcessor
             $nbupdate = count($existingLinks);
             $nbdiff = count($links) - count($existingLinks);
             $updateLinks = array();
-            try
-            {
-                if ($nbdiff > 0) // update existing links and add new links (more in xml file than database)
-                {
+            try {
+                if ($nbdiff > 0) {
+                    // update existing links and add new links (more in xml file than database)
+
                     $addLinks = array();
 
-                    for ($j = $nbupdate; $j < count($links); $j++)
-                    {
+                    for ($j = $nbupdate; $j < count($links); $j++) {
                         $addLinks[] = $links[$j];
                     }
 
                     // ajoute les nouveaux liens
                     $i = 0;
 
-                    foreach ($addLinks as $addLink)
-                    {
-
-                        if ($addLink["file"] = $this->copyFile($addLink))
-                        {
+                    foreach ($addLinks as $addLink) {
+                        if ($addLink["file"] = $this->copyFile($addLink)) {
                             $addLink["link_id"] = $this->addLink($addLink, $pid);
                             $addLink["price_id"] = $this->addLinkPrice($addLink);
                             $addLink["title_id"] = $this->addLinkTitle($addLink);
-                            if ($addLink["sample"])
-                            {
+                            if ($addLink["sample"]) {
                                 $addLink["sample"] = $this->copyFile($addLink);
                             }
                         }
                         $i++;
                     }
-                }
-                elseif ($nbdiff < 0)
-                { // update existing and delete links (more in database than xml file)
+                } elseif ($nbdiff < 0) { // update existing and delete links (more in database than xml file)
                     $nbdiff = $nbdiff * -1; // number to delete
                     $nbupdate = count($existingLinks) - $nbdiff; // nb links to update = number of existing links - difference
                     $i = 0;
                     $deleteLinks = array();
-                    if (count($existingLinks))
-                    {
-
+                    if (count($existingLinks)) {
                         $i = 0;
 
                         $reverse = array_reverse($existingLinks);
-                        foreach ($reverse as $deletelink)
-                        {
-                            if ($i >= $nbdiff)
+                        foreach ($reverse as $deletelink) {
+                            if ($i >= $nbdiff) {
                                 break;
+                            }
                             $deleteLinks[] = $deletelink["link_id"];
                             $i++;
                         }
@@ -115,30 +100,26 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                     }
                 }
 
-                if (count($existingLinks))
-                {
+                if (count($existingLinks)) {
                     $i = 0;
-                    foreach ($existingLinks as $updatelink)
-                    {
-                        if ($i >= $nbupdate)
+                    foreach ($existingLinks as $updatelink) {
+                        if ($i >= $nbupdate) {
                             break;
+                        }
                         $links[$i]["link_id"] = $updatelink["link_id"];
                         $updateLinks[] = $links[$i];
                         $i++;
                     }
                 }
 
-                if (count($updateLinks))
-                {
-                    foreach ($updateLinks as $updateLink)
-                    {
-                        if ($updateLink["file"] = $this->copyFile($updateLink, $filename))
+                if (count($updateLinks)) {
+                    foreach ($updateLinks as $updateLink) {
+                        if ($updateLink["file"] = $this->copyFile($updateLink, $filename)) {
                             $this->updateLink($updateLink);
+                        }
                     }
                 }
-            }
-            catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 die($e->getMessage());
             }
         }
@@ -146,35 +127,28 @@ class DownloadableProcessor extends Magmi_ItemProcessor
 
     public function copyFile($link)
     {
-        if (preg_match("|.*?://.*|", $link["file"]))
-        {
+        if (preg_match("|.*?://.*|", $link["file"])) {
             $filename = $this->getFilename($link["file"]);
-        }
-        else
-        {
+        } else {
             $filename = basename($link["file"]);
         }
 
-        if ($filename)
-        {
+        if ($filename) {
             $destdir = $this->_filePath . $filename[0] . DIRSEP . $filename[1] . DIRSEP;
             $cpfilename = $destdir . $filename;
 
             @mkdir($this->_filePath . $filename[0], 0777);
             @mkdir($destdir, 0777);
 
-            if (preg_match("|.*?://.*|", $link["file"]))
-            {
-                if (is_file($cpfilename))
+            if (preg_match("|.*?://.*|", $link["file"])) {
+                if (is_file($cpfilename)) {
                     unlink($cpfilename);
+                }
                 $this->download($link["file"], $cpfilename);
-            }
-            else
-            {
+            } else {
                 $fileIdentical = false;
 
-                if (file_exists($cpfilename))
-                {
+                if (file_exists($cpfilename)) {
                     $sourceFileMTime = filemtime($link["file"]);
                     $sourceFileFSize = filesize($link["file"]);
                     $targetFileMTime = filemtime($cpfilename);
@@ -183,10 +157,8 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                     $fileIdentical = (($sourceFileMTime === $targetFileMTime) && ($sourceFileFSize === $targetFileFSize));
                 }
 
-                if (!$fileIdentical)
-                {
-                    if (!@copy($link["file"], $cpfilename))
-                    {
+                if (!$fileIdentical) {
+                    if (!@copy($link["file"], $cpfilename)) {
                         unlink($cpfilename);
                         @copy($link["file"], $cpfilename);
                     }
@@ -194,15 +166,11 @@ class DownloadableProcessor extends Magmi_ItemProcessor
                     if (file_exists($cpfilename)) {
                         touch($cpfilename, filemtime($link["file"]));
                     }
-                }
-                else
-                {
+                } else {
                     $this->log("Files where identical: skipped copying " . $link["file"] . " to " . $cpfilename, "info");
                 }
             }
-        }
-        else
-        {
+        } else {
             $this->log("Le fichier n' pas été trouvé à l'emplacement " . $link["file"], "warning");
             return false;
         }
@@ -222,8 +190,7 @@ class DownloadableProcessor extends Magmi_ItemProcessor
         $this->log("BEGIN Download " . $url, "warning");
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        if ($httpCode == 404)
-        {
+        if ($httpCode == 404) {
             throw new Exception("File " . $url . " not found !");
         }
         curl_exec($ch);
@@ -248,12 +215,9 @@ class DownloadableProcessor extends Magmi_ItemProcessor
     private function extractCustomHeader($start, $end, $header)
     {
         $pattern = '/' . $start . '(.*?)' . $end . '/';
-        if (preg_match($pattern, $header, $result))
-        {
+        if (preg_match($pattern, $header, $result)) {
             return $result[1];
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -287,13 +251,12 @@ class DownloadableProcessor extends Magmi_ItemProcessor
 		title = ?
 		WHERE dl.link_id = ?";
 
-        $this->update($sql, array($link["file"],$link["title"],$link["link_id"]));
+        $this->update($sql, array($link["file"], $link["title"], $link["link_id"]));
     }
 
     public function addLink($link, $pid)
     {
-        if ($link["is_shareable"] == "config")
-        {
+        if ($link["is_shareable"] == "config") {
             $link["is_shareable"] = 2;
         }
         $dl = $this->tablename('downloadable_link');

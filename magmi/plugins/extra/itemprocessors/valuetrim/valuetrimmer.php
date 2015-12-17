@@ -31,15 +31,11 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
      */
     public function getTrimmableCols($item)
     {
-        if (!$this->_scanned)
-        {
-            foreach (array_keys($item) as $col)
-            {
+        if (!$this->_scanned) {
+            foreach (array_keys($item) as $col) {
                 $ainfo = $this->getAttrInfo($col);
-                if (count($ainfo) > 0)
-                {
-                    if ($ainfo["frontend_input"] == "select" || $ainfo["frontend_input"] == "multiselect")
-                    {
+                if (count($ainfo) > 0) {
+                    if ($ainfo["frontend_input"] == "select" || $ainfo["frontend_input"] == "multiselect") {
                         $this->_totrim[$col] = $ainfo["frontend_input"];
                     }
                 }
@@ -53,20 +49,16 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
     {
         // get list of trimmable columns
         $tc = $this->getTrimmableCols($item);
-        foreach ($tc as $col => $mode)
-        {
+        foreach ($tc as $col => $mode) {
             // for select, just trim value
-            if ($mode == "select")
-            {
+            if ($mode == "select") {
                 $item[$col] = trim($item[$col]);
-            }
-            else
-            // for multiselect, recompose trimmed value list
-            {
+            } else {
+                // for multiselect, recompose trimmed value list
+
                 $sep = Magmi_Config::getInstance()->get("GLOBAL", "mutiselect_sep", ",");
                 $vt = explode($sep, $item[$col]);
-                foreach ($vt as &$v)
-                {
+                foreach ($vt as &$v) {
                     $v = trim($v);
                 }
                 $item[$col] = implode($sep, $vt);
@@ -83,7 +75,7 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
         return true;
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "Input Data Preprocessing";
     }

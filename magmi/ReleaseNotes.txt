@@ -1,4 +1,13 @@
 ------------------------------------------------
+-     RELEASE NOTES FOR MAGMI 0.7.23           -
+-------------------------------------------------
+
+
+This is the new official magmi release, it includes major security updates, among other changes!
+
+
+
+------------------------------------------------
 -     RELEASE NOTES FOR MAGMI 0.7.19           -
 -------------------------------------------------
 

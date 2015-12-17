@@ -13,7 +13,6 @@ require_once(__DIR__ . "/../../integration/inc/magmi_datapump.php");
 
 class Suite1Test extends PHPUnit_Framework_TestCase
 {
-
     public static function setupBeforeClass()
     {
         //copying magmi config to current test directory
@@ -112,7 +111,6 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             unset($item);
         }
         $dp->endImportSession();
-
     }
 
     public function testConfig()
@@ -291,7 +289,6 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             unset($item);
         }
         $dp->endImportSession();
-
     }
 
 
@@ -321,7 +318,6 @@ class Suite1Test extends PHPUnit_Framework_TestCase
             unset($item);
         }
         $dp->endImportSession();
-
     }
 
     public function testMassItem()
@@ -357,8 +353,8 @@ class Suite1Test extends PHPUnit_Framework_TestCase
 
         $dp = Magmi_DataPumpFactory::getDataPumpInstance("productimport");
         $dp->beginImportSession("limiter", "create", new FileLogger(__DIR__ . "/log_" . __FUNCTION__ . ".txt"));
-        $limiter=$dp->getEngine()->getPluginInstanceByClassName('itemprocessors','ImportLimiter');
-        $limiter->setParam("LIMITER:col_filter","sku,qty");
+        $limiter=$dp->getEngine()->getPluginInstanceByClassName('itemprocessors', 'ImportLimiter');
+        $limiter->setParam("LIMITER:col_filter", "sku,qty");
         $limiter->initialize($limiter->getParams());
         $item=array('sku'=>'S0001',
                     'description'=>'toto',
@@ -366,7 +362,6 @@ class Suite1Test extends PHPUnit_Framework_TestCase
                     'qty'=>'25');
         $dp->ingest($item);
         $dp->endImportSession();
-
     }
 
     public function testGrouped()
@@ -407,6 +402,3 @@ class Suite1Test extends PHPUnit_Framework_TestCase
         $dp->endImportSession();
     }
 }
-
-
-

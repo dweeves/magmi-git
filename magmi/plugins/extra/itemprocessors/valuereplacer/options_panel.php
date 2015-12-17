@@ -54,7 +54,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-var vr_vals=<?php echo tdarray_to_js($this,'VREP:columnlist','VREP')?>;
+var vr_vals=<?php echo tdarray_to_js($this, 'VREP:columnlist', 'VREP')?>;
 var vr_linetpl='<ul class="formline"><li class="label">New value for {fieldname}</li><li class="value"><input type="text" name="VREP:{fieldname.enc}" value="{value}"></input></li></ul>';
 vrep_mf=new magmi_multifield('VREP:columnlist','VREP:columnsetup',vr_linetpl,vr_vals);
 vrep_mf.buildparamlist();

@@ -19,9 +19,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $this->_urlkeytablename=$this->tablename('catalog_product_entity_url_key');
         $this->registerAttributeHandler($this, array("attribute_code:.*"));
         $sql="SHOW TABLES LIKE ?";
-        $result=$this->selectAll($sql,array($this->_urlkeytablename));
+        $result=$this->selectAll($sql, array($this->_urlkeytablename));
         $this->_hasurlkeytable=(count($result)>0);
-
     }
 
     /**
@@ -46,8 +45,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $this->_missingcols = array_diff(array_keys($this->_basecols), $cols);
         $this->_missingattrs = array_diff(array_keys($this->_baseattrs), $cols);
         $m = $this->getMode();
-        if ($m == "create" || $m == "xcreate")
-        {
+        if ($m == "create" || $m == "xcreate") {
             $cols = array_merge($cols, $this->_missingcols, $this->_missingattrs);
             $this->log(
                 "Newly created items will have default values for columns:" .
@@ -62,8 +60,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function initializeBaseCols(&$item)
     {
-        foreach ($this->_missingcols as $missing)
-        {
+        foreach ($this->_missingcols as $missing) {
             $item[$missing] = $this->_basecols[$missing];
         }
     }
@@ -75,8 +72,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function initializeBaseAttrs(&$item)
     {
-        foreach ($this->_missingattrs as $missing)
-        {
+        foreach ($this->_missingattrs as $missing) {
             $item[$missing] = $this->_baseattrs[$missing];
         }
     }
@@ -88,30 +84,22 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function preprocessItemAfterId(&$item, $params = null)
     {
-        if ($params["new"] == true)
-        {
+        if ($params["new"] == true) {
             $this->initializeBaseCols($item);
             $this->initializeBaseAttrs($item);
             //force url key for new items for magento > 1.7.x
-            if($this->checkMagentoVersion("1.7.x", ">") && empty($item['url_key']))
-            {
-               $item["url_key"]=Slugger::slug($item["name"]);
+            if ($this->checkMagentoVersion("1.7.x", ">") && empty($item['url_key'])) {
+                $item["url_key"]=Slugger::slug($item["name"]);
             }
-
-        }
-        else
-        {
+        } else {
             //if we have an existing item, get some structural info from identification meta
-            if(!isset($item["type"]))
-            {
+            if (!isset($item["type"])) {
                 $item["type"]=$params["type"];
             }
         }
         // forcing default values for mandatory processing columns
-        foreach ($this->_forcedefault as $k => $v)
-        {
-            if (isset($item[$k]) && trim($item[$k]) == "")
-            {
+        foreach ($this->_forcedefault as $k => $v) {
+            if (isset($item[$k]) && trim($item[$k]) == "") {
                 $item[$k] = $v;
             }
         }
@@ -134,8 +122,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $exists = $this->currentItemExists();
         // check for new item default value in DB for new items
-        if (!$exists && isset($attrdesc["default_value"]) && !empty($attrdesc["default_value"]) && empty($ivalue))
-        {
+        if (!$exists && isset($attrdesc["default_value"]) && !empty($attrdesc["default_value"]) && empty($ivalue)) {
             return $attrdesc["default_value"];
         }
         return null;
@@ -161,8 +148,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     public function handleDecimalAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
-        if ($dval !== null)
-        {
+        if ($dval !== null) {
             return $dval;
         }
         // force convert decimal separator to dot
@@ -191,14 +177,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     public function handleDatetimeAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
-        if ($dval !== null)
-        {
+        if ($dval !== null) {
             return $dval;
         }
         $ovalue = deleteifempty(trim($ivalue));
         // Handle european date format or other common separators
-        if (preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|", $ovalue, $matches))
-        {
+        if (preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|", $ovalue, $matches)) {
             $hms = count($matches) > 4 ? $matches[4] : "";
             $ovalue = trim(sprintf("%4d-%2d-%2d %s", $matches[3], $matches[2], $matches[1], $hms));
         }
@@ -225,8 +209,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     public function handleTextAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
-        if ($dval !== null)
-        {
+        if ($dval !== null) {
             return $dval;
         }
         $ovalue = deleteifempty($ivalue);
@@ -274,37 +257,31 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 
         // default value exists, return it
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
-        if ($dval !== null)
-        {
+        if ($dval !== null) {
             return intval($dval);
         }
 
         $attid = $attrdesc["attribute_id"];
         // if we've got a select type value
-        if ($attrdesc["frontend_input"] == "select")
-        {
+        if ($attrdesc["frontend_input"] == "select") {
             $smodel=$attrdesc["source_model"];
             // we need to identify its type since some have no options
-            switch ($smodel)
-            {
+            switch ($smodel) {
                 // if its status, default to 1 (Enabled) if not correcly mapped
                 case "catalog/product_status":
-                    if (!$this->checkInt($ivalue))
-                    {
+                    if (!$this->checkInt($ivalue)) {
                         $ovalue = 1;
                     }
                     break;
                 // do not create options for boolean values tagged as select ,default to 0 if not correcly mapped
                 case "eav/entity_attribute_source_boolean":
-                    if (!$this->checkInt($ivalue))
-                    {
+                    if (!$this->checkInt($ivalue)) {
                         $ovalue = 0;
                     }
                     break;
                 // if visibility no options either,default to 4 if not correctly mapped
                 case "catalog/product_visibility":
-                    if (!$this->checkInt($ivalue))
-                    {
+                    if (!$this->checkInt($ivalue)) {
                         $ovalue = 4;
                     }
 
@@ -318,15 +295,14 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
                 // do not insert if empty
                 default:
                     $exists = $this->currentItemExists();
-                    if ($ivalue == "" && $exists)
-                    {
+                    if ($ivalue == "" && $exists) {
                         return "__MAGMI_DELETE__";
                     }
                     $oids = $this->getOptionIds($attid, $storeid, array($ivalue));
                     //the new oids is a key/value array
                     //in case of translate, the oids key is only the admin value, but the values are ok
                     //this would also work for multiselect
-                    $ovalue = implode(",",array_unique(array_values($oids)));
+                    $ovalue = implode(",", array_unique(array_values($oids)));
                     unset($oids);
                     break;
             }
@@ -357,9 +333,11 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         //specific behaviour for url key table if exists
         //no more conflict checking at this point, will only do for url rewrite
         $urlk=$ivalue;
-        if($this->_hasurlkeytable) {
+        if ($this->_hasurlkeytable) {
             $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
-            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid,$storeid, $ivalue));
+            #fix for url key "unique store value index"
+            $sql.=' ON DUPLICATE KEY UPDATE value=VALUES(value) ';
+            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $storeid, $ivalue));
         }
         return $urlk;
     }
@@ -387,19 +365,16 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $exists = $this->currentItemExists();
         // Check store specific value & empty & new item => ignore
-        if ($storeid !== 0 && empty($ivalue) && !$exists)
-        {
+        if ($storeid !== 0 && empty($ivalue) && !$exists) {
             return false;
         }
         // item exists , empty value, remove value, back to admin
-        if ($ivalue == "" && $exists)
-        {
+        if ($ivalue == "" && $exists) {
             return "__MAGMI_DELETE__";
         }
         // default value exists, return it
         $dval = $this->getDefaultValue($attrdesc, $ivalue);
-        if ($dval !== null)
-        {
+        if ($dval !== null) {
             return $dval;
         }
 
@@ -409,11 +384,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         // Added to support multiple select attributes
         // (as far as i could figure out) always stored as varchars
         // if it's a multiselect value
-        if ($attrdesc["frontend_input"] == "multiselect")
-        {
+        if ($attrdesc["frontend_input"] == "multiselect") {
             // if empty delete entry
-            if ($ivalue == "")
-            {
+            if ($ivalue == "") {
                 return "__MAGMI_DELETE__";
             }
             // magento uses "," as separator for different multiselect values

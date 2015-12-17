@@ -6,7 +6,7 @@
  *
  * This imports tier prices for columns names called "tier_price:"
  */
-class TierpriceProcessor extends Magmi_ItemProcessor
+class tierpriceprocessor extends Magmi_ItemProcessor
 {
     protected $_tpcol = array();
     protected $_singlestore = 0;
@@ -37,61 +37,47 @@ class TierpriceProcessor extends Magmi_ItemProcessor
         $tpn = $this->tablename("catalog_product_entity_tier_price");
         $tpcol = array_intersect(array_keys($this->_tpcol), array_keys($item));
         // do nothing if item has no tier price info or has not change
-        if (count($tpcol) == 0)
-        {
+        if (count($tpcol) == 0) {
             return true;
-        }
-        else
-        {
+        } else {
 
             // it seems that magento does not handle "per website" tier price on single store deployments , so force it to "default"
             // so we test wether we have single store deployment or not.
             // bepixeld patch : check pricescope from general config
-            if ($this->_singlestore == 0 && $this->_pricescope != 0)
-            {
+            if ($this->_singlestore == 0 && $this->_pricescope != 0) {
                 $wsids = $this->getItemWebsites($item);
-            }
-            else
-            {
+            } else {
                 $wsids = array(0);
             }
             $wsstr = $this->arr2values($wsids);
             // clear all existing tier price info for existing customer groups in csv
             $cgids = array();
-            foreach ($tpcol as $k)
-            {
+            foreach ($tpcol as $k) {
                 $tpinf = $this->_tpcol[$k];
-                if ($tpinf["id"] != null)
-                {
+                if ($tpinf["id"] != null) {
                     $cgids[] = $tpinf["id"];
-                }
-                else
-                {
+                } else {
                     $cgids = array();
                     break;
                 }
             }
 
             // if we have specific customer groups
-            if (count($cgids) > 0)
-            {
+            if (count($cgids) > 0) {
                 // delete only for thos customer groups
                 $instr = $this->arr2values($cgids);
 
                 // clear tier prices for selected tier price columns
                 $sql = "DELETE FROM $tpn WHERE entity_id=? AND customer_group_id IN ($instr) AND website_id IN ($wsstr)";
                 $this->delete($sql, array_merge(array($pid), $cgids, $wsids));
-            }
-            else
-            {
+            } else {
                 // delete for all customer groups
                 $sql = "DELETE FROM $tpn WHERE entity_id=? AND website_id IN ($wsstr)";
                 $this->delete($sql, array_merge(array($pid), $wsids));
             }
         }
 
-        foreach ($tpcol as $k)
-        {
+        foreach ($tpcol as $k) {
 
             // get tier price column info
             $tpinf = $this->_tpcol[$k];
@@ -103,37 +89,30 @@ class TierpriceProcessor extends Magmi_ItemProcessor
             $inserts = array();
             $data = array();
 
-            if ($item[$k] == "")
-            {
+            if ($item[$k] == "") {
                 continue;
             }
             $tpvals = explode(";", $item[$k]);
 
-            foreach ($wsids as $wsid)
-            {
+            foreach ($wsids as $wsid) {
                 // for each tier price value definition
-                foreach ($tpvals as $tpval)
-                {
+                foreach ($tpvals as $tpval) {
                     // split on ":"
                     $tpvinf = explode(":", $tpval);
                     // if we have only one item
-                    if (count($tpvinf) == 1)
-                    {
+                    if (count($tpvinf) == 1) {
                         // set qty to one
                         array_unshift($tpvinf, 1.0);
                     }
                     // if more thant 1, qty first,price second
                     $tpquant = $tpvinf[0];
                     $tpprice = str_replace(",", ".", $tpvinf[1]);
-                    if ($tpprice == "")
-                    {
+                    if ($tpprice == "") {
                         continue;
                     }
-                    if (substr($tpprice, -1) == "%")
-                    {
+                    if (substr($tpprice, -1) == "%") {
                         // if no reference price,skip % tier price
-                        if (!isset($item["price"]))
-                        {
+                        if (!isset($item["price"])) {
                             $this->warning("No price define, cannot apply % on tier price");
                             continue;
                         }
@@ -152,8 +131,7 @@ class TierpriceProcessor extends Magmi_ItemProcessor
                     $data[] = $wsid;
                 }
             }
-            if (count($inserts) > 0)
-            {
+            if (count($inserts) > 0) {
                 $sql .= implode(",", $inserts);
                 $sql .= " ON DUPLICATE KEY UPDATE `value`=VALUES(`value`)";
                 $this->insert($sql, $data);
@@ -165,23 +143,18 @@ class TierpriceProcessor extends Magmi_ItemProcessor
     public function processColumnList(&$cols, $params = null)
     {
         // inspect column list for getting tier price columns info
-        foreach ($cols as $col)
-        {
-            if (preg_match("|tier_price:(.*)|", $col, $matches))
-            {
+        foreach ($cols as $col) {
+            if (preg_match("|tier_price:(.*)|", $col, $matches)) {
                 $tpinf = array("name"=>$matches[1],"id"=>null);
 
                 // if specific tier price
-                if ($tpinf["name"] !== "_all_")
-                {
+                if ($tpinf["name"] !== "_all_") {
                     // get tier price customer group id
                     $sql = "SELECT customer_group_id from " . $this->tablename("customer_group") .
                          " WHERE customer_group_code=?";
                     $cgid = $this->selectone($sql, $tpinf["name"], "customer_group_id");
                     $tpinf["id"] = $cgid;
-                }
-                else
-                {
+                } else {
                     $tpinf["id"] = null;
                 }
                 $this->_tpcol[$col] = $tpinf;
@@ -194,8 +167,7 @@ class TierpriceProcessor extends Magmi_ItemProcessor
     {
         $sql = "SELECT COUNT(store_id) as cnt FROM " . $this->tablename("core_store") . " WHERE store_id!=0";
         $ns = $this->selectOne($sql, array(), "cnt");
-        if ($ns == 1)
-        {
+        if ($ns == 1) {
             $this->_singlestore = 1;
         }
         // bepixeld patch : check pricescope from general config

@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(dirname(__DIR__))."/inc/magmi_defs.php");
-require_once ("magmi_config.php");
-require_once ("magmi_mixin.php");
+require_once("magmi_config.php");
+require_once("magmi_mixin.php");
 
 
 /**
@@ -26,8 +26,7 @@ class Magmi_PluginConfig extends ProfileBasedConfig
     public function load($name = null)
     {
         $cname = ($name == null ? $this->_confname : $name);
-        if (file_exists($cname))
-        {
+        if (file_exists($cname)) {
             parent::load($cname);
         }
     }
@@ -35,12 +34,10 @@ class Magmi_PluginConfig extends ProfileBasedConfig
     public function getIniStruct($arr)
     {
         $conf = array();
-        foreach ($arr as $k => $v)
-        {
+        foreach ($arr as $k => $v) {
             $k = $this->_prefix . ":" . $k;
-            list($section,$value) = explode(":", $k, 2);
-            if (!isset($conf[$section]))
-            {
+            list($section, $value) = explode(":", $k, 2);
+            if (!isset($conf[$section])) {
                 $conf[$section] = array();
             }
             $conf[$section][$value] = $v;
@@ -64,10 +61,9 @@ class Magmi_PluginOptionsPanel
     {
         $this->_plugin = $pinst;
        //fix xsrf, limit inclusion to "basename"
-       if($file !==null && (basename($file)!==$file))
-        {
-            $file=null;
-        }
+       if ($file !==null && (basename($file)!==$file)) {
+           $file=null;
+       }
         $this->_file = ($file == null ? "options_panel.php" : $file);
         $this->initDefaultHtml();
     }
@@ -77,11 +73,11 @@ class Magmi_PluginOptionsPanel
         return $this->_file;
     }
 
-    public final function initDefaultHtml()
+    final public function initDefaultHtml()
     {
         $panelfile = dirname(__FILE__) . "/magmi_default_options_panel.php";
         ob_start();
-        require ($panelfile);
+        require($panelfile);
         $this->_defaulthtml = ob_get_contents();
         ob_end_clean();
     }
@@ -92,14 +88,11 @@ class Magmi_PluginOptionsPanel
         $pdir = Magmi_PluginHelper::getInstance()->getPluginDir($this->_plugin);
         $panelfile = "$pdir/" . $this->getFile();
         $content = "";
-        if (!file_exists($panelfile))
-        {
+        if (!file_exists($panelfile)) {
             $content = $this->_defaulthtml;
-        }
-        else
-        {
+        } else {
             ob_start();
-            require ($panelfile);
+            require($panelfile);
             $content = ob_get_contents();
             ob_end_clean();
         }
@@ -108,7 +101,7 @@ class Magmi_PluginOptionsPanel
 
     public function __call($data, $arg)
     {
-        return call_user_func_array(array($this->_plugin,$data), $arg);
+        return call_user_func_array(array($this->_plugin, $data), $arg);
     }
 }
 
@@ -123,7 +116,8 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     protected $_params;
 
     public function __construct()
-    {}
+    {
+    }
 
 
     public function getParams()
@@ -150,10 +144,8 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     {
         $iarr = explode(",", $pvalue);
         $oarr = array();
-        foreach ($iarr as $v)
-        {
-            if ($v != "")
-            {
+        foreach ($iarr as $v) {
+            if ($v != "") {
                 $oarr[] = $v;
             }
         }
@@ -197,8 +189,7 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     public function log($data, $type = 'std', $useprefix = true)
     {
         $pinf = $this->getPluginInfo();
-        if ($useprefix)
-        {
+        if ($useprefix) {
             $data = "{$pinf["name"]} v{$pinf["version"]} - " . $data;
         }
         $this->_caller_log($data, "plugin;$this->_class;$type");
@@ -217,7 +208,8 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     }
 
     public function initialize($params)
-    {}
+    {
+    }
 
     public function getConfig()
     {
@@ -229,7 +221,7 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         return $this->_magmiconfig;
     }
 
-    public final function pluginInit($mmi, $meta, $params = null, $doinit = true, $profile = null)
+    final public function pluginInit($mmi, $meta, $params = null, $doinit = true, $profile = null)
     {
         $this->bind($mmi);
         $this->_pluginmeta = $meta;
@@ -240,13 +232,11 @@ abstract class Magmi_Plugin extends Magmi_Mixin
 
         $this->_params = ($params != null ? array_merge($this->_config->getConfig(), $params) : $this->_config->getConfig());
 
-        if (isset($mmi))
-        {
+        if (isset($mmi)) {
             $this->pluginHello();
         }
 
-        if ($doinit)
-        {
+        if ($doinit) {
             $this->initialize($this->_params);
         }
     }
@@ -255,14 +245,10 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     {
         $arr = array();
         $paramkeys = $this->getPluginParamNames();
-        foreach ($paramkeys as $pk)
-        {
-            if (isset($params[$pk]))
-            {
+        foreach ($paramkeys as $pk) {
+            if (isset($params[$pk])) {
                 $arr[$pk] = $params[$pk];
-            }
-            else
-            {
+            } else {
                 $arr[$pk] = 0;
             }
         }
@@ -273,16 +259,11 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     {
         $arr = array();
         $paramkeys = $this->getPluginParamNames();
-        foreach ($paramkeys as $pk)
-        {
-            if (isset($params[$pk]))
-            {
+        foreach ($paramkeys as $pk) {
+            if (isset($params[$pk])) {
                 $arr[$pk] = $params[$pk];
-            }
-            else
-            {
-                if (isset($this->_params[$pk]))
-                {
+            } else {
+                if (isset($this->_params[$pk])) {
                     $arr[$pk] = $this->_params[$pk];
                 }
             }
@@ -292,8 +273,7 @@ abstract class Magmi_Plugin extends Magmi_Mixin
 
     public function persistParams($plist)
     {
-        if (count($plist) > 0)
-        {
+        if (count($plist) > 0) {
             $this->_config->setPropsFromFlatArray($plist);
             return $this->_config->save();
         }
@@ -309,16 +289,12 @@ abstract class Magmi_Plugin extends Magmi_Mixin
     {
         $panel = $this->getOptionsPanel()->getHtml();
         $info = null;
-        if (preg_match('|<div class="plugin_description">(.*?)</div>|smi', $panel, $match))
-        {
-
+        if (preg_match('|<div class="plugin_description">(.*?)</div>|smi', $panel, $match)) {
             $info = $match[1];
             $delims = array(".",":");
-            foreach ($delims as $delim)
-            {
+            foreach ($delims as $delim) {
                 $p = strpos($info, $delim);
-                if ($p !== false)
-                {
+                if ($p !== false) {
                     $info = substr($info, 0, $p);
                     break;
                 }
@@ -327,7 +303,7 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         return $info;
     }
 
-    static public function getCategory()
+    public static function getCategory()
     {
         return "common";
     }

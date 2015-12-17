@@ -1,5 +1,5 @@
 <?php
-require_once ('remotefilegetter.php');
+require_once('remotefilegetter.php');
 
 /**
  * Class FSHelper
@@ -12,7 +12,6 @@ require_once ('remotefilegetter.php');
  */
 class FSHelper
 {
-
     /**
      * Checks if a directory has write rights
      *
@@ -24,12 +23,9 @@ class FSHelper
     {
         // try to create a new file
         $test = @fopen("$dir/__testwr__", "w");
-        if ($test == false)
-        {
+        if ($test == false) {
             return false;
-        }
-        else
-        {
+        } else {
             // if succeeded, remove test file
             fclose($test);
             unlink("$dir/__testwr__");
@@ -47,15 +43,12 @@ class FSHelper
         $is_disabled = array();
         // Check for php disabled functions
         $disabled = explode(',', ini_get('disable_functions'));
-        foreach ($disabled as $disableFunction)
-        {
+        foreach ($disabled as $disableFunction) {
             $is_disabled[] = trim($disableFunction);
         }
         // try the following if not disabled,return first non disabled
-        foreach (array("popen","shell_exec") as $func)
-        {
-            if (!in_array($func, $is_disabled))
-            {
+        foreach (array("popen", "shell_exec") as $func) {
+            if (!in_array($func, $is_disabled)) {
                 return $func;
             }
         }
@@ -75,7 +68,8 @@ class MagentoDirHandlerFactory
     protected static $_instance;
 
     public function __construct()
-    {}
+    {
+    }
 
     /**
      * Singleton getInstance method
@@ -84,8 +78,7 @@ class MagentoDirHandlerFactory
      */
     public static function getInstance()
     {
-        if (!isset(self::$_instance))
-        {
+        if (!isset(self::$_instance)) {
             self::$_instance = new MagentoDirHandlerFactory();
         }
         return self::$_instance;
@@ -99,8 +92,7 @@ class MagentoDirHandlerFactory
     public function registerHandler($obj)
     {
         $cls = get_class($obj);
-        if (!isset($this->_handlers[$cls]))
-        {
+        if (!isset($this->_handlers[$cls])) {
             $this->_handlers[$cls] = $obj;
         }
     }
@@ -114,10 +106,8 @@ class MagentoDirHandlerFactory
     public function getHandler($url)
     {
         // Iterates on declared handlers , return first matching url
-        foreach ($this->_handlers as $cls => $handler)
-        {
-            if ($handler->canHandle($url))
-            {
+        foreach ($this->_handlers as $cls => $handler) {
+            if ($handler->canHandle($url)) {
                 return $handler;
             }
         }
@@ -177,14 +167,14 @@ abstract class MagentoDirHandler
      *
      * @param unknown $url
      */
-    public abstract function canhandle($url);
+    abstract public function canhandle($url);
 
     /**
      * File exists
      *
      * @param unknown $filepath
      */
-    public abstract function file_exists($filepath);
+    abstract public function file_exists($filepath);
 
     /**
      * Mkdir
@@ -193,7 +183,7 @@ abstract class MagentoDirHandler
      * @param string $mask
      * @param string $rec
      */
-    public abstract function mkdir($path, $mask = null, $rec = false);
+    abstract public function mkdir($path, $mask = null, $rec = false);
 
     /**
      * File Copy
@@ -201,14 +191,14 @@ abstract class MagentoDirHandler
      * @param unknown $srcpath
      * @param unknown $destpath
      */
-    public abstract function copy($srcpath, $destpath);
+    abstract public function copy($srcpath, $destpath);
 
     /**
      * File Deletion
      *
      * @param unknown $path
      */
-    public abstract function unlink($path);
+    abstract public function unlink($path);
 
     /**
      * Chmod
@@ -216,7 +206,7 @@ abstract class MagentoDirHandler
      * @param unknown $path
      * @param unknown $mask
      */
-    public abstract function chmod($path, $mask);
+    abstract public function chmod($path, $mask);
 
     /**
      * Check if we can execute processes
@@ -235,7 +225,7 @@ abstract class MagentoDirHandler
      * @param unknown $params
      * @param string $workingdir
      */
-    public abstract function exec_cmd($cmd, $params, $workingdir = null);
+    abstract public function exec_cmd($cmd, $params, $workingdir = null);
 }
 
 /**
@@ -314,13 +304,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
 
-        if ($mask == null)
-        {
+        if ($mask == null) {
             $mask = octdec('755');
         }
         $ok = @mkdir($mp, $mask, $rec);
-        if (!$ok)
-        {
+        if (!$ok) {
             $this->_lasterror = error_get_last();
         }
         return $ok;
@@ -335,13 +323,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $path));
 
-        if ($mask == null)
-        {
+        if ($mask == null) {
             $mask = octdec('755');
         }
         $ok = @chmod($mp, $mask);
-        if (!$ok)
-        {
+        if (!$ok) {
             $this->_lasterror = error_get_last();
         }
         return $ok;
@@ -381,8 +367,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         $rfg = RemoteFileGetterFactory::getFGInstance($this->_rfgid);
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $destpath));
         $ok = $rfg->copyRemoteFile($remoteurl, $mp);
-        if (!$ok)
-        {
+        if (!$ok) {
             $this->_lasterror = $rfg->getErrors();
         }
         return $ok;
@@ -397,16 +382,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     {
         $result = false;
         $destpath = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $destpath));
-        if (preg_match('|^.*?://.*$|', $srcpath))
-        {
+        if (preg_match('|^.*?://.*$|', $srcpath)) {
             $result = $this->copyFromRemote($srcpath, $destpath);
-        }
-        else
-        {
-
+        } else {
             $result = @copy($srcpath, $destpath);
-            if (!$result)
-            {
+            if (!$result) {
                 $this->_lasterror = error_get_last();
             }
         }
@@ -426,16 +406,13 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         $precmd = "";
         // If a working directory has been specified, switch to it
         // before running the requested command
-        if (!empty($working_dir))
-        {
+        if (!empty($working_dir)) {
             $curdir = getcwd();
             $wdir = realpath($working_dir);
             // get current directory
-            if ($curdir != $wdir && $wdir !== false)
-            {
+            if ($curdir != $wdir && $wdir !== false) {
                 // trying to change using chdir
-                if (!@chdir($wdir))
-                {
+                if (!@chdir($wdir)) {
                     // if no success, use cd from shell
                     $precmd = "cd $wdir && ";
                 }
@@ -444,13 +421,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         $full_cmd = $precmd . $full_cmd;
         // Handle Execution
         $emode = $this->getexecmode();
-        switch ($emode)
-        {
+        switch ($emode) {
             case "popen":
                 $x = popen($full_cmd, "r");
                 $out = "";
-                while (!feof($x))
-                {
+                while (!feof($x)) {
                     $data = fread($x, 1024);
                     $out .= $data;
                     usleep(100000);
@@ -463,13 +438,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         }
 
         // restore old directory if changed
-        if ($curdir)
-        {
+        if ($curdir) {
             @chdir($curdir);
         }
 
-        if ($out == null)
-        {
+        if ($out == null) {
             $this->_lasterror = array("type"=>" execution error","message"=>error_get_last());
             return false;
         }

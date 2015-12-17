@@ -16,7 +16,7 @@
 		<li class="label">CSVs base directory</li>
 		<li class="value"><input type="text" name="CSV:basedir"
 			id="CSV:basedir"
-			value="<?php echo $this->getParam("CSV:basedir","var/import")?>">
+			value="<?php echo $this->getParam("CSV:basedir", "var/import")?>">
 			<div class="fieldinfo">Relative paths are relative to magento base
 				directory , absolute paths will be used as is</div></li>
 	</ul>
@@ -45,8 +45,7 @@
 			new Ajax.Updater('csvds_filelist','ajax_pluginconf.php',{
 			parameters:{file:'csvds_filelist.php',
 						plugintype:'utilities',
-                        token:'<?php echo $_SESSION['token']?>',
-					    pluginclass:'<?php echo get_class($this->_plugin)?>',
+                        pluginclass:'<?php echo get_class($this->_plugin)?>',
 					    profile:'<?php echo $this->getConfig()->getProfile()?>',
 					    'CSV:basedir':$F('CSV:basedir')}});
 			});

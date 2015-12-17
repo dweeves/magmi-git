@@ -17,25 +17,18 @@ $stats = $this->getStatistics();
 		</thead>
 		<tbody>
 <?php
-foreach ($stats as $type => $data)
-{
+foreach ($stats as $type => $data) {
     ?>
 	<?php
 
     $style = "";
-    if ($data["pc"] == 0)
-    {
+    if ($data["pc"] == 0) {
         $style = "background-color:#88ff88";
+    } elseif ($data["pc"] < 15) {
+        $style = "background-color:#ffff88";
+    } else {
+        $style = "background-color:#ff8888";
     }
-    else
-        if ($data["pc"] < 15)
-        {
-            $style = "background-color:#ffff88";
-        }
-        else
-        {
-            $style = "background-color:#ff8888";
-        }
     ?>
 	<tr>
 				<td style="<?php echo $style?>">&nbsp;</td>
@@ -45,6 +38,7 @@ foreach ($stats as $type => $data)
 				<td><?php echo $data["pc"]?></td>
 			</tr>
 <?php
+
 }
 ?>
 </tbody>

@@ -2,7 +2,6 @@
 
 class Magmi_OptimizerPlugin extends Magmi_GeneralImportPlugin
 {
-
     public function getPluginInfo()
     {
         return array("name"=>"Magmi Optimizer","author"=>"Dweeves","version"=>"1.0.5",
@@ -16,17 +15,13 @@ class Magmi_OptimizerPlugin extends Magmi_GeneralImportPlugin
             "catalog_category_entity_varchar"=>array("value","MAGMI_CCEV_OPTIMIZATION_IDX"),
             "eav_attribute"=>array("attribute_code","MAGMI_EA_CODE_OPTIMIZATION_IDX"));
         $this->log("Optimizing magmi", "info");
-        foreach ($tbls as $tblname => $idxinfo)
-        {
-            try
-            {
+        foreach ($tbls as $tblname => $idxinfo) {
+            try {
                 $t = $this->tablename($tblname);
                 $this->log("Adding index {$idxinfo[1]} on $t", "info");
                 $sql = "ALTER  TABLE $t ADD INDEX {$idxinfo[1]} (`{$idxinfo[0]}`)";
                 $this->exec_stmt($sql);
-            }
-            catch (Exception $e)
-            {
+            } catch (Exception $e) {
                 // ignore exception
                 $this->log("Already optmized!", "info");
             }
@@ -35,5 +30,6 @@ class Magmi_OptimizerPlugin extends Magmi_GeneralImportPlugin
     }
 
     public function initialize($params)
-    {}
+    {
+    }
 }

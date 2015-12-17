@@ -28,8 +28,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
         $cpe = $this->tablename('catalog_product_entity');
         $this->log("Optmizing EAV Tables...", "info");
-        foreach ($tables as $t)
-        {
+        foreach ($tables as $t) {
             $this->log("Optmizing $t....", "info");
             $sql = "DELETE ta.* FROM " . $this->tablename($t) . " as ta
 			LEFT JOIN $cpe as cpe on cpe.entity_id=ta.entity_id
@@ -42,9 +41,8 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
     public function fixFlat()
     {
         $this->log("Cleaning flat tables before reindex...", "info");
-        $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", NULL, false);
-        while ($row = $stmt->fetch(PDO::FETCH_NUM))
-        {
+        $stmt = $this->exec_stmt("SHOW TABLES LIKE '" . $this->tablename('catalog_product_flat') . "%'", null, false);
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $tname = $row[0];
             // removing records in flat tables that are no more linked to entries in catalog_product_entity table
             // for some reasons, this seem to happen
@@ -68,20 +66,17 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
     public function updateIndexes()
     {
         // make sure we are not in session
-        if (session_id() !== "")
-        {
+        if (session_id() !== "") {
             session_write_close();
         }
         $cl = $this->getParam("REINDEX:phpcli") . " shell/indexer.php";
         $idxlstr = $this->getParam("REINDEX:indexes", "");
         $idxlist = explode(",", $idxlstr);
-        if (count($idxlist) == 0)
-        {
+        if (count($idxlist) == 0) {
             $this->log("No indexes selected , skipping reindexing...", "warning");
             return true;
         }
-        foreach ($idxlist as $idx)
-        {
+        foreach ($idxlist as $idx) {
             $tstart = microtime(true);
             $this->log("Reindexing $idx....", "info");
 
@@ -90,8 +85,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             $this->log($out, "info");
             $tend = microtime(true);
             $this->log("done in " . round($tend - $tstart, 2) . " secs", "info");
-            if (Magmi_StateManager::getState() == "canceled")
-            {
+            if (Magmi_StateManager::getState() == "canceled") {
                 exit();
             }
             flush();

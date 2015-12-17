@@ -39,26 +39,56 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
              "\n\n";
 
         $attachments = $this->_attach;
-        if ($attachments !== false)
-        {
-            for ($i = 0; $i < count($attachments); $i++)
-            {
-                if (is_file($attachments[$i]))
-                {
-                    $fileatt = $attachments[$i];
+        if ($attachments !== false) {
+
+            //Should we zip them?
+            $zip = $this->getParam("EMAILREP:attachcsv",false);
+	    $this->log("Zip: $zip", "info");	
+	    if ($zip){
+                $archive = new ZipArchive();
+                $fname = sys_get_temp_dir() . '/report.zip';
+		if ($archive->open($fname,ZipArchive::OVERWRITE) === true){
+		    for ($i = 0; $i < count($attachments); $i++){
+			if (!is_file($attachments[$i])) continue;
+			$fileatt_name = explode(DIRECTORY_SEPARATOR,$attachments[$i]);
+			$fileatt_name = array_pop($fileatt_name);
+			$archive->addFile($attachments[$i],$fileatt_name);
+                    }
+                    $archive->close();
+
+                    $fileatt = $fname;
                     $fileatt_type = "application/octet-stream";
-                    $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
-                        $attachments[$i], '/') + 1;
-                    $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
-
-                    $file = fopen($fileatt, 'rb');
-                    $data = fread($file, filesize($fileatt));
-                    fclose($file);
-
+                    $fileatt_name = "report.zip";
+                    $file = fopen($fileatt,'rb');
+                    $data = fread($file,filesize($fileatt));
+		    fclose($file);
                     $data = chunk_split(base64_encode($data));
 
                     $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
                          " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
+		}else{
+                    $email_message .= "\n\nThere was a problem compressing your report\n\n";
+                }
+
+            }else{
+
+                for ($i = 0; $i < count($attachments); $i++) {
+                    if (is_file($attachments[$i])) {
+                        $fileatt = $attachments[$i];
+                        $fileatt_type = "application/octet-stream";
+                        $start = strrpos($attachments[$i], '/') == -1 ? strrpos($attachments[$i], '//') : strrpos(
+                            $attachments[$i], '/') + 1;
+                        $fileatt_name = substr($attachments[$i], $start, strlen($attachments[$i]));
+
+                        $file = fopen($fileatt, 'rb');
+                        $data = fread($file, filesize($fileatt));
+                        fclose($file);
+
+                        $data = chunk_split(base64_encode($data));
+
+                        $email_message .= "--{$mime_boundary}\n" . "Content-Type: {$fileatt_type};\n" .
+                             " name=\"{$fileatt_name}\"\n" . "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
+                    }
                 }
             }
         }
@@ -78,10 +108,8 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
     public function getPluginParams($params)
     {
         $pp = array();
-        foreach ($params as $k => $v)
-        {
-            if (preg_match("/^EMAILREP:.*$/", $k))
-            {
+        foreach ($params as $k => $v) {
+            if (preg_match("/^EMAILREP:.*$/", $k)) {
                 $pp[$k] = $v;
             }
         }
@@ -91,20 +119,16 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
     public function afterImport()
     {
         $eng = $this->_callers[0];
-        if ($this->getParam("EMAILREP:to", "") != "" && $this->getParam("EMAILREP:from", "") != "")
-        {
-            if ($this->getParam("EMAILREP:attachcsv", false) == true)
-            {
+        if ($this->getParam("EMAILREP:to", "") != "" && $this->getParam("EMAILREP:from", "") != "") {
+            if ($this->getParam("EMAILREP:attachcsv", false) == true) {
                 $ds = $eng->getPluginInstanceByClassName("datasources", "Magmi_CSVDataSource");
-                if ($ds != null)
-                {
+                if ($ds != null) {
                     $csvfile = $ds->getParam("CSV:filename");
                     $this->addAttachment($csvfile);
                 }
             }
 
-            if ($this->getParam("EMAILREP:attachlog", false) == true)
-            {
+            if ($this->getParam("EMAILREP:attachlog", false) == true) {
                 // copy magmi report
                 $pfile = Magmi_StateManager::getProgressFile(true);
                 $this->addAttachment($pfile);
@@ -113,8 +137,7 @@ class EmailReportPlugin extends Magmi_GeneralImportPlugin
             $ok = $this->send_email($this->getParam("EMAILREP:to"), $this->getParam("EMAILREP:from"),
                 $this->getParam("EMAILREP:from_alias", ""), $this->getParam("EMAILREP:subject", "Magmi import report"),
                 $this->getParam("EMAILREP:body", "report attached"), $this->_attach);
-            if (!$ok)
-            {
+            if (!$ok) {
                 $this->log("Cannot send email", "error");
             }
         }
