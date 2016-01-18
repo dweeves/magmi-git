@@ -238,7 +238,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             $url = $this->getParam($prefix.":remoteurl", "");
             $outname = $this->getRemoteFile($prefix, $url);
             $this->setParam($prefix.":filename", $outname);
-            $csvreader->initialize($this->_params);
+            $csvreader->initialize($this->_params, $prefix);
         }
         $csvreader->checkCSV();
 
