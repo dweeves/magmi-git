@@ -20,6 +20,11 @@ But devil is in the details and i don't have much time doing an extensive test s
 
 So , if you are using Magento CE 1.8.x or CE 1.9.x , please provide bug reports for any found defects or any incompatibility you might have noticed.
 
+PHP
+=====
+
+Starting with release 0.7.22, Magmi requires PHP 5.4 and later.
+
 Authentication
 ==================
 
