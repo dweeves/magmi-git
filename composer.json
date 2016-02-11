@@ -1,6 +1,7 @@
 {
     "name": "dweeves/magmi",
     "description": "Magento Mass Importer",
+    "type": "magento-module",
     "license": "MIT License",
     "homepage": "http://sourceforge.net/projects/magmi/",
     "authors":[
