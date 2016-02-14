@@ -9,6 +9,6 @@
         }
     ],
     "bin": [
-        "cli/magmi.cli.php"
+        "magmi/cli/magmi.cli.php"
     ]
 }
