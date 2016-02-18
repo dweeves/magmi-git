@@ -8,5 +8,8 @@
         {
             "name":"Sebastien Bracquemont"
         }
+    ],
+    "bin": [
+        "magmi/cli/magmi.cli.php"
     ]
 }
