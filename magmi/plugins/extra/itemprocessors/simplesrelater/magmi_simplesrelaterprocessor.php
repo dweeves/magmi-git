@@ -22,8 +22,15 @@ class Magmi_SimplesRelaterProcessor extends Magmi_ItemProcessor
         
         $cpsl = $this->tablename("catalog_product_super_link");
         $cpr = $this->tablename("catalog_product_relation");
-        $cpe = $this->tablename("catalog_product_entity");
+        
+        
         $parentId = $this->getProductIdBySku($configurableSku);
+
+        //Check if the relation already exists;
+        
+        $sql = "SELECT COUNT(*) AS rows FROM $cpsl WHERE parent_id = ? AND product_id = ?";
+        if ($this->selectone($sql,array($parentId,$simpleId)) > 0) return true; //Relation already exists
+        
         $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) values (?,?)";
         $this->insert($sql,array($parentId,$simpleId));
         
@@ -34,6 +41,7 @@ class Magmi_SimplesRelaterProcessor extends Magmi_ItemProcessor
     
     public function processItemAfterId(&$item, $params = null)
     {
+
         if ($item["type"] === "simple" && isset($item["parent_product"]) && trim($item["parent_product"]) != ""){
             $relations = explode(",",$item["parent_product"]);
             
