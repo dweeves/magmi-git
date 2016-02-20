@@ -210,6 +210,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                     }
                     $opt['sku'] = $sku;
                     $opt['price'] = $price;
+                    $opt['price_type'] = $price_type;
                     break;
                 case 'field':
                 case 'area':
