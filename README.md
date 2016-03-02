@@ -1,4 +1,4 @@
-Magmi for Magento 2.0
+Magmi 2 for Magento 2.0
 
 =========
 
@@ -9,3 +9,5 @@ Magento CE 2.x Support
 ===================================
 
 It is experimental and not fully tested yet
+
+This version might not mean what all extensions for Magmi 0.7.x will be working with Magento 2

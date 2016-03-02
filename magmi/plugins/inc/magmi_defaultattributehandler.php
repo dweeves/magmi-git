@@ -268,26 +268,26 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             // we need to identify its type since some have no options
             switch ($smodel) {
                 // if its status, default to 1 (Enabled) if not correcly mapped
-                case "catalog/product_status":
+                case 'Magento\Catalog\Model\Product\Attribute\Source\Status':
                     if (!$this->checkInt($ivalue)) {
                         $ovalue = 1;
                     }
                     break;
                 // do not create options for boolean values tagged as select ,default to 0 if not correcly mapped
-                case "eav/entity_attribute_source_boolean":
+                case 'Magento\Eav\Model\Entity\Attribute\Source\Boolean':
                     if (!$this->checkInt($ivalue)) {
                         $ovalue = 0;
                     }
                     break;
                 // if visibility no options either,default to 4 if not correctly mapped
-                case "catalog/product_visibility":
+                case 'Magento\Catalog\Model\Product\Visibility':
                     if (!$this->checkInt($ivalue)) {
                         $ovalue = 4;
                     }
 
                     break;
                 // if it's tax_class, get tax class id from item value
-                case "tax/class_source_product":
+                case 'Magento\Tax\Model\TaxClass\Source\Product':
                     $ovalue = $this->getTaxClassId($ivalue);
                     break;
                 // otherwise, standard option behavior

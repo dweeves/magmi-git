@@ -29,25 +29,25 @@ class CategoryImporter extends Magmi_ItemProcessor
     {
         // zioigor - 20110426 missing call to tablename method for table_prfix
         $t = $this->tablename("catalog_category_entity");
-        $csg = $this->tablename("core_store_group");
-        $cs = $this->tablename("core_store");
+        $csg = $this->tablename("store_group");
+        $cs = $this->tablename("store");
         $ccev = $t . "_varchar";
         $ea = $this->tablename("eav_attribute");
         $result = $this->selectAll(
-            "SELECT cs.store_id,csg.website_id,cce.entity_type_id,cce.path,ccev.value as name
+            "SELECT cs.store_id,csg.website_id,cce.path,ccev.value as name
 								FROM $cs as cs
 								JOIN $csg as csg on csg.group_id=cs.group_id
 								JOIN $t as cce ON cce.entity_id=csg.root_category_id
-								JOIN $ea as ea ON ea.attribute_code='name' AND ea.entity_type_id=cce.entity_type_id
+								JOIN $ea as ea ON ea.attribute_code='name'
 								JOIN $ccev as ccev ON ccev.attribute_id=ea.attribute_id AND ccev.entity_id=cce.entity_id
 		 ");
         foreach ($result as $row) {
-            $rootinfo = array("path"=>$row["path"],"etid"=>$row["entity_type_id"],"name"=>$row["name"],
+            $rootinfo = array("path"=>$row["path"],"name"=>$row["name"],
                 "rootarr"=>explode("/", $row["path"]));
             $this->_catroots[$row["store_id"]] = $rootinfo;
             $this->_catrootw[$row["website_id"]][] = $row["store_id"];
             if ($this->_cat_eid == null) {
-                $this->_cat_eid = $row["entity_type_id"];
+//                $this->_cat_eid = $row["entity_type_id"];
             }
         }
     }
@@ -55,8 +55,9 @@ class CategoryImporter extends Magmi_ItemProcessor
     public function getCatAttributeInfos($attcode)
     {
         $t = $this->tablename("eav_attribute");
-        $sql = "SELECT * FROM $t WHERE entity_type_id=? AND attribute_code=?";
-        $info = $this->selectAll($sql, array($this->_cat_eid, $attcode));
+        $sql = "SELECT * FROM $t WHERE  attribute_code=?";
+
+        $info = $this->selectAll($sql, array($attcode));
         return $info[0];
     }
 
@@ -111,7 +112,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $path = implode("/", $parentpath);
         $parentid = array_pop($parentpath);
         // get child info using parent data
-        $sql = "SELECT cce.entity_type_id,cce.attribute_set_id,cce.level+1 as level,COALESCE(MAX(eac.position),0)+1 as position
+        $sql = "SELECT cce.attribute_set_id,cce.level+1 as level,COALESCE(MAX(eac.position),0)+1 as position
 		FROM $cet as cce
 		LEFT JOIN  $cet as eac ON eac.parent_id=cce.entity_id
 		WHERE cce.entity_id=?
@@ -119,9 +120,9 @@ class CategoryImporter extends Magmi_ItemProcessor
         $info = $this->selectAll($sql, array($parentid));
         $info = $info[0];
         // insert new category
-        $sql = "INSERT INTO $cet 	(entity_type_id,attribute_set_id,parent_id,position,level,path,children_count) VALUES (?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO $cet 	(attribute_set_id,parent_id,position,level,path,children_count) VALUES (?,?,?,?,?,?)";
         // insert empty path until we get category id
-        $data = array($info["entity_type_id"],$info["attribute_set_id"],$parentid,$info["position"],$info["level"],"",0);
+        $data = array($info["attribute_set_id"],$parentid,$info["position"],$info["level"],"",0);
         // insert in db,get cat id
         $catid = $this->insert($sql, $data);
 
@@ -139,8 +140,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 
             foreach ($attinfo as $attrcode => $attdata) {
                 if (isset($attdata["attribute_id"])) {
-                    $inserts[] = "(?,?,?,?,?)";
-                    $data[] = $info["entity_type_id"];
+                    $inserts[] = "(?,?,?,?)";
                     $data[] = $attdata["attribute_id"];
                     $data[] = 0; // store id 0 for categories
                     $data[] = $catid;
@@ -148,7 +148,7 @@ class CategoryImporter extends Magmi_ItemProcessor
                 }
             }
 
-            $sql = "INSERT INTO $tb (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " .
+            $sql = "INSERT INTO $tb (attribute_id,store_id,entity_id,value) VALUES " .
                  implode(",", $inserts) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
             $this->insert($sql, $data);
             unset($data);

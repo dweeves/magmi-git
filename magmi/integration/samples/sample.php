@@ -38,12 +38,26 @@ $dp = Magmi_DataPumpFactory::getDataPumpInstance("productimport");
  * ON THE FLY INDEXER IS RECOMMENDED (better endimport performance)
  * Reindexer needed also to have products show up on front : select all but "catalog_category_product" & "url_rewrite" (both are handled by on the fly indexer)
  */
-$dp->beginImportSession("test_ptj", "create", new TestLogger());
+$dp->beginImportSession("default", "create", new TestLogger());
+
+$item=[
+    'name'=>'name22',
+    'sku'=>'nnn',
+    'qty'=>'55',
+    'is_in_stock'=>'3',
+    'type'=>'simple',
+    'categories'=>'Все/Cat1',
+    'small_image'=>'+http://hotline.ua/img/tx/746/7463963.jpg'
+];
+$dp->ingest($item);
+$dp->endImportSession();
+die();
+
 
 /*
  * Create 5000 items , with every 100 : upsell on last 100 even cross sell on last 100 odd related on last 100 every 5 cross sell on last 100 every 10 categories named catX/even or catX/odd with X is thousand of item (using categories plugin)
  */
-for ($sku = 0; $sku < 5000; $sku++) {
+for ($sku = 0; $sku < 2; $sku++) {
     // create item category path array
     // catX/even or catX/odd, X being the 1000's of the item
     $cats = array("cat" . strval(intval($sku / 1000)));

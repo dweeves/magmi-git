@@ -140,7 +140,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->_sid_wsscope[$scodes] = array();
             $wscarr = csl2arr($scodes);
             $qcolstr = $this->arr2values($wscarr);
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             $sql = "SELECT csdep.store_id FROM $cs as csmain
                     JOIN $cs as csdep ON csdep.website_id=csmain.website_id
                     WHERE csmain.code IN ($qcolstr) ";
@@ -163,7 +163,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->_sid_sscope[$scodes] = array();
             $scarr = csl2arr($scodes);
             $qcolstr = $this->arr2values($scarr);
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             $sql = "SELECT csmain.store_id from $cs as csmain WHERE csmain.code IN ($qcolstr)";
             $sidrows = $this->selectAll($sql, $scarr);
             foreach ($sidrows as $sidrow) {
@@ -299,6 +299,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function checkRequired($cols)
     {
+
         $eav_attr = $this->tablename("eav_attribute");
         $sql = "SELECT attribute_code FROM $eav_attr WHERE  is_required=1
                 AND frontend_input!='' AND frontend_label!='' AND entity_type_id=?";
@@ -318,7 +319,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $bt=$attrinf['backend_type'];
         $user=$attrinf['is_user_defined'];
         //checking specific extension custom model for selects that might not respect magento default model
-        if ($user==1 && $bt=='int' && $finp=='select' && isset($smodel) && $smodel!="eav/entity_attribute_source_table") {
+        if ($user==1 && $bt=='int' && $finp=='select' && isset($smodel) && $smodel!="Magento\Eav\Model\Entity\Attribute\Source\Table") {
             $this->log("Potential assignment problem, specific model found for select attribute => ".$attrinf['attribute_code']."($smodel)", "warning");
         }
     }
@@ -332,12 +333,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         if (isset($this->attribute_set_infos)) {
             return; // already initialized
         }
-
         $tname = $this->tablename("eav_entity_attribute");
         $sql = "SELECT  ea.attribute_set_id,ea.attribute_id
                 FROM    $tname AS ea
                 WHERE   ea.entity_type_id = ?";
         $result = $this->selectAll($sql, $this->getProductEntityType());
+
         foreach ($result as $row) {
             $this->attribute_set_infos[$row["attribute_set_id"]][$row["attribute_id"]] = 1;
         }
@@ -347,6 +348,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 "SELECT attribute_set_id,attribute_set_name FROM $tname WHERE entity_type_id=?",
                 array($this->getProductEntityType()));
         $this->attribute_sets = array();
+
         foreach ($result as $row) {
             $this->attribute_sets[$row['attribute_set_name']] = $row['attribute_set_id'];
         }
@@ -388,8 +390,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             } else {
                 $sql = "SELECT `$tname`.* FROM `$tname` WHERE ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";
             }
+
             $toscan[] = $this->getProductEntityType();
             $result = $this->selectAll($sql, $toscan);
+
+
 
             $attrinfs = array();
             // create an attribute code based array for the wanted columns
@@ -944,7 +949,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
                 $scope=$attrdesc["is_global"];
-				if ($attrcode != "price" && $attrdesc["is_configurable"]==1) {
+				if ($attrcode != "price" && $attrdesc["is_filterable"]==1) {
 						$scope=0;
 				}
 
@@ -991,15 +996,14 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     }
                     // if we have something to do with this value
                     if ($ovalue !== false && $ovalue != null) {
-                        $data[] = $this->getProductEntityType();
+//                        $data[] = $this->getProductEntityType();
                         $data[] = $attid;
                         $data[] = $store_id;
                         $data[] = $pid;
                         $data[] = $ovalue=='__NULL__'?null:$ovalue;
-                        $insstr = "(?,?,?,?,?)";
+                        $insstr = "(?,?,?,?)";
                         $inserts[] = $insstr;
                     }
-
                     // if one of the store in the list is admin
                     if ($store_id == 0) {
                         $sids = $store_ids;
@@ -1021,14 +1025,17 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             if (!empty($inserts)) {
                 // now perform insert for all values of the the current backend type in one
                 // single insert
+
                 $sql = "INSERT INTO $cpet
-                        (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
+                        (`attribute_id`, `store_id`, `entity_id`, `value`)
                         VALUES ";
                 $sql .= implode(",", $inserts);
                 // this one taken from mysql log analysis of magento import
                 // smart one :)
                 $sql .= " ON DUPLICATE KEY UPDATE `value`=VALUES(`value`)";
+
                 $this->insert($sql, $data);
+
             }
 
             //if we have values to delete
@@ -1145,7 +1152,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
         $sql = "INSERT INTO `$css` SELECT '$pid' as product_id,ws.website_id,cis.stock_id,'$qty' as qty,? as stock_status
                 FROM `$cpe` as cpe
-                    JOIN " . $this->tablename("core_website") . " as ws ON ws.website_id IN (" . $this->arr2values($wsids) . ")
+                    JOIN " . $this->tablename("store_website") . " as ws ON ws.website_id IN (" . $this->arr2values($wsids) . ")
                     JOIN " . $this->tablename("cataloginventory_stock") . " as cis ON cis.stock_id=?
                 WHERE cpe.entity_id=?
                 ON DUPLICATE KEY UPDATE stock_status=VALUES(`stock_status`),qty=VALUES(`qty`)";
@@ -1265,7 +1272,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             if (!isset($this->_wsids[$item["websites"]])) {
                 $this->_wsids[$item["websites"]] = array();
 
-                $cws = $this->tablename("core_website");
+                $cws = $this->tablename("store_website");
                 $wscodes = csl2arr($item["websites"]);
                 $qcolstr = $this->arr2values($wscodes);
                 $rows = $this->selectAll("SELECT website_id FROM $cws WHERE code IN ($qcolstr)", $wscodes);
@@ -1283,7 +1290,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
         if (!isset($this->_wsids[$k])) {
             $this->_wsids[$k] = array();
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             if (trim($k) != "admin") {
                 $scodes = csl2arr($k);
                 $qcolstr = $this->arr2values($scodes);
@@ -1311,7 +1318,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $wsids = $this->getItemWebsites($item);
         $qcolstr = $this->arr2values($wsids);
         $cpst = $this->tablename("catalog_product_website");
-        $cws = $this->tablename("core_website");
+        $cws = $this->tablename("store_website");
         // associate product with all websites in a single multi insert (use ignore to avoid duplicates)
         $ddata = array($pid);
         $sql = "DELETE FROM `$cpst` WHERE product_id=?";
@@ -1427,7 +1434,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public function findItemStores($pid)
     {
         $sql = "SELECT cs.code FROM " . $this->tablename("catalog_product_website") . " AS cpw " .
-               "JOIN " . $this->tablename("core_store") . " as cs ON cs.website_id=cpw.website_id " .
+               "JOIN " . $this->tablename("store") . " as cs ON cs.website_id=cpw.website_id " .
                "WHERE cpw.product_id=?";
         $result = $this->selectAll($sql, array($pid));
         $scodes = array();
@@ -1445,7 +1452,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
         $scarr = explode(",", $scodes);
         trimarray($scarr);
-        $sql = "SELECT code FROM " . $this->tablename("core_store") . " WHERE code IN (" . $this->arr2values($scarr) . ")";
+        $sql = "SELECT code FROM " . $this->tablename("store") . " WHERE code IN (" . $this->arr2values($scarr) . ")";
         $result = $this->selectAll($sql, $scarr);
         $rscodes = array();
         foreach ($result as $row) {
