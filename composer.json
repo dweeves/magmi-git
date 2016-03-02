@@ -1,11 +1,14 @@
 {
-    "name": "dweeves/magmi",
-    "description": "Magento Mass Importer",
+    "name": "tagesjump/magmi2",
+    "description": "Magmi for Magento 2.0",
     "license": "MIT License",
-    "homepage": "http://sourceforge.net/projects/magmi/",
+    "homepage": "http://tagesjump.ru",
     "authors":[
         {
             "name":"Sebastien Bracquemont"
+        },
+        {
+            "name":"Tagesjump"
         }
     ],
     "bin": [
