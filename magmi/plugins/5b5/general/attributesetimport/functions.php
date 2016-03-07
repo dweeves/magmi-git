@@ -89,7 +89,7 @@ function options($self, $title, $prefix, $entityName, $withCsvOptions, $withMagm
     }
     if ($withEnable) {
         checkbox($self, $prefix, 'enable', true, "Enable ${entityName} import");
-        startDiv($self, $prefix, 'enabled', $self->getParam($prefix.":enable", "off")=="on");
+        startDiv($self, $prefix, 'enabled', $self->getParam($prefix.":enable", "on")=="on");
     }
     if ($withCsvOptions) {
         csvOptions($self, $prefix);

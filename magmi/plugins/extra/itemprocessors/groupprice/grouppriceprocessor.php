@@ -111,7 +111,13 @@ class grouppriceprocessor extends Magmi_ItemProcessor
                 if ($id = $this->selectone($sql, strtoupper($groupname), "customer_group_id")) {
                     $this->_groups[$col] = array('name'=>$groupname,'id'=>$id);
                 } else {
-                    $this->_groups[$col] = array('name'=>$groupname,'id'=>$this->createGroup($groupname));
+                    if($groupname == 'NOT LOGGED IN'){
+                        $this->_groups[$col] = array('name'=>$groupname,'id'=>$id);
+                    }
+                    else{
+                        $this->_groups[$col] =
+                            array('name'=>$groupname,'id'=>$this->createGroup($groupname));
+                    }
                 }
             }
         }
