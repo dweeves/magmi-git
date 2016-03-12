@@ -3,11 +3,10 @@ magmi-git 0.7.23
 
 Magmi GitHub
 
-This is the Official GitHub home for magmi  project (Magento Mass Importer), the original Git is hosted on sourceforge but this github repo will
-be kept in sync.
+This is the Official GitHub home for magmi  project (Magento Mass Importer), the original Git is hosted on [sourceforge](https://sourceforge.net/projects/magmi/) but this github repo will be kept in sync.
 
 
-Magmi Wiki is still hosted at sourceforge.
+The [Magmi Wiki](http://wiki.magmi.org/index.php?title=Main_Page) is still hosted at sourceforge.
 
 Magento CE 1.8.x  & 1.9.x Support
 ===================================
