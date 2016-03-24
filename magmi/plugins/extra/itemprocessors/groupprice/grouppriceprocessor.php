@@ -17,7 +17,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
 
     public function processItemAfterId(&$item, $params = null)
     {
-        $table_name = $this->tablename("catalog_product_entity_group_price");
+        $table_name = $this->tablename("catalog_product_entity_tier_price");
         $group_cols = array_intersect(array_keys($this->_groups), array_keys($item));
 
         $reusableIds = array();
