@@ -79,6 +79,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                         break;
                     case 'dl':
                         $curlopts=array(
+                            //longer timeouts for big files
+                            CURLOPT_TIMEOUT =>600,
                             // force get
                             CURLOPT_HTTPGET=>true,
                             // no header
@@ -108,7 +110,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             case 'ftp':
                 $curlopts = array(
                     //longer timeouts for big files
-                    CURLOPT_TIMEOUT =>300,
+                    CURLOPT_TIMEOUT =>600,
                     //use binary
                     CURLOPT_BINARYTRANSFER=>true,
                     CURLOPT_FOLLOWLOCATION=> 1,
