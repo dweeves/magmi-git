@@ -72,6 +72,8 @@ class Magmi_ValueParser
                 if ($match != $matches[0]) {
                     $code = trim($match);
                     $code = str_replace($renc, '"', $code);
+                    $code = str_replace("'\"","'",$code);
+                    $code = str_replace("\"'","'",$code);
 
                     $rep = eval("return ($code);");
                     // escape potential "{{xxx}}" values in interpreted target
