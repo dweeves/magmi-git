@@ -1,39 +1,36 @@
 magmi-git 0.7.23
-=========
+===
 
-Magmi GitHub
+This is the official GitHub home for the Magmi project: the original "Magento Mass Importer".
 
-This is the Official GitHub home for magmi  project (Magento Mass Importer), the original Git is hosted on sourceforge but this github repo will
-be kept in sync.
+The primary source repository is still [hosted on SourceForge](https://sourceforge.net/projects/magmi/) however this GitHub repo will be kept in sync as development continues.
 
+The [official Magmi Wiki](http://wiki.magmi.org/) is still hosted at SourceForge.
 
-Magmi Wiki is still hosted at sourceforge.
+### Magento CE 1.8 and 1.9 Support
 
-Magento CE 1.8.x  & 1.9.x Support
-===================================
+The Magmi project needs your help!
 
-Magmi needs you to test it against Magento CE 1.8.x. & Magento CE 1.9.x
+While Magmi is being used on Magento Community Edition 1.8 and 1.9 installations with very little or no issues, additional testing is required to make sure it's stable and ready for production use. Developers using Magento CE 1.8.x or CE 1.9.x are encouraged to provide bug reports for any issues or incompatibilities that have been discovered.
 
-It should work for most of it, and maybe it's already working well.
+### Authentication
 
-But devil is in the details and i don't have much time doing an extensive test session.
+Magmi now features shared Magento authentication out of the box.
 
-So , if you are using Magento CE 1.8.x or CE 1.9.x , please provide bug reports for any found defects or any incompatibility you might have noticed.
+Upon installing Magmi and visiting the web panel for the first time, the default username and password are both set to "magmi". Once successfully logged in, configure Magmi with the Magento database credentials (under Configure Global Parameters) and then save the settings. Afterwards, one can simply use their Magento administrative (backend) credentials to login to Magmi.
 
-Authentication
-==================
+#### Apache and PHP-CGI/FPM Auth Issues
 
-Following previous issues with the mis-use of Magmi in an insecure way, Magmi now contains built-in authentication.
+By default, PHP-CGI/FPM under Apache does not pass HTTP authentication credentials to PHP processes for authorization. If one is unable to login to Magmi, a few minor changes to Apache's configuration may be required.
 
-Once you have provided DB details and Magmi can connect to the DB, you will need to login using a set of Magento admin credentials to use Magmi. If Magmi has not yet been configured to connect, then the username and password are both 'magmi'
-
-Authentication with PHP-CGI/FPM
--------------------------------
-
-php-cgi/fpm under Apache does not pass HTTP Basic user/pass to PHP by default
-     
-Add these lines to an .htaccess file:
+First, create a `.htaccess` file inside the `magmi/web` folder and then add the following lines:
 
      RewriteEngine On
      RewriteCond %{HTTP:Authorization} ^(.+)$
      RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+A sample .htaccess file has been provided under the same folder. Simply copy `.htaccess-sample-php_cgi_fpm` to `.htaccess`.
+
+Additionally, the following line might be needed in your Apache VirtualHost configuration (or .htccess) if using Apache's mod_proxy_fcgi:
+
+     SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
