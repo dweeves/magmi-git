@@ -329,9 +329,9 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             $this->_use_defaultopc = true;
             $this->log("no options_container set, defaulting to :Block after product info", "startup");
         }
-		  else {
+        else {
             $this->_use_defaultopc = false;
-		  }
+        }
     }
 
     public function getPluginParamNames()
