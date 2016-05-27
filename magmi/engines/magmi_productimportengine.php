@@ -384,7 +384,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // SQL for selecting attribute properties for all wanted attributes
                 $sql = "SELECT `$tname`.*,$extra.* FROM `$tname`
                         LEFT JOIN $extra ON $tname.attribute_id=$extra.attribute_id
-                        WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";
+                        WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?) ORDER BY $tname.attribute_id";
             } else {
                 $sql = "SELECT `$tname`.* FROM `$tname` WHERE ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";
             }
