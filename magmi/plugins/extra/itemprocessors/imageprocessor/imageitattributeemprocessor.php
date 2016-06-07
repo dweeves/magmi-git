@@ -9,7 +9,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     protected $_errorimgs = array();
     protected $_lastimage = "";
     protected $_handled_attributes = array();
-    protected $_img_baseattrs = array("image","small_image","thumbnail");
+    protected $_img_baseattrs = array("image", "small_image", "thumbnail");
     protected $_active = false;
     protected $_newitem;
     protected $_mdh;
@@ -41,8 +41,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.33a",
-            "url"=>$this->pluginDocUrl("Image_attributes_processor"));
+        return array("name" => "Image attributes processor", "author" => "Dweeves, Tommy Goode", "version" => "1.0.33a",
+            "url" => $this->pluginDocUrl("Image_attributes_processor"));
     }
 
     public function isErrorImage($img)
@@ -106,7 +106,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $imagefile = $infolist[0];
             }
             unset($infolist);
-            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+            $extra = array("store" => $storeid, "attr_code" => $attrcode, "imageindex" => $imageindex == 0 ? "" : $imageindex);
             // copy it from source dir to product media dir
             $imagefile = $this->copyImageFile($imagefile, $item, $extra);
             unset($extra);
@@ -184,7 +184,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $imagefile = trim($ivalue);
 
         // else copy image file
-        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid, "attr_code"=>$attrcode));
+        $imagefile = $this->copyImageFile($imagefile, $item, array("store" => $storeid, "attr_code" => $attrcode));
         $ovalue = $imagefile;
         // add to gallery as excluded
         if ($imagefile !== false) {
@@ -204,7 +204,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
         // trimming
         $ivalue = trim($ivalue);
-        if ($ivalue=="") {
+        if ($ivalue == "") {
             return $ivalue;
         }
 
@@ -234,27 +234,26 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function getImageId($pid, $attid, $imgname, $refid = null, $store_id = 0)
     {
-        $t = $this->tablename('catalog_product_entity_media_gallery');
+        $t = $this->tablename('catalog_product_entity_media_gallery_value');
 
         $sql = "SELECT $t.value_id FROM $t ";
+        $vc = $this->tablename('catalog_product_entity_media_gallery');
         if ($refid != null) {
-            $vc = $this->tablename('catalog_product_entity_varchar');
-            $sql .= " JOIN $vc ON $t.entity_id=$vc.entity_id AND $t.value=$vc.value AND $vc.attribute_id=?
-					WHERE $t.entity_id=? AND $vc.store_id=?";
+            $sql .= "JOIN $vc ON $t.value_id=$vc.value_id WHERE $vc.attribute_id=? AND $t.entity_id=? AND $t.store_id=?";
             $imgid = $this->selectone($sql, array($refid, $pid, $store_id), 'value_id');
         } else {
-            $sql .= " WHERE value=? AND entity_id=? AND attribute_id=?";
+            $sql .= "JOIN $vc ON $t.value_id=$vc.value_id WHERE $vc.entity_id=? AND $vc.store_id=?";
+            $sql .= " WHERE $vc.value=? AND $vc.entity_id=? AND $t.attribute_id=?";
             $imgid = $this->selectone($sql, array($imgname, $pid, $attid), 'value_id');
         }
 
         if ($imgid == null) {
             // insert image in media_gallery
-            $sql = "INSERT INTO $t
-				(attribute_id,entity_id,value)
+            $sql = "INSERT INTO $vc
+				(attribute_id,value)
 				VALUES
-				(?,?,?)";
-
-            $imgid = $this->insert($sql, array($attid, $pid, $imgname));
+				(?,?)";
+            $imgid = $this->insert($sql, array($attid, $imgname));
         } else {
             $sql = "UPDATE $t
 				 SET value=?
@@ -291,7 +290,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      *            : image file name (relative to /products/media in magento dir)
      */
     public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false,
-        $refid = null)
+                                      $refid = null)
     {
         $gal_attinfo = $this->getAttrInfo("media_gallery");
         $tg = $this->tablename('catalog_product_entity_media_gallery');
@@ -302,30 +301,37 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             // et maximum current position in the product gallery
             $sql = "SELECT MAX( position ) as maxpos
 					 FROM $tgv AS emgv
-					 JOIN $tg AS emg ON emg.value_id = emgv.value_id AND emg.entity_id = ?
+					 JOIN $tg AS emg ON emg.value_id = emgv.value_id AND emgv.entity_id = ?
 					 WHERE emgv.store_id=?
-			 		 GROUP BY emg.entity_id";
+			 		 GROUP BY emgv.entity_id";
             $pos = $this->selectone($sql, array($pid, $storeid), 'maxpos');
-            $pos = ($pos == null ? 0 : $pos + 1);
+            $pos = ($pos == null ? 1 : $pos + 1);
             // nsert new value (ingnore duplicates)
 
             $vinserts = array();
             $data = array();
 
             foreach ($targetsids as $tsid) {
-                $vinserts[] = "(?,?,?,?," . ($imglabel == null ? "NULL" : "?") . ")";
-                $data = array_merge($data, array($vid, $tsid, $pos, $excluded ? 1 : 0));
+                $vinserts[] = "(?,?,?,?,?," . ($imglabel == null ? "NULL" : "?") . ")";
+                $data = array_merge($data, array($vid, $tsid, $pos, 0, $pid));
                 if ($imglabel != null) {
                     $data[] = $imglabel;
                 }
             }
 
             if (count($data) > 0) {
+                $this->exec_stmt('SET foreign_key_checks = 0');
                 $sql = "INSERT INTO $tgv
-					(value_id,store_id,position,disabled,label)
+					(value_id,store_id,position,disabled,entity_id,label)
 					VALUES " . implode(",", $vinserts) . "
 					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
                 $this->insert($sql, $data);
+                // insert to catalog_product_entity_media_gallery_value_to_entity
+                $galleryRelationTable = 'catalog_product_entity_media_gallery_value_to_entity';
+                $relationData = array($vid, $pid);
+                $sql_insert_relation = "INSERT INTO {$galleryRelationTable} VALUES (?, ?)";
+                $this->insert($sql_insert_relation, $relationData);
+                $this->exec_stmt('SET foreign_key_checks = 1');
             }
             unset($vinserts);
             unset($data);
@@ -374,7 +380,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $extra["imagename.noext"] = $matches[1];
         } else {
             $uid = uniqid("img", true);
-            $extra = array_merge($extra, array("imagename"=>"$uid.jpg", "imagename.ext"=>"jpg", "imagename.noext"=>$uid));
+            $extra = array_merge($extra, array("imagename" => "$uid.jpg", "imagename.ext" => "jpg", "imagename.noext" => $uid));
         }
 
         return $extra;
@@ -418,8 +424,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         if ($this->isErrorImage($imgfile)) {
             if ($this->_newitem) {
                 $this->fillErrorAttributes($item);
-            }
-            ;
+            };
             return false;
         }
 
@@ -432,10 +437,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         //handle amazon specific
         if (is_remote_path($imgfile)) {
             // Amazon images patch , remove SLXXXX part
-           if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
-               $pattern = '/\bSL[0-9]+\./i';
-               $imgfile = preg_replace($pattern, '', $imgfile);
-           }
+            if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
+                $pattern = '/\bSL[0-9]+\./i';
+                $imgfile = preg_replace($pattern, '', $imgfile);
+            }
         }
 
         $source = $this->findImageFile($imgfile);
