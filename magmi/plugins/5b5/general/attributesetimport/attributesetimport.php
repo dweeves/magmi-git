@@ -40,90 +40,90 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
      * Config parameters for call to updateGeneric when processing attributes.
      * @var array
      */
-    private $ATTRIBUTE_ARGS = [
+    private $ATTRIBUTE_ARGS = array(
                     'entityName'=>"attribute",
-                    'tables'=>['eav_attribute','catalog_eav_attribute'],
+                    'tables'=> array('eav_attribute','catalog_eav_attribute'),
                     'idColName'=>'attribute_id',
-                    'nameColNames'=>['attribute_code'],
+                    'nameColNames'=> array('attribute_code'),
                     'elementPrefix'=>'5B5ATI',
                     'verbose'=>true,
                     'fetchSystemAttributeIdsSql'=>"select attribute_id from ##eav_attribute## where is_user_defined = 0"
-            ];
+            );
 
     /**
      * Config parameters for call to updateGeneric when processing attribute sets.
      * @var array
      */
-    private $ATTRIBUTE_SET_ARGS = [
+    private $ATTRIBUTE_SET_ARGS = array(
                     'entityName'=>"attribute set",
-                    'tables'=>['eav_attribute_set'],
+                    'tables'=>array('eav_attribute_set'),
                     'idColName'=>'attribute_set_id',
-                    'nameColNames'=>['attribute_set_name'],
+                    'nameColNames'=>array('attribute_set_name'),
                     'elementPrefix'=>'5B5ASI',
                     'verbose'=>true,
-                    'inner' => [
-                            'magmi:groups' => [
+                    'inner' => array(
+                            'magmi:groups' => array(
                                     'label' => 'Groups',
                                     'recordSeparator' => ',',
                                     'valueSeparator' => ':',
-                                    'columnNames' => [
+                                    'columnNames' => array(
                                             'attribute_group_name',
                                             'default_group_id',
                                             'sort_order'
-                                    ],
-                                    'applyDefaultsFromParent' => ['attribute_set_id'],
-                                    'applyConditionsFromParent' => ['attribute_set_id'],
-                                    'config' => [
+                                    ),
+                                    'applyDefaultsFromParent' => array('attribute_set_id'),
+                                    'applyConditionsFromParent' => array('attribute_set_id'),
+                                    'config' => array(
                                             'entityName'=>"attribute group",
-                                            'tables'=>['eav_attribute_group'],
+                                            'tables'=>array('eav_attribute_group'),
                                             'idColName'=>'attribute_group_id',
-                                            'nameColNames'=>['attribute_group_name'],
+                                            'nameColNames'=>array('attribute_group_name'),
                                             'elementPrefix'=>'5B5AGI',
                                             'verbose'=>false
-                                    ]
-                            ]
-                    ]
-    ];
+                                    )
+                            )
+                    )
+    );
 
     /**
      * Config parameters for call to updateGeneric when processing attribute set associations.
      * @var array
      */
-    private $ATTRIBUTE_SET_ASSOCIATION_ARGS = [
+    private $ATTRIBUTE_SET_ASSOCIATION_ARGS = array(
                     'entityName'=>"attribute association",
-                    'tables'=>['eav_entity_attribute'],
+                    'tables'=>array('eav_entity_attribute'),
                     'idColName'=>'entity_attribute_id',
-                    'nameColNames'=>['attribute_set_id','attribute_id','attribute_group_id'],
+                    'nameColNames'=>array('attribute_set_id','attribute_id','attribute_group_id'),
                     'elementPrefix'=>'5B5AAI',
                     'verbose'=>true,
                     'fetchSystemAttributeIdsSql'=>"select entity_attribute_id from ##eav_entity_attribute## where attribute_id in (select attribute_id from ##eav_attribute## where is_user_defined = 0)"
-    ];
+    );
 
     /**
      * Configuration for the Name2IdDecoder used for attribute associations "decoding".
      * @var array
      */
-    private $ATTRIBUTE_SET_ASSOCIATION_DECODER_ARGS = [
+    private $ATTRIBUTE_SET_ASSOCIATION_DECODER_ARGS = array(
                             'attribute_set_name'
-                                =>[
+                                =>array(
                                     'tableName' => 'eav_attribute_set',
                                     'nameColumnName' => 'attribute_set_name',
                                     'idColumnName' => 'attribute_set_id'
-                                ],
+                                ),
                             'attribute_code'
-                                =>[
+                                =>array(
                                     'tableName' => 'eav_attribute',
                                     'nameColumnName' => 'attribute_code',
                                     'idColumnName' => 'attribute_id'
-                                ],
+                                ),
                             'attribute_group_name'
-                                =>[
+                                =>array(
                                     'tableName' => 'eav_attribute_group',
                                     'nameColumnName' => 'attribute_group_name',
                                     'idColumnName' => 'attribute_group_id',
                                     'additionalIdColumn' => 'attribute_set_id'
-                                ]
-    ];
+                                )
+    );
 
     public function initialize($params)
     {
@@ -238,7 +238,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
             $url = $this->getParam($prefix.":remoteurl", "");
             $outname = $this->getRemoteFile($prefix, $url);
             $this->setParam($prefix.":filename", $outname);
-            $csvreader->initialize($this->_params);
+            $csvreader->initialize($this->_params, $prefix);
         }
         $csvreader->checkCSV();
 
@@ -259,7 +259,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributes($csvreader)
     {
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
+        $etiCondition = array('entity_type_id' => $this->getProductEntityType());
         $this->updateGeneric($csvreader, $this->ATTRIBUTE_ARGS, $etiCondition, $etiCondition);
     }
 
@@ -270,7 +270,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributeSets($csvreader)
     {
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
+        $etiCondition = array('entity_type_id' => $this->getProductEntityType());
         $this->updateGeneric($csvreader, $this->ATTRIBUTE_SET_ARGS, $etiCondition, $etiCondition);
     }
 
@@ -280,12 +280,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
     public function importAttributeAssociations($csvreader)
     {
         // condition to restrict on product entity type (will be given as default and fetchConditions to updateGeneric() function
-        $etiCondition = ['entity_type_id' => $this->getProductEntityType()];
+        $etiCondition = array('entity_type_id' => $this->getProductEntityType());
 
         // dynamically add product entity type id to decoder options
         $decoderArgs = array_merge_recursive($this->ATTRIBUTE_SET_ASSOCIATION_DECODER_ARGS,
-                ['attribute_set_name'=>['conditions' =>['entity_type_id' => $this->getProductEntityType()]],
-                        'attribute_code'=>['conditions' =>['entity_type_id' => $this->getProductEntityType()]]]);
+                array('attribute_set_name'=>array('conditions' =>array('entity_type_id' => $this->getProductEntityType())),
+                        'attribute_code'=>array('conditions' =>array('entity_type_id' => $this->getProductEntityType()))));
 
         $decoder = new Name2IdDecoder($this, $decoderArgs);
         $this->updateGeneric($csvreader, $this->ATTRIBUTE_SET_ASSOCIATION_ARGS, $etiCondition, $etiCondition, $decoder);
@@ -505,7 +505,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
 
         // merge default values into $mergedDefaults, defaults are given from two sources: from user config parameter PREFIX:default_values (in JSON format)
         // and from function parameter $defaults
-        $mergedDefaults = [];
+        $mergedDefaults = array();
         $paramDefaults = json_decode($this->getParam($elementPrefix.":default_values", "{}"), true);
         if (isset($defaults) || isset($paramDefaults)) {
             $mergedDefaults = array_merge((array)$paramDefaults, (array)$defaults);

@@ -32,7 +32,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader
     {
         $this->openCSV();
         $this->getColumnNames();
-        $this->_availableValuesPerColumn=[];
+        $this->_availableValuesPerColumn= array();
         while ($record = $this->getNextRecord()) {
             foreach ($record as $columnName => $value) {
                 if (!isset($this->_availableValuesPerColumn[$columnName])) {

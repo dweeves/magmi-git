@@ -91,7 +91,7 @@ class AttributeCleanup extends Magmi_GeneralImportPlugin
                 ,'catalog_product_index_eav_decimal_tmp'
                 ,'catalog_product_index_eav_idx'
                 ,'catalog_product_index_eav_tmp'
-                ,['catalog_product_super_attribute','product_id']
+                , array('catalog_product_super_attribute','product_id')
         );
 
         foreach ($tables as $table) {

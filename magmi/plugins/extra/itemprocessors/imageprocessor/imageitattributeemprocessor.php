@@ -388,7 +388,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $pname = (isset($extra['parsed']) ? $extra['imagename'] : $this->forcename);
             $cname = $this->parsename($pname, $item, $extra);
         }
-        $cname = strtolower(preg_replace("/%[0-9][0-9|A-F]/", "_", rawurlencode($cname)));
+        $cname = strtolower(preg_replace("/%[0-9|A-F][0-9|A-F]/", "_", rawurlencode($cname)));
 
         return $cname;
     }
