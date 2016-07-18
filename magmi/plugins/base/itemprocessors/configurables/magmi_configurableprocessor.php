@@ -289,6 +289,16 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
             }
             $idx++;
         }
+        
+        // Delete attributes not in csv.
+        $ea = $this->tablename("eav_attribute");
+        $confoptsPlaceholders = implode(',', array_fill(0, count($confopts), '?'));
+        $sql = "DELETE `$cpsa` FROM `$cpsa` "
+            . "JOIN `$ea` ON `$cpsa`.`attribute_id` = `$ea`.`attribute_id` "
+            . "WHERE `$cpsa`.`product_id` = ? AND `$ea`.`attribute_code` NOT IN ($confoptsPlaceholders)";
+        $params = array_merge(array($pid), $confopts);
+        $this->delete($sql, $params);
+        
         unset($confopts);
         switch ($matchmode) {
             case "none":
