@@ -95,7 +95,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Product Import Engine","version"=>"1.9.1","author"=>"dweeves");
+        return array("name"=>"Magmi Product Import Engine","version"=>"1.10","author"=>"dweeves");
     }
 
     /**
@@ -483,7 +483,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     {
         $tname = $this->tablename("catalog_product_entity");
         $result = $this->selectAll(
-            "SELECT sku,entity_id as pid,attribute_set_id  as asid,type_id as type FROM $tname WHERE sku=?", $sku);
+            "SELECT sku,entity_id as pid,attribute_set_id as asid,created_at,updated_at,type_id as type FROM $tname WHERE sku=?", $sku);
         if (count($result) > 0) {
             $pids = $result[0];
             $pids["__new"] = false;
@@ -1513,7 +1513,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $pid = $itemids["pid"];
         $asid = $itemids["asid"];
 
-
         $isnew = false;
         if (isset($pid) && $this->mode == "xcreate") {
             $this->log("skipping existing sku:{$item["sku"]} - xcreate mode set", "skip");
@@ -1842,9 +1841,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->log("Import Mode:$this->mode", "startup");
         $this->log("step:" . $this->getProp("GLOBAL", "step", 0.5) . "%", "step");
         $this->log("Attributeset update is ".($this->getProp("GLOBAL", "noattsetupdate", "off") == "on"?"dis":"en")."abled.", "startup");
-        $this->createPlugins($this->_profile, $params);
+        //$this->createPlugins($this->_profile, $params);
+
+        //$this->callPlugins("datasources,general", "beforeImport");
+        $this->initImport($params);
         $this->datasource = $this->getDataSource();
-        $this->callPlugins("datasources,general", "beforeImport");
         $nitems = $this->lookup();
         Magmi_StateManager::setState("running");
         // if some rows found
@@ -1893,7 +1894,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     break;
                 }
             }
-            $this->callPlugins("datasources,general,itemprocessors", "endImport");
+            //$this->callPlugins("datasources,general,itemprocessors", "endImport");
+            $this->exitImport();
             $this->reportStats($this->_current_row, $tstart, $tdiff, $lastdbtime, $lastrec);
             $this->log("Skus imported OK:" . $this->_skustats["ok"] . "/" . $this->_skustats["nsku"], "info");
             if ($this->_skustats["ko"] > 0) {

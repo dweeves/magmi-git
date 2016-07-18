@@ -1,15 +1,55 @@
 <?php
 
+class IdxEng extends Magmi_Engine
+{
+     public function engineInit($params)
+    {
+
+    }
+
+     public function engineRun($params)
+    {
+
+    }
+}
+
 class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 {
     protected $_reindex;
-    protected $_indexlist = "catalog_product_attribute,catalog_product_price,catalog_product_flat,catalog_category_flat,catalog_category_product,cataloginventory_stock,catalog_url,catalogsearch_fulltext,tag_summary";
+    protected $_indexlist = null;
     protected $_mdh;
+    protected $_eng;
 
     public function getPluginInfo()
     {
-        return array("name"=>"Magmi Magento Reindexer","author"=>"Dweeves","version"=>"1.0.3a",
+        return array("name"=>"Magmi Magento Reindexer","author"=>"Dweeves","version"=>"1.0.4",
             "url"=>$this->pluginDocUrl("Magmi_Magento_Reindexer"));
+    }
+
+    public function initIndexList()
+    {
+        if($this->_eng==null)
+        {
+            $this->_eng=new IdxEng();
+            $this->_eng->initialize();
+            $this->_eng->connectToMagento();
+        }
+
+        $sql="SELECT indexer_code FROM ".$this->_eng->tablename('index_process');
+        $result=$this->_eng->selectAll($sql);
+        $idxlist=array();
+        if(count($result))
+        {
+            foreach($result as $row)
+            {
+                $idxlist[]=$row["indexer_code"];
+            }
+            return implode(',', $idxlist);
+        }
+        else
+        {
+            return array();
+        }
     }
 
     public function afterImport()
@@ -60,6 +100,10 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
     public function getIndexList()
     {
+        if($this->_indexlist==null)
+        {
+            $this->_indexlist=$this->initIndexList();
+        }
         return $this->_indexlist;
     }
 
@@ -91,6 +135,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             flush();
         }
     }
+
 
     public function isRunnable()
     {
