@@ -1730,7 +1730,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->initProdType();
             $this->createPlugins($this->_profile, $params);
             $this->_registerPluginLoopCallback("processItemAfterId", "onPluginProcessedItemAfterId");
-            $this->callPlugins("datasources,itemprocessors", "startImport");
+            $this->callPlugins("datasources,general,itemprocessors", "beforeImport");
             $this->resetSkuStats();
         } catch (Exception $e) {
             $this->disconnectFromMagento();
@@ -1854,7 +1854,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->initProdType();
             $this->resetSkuStats();
             // intialize store id cache
-            $this->callPlugins("datasources,itemprocessors", "startImport");
+            $this->callPlugins("datasources,general,itemprocessors", "startImport");
             // initializing item processors
             $cols = $this->datasource->getColumnNames();
             $this->log(count($cols), "columns");
