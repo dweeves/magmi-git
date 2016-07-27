@@ -3,9 +3,9 @@
 /**
  * MAGENTO MASS IMPORTER CLASS
  *
- * version : 1.7.8
+ * version : 1.10
  * author : S.BRACQUEMONT aka dweeves
- * updated : 2010-10-09
+ * updated : 2016-07-27
  *
  */
 require_once(dirname(__DIR__) . "/inc/magmi_defs.php");
