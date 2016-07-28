@@ -1,3 +1,5 @@
+[![Join the chat at https://gitter.im/dweeves/magmi-git](https://badges.gitter.im/dweeves/magmi-git.svg)](https://gitter.im/dweeves/magmi-git?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 magmi-git 0.7.23
 ===
 
