@@ -34,3 +34,11 @@ A sample .htaccess file has been provided under the same folder. Simply copy `.h
 Additionally, the following line might be needed in your Apache VirtualHost configuration (or .htccess) if using Apache's mod_proxy_fcgi:
 
      SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+     
+#### .ini File Warning
+
+While the authentication protects your Magmi web interface from unauthorised logins, it doesn't protect you from a poorly configured server.
+
+Magmi uses .ini files to store it's configuration, and some servers will serve these files as plain text files if the are requested directly.
+
+There is never a reason to serve .ini files to end users on a Magento platform, so ensure that your server is configured not to!
