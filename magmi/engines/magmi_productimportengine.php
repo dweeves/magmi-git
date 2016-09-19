@@ -1880,7 +1880,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $inserts[] = "(?,?,?)";
                 $data[] = $catid;
                 $data[] = $pid;
-                $data[] = $catpos;
+                $data[] = (int)$catpos;
             }
         }
 
