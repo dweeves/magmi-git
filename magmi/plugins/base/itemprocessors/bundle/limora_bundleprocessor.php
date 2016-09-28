@@ -182,7 +182,7 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     $option['option_id'] = $optionId;
 
                     $sql = "INSERT INTO $optv (option_id, store_id, title) VALUES(:option_id, :store_id, :title)";
-                    $bind = array('option_id'=>$option['option_id'],'store_id'=>0,'title'=>$option['code']);
+                    $bind = array('option_id'=>$option['option_id'],'store_id'=>0,'title'=>$option['title']);
                     $this->insert($sql, $bind);
 
                     if (!empty($option['title']) && $option['store_id'] != 0) {
