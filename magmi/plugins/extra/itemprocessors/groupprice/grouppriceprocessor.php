@@ -9,11 +9,11 @@ class grouppriceprocessor extends Magmi_ItemProcessor
     protected $_singleStore;
     protected $_priceScope;
     protected $_tax_class_id;
+
     public function getPluginInfo()
     {
         return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.4');
     }
-
 
     public function processItemAfterId(&$item, $params = null)
     {
@@ -21,9 +21,9 @@ class grouppriceprocessor extends Magmi_ItemProcessor
         $group_cols = array_intersect(array_keys($this->_groups), array_keys($item));
 
         $reusableIds = array();
-        
+
         if (!empty($group_cols)) {
-            $website_ids = $this->_singleStore && $this->_priceScope ? $this->getItemWebsites($item) : array(0);
+            $website_ids = !$this->_singleStore && $this->_priceScope ? $this->getItemWebsites($item) : array(0);
             $group_ids = array();
             foreach ($group_cols as $key) {
                 if ($this->_groups[$key]['id']) {
@@ -42,8 +42,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
                 foreach ($rows as $row){
                     $reusableIds[] = $row['value_id'];
                 }
-                
-                
+
                 //Deleting the records from the table is the best way to do it as we need to handle removed rows, however perhaps we can re-used the IDs...
                 $sql = 'DELETE FROM ' . $table_name . '
                               WHERE entity_id=?
