@@ -213,6 +213,20 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             return $dval;
         }
         $ovalue = deleteifempty($ivalue);
+        $attid = $attrdesc["attribute_id"];
+         // --- ExtensionsMall multiselect 1.9.3 varchar -> text ----
+        if ($attrdesc["frontend_input"] == "multiselect") {
+            // if empty delete entry
+            if ($ivalue == "") {
+                return "__MAGMI_DELETE__";
+            }
+            // magento uses "," as separator for different multiselect values
+            $sep = Magmi_Config::getInstance()->get("GLOBAL", "multiselect_sep", ",");
+            $multiselectvalues = explode($sep, $ivalue);
+            $oids = $this->getOptionIds($attid, $storeid, $multiselectvalues);
+            $ovalue = implode(",", array_values($oids));
+            unset($oids);
+        }
         return $ovalue;
     }
 
