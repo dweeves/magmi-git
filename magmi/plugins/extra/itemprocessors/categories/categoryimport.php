@@ -47,7 +47,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         $this->stores = array_reduce($stores, function ($result, $store) {
             $result[$store['code']] = $store['id'];
             return $result;
-        }, []);
+        }, array());
     }
 
     /**
@@ -293,7 +293,7 @@ class CategoryImporter extends Magmi_ItemProcessor
         foreach ($pcatparts as $cp) {
             $a = explode("::", $cp);
             // Separte numeric options into array (is_active, is_anchored, include_in_menu, position)
-            $options = [];
+            $options = array();
             if (count($a) > 1) {
                 $options = array_filter($a, 'is_numeric');
                 // The three first options are always used togehter

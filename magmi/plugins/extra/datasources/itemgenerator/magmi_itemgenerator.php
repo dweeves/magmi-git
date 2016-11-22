@@ -15,7 +15,7 @@ class Magmi_ItemGenerator extends Magmi_DataSource
 
     public function getPluginParamNames()
     {
-        return ["ITG:template","ITG:nbitems"];
+        return array("ITG:template","ITG:nbitems");
     }
     public function startImport()
     {
