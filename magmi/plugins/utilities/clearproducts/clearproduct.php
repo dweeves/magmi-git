@@ -21,6 +21,7 @@ class ClearProductUtility extends Magmi_UtilityPlugin
             "catalog_product_super_attribute_label","catalog_product_super_attribute_pricing",
             "catalog_product_super_attribute","catalog_product_super_link","catalog_product_link",
             "catalog_product_link_attribute_varchar","catalog_product_link_attribute_int",
+            "catalog_product_entity_group_price",
 
             "catalog_product_relation","catalog_product_enabled_index","catalog_product_website",
             "catalog_category_product_index","catalog_category_product","cataloginventory_stock_item",

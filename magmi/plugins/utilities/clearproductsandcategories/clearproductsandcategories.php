@@ -18,6 +18,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
             "catalog_product_entity_tier_price","catalog_product_entity_varchar","catalog_product_link",
             "catalog_product_link_attribute_decimal","catalog_product_link_attribute_int",
             "catalog_product_link_attribute_varchar",
+            "catalog_product_entity_group_price",
 
             // "catalog_product_link_attribute",
             // "catalog_product_link_type",
