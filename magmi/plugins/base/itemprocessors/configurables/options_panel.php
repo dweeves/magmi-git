@@ -32,6 +32,12 @@
 	</select></li>
 </ul>
 <ul class="formline">
+	<li class="label">Simples Sku Separator</li>
+	<li class="value">
+		<input type="text" name="CFGR:simplesskuseparator" value="<?php echo $this->getParam('CFGR:simplesskuseparator', ',') ?>" />
+    </li>
+</ul>
+<ul class="formline">
 	<li class="label">Force simples visibility</li>
 	<li class="value">
 <?php $v=$this->getParam("CFGR:updsimplevis", 0)?>

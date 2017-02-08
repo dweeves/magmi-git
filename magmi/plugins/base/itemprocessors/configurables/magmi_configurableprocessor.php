@@ -13,7 +13,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     /* Plugin info declaration */
     public function getPluginInfo()
     {
-        return array("name"=>"Configurable Item processor","author"=>"Dweeves","version"=>"1.3.7a",
+        return array("name"=>"Configurable Item processor","author"=>"Dweeves","version"=>"1.3.8a",
             "url"=>$this->pluginDocUrl("Configurable_Item_processor"));
     }
 
@@ -304,7 +304,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
                 break;
             case "fixed":
-                $sskus = explode(",", $item["simples_skus"]);
+                $sskus = explode($this->getParam("CFGR:simplesskuseparator", ','), $item["simples_skus"]);
                 trimarray($sskus);
                 $this->fixedLink($pid, $sskus);
                 $this->updSimpleVisibility($pid);
@@ -336,7 +336,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginParamNames()
     {
-        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink");
+        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:simplesskuseparator");
     }
 
     public static function getCategory()
