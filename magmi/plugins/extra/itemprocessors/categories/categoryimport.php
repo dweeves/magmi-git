@@ -42,7 +42,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 
     public function initStores()
     {
-        $sql = 'SELECT store_id AS id, code FROM ' . $this->tablename('core_store');
+        $sql = 'SELECT store_id AS id, code FROM ' . $this->tablename('store');
         $stores = $this->selectAll($sql, null, 'code');
         $this->stores = array_reduce($stores, function ($result, $store) {
             $result[$store['code']] = $store['id'];
@@ -415,6 +415,8 @@ class CategoryImporter extends Magmi_ItemProcessor
             $sql = "INSERT INTO $table (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " .
                  implode(",", $placeholders) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
             $this->insert($sql, $values);
+
+
         }
     }
 

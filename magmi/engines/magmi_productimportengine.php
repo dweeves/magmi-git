@@ -376,7 +376,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->_sid_sscope[$scodes] = array();
             $scarr = csl2arr($scodes);
             $qcolstr = $this->arr2values($scarr);
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             $sql = "SELECT csmain.store_id from $cs as csmain WHERE csmain.code IN ($qcolstr)";
             $sidrows = $this->selectAll($sql, $scarr);
             foreach ($sidrows as $sidrow)
@@ -401,7 +401,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $this->_sid_wsscope[$scodes] = array();
             $wscarr = csl2arr($scodes);
             $qcolstr = $this->arr2values($wscarr);
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             $sql = "SELECT csdep.store_id FROM $cs as csmain
                     JOIN $cs as csdep ON csdep.website_id=csmain.website_id
                     WHERE csmain.code IN ($qcolstr) ";
@@ -801,7 +801,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function findItemStores($pid)
     {
-        $sql = "SELECT cs.code FROM " . $this->tablename("catalog_product_website") . " AS cpw " . "JOIN " . $this->tablename("core_store") . " as cs ON cs.website_id=cpw.website_id " . "WHERE cpw.product_id=?";
+        $sql = "SELECT cs.code FROM " . $this->tablename("catalog_product_website") . " AS cpw " . "JOIN " . $this->tablename("store") . " as cs ON cs.website_id=cpw.website_id " . "WHERE cpw.product_id=?";
         $result = $this->selectAll($sql, array($pid));
         $scodes = array();
         foreach ($result as $row)
@@ -1131,10 +1131,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $res = array("ok" => 0, "last" => 0);
         $canceled = false;
         $this->_current_row++;
-        if ($this->_current_row % $rstep == 0)
-        {
+        /*if ($this->_current_row % $rstep == 0)
+        {*/
             $this->reportStats($this->_current_row, $tstart, $tdiff, $lastdbtime, $lastrec);
-        }
+        /*}*/
         try
         {
             if (is_array($item) && count($item) > 0)
@@ -1311,6 +1311,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             //always update stock
             $this->updateStock($pid, $item, $isnew);
             $this->touchProduct($pid);
+
             // ok,we're done
             if (!$this->callPlugins("itemprocessors", "processItemAfterImport", $item, $fullmeta))
             {
@@ -1324,7 +1325,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
         return true;
     }
-
 
     /**
      * Fetches item identifiers (attribute_set, type, product id if existing)
@@ -1665,12 +1665,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     // if we have something to do with this value
                     if ($ovalue !== false && $ovalue != null)
                     {
-                        $data[] = $this->getProductEntityType();
                         $data[] = $attid;
                         $data[] = $store_id;
                         $data[] = $pid;
                         $data[] = $ovalue == '__NULL__' ? null : $ovalue;
-                        $insstr = "(?,?,?,?,?)";
+                        $insstr = "(?,?,?,?)";
                         $inserts[] = $insstr;
                     }
 
@@ -1683,8 +1682,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         if (count($sids) > 0)
                         {
                             $sidlist = implode(",", $sids);
-                            $ddata = array($this->getProductEntityType(), $attid, $pid);
-                            $sql = "DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id=? AND store_id IN ($sidlist) AND entity_id=?";
+                            $ddata = array($attid, $pid);
+                            $sql = "DELETE FROM $cpet WHERE attribute_id=? AND store_id IN ($sidlist) AND entity_id=?";
                             $this->delete($sql, $ddata);
                             unset($ddata);
                         }
@@ -1699,7 +1698,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // now perform insert for all values of the the current backend type in one
                 // single insert
                 $sql = "INSERT INTO $cpet
-                        (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
+                        (`attribute_id`, `store_id`, `entity_id`, `value`)
                         VALUES ";
                 $sql .= implode(",", $inserts);
                 // this one taken from mysql log analysis of magento import
@@ -1715,8 +1714,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 {
                     $sidlist = $store_id;
                     $attidlist = implode(",", $to_delete);
-                    $sql = "DELETE FROM $cpet WHERE entity_type_id=? AND attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
-                    $this->delete($sql, array($this->getProductEntityType(), $pid));
+                    $sql = "DELETE FROM $cpet WHERE attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
+                    $this->delete($sql, $pid);
                 }
             }
             //if no values inserted or deleted on a new item, we have a problem
@@ -1905,7 +1904,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $wsids = $this->getItemWebsites($item);
         $qcolstr = $this->arr2values($wsids);
         $cpst = $this->tablename("catalog_product_website");
-        $cws = $this->tablename("core_website");
+        $cws = $this->tablename("store_website");
         // associate product with all websites in a single multi insert (use ignore to avoid duplicates)
         $ddata = array($pid);
         $sql = "DELETE FROM `$cpst` WHERE product_id=?";
@@ -1929,7 +1928,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             {
                 $this->_wsids[$item["websites"]] = array();
 
-                $cws = $this->tablename("core_website");
+                $cws = $this->tablename("store_website");
                 $wscodes = csl2arr($item["websites"]);
                 $qcolstr = $this->arr2values($wscodes);
                 $rows = $this->selectAll("SELECT website_id FROM $cws WHERE code IN ($qcolstr)", $wscodes);
@@ -1950,7 +1949,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         if (!isset($this->_wsids[$k]))
         {
             $this->_wsids[$k] = array();
-            $cs = $this->tablename("core_store");
+            $cs = $this->tablename("store");
             if (trim($k) != "admin")
             {
                 $scodes = csl2arr($k);
@@ -2066,7 +2065,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         }
         $sql = "INSERT INTO `$css` SELECT '$pid' as product_id,ws.website_id,cis.stock_id,'$qty' as qty,? as stock_status
                 FROM `$cpe` as cpe
-                    JOIN " . $this->tablename("core_website") . " as ws ON ws.website_id IN (" . $this->arr2values($wsids) . ")
+                    JOIN " . $this->tablename("store_website") . " as ws ON ws.website_id IN (" . $this->arr2values($wsids) . ")
                     JOIN " . $this->tablename("cataloginventory_stock") . " as cis ON cis.stock_id=?
                 WHERE cpe.entity_id=?
                 ON DUPLICATE KEY UPDATE stock_status=VALUES(`stock_status`),qty=VALUES(`qty`)";
