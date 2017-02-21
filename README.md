@@ -1,13 +1,22 @@
-Magmi 2 for Magento 2.0
+Magmi 2 for Magento 2.1.x
 
 =========
 
-This is the fork Magento 2.0 of the Official GitHub home for magmi  project (Magento Mass Importer)
+This is fork from official magmi Github reposiotry (https://github.com/dweeves/magmi-git). 
+This fork use version 0.7.23 of magmi with changes for Magento 2.0 imported from repositories:
+- tagesjump/magmi-m2 - https://github.com/tagesjump/magmi-m2
+- pushnov-i/magmi-m2 - https://github.com/pushnov-i/magmi-m2
 
 
-Magento CE 2.x Support
-===================================
+Magento CE 2.1.x Support
+========================
 
-It is experimental and not fully tested yet
+Current version in experimental and tested only for import simple and configurable products, categories, images and simple-configurable links.
 
-This version might not mean what all extensions for Magmi 0.7.x will be working with Magento 2
+** NOTICE: If you want to create URL rewrites please enable "On the fly indexer" plugin! **
+
+** Known working plugins: **
+- On the fly category creator/importer
+- On the fly indexer
+- Configurable Item processor
+- Image attributes processor
