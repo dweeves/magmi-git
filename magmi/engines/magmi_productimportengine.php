@@ -1131,10 +1131,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $res = array("ok" => 0, "last" => 0);
         $canceled = false;
         $this->_current_row++;
-        /*if ($this->_current_row % $rstep == 0)
-        {*/
+        if ($this->_current_row % $rstep == 0)
+        {
             $this->reportStats($this->_current_row, $tstart, $tdiff, $lastdbtime, $lastrec);
-        /*}*/
+        }
         try
         {
             if (is_array($item) && count($item) > 0)
@@ -1607,10 +1607,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
                 $scope = $attrdesc["is_global"];
-                if ($attrcode != "price" && $attrdesc["is_configurable"] == 1)
-                {
-                    $scope = 0;
-                }
+
+                //Disabled checking "is_configurable" because is deprecated in Magento 2
+                //if ($attrcode != "price" && $attrdesc["is_configurable"] == 1)
+                //{
+                //    $scope = 0;
+                //}
 
                 $store_ids = $this->getItemStoreIds($item, $scope);
 

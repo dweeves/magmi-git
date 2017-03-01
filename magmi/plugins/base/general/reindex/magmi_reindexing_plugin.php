@@ -35,14 +35,14 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             $this->_eng->connectToMagento();
         }
 
-        $sql="SELECT indexer_code FROM ".$this->_eng->tablename('index_process');
+        $sql="SELECT indexer_id FROM ".$this->_eng->tablename('indexer_state');
         $result=$this->_eng->selectAll($sql);
         $idxlist=array();
         if(count($result))
         {
             foreach($result as $row)
             {
-                $idxlist[]=$row["indexer_code"];
+                $idxlist[]=$row["indexer_id"];
             }
             return implode(',', $idxlist);
         }

@@ -262,7 +262,7 @@ class ItemIndexer extends Magmi_ItemProcessor
             $sql = "SELECT entity_id,request_path as path FROM {$this->tns["curw"]} WHERE entity_type = 'product'";
             $data = $this->selectAll($sql);
             foreach ($data as $line) {
-                $this->usedurls[$line['path']] = $line['product_id'];
+                $this->usedurls[$line['path']] = $line['entity_id'];
             }
             unset($data);
         }

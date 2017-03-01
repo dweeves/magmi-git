@@ -383,23 +383,23 @@ abstract class Magmi_Engine extends DbHelper
         $this->_excid++;
         $trstr = "";
         //FIXME: infinity loop in M2
-//        foreach ($traces as $trace) {
-//            if (isset($trace["file"])) {
-//                $fname = str_replace(dirname(dirname(__FILE__)), "", $trace["file"]);
-//                $trstr .= $fname . ":" . (isset($trace["line"]) ? $trace["line"] : "?") . " - ";
-//                if (isset($trace["class"])) {
-//                    $trstr .= $trace["class"] . "->";
-//                    if (isset($trace["function"])) {
-//                        $trstr .= $trace["function"];
-//                    }
-//                    $trstr .= "\n----------------------------------------\n";
-//                    if (isset($trace["args"])) {
-//                        $trstr .= print_r($trace["args"], true);
-//                    }
-//                    $trstr .= "\n";
-//                }
-//            }
-//        }
+        foreach ($traces as $trace) {
+            if (isset($trace["file"])) {
+                $fname = str_replace(dirname(dirname(__FILE__)), "", $trace["file"]);
+                $trstr .= $fname . ":" . (isset($trace["line"]) ? $trace["line"] : "?") . " - ";
+                if (isset($trace["class"])) {
+                    $trstr .= $trace["class"] . "->";
+                    if (isset($trace["function"])) {
+                        $trstr .= $trace["function"];
+                    }
+                    $trstr .= "\n----------------------------------------\n";
+                    if (isset($trace["args"])) {
+                        $trstr .= print_r($trace["args"], true);
+                    }
+                    $trstr .= "\n";
+                }
+            }
+        }
         if (!isset($this->_exceptions[$tk])) {
             $this->_exceptions[$tk] = array(0,$this->_excid);
         }
