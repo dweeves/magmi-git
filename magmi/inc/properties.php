@@ -183,7 +183,9 @@ class Properties
      */
     public function get($secname, $pname, $default = null)
     {
-        if (isset($this->_props[$secname]) && isset($this->_props[$secname][$pname]))
+        if (isset($this->_props[$secname])
+            && isset($this->_props[$secname][$pname])
+            && $this->_props[$secname][$pname] != '')
         {
             $v = $this->_props[$secname][$pname];
             return $v;
