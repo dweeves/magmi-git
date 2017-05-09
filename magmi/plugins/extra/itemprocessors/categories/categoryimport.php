@@ -304,6 +304,8 @@ class CategoryImporter extends Magmi_ItemProcessor
                 } else {
                     $catpos[] = "0";
                 }
+            } else {
+                $catpos[] = "0";       
             }
             $translation_option = array_values(array_filter($a, function ($option) { return stripos($option, '[') === 0; }));
             $translation_option_part = count($translation_option) ? '::' . $translation_option[0] : '';
