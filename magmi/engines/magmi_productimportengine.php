@@ -1678,7 +1678,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         }
                     }
                     // if we have something to do with this value
-                    if ($ovalue !== false && $ovalue != null)
+                    if ($ovalue !== false && $ovalue !== null)
                     {
                         $data[] = $this->getProductEntityType();
                         $data[] = $attid;
