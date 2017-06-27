@@ -630,4 +630,22 @@ class DBHelper
             return $columnNames;
         }
     }
+
+    /**
+     * @param $tableName
+     * @return bool
+     */
+    public function tableExists($tableName)
+    {
+        $sql = 'SHOW TABLES LIKE ?';
+        return !empty($this->exec_stmt($sql, array($tableName))->rowCount());
+    }
+
+    /**
+     * @return int|null
+     */
+    public function lastInsertId()
+    {
+        return $this->_db->lastInsertId();
+    }
 }

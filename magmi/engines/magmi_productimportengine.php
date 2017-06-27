@@ -71,6 +71,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     //handlers cache
     private $_handlercache = array();
 
+    private $_attributeEntityIdName = 'entity_id';
+
     /**
      * Constructor
      * add default attribute processor
@@ -178,7 +180,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $cpet = $this->tablename("catalog_product_entity_$bt");
             $storeids = $this->getItemStoreIds($item);
             $sid = $storeids[0];
-            $sql = "SELECT attribute_id,value FROM $cpet WHERE entity_id=? AND store_id=? AND attribute_id IN (" . $this->arr2values($bta[$bt]) . ")";
+            $sql = "SELECT attribute_id,value FROM $cpet WHERE ". $this->getProductColumnId() ."=? AND store_id=? AND attribute_id IN (" . $this->arr2values($bta[$bt]) . ")";
             $tdata = $this->selectAll($sql, array_merge(array($params["product_id"], $sid), $bta[$bt]));
             foreach ($tdata as $row)
             {
@@ -1216,7 +1218,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         // get Item identifiers in magento
         $itemids = $this->getItemIds($item);
         // extract product id & attribute set id
-        $pid = $itemids["pid"];
+        $realPid = $pid = $itemids["pid"];  // $realPid takes in account EE Version
         $asid = $itemids["asid"];
         $isnew = false;
         if (isset($pid) && $this->mode == "xcreate")
@@ -1233,7 +1235,26 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     $this->log("cannot create product sku:{$item["sku"]}, no attribute_set defined", "error");
                     return false;
                 }
-                $pid = $this->createProduct($item, $asid);
+
+                if ($this->isEnterprise()) {
+                    $tableSequenceName = $this->tablename('sequence_product');
+                    if ($this->tableExists($tableSequenceName)) {
+                        $this->exec_stmt("INSERT INTO $tableSequenceName () VALUES ();");
+                        $item['entity_id'] = $this->lastInsertId();
+                        $item['updated_in'] = 2147483647;
+                    }
+                }
+
+                $realPid = $pid = $this->createProduct($item, $asid);
+
+                /**
+                 * In case of Enterprise, row_id is the auto_increment column with product entity
+                 */
+                if ($this->isEnterprise() && !isset($item['row_id'])) {
+                    $item['row_id'] = $pid;
+                    $realPid = $item['entity_id'];
+                }
+
                 $this->_curitemids["pid"] = $pid;
                 $isnew = true;
             }
@@ -1263,11 +1284,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     }
                 }
             }
-            $this->updateProduct($item, $pid);
+            $this->updateProduct($item, $realPid);
         }
         try
         {
-            $basemeta = array("product_id" => $pid, "new" => $isnew, "same" => $this->_same, "asid" => $asid);
+            $basemeta = array("product_id" => $realPid, "new" => $isnew, "same" => $this->_same, "asid" => $asid);
             $fullmeta = array_merge($basemeta, $itemids);
             if (!$this->callPlugins("itemprocessors", "preprocessItemAfterId", $item, $fullmeta))
             {
@@ -1294,23 +1315,24 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             $attrmap = $this->attrbytype;
             do
             {
-                $attrmap = $this->createAttributes($pid, $item, $attrmap, $isnew, $itemids);
+                // In Enterprise case, use row_id
+                $attrmap = $this->createAttributes((isset($item['row_id']) ? $item['row_id'] : $pid), $item, $attrmap, $isnew, $itemids);
             }
             while (count($attrmap) > 0);
             if (!testempty($item, "category_ids") || (isset($item["category_reset"]) && $item["category_reset"] == 1))
             {
                 // assign categories
-                $this->assignCategories($pid, $item);
+                $this->assignCategories($realPid, $item);
             }
             // update websites if column is set
             if (isset($item["websites"]) || $isnew)
             {
-                $this->updateWebSites($pid, $item);
+                $this->updateWebSites($realPid, $item);
             }
             //fix for multiple stock update
             //always update stock
-            $this->updateStock($pid, $item, $isnew);
-            $this->touchProduct($pid);
+            $this->updateStock($realPid, $item, $isnew);
+            $this->touchProduct($realPid);
 
             // ok,we're done
             if (!$this->callPlugins("itemprocessors", "processItemAfterImport", $item, $fullmeta))
@@ -1685,7 +1707,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         {
                             $sidlist = implode(",", $sids);
                             $ddata = array($attid, $pid);
-                            $sql = "DELETE FROM $cpet WHERE attribute_id=? AND store_id IN ($sidlist) AND entity_id=?";
+                            $sql = "DELETE FROM $cpet WHERE attribute_id=? AND store_id IN ($sidlist) AND ". $this->getProductColumnId() ."=?";
                             $this->delete($sql, $ddata);
                             unset($ddata);
                         }
@@ -1700,7 +1722,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // now perform insert for all values of the the current backend type in one
                 // single insert
                 $sql = "INSERT INTO $cpet
-                        (`attribute_id`, `store_id`, `entity_id`, `value`)
+                        (`attribute_id`, `store_id`, `". $this->getProductColumnId() ."`, `value`)
                         VALUES ";
                 $sql .= implode(",", $inserts);
                 // this one taken from mysql log analysis of magento import
@@ -1716,7 +1738,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 {
                     $sidlist = $store_id;
                     $attidlist = implode(",", $to_delete);
-                    $sql = "DELETE FROM $cpet WHERE attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND entity_id=?";
+                    $sql = "DELETE FROM $cpet WHERE attribute_id IN ($attidlist) AND store_id IN ($sidlist) AND ". $this->getProductColumnId() ."=?";
                     $this->delete($sql, $pid);
                 }
             }
@@ -2118,5 +2140,17 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $this->log("Import Ended", "end");
 
         Magmi_StateManager::setState("idle");
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductColumnId()
+    {
+        if ($this->isEnterprise()) {
+            return 'row_id';
+        }
+
+        return 'entity_id';
     }
 }
