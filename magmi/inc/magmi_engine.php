@@ -87,6 +87,14 @@ abstract class Magmi_Engine extends DbHelper
     }
 
     /**
+     * @return bool
+     */
+    public function isEnterprise()
+    {
+        return (strpos($this->_conf->get("MAGENTO", "version"), 'EE') !== false);
+    }
+
+    /**
      * checks the magento version
      */
     public function checkMagentoVersion($version, $operator)

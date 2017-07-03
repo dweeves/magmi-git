@@ -265,7 +265,7 @@ $cansock = !($dmysqlsock === false);
 			<ul class="formline">
 				<li class="label">Version:</li>
 				<li class="value"><select name="MAGENTO:version">
-			<?php foreach (array("2.1.x") as $ver) {
+			<?php foreach (array("2.1.x", "2.1.x EE") as $ver) {
     ?>
 				<option value="<?php echo $ver?>"
 							<?php if ($conf->get("MAGENTO", "version")==$ver) {
