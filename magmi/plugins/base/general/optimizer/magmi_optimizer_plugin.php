@@ -18,9 +18,12 @@ class Magmi_OptimizerPlugin extends Magmi_GeneralImportPlugin
         foreach ($tbls as $tblname => $idxinfo) {
             try {
                 $t = $this->tablename($tblname);
-                $this->log("Adding index {$idxinfo[1]} on $t", "info");
-                $sql = "ALTER  TABLE $t ADD INDEX {$idxinfo[1]} (`{$idxinfo[0]}`)";
-                $this->exec_stmt($sql);
+                $checkSql = "SELECT COUNT(1) indexExists FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema = DATABASE() AND table_name = '$t' AND index_name = '{$idxinfo[1]}';";
+                if (!$this->selectone($checkSql, null, 'indexExists')) {
+                    $this->log("Adding index {$idxinfo[1]} on $t", "info");
+                    $sql = "ALTER  TABLE $t ADD INDEX {$idxinfo[1]} (`{$idxinfo[0]}`)";
+                    $this->exec_stmt($sql);
+                }
             } catch (Exception $e) {
                 // ignore exception
                 $this->log("Already optmized!", "info");
