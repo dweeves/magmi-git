@@ -526,8 +526,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
         $givenNameValues = new MultiDimArray(); // store given Attribute names for faster pruning in second loop
 
         // iterate over all given records from CSV
-        while ($record = $csvreader->getNextRecord()) {
+        while ($record = $csvreader->getNextRecord() ) {
             try {
+                if(Magmi_StateManager::getState()=='canceled')
+                {
+                    break;
+                }
                 // counters and helper variables for statistics
                 // (using booleans for statistics to only count one record once in multi-table updates (having more than one
                 // table configured in $tables)
@@ -699,16 +703,21 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                 if (time()-$lastReportTime != 0 || $currentRecordNo == $givenRecordCount) {
                     $lastReportTime = time();
                     if ($verbose) {
-                        $this->log("Insert & Update loop processed $currentRecordNo/$givenRecordCount records.", 'startup');
+                        $this->log("Insert & Update loop processed $currentRecordNo/$givenRecordCount records.", 'info');
                     }
                 }
             } catch (Exception $e) {
                 // exception within loop -> log Exception
-                $this->log("Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record, true).(isset($originalRecord)?"\noriginal record data:".print_r($originalRecord, true):"")."\nsee trace log!", 'startup');
+                $this->log("Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage().",see trace log!", 'info');
                 $this->trace($e, "Exception in update/insert loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($record, true).(isset($originalRecord)?"\noriginal record data:".print_r($originalRecord, true):""));
             }
         }
 
+        if(Magmi_StateManager::getState()=='canceled')
+        {
+            $this->log("Cancelled ","warning");
+            return false;
+        }
 
         /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------
          *  Prune loop
@@ -782,6 +791,7 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
 
             // just for counting records...
             $currentRecordNo = 0;
+            $pruneonly=$this->getParam($elementPrefix.":prune_only","");
 
             // now loop aver all records from database...
             // again use rewind(), valid(), next() and offsetSet() because the short notation and foreach do not like array indexe
@@ -798,8 +808,21 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     $prunedRecord = false;
                     $keptRecord = false;
 
+
+                    $to_delete=!$givenNameValues->offsetExists($currentNames);
+
+                    if($pruneonly!="" && $to_delete && !is_int($currentNames[0]))
+                    {
+                        $to_delete = $to_delete && preg_match("/$pruneonly/",$currentNames[0]);
+                    }
+
+                    if($to_delete)
+                    {
+                        $to_delete = $to_delete && !$keepNamesArray->offsetExistsPartly($currentNames) && !isset($keepSystemIds[$currentId]);
+                    }
+
                     // check if conditions for pruning are matched (see above,1.) except a.) and b.) )
-                    if (!$givenNameValues->offsetExists($currentNames) && !$keepNamesArray->offsetExistsPartly($currentNames) && !isset($keepSystemIds[$currentId])) {
+                    if ($to_delete) {
                         // delete in each configured table
                         foreach ($tables as $tableName) {
                             $columnNames = $this->cols($tableName);
@@ -824,12 +847,12 @@ class AttributeSetImporter extends Magmi_GeneralImportPlugin
                     if (time()-$lastReportTime != 0 || $currentRecordNo == $dbRecordCount) {
                         $lastReportTime = time();
                         if ($verbose) {
-                            $this->log("Prune loop processed $currentRecordNo/$dbRecordCount records.", 'startup');
+                            $this->log("Prune loop processed $currentRecordNo/$dbRecordCount records.", 'info');
                         }
                     }
                 } catch (Exception $e) {
                     // exception within loop -> log Exception
-                    $this->log("Exception in prune loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($dbRecord, true)."\nsee trace log!", 'startup');
+                    $this->log("Exception in prune loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($dbRecord, true)."\nsee trace log!", 'info');
                     $this->trace($e, "Exception in prune loop for entity '$entityName' in record no $currentRecordNo: ".$e->getMessage()."\nrecord data:".print_r($dbRecord, true));
                 }
                 $dbDataByName->next();

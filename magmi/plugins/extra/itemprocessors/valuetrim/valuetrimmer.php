@@ -56,7 +56,7 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
             } else {
                 // for multiselect, recompose trimmed value list
 
-                $sep = Magmi_Config::getInstance()->get("GLOBAL", "mutiselect_sep", ",");
+                $sep = Magmi_Config::getInstance()->get("GLOBAL", "multiselect_sep", ",");
                 $vt = explode($sep, $item[$col]);
                 foreach ($vt as &$v) {
                     $v = trim($v);
