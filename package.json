@@ -1,0 +1,26 @@
+{
+  "name": "magmi",
+  "description": "Magento Mass Importer",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dweeves/magmi-git.git"
+  },
+  "author": "Sebastien Bracquemont",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/dweeves/magmi-git/issues"
+  },
+  "homepage": "http://sourceforge.net/projects/magmi/",
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-csscomb": "^3.0.8",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^3.1.0"
+  }
+}

@@ -1,5 +1,6 @@
 .idea
 /magmi/state/*
 !/magmi/state/dummy.txt
+/node_modules/
 .php-cs-fixer.cache
 .php_cs.cache

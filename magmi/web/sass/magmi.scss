@@ -1,11 +1,84 @@
 @CHARSET 'UTF-8';
+
+// Variables
+$colors: ('primary': #444, 'light': #999, 'lighter': #dddddd, 'dark': #222, 'medium': #555, 'error': #b94a48, 'hover': #b8b8e6);
+$link-colors: ('primary': #3366CC, 'focus': #DF5353, 'hover': #333);
+$background-colors: ('primary': #f4f4f4, 'light': #fafafa, 'lighter': #fdfdfd, 'purple': #b8b8e6, 'default': #ffffff);
+
+$alert-colors: ('default': #c09853, 'success': #468847, 'error': #b94a48, 'info': #3a87ad, 'normal': #333);
+$alert-background-colors: ('default': #fcf8e3, 'success': #dff0d8, 'error': #f2dede, 'info': #d9edf7, 'normal': #f0f0f0);
+$alert-border-colors: ('default': #fbeed5, 'success': #d6e9c6, 'error': #eed3d7, 'info': #bce8f1, 'normal': #ddd);
+
+$button-colors: ('default': #333, 'red': #fff, 'blue': #fff, 'disabled': #ccc);
+$button-background-colors: ('default': #f5f5f5, 'red': #d14836, 'blue': #4d90fe, 'disabled': #f7f7f7);
+$button-border-colors: ('default': #ddd, 'red': #b0281a, 'blue': #3079ed, 'disabled': #ccc);
+$button-hover-colors: ('default': #000, 'red': #fff, 'blue': #fff);
+$button-hover-background-colors: ('default': #fafafa, 'red': #c53727, 'blue': #357ae8);
+$button-hover-border-colors: ('default': #bbb, 'red': #b0281a, 'blue': #3079ed);
+
+$font-sizes: ('normal': 1.0em, 'tiny': 0.7em, 'small': 0.8em, 'compact': 0.9em, 'medium': 1.2em, 'large': 1.4em, 'xlarge': 1.6em, 'title': 1.5em);
+
+@function size($key) {
+  @return map-get($font-sizes, $key);
+}
+
+@function color($key: 'primary') {
+  @return map-get($colors, $key);
+}
+
+@function link-color($key: 'primary') {
+  @return map-get($link-colors, $key);
+}
+
+@function bg-color($key: 'primary') {
+  @return map-get($background-colors, $key);
+}
+
+@function icon-color($key) {
+  @return map-get($icon-colors, $key);
+}
+
+@function alert-color($key) {
+  @return map-get($alert-colors, $key);
+}
+
+@function alert-bg-color($key) {
+  @return map-get($alert-background-colors, $key);
+}
+
+@function alert-border-color($key) {
+  @return map-get($alert-border-colors, $key);
+}
+
+@function button-color($key) {
+  @return map-get($button-colors, $key);
+}
+
+@function button-bg-color($key) {
+  @return map-get($button-background-colors, $key);
+}
+
+@function button-border-color($key) {
+  @return map-get($button-border-colors, $key);
+}
+
+@function button-hover-color($key) {
+  @return map-get($button-hover-colors, $key);
+}
+
+@function button-hover-bg-color($key) {
+  @return map-get($button-hover-background-colors, $key);
+}
+
+@function button-hover-border-color($key) {
+  @return map-get($button-hover-border-colors, $key);
+}
+
 body {
   behavior: url('csshover3.htc');
 }
 
-.datasource_plugin_config,
-.itemprocessor_plugin_config,
-.general_plugin_config {
+.datasource_plugin_config, .itemprocessor_plugin_config, .general_plugin_config {
   clear: both;
 }
 
@@ -15,20 +88,23 @@ ul.formline {
   clear: both;
   height: 27px;
   margin-bottom: 6px;
-}
-ul.formline li {
-  padding-left: 0;
-  margin-left: 0;
-  float: left;
-  list-style: none;
-}
-ul.formline li.label {
-  text-align: left;
-  width: 200px;
-  line-height: 27px;
-}
-ul.formline li.value {
-  float: left;
+
+  li {
+    padding-left: 0;
+    margin-left: 0;
+    float: left;
+    list-style: none;
+
+    &.label {
+      text-align: left;
+      width: 200px;
+      line-height: 27px;
+    }
+
+    &.value {
+      float: left;
+    }
+  }
 }
 
 .fieldinfo {
@@ -60,6 +136,7 @@ div.title {
 
 .title .info {
   float: left;
+
   /*width:598px;*/
   border: 1px solid #8888cc;
   height: 100%;
@@ -93,16 +170,17 @@ div.title {
 }
 
 .subtitle {
-  background-color: #b8b8e6;
+  background-color: bg-color('purple');
   width: 100%;
   line-height: 2.6rem;
   font-size: 1.25rem;
   font-weight: bold;
   margin-top: 10px;
   border-radius: 3px;
-}
-.subtitle span {
-  padding: 0 10px;
+
+  span {
+    padding: 0 10px;
+  }
 }
 
 .saveinfo {
@@ -140,8 +218,7 @@ span.version {
   padding-right: 10;
 }
 
-.log_error,
-.mgupload_error {
+.log_error, .mgupload_error {
   border: 1px solid #cc0000;
   background: #ff8888;
   color: #000000;
@@ -212,8 +289,7 @@ span.version {
   padding-right: 5px;
 }
 
-.log_info,
-.mgupload_info {
+.log_info, .mgupload_info {
   border: 1px solid #00cc44;
   background: #88ffcc;
   color: #000000;
@@ -275,8 +351,7 @@ span.version {
   padding-bottom: 2px;
 }
 
-#common_config input[type=text],
-#common_config input[type=password] {
+#common_config input[type=text], #common_config input[type=password] {
   width: 180px;
 }
 
@@ -309,6 +384,8 @@ div.plugininfo {
   height: 18px;
   margin-bottom: 1px;
 }
+
+.pluginname {}
 
 span.pluginname.sponsored {
   background: #eeeeff;
@@ -347,6 +424,8 @@ div.plugininfo:hover div.plugininfohover {
   left: 100%;
   z-index: 200;
 }
+
+div.plugindata .ul {}
 
 div.plugindata .minidoc {
   background: #ffffff;
@@ -415,13 +494,11 @@ div.pluginconfpanel.selected {
   background-color: #888888;
 }
 
-.log_itime table,
-.log_dbtime table {
+.log_itime table, .log_dbtime table {
   width: 100%;
 }
 
-.log_itime table td,
-.log_dbtime table td {
+.log_itime table td, .log_dbtime table td {
   border: 1px solid #eeeeee;
 }
 
@@ -439,8 +516,7 @@ div.log_error {
   margin: 2px;
 }
 
-.plupload_error,
-.magmi_error {
+.plupload_error, .magmi_error {
   border: 1px #cc0000 solid;
   background-color: #ffaaaa;
   color: #000000;
@@ -466,7 +542,7 @@ div.log_error {
 div.trace {
   font-size: small;
   font-family: courier, monospace;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #cc0000;
 }
 
@@ -554,8 +630,8 @@ p.logentry {
 #overlaycontent {
   width: 800;
   margin: 200 auto;
-  background-color: #ffffff;
-  border: 1px solid #000000;
+  background-color: #fff;
+  border: 1px solid #000;
   text-align: left;
 }
 

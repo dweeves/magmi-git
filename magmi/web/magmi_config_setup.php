@@ -144,29 +144,32 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 		<a href="magmi_utilities.php">Advanced Utilities</a>
 	</div>
 </div>
-<div class="container_12">
-	<div class="grid_12 subtitle">
-		<span>Configure Global Parameters</span> <span id="commonconf_msg"
-			class="saveinfo">
-Saved:<?php echo $conf->getLastSaved("%c")?>
-</span>
-	</div>
-</div>
+
 <?php
 $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
 $cansock = !($dmysqlsock === false);
 ?>
-<div class="clear"></div>
-<form method="post" action="magmi_saveconfig.php" id="commonconf_form">
-	<div class="container_12" id="common_config">
-		<div class="grid_4 col">
-			<h3>Database</h3>
+<div class="container">
+<div class="row">
+<div class="col-12">
+	<h2 class="subtitle">
+		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="saveinfo">
+		Saved:<?php echo $conf->getLastSaved("%c")?>
+		</span>
+	</h2>
+</div>
+
+<form method="post" action="magmi_saveconfig.php" id="commonconf_form" class="col-12">
+		<div class="card-group">
+		<div class="card">
+			<h3 class="card-header">Database</h3>
+			<div class="card-body">
+			<div id="connectivity" class="form-group">
 	<?php $curconn = $conf->get("DATABASE", "connectivity", "net");?>
-			<ul class="formline">
-				<li class="label">Connectivity</li>
-				<li class="value"><select name="DATABASE:connectivity" id="DATABASE:connectivity">
-					<option value="net" <?php if ($curconn == "net") {
+				<label for="DATABASE:connectivity">Connectivity</label>
+				<select name="DATABASE:connectivity" id="DATABASE:connectivity" class="form-control">
+					<option value="net" <?php if ($curconn === "net") {
     ?>
 						selected="selected" <?php
 } ?>>Using host/port</option>
@@ -179,31 +182,24 @@ $cansock = !($dmysqlsock === false);
 					<?php
     }?>
 					<option value="localxml" <?php echo $curconn == "localxml" ? 'selected="selected"' : '' ?>>Using magento.xml</option>
-				</select></li>
-			</ul>
-
-			<div id="connectivity:net" class="connectivity"
+				</select>
+				</div>
+			<div id="connectivity:net" class="form-group connectivity"
 				<?php if ($curconn != "net") {
         ?> style="display: none" <?php
     }?>>
-				<ul class="formline">
-					<li class="label">Host:</li>
-					<li class="value"><input type="text" name="DATABASE:host"
-						value="<?php echo $conf->get("DATABASE", "host", "localhost")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Port:</li>
-					<li class="value"><input type="text" name="DATABASE:port"
-						value="<?php echo $conf->get("DATABASE", "port", "3306")?>"></input></li>
-				</ul>
+
+					<label for="DATABASE:host">Host:</label>
+					<input type="text" class="form-control" name="DATABASE:host" value="<?php echo $conf->get("DATABASE", "host", "localhost")?>"></input>
+
+					<label for="DATABASE:port">Port:</label>
+					<input type="text" class="form-control" name="DATABASE:port" value="<?php echo $conf->get("DATABASE", "port", "3306")?>"></input>
 			</div>
 			<div id="connectivity:localxml" class="connectivity" <?php echo $curconn != 'localxml' ? 'style="display: none;"' : '' ?>>
-				<ul class="formline">
-					<li class="label">Resource:</li>
-					<li class="value"><select id="select_localxml_resources" name="DATABASE:resource">
+					<label for="DATABASE:host">Resource:</label>
+					<select id="select_localxml_resources" class="form-control" name="DATABASE:resource">
 						<option value="<?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?>"><?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?></option>
 					</select>
-				</ul>
 			</div>
 			<?php if ($cansock) {
         ?>
@@ -211,50 +207,40 @@ $cansock = !($dmysqlsock === false);
 							<?php if ($curconn != "socket") {
             ?> style="display: none" <?php
         } ?>>
-							<ul class="formline">
-								<li class="label">Unix Socket:</li>
+
+								<label for="DATABASE:host">Unix Socket:</label>
 
 					<?php
                         $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
         if (!file_exists($mysqlsock)) {
             $mysqlsock = $dmysqlsock;
         } ?>
-					<li class="value"><input type="text" name="DATABASE:unix_socket"
-									value="<?php echo $mysqlsock?>"></input></li>
-					</ul>
+					<input type="text" name="DATABASE:unix_socket" class="form-control" value="<?php echo $mysqlsock?>"></input>
 			</div>
 			<?php
     }?>
 			<div id="connectivity_extra" <?php echo $curconn == 'localxml' ? 'style="display: none;"' : ''; ?>>
-				<hr />
-				<ul class="formline">
-					<li class="label">DB Name:</li>
-					<li class="value"><input type="text" name="DATABASE:dbname"
-						value="<?php echo $conf->get("DATABASE", "dbname")?>"></input></li>
-				</ul>
+				<hr/>
+				<label for="DATABASE:dbname">DB Name:</label>
+				<input type="text" name="DATABASE:dbname" class="form-control" value="<?php echo $conf->get("DATABASE", "dbname")?>"></input>
 
-				<ul class="formline">
-					<li class="label">Username:</li>
-					<li class="value"><input type="text" name="DATABASE:user"
-						value="<?php echo $conf->get("DATABASE", "user")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Password:</li>
-					<li class="value"><input type="password" name="DATABASE:password"
-						value="<?php echo $conf->get("DATABASE", "password")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Table prefix:</li>
-					<li class="value"><input type="text" name="DATABASE:table_prefix"
-						value="<?php echo $conf->get("DATABASE", "table_prefix")?>"></input></li>
-				</ul>
+				<label for="DATABASE:user">Username:</label>
+				<input type="text" name="DATABASE:user" class="form-control" value="<?php echo $conf->get("DATABASE", "user")?>"></input>
+
+				<label for="DATABASE:password">Password:</label>
+				<input type="password" name="DATABASE:password" class="form-control" value="<?php echo $conf->get("DATABASE", "password")?>"></input>
+
+				<label for="DATABASE:table_prefix">Table prefix:</label>
+				<input type="text" name="DATABASE:table_prefix" class="form-control" value="<?php echo $conf->get("DATABASE", "table_prefix")?>"></input>
 			</div>
 		</div>
-		<div class="grid_4 col">
-			<h3>Magento</h3>
-			<ul class="formline">
-				<li class="label">Version:</li>
-				<li class="value"><select name="MAGENTO:version">
+		</div>
+
+		<div class="card">
+			<h3 class="card-header">Magento</h3>
+			<div class="card-body">
+				<label for="MAGENTO:version">Version:</label>
+				<select name="MAGENTO:version" class="form-control">
 			<?php foreach (array("1.9.x", "1.8.x", "1.7.x", "1.6.x", "1.5.x", "1.4.x", "1.3.x") as $ver) {
         ?>
 				<option value="<?php echo $ver?>"
@@ -264,48 +250,39 @@ $cansock = !($dmysqlsock === false);
         } ?>><?php echo $ver?></option>
 			<?php
     }?>
-		</select></li>
-			</ul>
-			<ul class="formline" style="height: 40px">
-				<li class="label">Filesystem Path to magento directory:</li>
-				<li class="value"><input type="text" name="MAGENTO:basedir"
-					value="<?php echo $conf->get("MAGENTO", "basedir")?>"></input></li>
-			</ul>
+		</select>
+				<label for="MAGENTO:basedir">Filesystem Path to magento directory:</label>
+				<input type="text" name="MAGENTO:basedir" class="form-control" value="<?php echo $conf->get("MAGENTO", "basedir")?>"></input>
+			</div>
 		</div>
-		<div class="grid_4 col omega">
-			<h3>Global</h3>
-			<ul class="formline" id="globstep">
-				<li class="label">Reporting step in %:</li>
-				<li class="value"><input type="text" name="GLOBAL:step" size="5"
-					value="<?php echo $conf->get("GLOBAL", "step")?>"></input></li>
-			</ul>
-			<ul class="formline" id="mssep">
-				<li class="label">Multiselect value separator:</li>
-				<li class="value"><input type="text" name="GLOBAL:multiselect_sep"
-					size="3"
-					value="<?php echo $conf->get("GLOBAL", "multiselect_sep", ",")?>"></input></li>
-			</ul>
-			<h3>Dir &amp; File permissions</h3>
-			<ul class="formline" id="dirperms">
-				<li class="label">Directory permissions:</li>
-				<li class="value"><input type="text" name="GLOBAL:dirmask" size="3"
-					value="<?php echo $conf->get("GLOBAL", "dirmask", "755")?>"></input></li>
-			</ul>
-			<ul class="formline" id="fileperms">
-				<li class="label">File permissions:</li>
-				<li class="value"><input type="text" name="GLOBAL:filemask" size="3"
-					value="<?php echo $conf->get("GLOBAL", "filemask", "644")?>"></input></li>
-			</ul>
-			<h3>Backward compatibility</h3>
-			<ul class="formline" id="noattsetupdate">
-				<li class="label">Disable attribute set update:</li>
-				<li class="value">
-					<input type="checkbox" id="noattsetupdate_cb"
+		<div class="card omega">
+			<h3 class="card-header">Global</h3>
+			<div class="card-body" id="globstep">
+				<label for="GLOBAL:step">Reporting step in %:</label>
+				<input type="text" name="GLOBAL:step" class="form-control" size="5" value="<?php echo $conf->get("GLOBAL", "step")?>"></input>
+
+				<label for="GLOBAL:multiselect_sep">Multiselect value separator:</label>
+				<input type="text" name="GLOBAL:multiselect_sep" class="form-control" size="3" value="<?php echo $conf->get("GLOBAL", "multiselect_sep", ",")?>"></input>
+
+			<h6 class="card-subtitle mb-2 mt-2 text-muted">Dir &amp; File permissions</h6>
+
+				<label for="GLOBAL:dirmask">Directory permissions:</label>
+				<input type="text" name="GLOBAL:dirmask" class="form-control" size="3" value="<?php echo $conf->get("GLOBAL", "dirmask", "755")?>"></input>
+
+				<label for="GLOBAL:filemask">File permissions:</label>
+				<input type="text" name="GLOBAL:filemask" class="form-control" size="3" value="<?php echo $conf->get("GLOBAL", "filemask", "644")?>"></input>
+
+			<h6 class="card-subtitle mb-2 mt-2 text-muted">Backward compatibility</h6>
+
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="checkbox" id="noattsetupdate_cb" class="form-check-input"
 						<?php if ($conf->get("GLOBAL", "noattsetupdate", "off") == "on") {
         ?>
 						checked="checked" <?php
     }?>>
-						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" value="<?php echo $conf->get("GLOBAL", "noattsetupdate", "off") ?>"/>
+					Disable attribute set update:</label>
+						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" class="form-check-input" value="<?php echo $conf->get("GLOBAL", "noattsetupdate", "off") ?>"/>
 						<script type="text/javascript">
 						$('noattsetupdate_cb').observe('click',function(){
 							if($('noattsetupdate_cb').checked) {
@@ -314,20 +291,12 @@ $cansock = !($dmysqlsock === false);
 								$('noattsetupdate_hf').value = 'off';
 							}
 						});
-					</script></li>
-			</ul>
-
-		</div>
-		<div class="clear"></div>
-
-		<div class="container_12">
-			<div class="grid_12">
-				<div style="float: right">
-					<a id="save_commonconf" class="actionbutton" href="#">Save global
-						parameters</a>
-				</div>
+					</script>
 			</div>
+
 		</div>
+		</div>
+		<a id="save_commonconf" class="btn btn-primary btn-lg btn-block mt-3" role="button" aria-pressed="true" href="#">Save global parameters</a>
 	</div>
 	<?php if ($conf->get("USE_ALTERNATE", "file", "") != "") {
         ?>
@@ -336,6 +305,7 @@ $cansock = !($dmysqlsock === false);
 	<?php
     }?>
 </form>
+</div>
 
 <div class="clear"></div>
 <script type="text/javascript">

@@ -22,16 +22,18 @@ if (file_exists($postinst)) {
 
         if ($result["OK"] != "") {
             ?>
-<div class="container_12">
-	<div class="grid_12 subtitle">
-		<span>Post install procedure</span>
-	</div>
-	<div class="grid_12 col">
-		<h3>Post install output</h3>
-		<div class="mgupload_info" style="margin-top: 5px">
-	 <?php echo $result["OK"]?>
-	 </div>
-	</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+        	<div class="subtitle">
+        		<span>Post install procedure</span>
+        	</div>
+        	<h3>Post install output</h3>
+        	<div class="mgupload_info">
+        	   <?php echo $result["OK"]?>
+        	</div>
+        </div>
+    </div>
 </div>
 <?php
         }
@@ -56,7 +58,7 @@ if (count($badrights) == 0) {
 } else {
     ?>
 
-<div class="container_12">
+<div class="container">
 	<div class="grid_12">
 		<div class="magmi_error" style="margin-top: 5px">
 			Directory permissions not compatible with Mass Importer operations
