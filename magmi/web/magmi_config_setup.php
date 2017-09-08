@@ -26,19 +26,20 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
     $conf_ok = 0;
 }
 ?>
+<?php $zipok=class_exists("ZipArchive");?>
+<div class="magmi-update container mb-4">
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
-<?php $zipok = class_exists("ZipArchive");?>
-<div class="container_12">
-	<div class="grid_12 subtitle">
+<div class="row">
+<div class="col-12">
+<div class="card bg-light w-100">
+	<h2 class="card-header subtitle">
 		<span>Update Magmi</span>
-	</div>
-</div>
-<div class="container_12">
+	</h2>
 <?php if (false) {
     ?>
 <form method="post" enctype="multipart/form-data"
 		action="magmi_upload.php">
-		<div class="grid_12 col">
+		<div class="card-body">
 			<h3>Update Magmi Release</h3>
 			<input type="file" name="magmi_package"></input> <input type="submit"
 				value="Upload Magmi Release"></input>
@@ -58,10 +59,10 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 
 <!--  PLUGIN UPLOADER -->
-<div class="container_12">
+<div class="card-body">
 	<form method="post" enctype="multipart/form-data"
 		action="plugin_upload.php">
-		<div class="grid_12 col">
+		<div class="col-12">
 			<h3>Upload New Plugins</h3>
 			<input type="file" name="plugin_package"></input> <input
 				type="submit" value="Upload Plugins"></input>
@@ -80,40 +81,45 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 <?php
 } else {
         ?>
-<div class="grid_12 col">
-		<h3>Update Disabled</h3>
-		<div class="error">Upgrade/Upload function
-			are disabled for security reasons</div>
-	</div>
+<div class="card-body">
+	<h3>Update Disabled</h3>
+	<div class="error">Upgrade/Upload function are disabled for security reasons</div>
+</div>
 <?php
     }?>
 </div>
-<div class="container_12">
-	<div class="grid_12 subtitle">
+</div>
+</div>
+</div>
+
+<div class="magmi-run container mb-4">
+<div class="row">
+<div class="col-12">
+<div class="card bg-light">
+	<h2 class="card-header subtitle">
 		<span>Run Magmi</span>
+	</h2>
+<div class="card-body">
 <?php if (!$conf_ok) {
         ?>
 <span class="saveinfo log_warning"><b>No Profile saved yet, Run
 				disabled!!</b></span>
 <?php
     }?>
-</div>
-</div>
 <form method="POST" id="runmagmi"
 	action="magmi.php?ts=<?php echo time()?>" <?php if (!$conf_ok) {
         ?>
 	style="display: none" <?php
     }?>>
-	<input type="hidden" name="run" value="import"></input> <input
-		type="hidden" name="logfile"
+	<input type="hidden" name="run" class="form-group" value="import"></input> <input
+		type="hidden" name="logfile" class="form-group"
 		value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
-	<div class="container_12">
-		<div class="grid_12 col" id="directrun">
+		<div id="directrun">
 			<h3>Directly run magmi with existing profile</h3>
 			<div class="formline">
-				<span class="label">Run Magmi With Profile:</span>
+				<label for="profile">Run Magmi With Profile:</label>
 				<?php $profilelist = $conf->getProfileList(); ?>
-				<select name="profile" id="runprofile">
+				<select name="profile" id="runprofile" class="form-control">
 					<option <?php if (null == $profile) {
         ?> selected="selected" <?php
     }?>
@@ -126,23 +132,23 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
         } ?> value="<?php echo $profilename?>"><?php echo $profilename?></option>
 					<?php
     }?>
-				</select> <span>using mode:</span> <select name="mode" id="mode">
+				</select> <label for="mode">Using mode:</label> <select name="mode" id="mode" class="form-control">
 					<option value="update">Update existing items only,skip new ones</option>
 					<option value="create">create new items &amp; update existing ones</option>
 					<option value="xcreate">create new items only, skip existing ones</option>
 
-				</select> <input type="submit" value="Run Import"
+				</select> <input type="submit" value="Run Import" class="btn btn-primary btn-lg btn-block active mt-2"
 					<?php if (!$conf_ok) {
         ?> disabled="disabled" <?php
     }?>></input>
 			</div>
-		</div>
 	</div>
 </form>
-<div class="container_12">
-	<div class="grid_12">
-		<a href="magmi_utilities.php">Advanced Utilities</a>
-	</div>
+<a href="magmi_utilities.php" class="btn btn-secondary" role="button">Advanced Utilities</a>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <?php

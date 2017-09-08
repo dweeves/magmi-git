@@ -169,37 +169,11 @@ div.title {
   font-weight: bold;
 }
 
-.subtitle {
-  background-color: bg-color('purple');
-  width: 100%;
-  line-height: 2.6rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-top: 10px;
-  border-radius: 3px;
-
-  span {
-    padding: 0 10px;
-  }
-}
-
 .saveinfo {
   float: right;
   font-size: small;
   font-weight: normal;
   padding-right: 5px;
-}
-
-.actionbutton {
-  border: 1px solid #ccccff;
-  background: #eeeeff;
-  text-decoration: none;
-  font-size: small;
-}
-
-.actionbutton:hover {
-  border: 1px solid #8888cc;
-  background: #ccccff;
 }
 
 .error {
@@ -364,29 +338,6 @@ span.version {
   padding-top: 3px;
 }
 
-.pluginselect {
-  width: 400;
-  clear: both;
-  float: left;
-}
-
-.pluginselect input[type=checkbox] {
-  margin-left: 4px;
-  padding: 0;
-  margin-top: 3px;
-}
-
-div.plugininfo {
-  float: left;
-  position: relative;
-  padding-top: 2px;
-  background-color: #eeeeee;
-  height: 18px;
-  margin-bottom: 1px;
-}
-
-.pluginname {}
-
 span.pluginname.sponsored {
   background: #eeeeff;
 }
@@ -395,15 +346,6 @@ div.plugininfo div.plugininfohover {
   position: absolute;
   top: -9999px;
   left: -9999px;
-}
-
-div.plugininfo {
-  width: 50;
-  text-align: center;
-}
-
-div.plugininfo:hover {
-  background-color: #ccffcc;
 }
 
 div.pluginconf {
@@ -440,8 +382,6 @@ div.pluginconfpanel {
 
 div.pluginconfpanel.selected {
   display: block;
-  clear: both;
-  border: 1px solid #888888;
 }
 
 #import_current {
@@ -511,9 +451,8 @@ div.log_error {
 }
 
 .plugin_description {
-  border: 1px solid #eeeeee;
-  background-color: #dddddd;
-  margin: 2px;
+  background-color: color('lighter');
+  padding: 4px 6px;
 }
 
 .plupload_error, .magmi_error {
@@ -570,23 +509,8 @@ li.utility {
   margin-top: 2px;
 }
 
-.utility .pluginselect {
-  height: 20;
-  vertical-align: middle;
-}
-
-.utility .plugininfo {
-  height: 20;
-  vertical-align: middle;
-}
-
-.utility .utility_run {
-  float: right;
-  height: 20;
-}
-
-.utility .utility_run a {
-  margin-top: 2px;
+.pluginselect {
+  display: inline-flex;
 }
 
 .utility .pluginoptionpanel {
@@ -595,9 +519,8 @@ li.utility {
 
 .separator {
   width: 100%;
-  border: 0;
-  border-top: 1px solid #cccccc;
-  margin-bottom: 5px;
+  border-top: 1px solid color('lighter');
+  margin: 10px 0;
   clear: both;
 }
 
@@ -633,20 +556,6 @@ p.logentry {
   background-color: #fff;
   border: 1px solid #000;
   text-align: left;
-}
-
-div.actionbuttons {
-  width: 100%;
-  border-top: 1px solid #000000;
-  margin-top: 5px;
-  padding-top: 5px;
-  height: 24px;
-}
-
-div.actionbuttons a {
-  display: block;
-  float: right;
-  margin-right: 5px;
 }
 
 div.changedesc {
