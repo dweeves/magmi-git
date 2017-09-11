@@ -27,13 +27,13 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 }
 ?>
 <?php $zipok=class_exists("ZipArchive");?>
-<div class="col-4">
+<div class="col-12 col-md-5 col-xl-4">
 <div class="magmi-update mb-4">
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
-<div class="card bg-light w-100">
-	<h2 class="card-header subtitle">
+<div class="card">
+	<h3 class="card-header subtitle">
 		<span>Update Magmi</span>
-	</h2>
+	</h3>
 <?php if (false) {
     ?>
 <form method="post" enctype="multipart/form-data"
@@ -90,15 +90,14 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 
 <div class="magmi-run mb-4">
-<div class="card bg-light">
-	<h2 class="card-header subtitle">
+<div class="card">
+	<h3 class="card-header subtitle">
 		<span>Run Magmi</span>
-	</h2>
+	</h3>
 <div class="card-body">
 <?php if (!$conf_ok) {
         ?>
-<span class="saveinfo log_warning"><b>No Profile saved yet, Run
-				disabled!!</b></span>
+<span class="float-right saveinfo log_warning"><b>No Profile saved yet, Run disabled!</b></span>
 <?php
     }?>
 <form method="POST" id="runmagmi"
@@ -128,9 +127,9 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 					<?php
     }?>
 				</select> <label for="mode">Using mode:</label> <select name="mode" id="mode" class="form-control">
-					<option value="update">Update existing items only,skip new ones</option>
-					<option value="create">create new items &amp; update existing ones</option>
-					<option value="xcreate">create new items only, skip existing ones</option>
+					<option value="update">Update existing items only and skip new ones</option>
+					<option value="create">Create new items and update existing ones</option>
+					<option value="xcreate">Create new items only and skip existing ones</option>
 
 				</select> <input type="submit" value="Run Import" class="btn btn-primary btn-lg btn-block active mt-2"
 					<?php if (!$conf_ok) {
@@ -150,15 +149,18 @@ $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
 $cansock = !($dmysqlsock === false);
 ?>
-<div class="col-4">
-	<h2 class="subtitle">
-		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="saveinfo">
+<div class="col-12 col-md-7 col-xl-8 mb-4">
+	<div class="card">
+	<h3 class="card-header">
+		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="float-right saveinfo">
 		Saved:<?php echo $conf->getLastSaved("%c")?>
 		</span>
-	</h2>
+	</h3>
 
-<form method="post" action="magmi_saveconfig.php" id="commonconf_form" class="col-12">
-		<div class="card-group">
+	<div class="card-body">
+<form method="post" action="magmi_saveconfig.php" id="commonconf_form">
+		<div class="card-group row">
+		<div class="col-12 col-md-4 mb-4">
 		<div class="card">
 			<h3 class="card-header">Database</h3>
 			<div class="card-body">
@@ -232,7 +234,9 @@ $cansock = !($dmysqlsock === false);
 			</div>
 		</div>
 		</div>
+		</div>
 
+		<div class="col-12 col-md-4 mb-4">
 		<div class="card">
 			<h3 class="card-header">Magento</h3>
 			<div class="card-body">
@@ -252,6 +256,9 @@ $cansock = !($dmysqlsock === false);
 				<input type="text" name="MAGENTO:basedir" class="form-control" value="<?php echo $conf->get("MAGENTO", "basedir")?>"></input>
 			</div>
 		</div>
+		</div>
+
+		<div class="col-12 col-md-4 mb-4">
 		<div class="card omega">
 			<h3 class="card-header">Global</h3>
 			<div class="card-body" id="globstep">
@@ -293,7 +300,10 @@ $cansock = !($dmysqlsock === false);
 
 		</div>
 		</div>
-		<a id="save_commonconf" class="btn btn-primary btn-lg btn-block mt-3" role="button" aria-pressed="true" href="#">Save global parameters</a>
+		</div>
+		<div class="col-12">
+			<a id="save_commonconf" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true" href="#">Save global parameters</a>
+		</div>
 	</div>
 	<?php if ($conf->get("USE_ALTERNATE", "file", "") != "") {
         ?>
@@ -302,6 +312,8 @@ $cansock = !($dmysqlsock === false);
 	<?php
     }?>
 </form>
+</div>
+</div>
 
 <script type="text/javascript">
 

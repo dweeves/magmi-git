@@ -7,10 +7,11 @@
 				<h4>Release Information</h4>
 				<ul>
 					<li class="author">
-						Provided to the community by <b><i><a href="mailto:dweeves@gmail.com">Dweeves</a></i></b>
+						Provided to the community by <b><i><a href="mailto:&#100;&#119;&#101;&#101;&#118;&#101;&#115;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">Dweeves</a></i></b>
 					</li>
 					<li>
-						<button type="button" class="btn btn-secondary license" data-toggle="popover" title="MIT OSL License" data-content="<?php echo file_get_contents("../inc/license.txt"); ?>">License</button>
+						<a href="#license" class="license" title="MIT OSL License" data-toggle="modal" data-target="#license">License</a>
+						<?php include('../inc/license.php'); ?>
 					</li>
 					<li>
 						<a href="http://wiki.magmi.org" target="wiki">Wiki</a> or plugin panels documentation link

@@ -94,11 +94,36 @@ header {
   }
 }
 
+body {
+  background-color: bg-color('primary');
+}
+
+.card {
+  box-shadow: rgba(0,0,0, 0.08) 0px 1px 2px 0px;
+
+  .card-header {
+    background-color: bg-color('purple');
+    color: rgba(color('default'), 0.95);
+    font-size: 1.3rem;
+  }
+}
+
+#commonconf_form {
+  .card-header {
+    background-color: bg-color('primary');
+    color: rgba(color('primary'), 1);
+  }
+}
+
+.plugininfo, .pluginconf, .plugindoc {
+  display: inline-block;
+}
+
 footer {
   position: relative;
   background-color: bg-color('purple');
   padding: 15px 0;
-  color: rgba(color('default'), 0.85);
+  //color: rgba(color('default'), 0.95);
 }
 
 .datasource_plugin_config, .itemprocessor_plugin_config, .general_plugin_config {
@@ -193,10 +218,9 @@ div.title {
 }
 
 .saveinfo {
-  float: right;
-  font-size: small;
-  font-weight: normal;
-  padding-right: 5px;
+  margin-top: 4px;
+  font-style: italic;
+  font-size: 0.8rem;
 }
 
 .error {
@@ -362,16 +386,6 @@ div.plugininfo div.plugininfohover {
   position: absolute;
   top: -9999px;
   left: -9999px;
-}
-
-div.pluginconf {
-  float: left;
-  margin-left: 10;
-}
-
-div.plugindoc {
-  float: left;
-  margin-left: 10;
 }
 
 div.plugininfo:hover div.plugininfohover {

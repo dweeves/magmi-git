@@ -2,19 +2,19 @@
 
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({
-		DEBUG: false,
+		DEBUG: true,
 		pattern: '*'
 	});
 
 // Variables
 var url = 'http://dagoth.bp.local/github/magmi-git/';
-var template = 'magmi/web';
+var magmi = 'magmi';
 
 var paths = {
-	img: template + '/' + 'images',
-	js: template + '/' + 'js',
-	sass: template + '/' + 'sass',
-	css: template + '/' + 'css'
+	img: magmi + '/web/images',
+	js: magmi + '/web/js',
+	sass: magmi + '/web/sass',
+	css: magmi + '/web/css'
 };
 
 // BrowserSync task
@@ -26,7 +26,7 @@ gulp.task('browserSync', ['sass'], function() {
 	});
     gulp.watch(paths.sass + '/**/*.scss', ['sass']);
 	gulp.watch(paths.js + '/**/*.js').on('change', plugins.browserSync.reload);
-	gulp.watch(template + '/**/*.php').on('change', plugins.browserSync.reload);
+	gulp.watch(magmi + '/**/*.php').on('change', plugins.browserSync.reload);
 });
 
 // Autoprefixer task

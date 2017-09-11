@@ -8,9 +8,8 @@
 
 	<div class="csvmode"></div>
 
-	<ul class="formline">
-		<li class="label">CSV import mode</li>
-		<li class="value"><select name="CSV:importmode" id="CSV:importmode">
+		<label for="CSV:importmode">CSV import mode</label>
+		<select name="CSV:importmode" id="CSV:importmode" class="form-control">
 				<option value="local"
 					<?php if ($this->getParam("CSV:importmode", "local") == "local") {
     ?>
@@ -23,61 +22,46 @@
     }?>>Remote</option>
 		</select>
 
-	</ul>
-
 	<div id="localcsv"
 		<?php if ($this->getParam("CSV:importmode", "local") == "remote") {
         ?>
 		style="display: none" <?php
     }?>>
-		<ul class="formline">
-			<li class="label">CSVs base directory</li>
-			<li class="value"><input type="text" name="CSV:basedir"
-				id="CSV:basedir"
-				value="<?php echo $this->getParam("CSV:basedir", "var/import")?>">
-				<div class="fieldinfo">Relative paths are relative to magento base
-					directory , absolute paths will be used as is</div></li>
-		</ul>
-		<ul class="formline">
-			<li class="label">File to import:</li>
-			<li class="value" id="csvds_filelist">
- <?php echo $this->getOptionsPanel("csvds_filelist.php")->getHtml(); ?>
- </li>
-		</ul>
+
+		<label for="CSV:basedir">CSVs base directory</label>
+		<input type="text" name="CSV:basedir"
+			id="CSV:basedir" class="form-control"
+			value="<?php echo $this->getParam("CSV:basedir", "var/import")?>">
+			<p class="fieldinfo">Relative paths are relative to magento base directory , absolute paths will be used as is.</p>
+
+		<div class="value" id="csvds_filelist">
+			<span for="CSV:basedir">File to import:</span>
+		 	<?php echo $this->getOptionsPanel("csvds_filelist.php")->getHtml(); ?>
+		 </div>
 	</div>
 
 	<div id="remotecsv"
-		<?php if ($this->getParam("CSV:importmode", "local") == "local") {
-        ?>
+		<?php if ($this->getParam("CSV:importmode", "local")=="local") {
+    ?>
 		style="display: none" <?php
-    }?>>
-		<ul class="formline">
-			<li class="label">Remote CSV url</li>
-			<li class="value"><input type="text" name="CSV:remoteurl"
-				id="CSV:remoteurl"
-				value="<?php echo $this->getParam("CSV:remoteurl", "")?>"
-				style="width: 400px"><input type="checkbox"
-				id="CSV:forcedl" name="CSV:forcedl"
-				<?php if ($this->getParam("CSV:forcedl", false) == true) {
-        ?>
-				checked="checked" <?php
-    }?>>Force Download</li>
-		</ul>
+}?>>
+
+			<label for="CSV:remoteurl">Remote CSV url</label>
+			<input type="text" name="CSV:remoteurl" id="CSV:remoteurl" class="form-control" value="<?php echo $this->getParam("CSV:remoteurl", "")?>">
+
+			<label class="form-check-label">
+				<input type="checkbox" id="CSV:forcedl" class="form-check-input" name="CSV:forcedl" <?php if ($this->getParam("CSV:forcedl", false)==true) {?> checked="checked" <?php }?>>Force Download
+			</label>
 
 		<div id="remotecookie">
-			<ul class="formline">
-				<li class="label">HTTP Cookie</li>
-				<li class="value"><input type="text" name="CSV:remotecookie"
-					id="CSV:remotecookie"
-					value="<?php echo $this->getParam("CSV:remotecookie", "")?>"
-					style="width: 400px"></li>
-			</ul>
+			<label for="CSV:remotecookie">HTTP Cookie</label>
+			<input type="text" name="CSV:remotecookie" id="CSV:remotecookie" class="form-control" value="<?php echo $this->getParam("CSV:remotecookie", "")?>">
 		</div>
-		<input type="checkbox" id="CSV:remoteauth" name="CSV:remoteauth"
-			<?php  if ($this->getParam("CSV:remoteauth", false) == true) {
-        ?>
-			checked="checked" <?php
-    }?>>authentication needed
+
+		<label class="form-check-label">
+			<input type="checkbox" id="CSV:remoteauth" class="form-check-input" name="CSV:remoteauth"
+			<?php if ($this->getParam("CSV:remoteauth", false)==true) { ?> checked="checked" <?php }?>>Authentication needed
+ 		</label>
 		<div id="remoteauth"
 			<?php  if ($this->getParam("CSV:remoteauth", false) == false) {
         ?>

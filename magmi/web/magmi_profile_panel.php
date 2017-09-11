@@ -13,19 +13,19 @@ if ($profile == "") {
 $profilename = ($profile != "default" ? $profile : "Default");
 ?>
 
-<div id="profile_action" class="col-4 mb-4">
+<div id="profile_action" class="col-12 col-md-6 col-xl-4 mb-4">
 	<script type="text/javascript">
 		var profile="<?php echo $profile ?>";
 	</script>
-	<div class="card bg-light">
-	<div class="card-header subtitle">
+	<div class="card">
+	<h3 class="card-header subtitle">
 		<span>Configure Current Profile (<?php echo $profilename?>)</span>
 <?php
 $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
 $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 ?>
-<span class="saveinfo<?php if (!$conf_ok) {
+<span class="float-right saveinfo<?php if (!$conf_ok) {
     ?> log_warning<?php
 }?>"
 			id="profileconf_msg">
@@ -40,7 +40,7 @@ Saved:<?php echo $eplconf->getLastSaved("%c")?>
     }
 ?>
 </span>
-	</div>
+	</h3>
 	<div class="card-body">
 		<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
 			<h3>Profile to configure</h3>
@@ -93,10 +93,11 @@ foreach ($order as $k) {
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
 			value="<?php echo implode(",", $eplconf->getEnabledPluginClasses($k))?>"
 			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
-		<div class="card bg-light col-12 col-md-6 col-xl-4 mb-4">
-			<div class="card-header">
-				<h3><?php echo ucfirst($k)?></h3>
-			</div>
+		<div class="col-12 col-md-6 col-xl-4 mb-4">
+			<div class="card">
+			<h3 class="card-header">
+				<span><?php echo ucfirst($k)?></span>
+			</h3>
 		<?php
 
     if ($k == "datasources") {
@@ -195,6 +196,7 @@ foreach ($order as $k) {
                     } ?>
 
 						<?php echo $pinfo["name"]." v".$pinfo["version"]; ?>
+						</label>
 						<div class="plugininfo">
 							<span class="badge badge-secondary">Info</span>
 							<div class="plugininfohover">
@@ -235,7 +237,6 @@ foreach ($order as $k) {
 												<span><?php echo $pik?></span>:<span><?php echo $piv ?></span>
 											<?php
                         } ?>
-										</label>
 										</li>
 								<?php
                     } ?>
@@ -261,7 +262,7 @@ foreach ($order as $k) {
 						</div>
 							<?php if (isset($pinfo["url"])) {
                         ?>
-							<div class="plugindoc">
+							<div class="plugindoc float-right">
 								<a href="<?php echo $pinfo["url"]?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc">documentation</a>
 							</div>
 							<?php
@@ -285,15 +286,18 @@ foreach ($order as $k) {
         }
     } ?>
 	</div>
+	</div>
 	<?php
 }?>
 </form>
-	<div class="grid_12">
+	<div class="row">
+		<div class="col-12">
 			<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"
 				<?php if (!$conf_ok) {
 			    ?> disabled="disabled" <?php
 			}?>>Save Profile (<?php echo $profilename?>)
 			</a>
+		</div>
 	</div>
 </div>
 

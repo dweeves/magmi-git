@@ -7,4 +7,4 @@
 	</div>
 	<span class="version">version: <?php echo Magmi_Version::$version; ?></span>
 </header>
-<div class="row">
+<div class="row mb-4">
