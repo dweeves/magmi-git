@@ -165,130 +165,95 @@ foreach ($order as $k) {
                 } else {
                     ?>
 						<?php if (!$catopen) {
-                        $catopen = true?>
-						<div class="card-body">
-				<h1><?php echo $pcat?></h1>
-						<ul class="list-group"><?php
-                 } ?>
-
+    $catopen=true?>
+				<div class="card-body">
+					<h1><?php echo $pcat?></h1>
+					<ul class="list-group"><?php } ?>
 						<?php
-                    $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-                    $pinfo = $pinst->getPluginInfo();
-                    $info = $pinst->getShortDescription();
-                    $plrunnable = $pinst->isRunnable();
-                    $enabled = $eplconf->isPluginEnabled($k, $pclass)?>
+							$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+							$pinfo = $pinst->getPluginInfo();
+							$info = $pinst->getShortDescription();
+							$plrunnable = $pinst->isRunnable();
+							$enabled = $eplconf->isPluginEnabled($k, $pclass);
+						?>
 						<li class="list-group-item">
-						<label class="form-check-label pluginselect">
-							<?php if ($plrunnable[0]) {
-                        ?>
-								<input type="checkbox" class="form-check-input pl_<?php echo $k?>"
-								name="<?php echo $pclass?>"
-								<?php if ($eplconf->isPluginEnabled($k, $pclass)) {
-                            ?>
-								checked="checked" <?php
-                        } ?>>
-							<?php
-                    } else {
-                        ?>
-								<input type="checkbox" class="form-check-input pl_<?php echo $k?>"
-								name="<?php echo $pclass?>" disabled="disabled">
-							<?php
-                    } ?>
+							<label class="form-check-label pluginselect">
+								<?php if ($plrunnable[0]) { ?>
+								<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>"
+								<?php if ($eplconf->isPluginEnabled($k, $pclass)) { ?> checked="checked" <?php } ?>>
+								<?php } else { ?>
+								<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>" disabled="disabled">
+								<?php } ?>
+								<?php echo $pinfo["name"]; ?> <i>(v<?php echo $pinfo["version"]; ?>)</i>
+							</label>
 
-						<?php echo $pinfo["name"]." v".$pinfo["version"]; ?>
-						</label>
-						<div class="plugininfo">
-							<span class="badge badge-secondary">Info</span>
-							<div class="plugininfohover">
-								<div class="plugindata">
-									<ul>
-									<?php
+							<span class="badge badge-secondary" data-toggle="modal" data-target="#<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>">Info</span>
 
-                    $sp = isset($pinfo["sponsorinfo"]);
-                    foreach ($pinfo as $pik => $piv) {
-                        ?>
-
-										<li <?php if (isset($sp)) {
-                            ?> class='sponsored' <?php
-                        } ?>><?php
-                        if ($pik == "url") {
-                            ?>
-												<span><?php echo $pik?></span>:<span><a
-												href="<?php echo $piv?>" target="_blank">Wiki entry</a></span>
-											<?php
-                        } elseif ($pik == "sponsorinfo") {
-                            ?>
-													<span class="sponsor">Sponsored By</span>: <span>
-													<?php if (isset($piv['url'])) {
-                                ?>
-													<a href="<?php echo $piv['url']?>" target="_blank">
-													<?php
-                            }
-                            echo $piv["name"];
-                            if (isset($piv['url'])) {
-                                ?>
-													</a>
-													<?php
-                            } ?>
-													</span>
-											<?php
-                        } else {
-                            ?>
-												<span><?php echo $pik?></span>:<span><?php echo $piv ?></span>
-											<?php
-                        } ?>
-										</li>
-								<?php
-                    } ?>
-										</ul>
-									<div class="minidoc">
-											<?php echo $info?>
+							<div class="plugininfo modal fade" id="<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+								<div class="plugininfohover modal-dialog" role="document">
+									<div class="plugindata modal-content">
+										<div class="modal-header">
+											<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
+											<h5 class="modal-title" id="exampleModalLongTitle"><?php if ($pik == 'name') { echo $piv; } ?></h5>
+											<?php } ?>
 										</div>
+										<div class="modal-body">
+											<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
+											<div class="<?php if (isset($sp)) { echo 'sponsored'; } ?>">
+												<?php if ($pik == 'url') { ?>
+												<span><b class="title"><?php echo $pik ?>: </b>
+													<a href="<?php echo $piv ?>" target="_blank">Wiki entry</a>
+												</span>
+												<?php } elseif ($pik == 'sponsorinfo') { ?>
+												<span class="sponsor">
+													<b class="title">sponsor: </b>
+													<?php if (isset($piv['url'])) { ?>
+													<a href="<?php echo $piv['url'] ?>" target="_blank"><?php echo $piv['name']; ?></a>
+													<?php } else { ?>
+													<span><?php echo $piv['name']; ?></span>
+													<?php } ?>
+												</span>
+												<?php } else { ?>
+												<span><b class="title"><?php echo $pik ?>:</b> <?php echo $piv ?></span>
+												<?php } ?>
+											</div>
+											<?php } ?>
+											<div class="minidoc mt-2"><?php echo $info ?></div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+									<?php if (!$plrunnable[0]) { ?>
+									<div class="error"><pre><?php echo $plrunnable[1] ?></pre></div>
+									<?php } ?>
 								</div>
-								<?php if (!$plrunnable[0]) {
-                        ?>
-									<div class="error">
-									<pre><?php echo $plrunnable[1]?></pre>
-								</div>
-								<?php
-                    } ?>
-								</div>
-						</div>
-						<div class="pluginconf" <?php if (!$enabled) {
-                        ?>
-							style="display: none" <?php
-                    } ?>>
-							<a href="javascript:void(0)" class="btn btn-primary btn-sm">Configure</a>
-						</div>
-							<?php if (isset($pinfo["url"])) {
-                        ?>
+							</div>
+
+							<div class="pluginconf" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
+								<a href="javascript:void(0)" class="btn btn-primary btn-sm">Configure</a>
+							</div>
+
+							<?php if (isset($pinfo['url'])) { ?>
 							<div class="plugindoc float-right">
-								<a href="<?php echo $pinfo["url"]?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc">documentation</a>
+								<a href="<?php echo $pinfo['url']?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc">Documentation</a>
 							</div>
-							<?php
-                    } ?>
+							<?php } ?>
 
+							<?php if ($enabled) { ?>
 							<div class="pluginconfpanel">
-							<?php if ($enabled) {
-                        echo $pinst->getOptionsPanel()->getHtml();
-                    } ?>
+								<?php echo $pinst->getOptionsPanel()->getHtml() ?>
 							</div>
-					</li>
-
-			<?php
-                } ?>
-		<?php
-            } ?></ul>
-		<?php if ($catopen) {
-                ?></div><?php
-            } ?>
-		<?php
-        }
-    } ?>
+							<?php } ?>
+						</li>
+						<?php } ?>
+					<?php } ?>
+					</ul>
+		<?php if ($catopen) { ?></div><?php } ?>
+		<?php }} ?>
 	</div>
 	</div>
-	<?php
-}?>
+	<?php } ?>
 </form>
 	<div class="row">
 		<div class="col-12">

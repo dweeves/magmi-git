@@ -34,10 +34,15 @@ body {
   color: #444444;
 }
 
-.plugininfo,
 .pluginconf,
 .plugindoc {
   display: inline-block;
+}
+
+.plugininfo .plugindata .title {
+  display: inline-block;
+  width: 120px;
+  text-transform: capitalize;
 }
 
 footer {
@@ -303,28 +308,6 @@ span.pluginname.sponsored {
   background: #eeeeff;
 }
 
-div.plugininfo div.plugininfohover {
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
-}
-
-div.plugininfo:hover div.plugininfohover {
-  width: 400;
-  border: 1px solid #000000;
-  background: #eeeecc;
-  top: 0;
-  left: 100%;
-  z-index: 200;
-}
-
-div.plugindata .minidoc {
-  background: #ffffff;
-  border-top: 1px solid #cccccc;
-  padding-top: 3px;
-  padding-bottom: 3px;
-}
-
 div.pluginconfpanel {
   display: none;
 }
@@ -459,10 +442,6 @@ ul#mssep.formline li.label {
 
 li.utility {
   margin-top: 2px;
-}
-
-.pluginselect {
-  display: inline-flex;
 }
 
 .utility .pluginoptionpanel {
