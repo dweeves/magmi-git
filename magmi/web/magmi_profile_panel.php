@@ -12,11 +12,11 @@ if ($profile == "") {
 }
 $profilename = ($profile != "default" ? $profile : "Default");
 ?>
-<script type="text/javascript">
+
+<div id="profile_action" class="col-4 mb-4">
+	<script type="text/javascript">
 		var profile="<?php echo $profile ?>";
 	</script>
-<div id="profile_action" class="row mb-4">
-	<div class="col-12">
 	<div class="card bg-light">
 	<div class="card-header subtitle">
 		<span>Configure Current Profile (<?php echo $profilename?>)</span>
@@ -82,9 +82,8 @@ foreach ($plugins as $k => $pclasslist) {
 </div>
 </div>
 
-<div id="profile_cfg" class="row mb-4">
-<div class="col-12">
-	<form action="" method="POST" id="saveprofile_form">
+<div id="profile_cfg" class="mb-4">
+	<form action="" method="POST" id="saveprofile_form" class="row">
 		<input type="hidden" name="profile" id="curprofile"
 			value="<?php echo $profile?>">
 	<?php
@@ -94,7 +93,7 @@ foreach ($order as $k) {
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
 			value="<?php echo implode(",", $eplconf->getEnabledPluginClasses($k))?>"
 			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
-		<div class="card bg-light mb-4">
+		<div class="card bg-light col-12 col-md-6 col-xl-4 mb-4">
 			<div class="card-header">
 				<h3><?php echo ucfirst($k)?></h3>
 			</div>
@@ -290,12 +289,11 @@ foreach ($order as $k) {
 }?>
 </form>
 	<div class="grid_12">
-		<div style="float: right">
-			<a id="saveprofile" class="actionbutton" href="javascript:void(0)"
+			<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"
 				<?php if (!$conf_ok) {
-        ?> disabled="disabled" <?php
-    }?>>Save Profile (<?php echo $profilename?>)</a>
-		</div>
+			    ?> disabled="disabled" <?php
+			}?>>Save Profile (<?php echo $profilename?>)
+			</a>
 	</div>
 </div>
 
@@ -348,7 +346,6 @@ foreach ($order as $k) {
 			id="plchangeok">Run with selected option</a> <a class="actionbutton"
 			href="javascript:cancelimport();" id="plchangecancel">Cancel Run</a>
 	</div>
-</div>
 </div>
 
 <script type="text/javascript">

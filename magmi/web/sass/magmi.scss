@@ -1,9 +1,9 @@
 @CHARSET 'UTF-8';
 
 // Variables
-$colors: ('primary': #444, 'light': #999, 'lighter': #dddddd, 'dark': #222, 'medium': #555, 'error': #b94a48, 'hover': #b8b8e6);
+$colors: ('default': #ffffff, 'primary': #444, 'light': #999, 'lighter': #dddddd, 'dark': #222, 'medium': #555, 'error': #b94a48, 'hover': #b8b8e6);
 $link-colors: ('primary': #3366CC, 'focus': #DF5353, 'hover': #333);
-$background-colors: ('primary': #f4f4f4, 'light': #fafafa, 'lighter': #fdfdfd, 'purple': #b8b8e6, 'default': #ffffff);
+$background-colors: ('primary': #f4f4f4, 'light': #fafafa, 'lighter': #fdfdfd, 'purple': #563d7c, 'default': #ffffff);
 
 $alert-colors: ('default': #c09853, 'success': #468847, 'error': #b94a48, 'info': #3a87ad, 'normal': #333);
 $alert-background-colors: ('default': #fcf8e3, 'success': #dff0d8, 'error': #f2dede, 'info': #d9edf7, 'normal': #f0f0f0);
@@ -74,8 +74,31 @@ $font-sizes: ('normal': 1.0em, 'tiny': 0.7em, 'small': 0.8em, 'compact': 0.9em, 
   @return map-get($button-hover-border-colors, $key);
 }
 
-body {
-  behavior: url('csshover3.htc');
+header {
+  position: relative;
+  background-color: bg-color('purple');
+  padding: 15px 0;
+
+  .logo {
+    a, img {
+      display: block;
+      width: 150px;
+    }
+  }
+
+  .version {
+    position: absolute;
+    right: 20px;
+    top: 24px;
+    color: rgba(color('default'), 0.7);
+  }
+}
+
+footer {
+  position: relative;
+  background-color: bg-color('purple');
+  padding: 15px 0;
+  color: rgba(color('default'), 0.85);
 }
 
 .datasource_plugin_config, .itemprocessor_plugin_config, .general_plugin_config {
@@ -183,13 +206,6 @@ div.title {
 li.value span {
   padding-top: 4px;
   height: 16px;
-}
-
-span.version {
-  float: right;
-  font-weight: normal;
-  font-size: medium;
-  padding-right: 10;
 }
 
 .log_error, .mgupload_error {

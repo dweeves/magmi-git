@@ -1,6 +1,26 @@
 @CHARSET 'UTF-8';
-body {
-  behavior: url('csshover3.htc');
+header {
+  position: relative;
+  background-color: #563d7c;
+  padding: 15px 0;
+}
+header .logo a,
+header .logo img {
+  display: block;
+  width: 150px;
+}
+header .version {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+footer {
+  position: relative;
+  background-color: #563d7c;
+  padding: 15px 0;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .datasource_plugin_config,
@@ -106,13 +126,6 @@ div.title {
 li.value span {
   padding-top: 4px;
   height: 16px;
-}
-
-span.version {
-  float: right;
-  font-weight: normal;
-  font-size: medium;
-  padding-right: 10;
 }
 
 .log_error,

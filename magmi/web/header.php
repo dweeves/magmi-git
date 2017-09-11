@@ -1,39 +1,10 @@
 <?php require_once("head.php"); ?>
-<header class="container mb-4">
-	<div class="row">
-		<div class="col-12 col-md-4 logo">
-			<div class="logoauth">Logo Design by dewi</div>
-		</div>
-		<div class="col-12 col-md-4 info" style="width: 400px">
-			<h3>Release Information</h3>
-			<div class="version">
-				v<?php echo Magmi_Version::$version; ?>
-			</div>
-			<div class="author">
-				Provided to the community by <b><i><a
-						href="mailto:dweeves@gmail.com">Dweeves</a></i></b>
-			</div>
-			<div class="license">
-				Released under <a href="javascript:togglelicense();">MIT OSL License</a>
-			</div>
-			<div id="m_license" style="display: none">
-			<?php echo nl2br(file_get_contents("../inc/license.txt")); ?>
-			</div>
-			<div>
-				Online Help : see <a
-					href="http://wiki.magmi.org" target="wiki">Wiki</a>
-				or plugin panels documentation link
-			</div>
-		</div>
-		<div class="col-12 col-md-4 info" style="float: right; width: 180px">
-			<h3>Support Magmi</h3>
-			<div class="donate">
-				If Magmi saves you countless hours or simply if you like it , you
-				can <br /> <a
-					href="http://sourceforge.net/donate/index.php?group_id=350817"
-					target="_blank">donate to support development !</a>
-			</div>
-		</div>
+<header class="row mb-4">
+	<div class="col-12 logo">
+		<a href="magmi.php" title="Home" class="mx-auto">
+			<img src="images/logo.png" alt="Magmi - Logo Design by dewi">
+		</a>
 	</div>
-<script type="text/javascript">togglelicense=function() {$('m_license').toggle();}</script>
+	<span class="version">version: <?php echo Magmi_Version::$version; ?></span>
 </header>
+<div class="row">

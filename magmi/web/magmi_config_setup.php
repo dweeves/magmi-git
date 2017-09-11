@@ -27,10 +27,9 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 }
 ?>
 <?php $zipok=class_exists("ZipArchive");?>
-<div class="magmi-update container mb-4">
+<div class="col-4">
+<div class="magmi-update mb-4">
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
-<div class="row">
-<div class="col-12">
 <div class="card bg-light w-100">
 	<h2 class="card-header subtitle">
 		<span>Update Magmi</span>
@@ -89,12 +88,8 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
     }?>
 </div>
 </div>
-</div>
-</div>
 
-<div class="magmi-run container mb-4">
-<div class="row">
-<div class="col-12">
+<div class="magmi-run mb-4">
 <div class="card bg-light">
 	<h2 class="card-header subtitle">
 		<span>Run Magmi</span>
@@ -149,22 +144,18 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 </div>
 </div>
-</div>
 
 <?php
 $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
 $cansock = !($dmysqlsock === false);
 ?>
-<div class="container">
-<div class="row">
-<div class="col-12">
+<div class="col-4">
 	<h2 class="subtitle">
 		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="saveinfo">
 		Saved:<?php echo $conf->getLastSaved("%c")?>
 		</span>
 	</h2>
-</div>
 
 <form method="post" action="magmi_saveconfig.php" id="commonconf_form" class="col-12">
 		<div class="card-group">
@@ -311,9 +302,7 @@ $cansock = !($dmysqlsock === false);
 	<?php
     }?>
 </form>
-</div>
 
-<div class="clear"></div>
 <script type="text/javascript">
 
 $('save_commonconf').observe('click',function()
@@ -367,3 +356,4 @@ if ($('DATABASE:connectivity').value == 'localxml') {
 	);
 }
 </script>
+</div>
