@@ -27,6 +27,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 }
 ?>
 <?php $zipok=class_exists("ZipArchive");?>
+<div class="row mb-4">
 <div class="col-12 col-md-5 col-xl-4">
 <div class="magmi-update mb-4">
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->

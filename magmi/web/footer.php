@@ -13,7 +13,7 @@
 				<h3>Resources</h3>
 				<a href="http://wiki.magmi.org" target="_blank">Documentation</a><br>
 				<a href="https://sourceforge.net/p/magmi/discussion/" target="_blank">Discussion Forum</a><br>
-				<a href="http://wiki.magmi.org" target="_blank">Github Issues</a>
+				<a href="https://github.com/dweeves/magmi-git/issues" target="_blank">Github Issues</a>
 			</div>
 			<div class="col-12 col-md-4 support">
 				<h3>Support</h3>
