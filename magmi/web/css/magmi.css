@@ -7630,18 +7630,17 @@ a.text-dark:hover {
 header {
   position: relative;
   background-color: #563d7c;
-  padding: 15px 0;
+  padding: 0;
 }
 header .logo a,
 header .logo img {
   display: block;
-  width: 150px;
+  width: 30px;
 }
 header .version {
   position: absolute;
   right: 20px;
-  top: 24px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 body {

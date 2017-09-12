@@ -30,4 +30,4 @@
 	<script type="text/javascript" src="js/magmi_utils.js"></script>
 	<script type="text/javascript" src="js/init.js"></script>
 </head>
-<body class="container-fluid">
+<body data-spy="scroll" class="container-fluid">
