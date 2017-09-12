@@ -6,6 +6,14 @@ $j(document).ready(function($) {
 	$j('[data-toggle="tooltip"]').tooltip();
 });
 
+// Scrollspy
+$j(document).ready(function($) {
+	$j('body').scrollspy({
+		target: '#navbarTop',
+		offset: 70
+	});
+});
+
 // Smooth Scroll
 $j(document).ready(function($) {
 	$j('a[href*="#"]')
@@ -22,7 +30,7 @@ $j(document).ready(function($) {
 			if (target.length) {
 				event.preventDefault();
 				$('html, body').animate({
-					scrollTop: target.offset().top
+					scrollTop: target.offset().top -70
 				}, 250, function() {
 					var $target = $(target);
 					$target.focus();

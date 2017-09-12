@@ -13,7 +13,7 @@ if ($profile == "") {
 $profilename = ($profile != "default" ? $profile : "Default");
 ?>
 
-<div id="profile_action" class="col-12 col-md-6 col-xl-4 mb-4">
+<div id="magmi-profile" class="magmi-profile col-12 mb-4">
 	<script type="text/javascript">
 		var profile="<?php echo $profile ?>";
 	</script>
@@ -81,8 +81,9 @@ foreach ($plugins as $k => $pclasslist) {
 </div>
 </div>
 </div>
+</div>
 
-<div id="profile_cfg" class="mb-4">
+<div id="profile_cfg" class="container mb-4">
 	<form action="" method="POST" id="saveprofile_form" class="row">
 		<input type="hidden" name="profile" id="curprofile"
 			value="<?php echo $profile?>">
@@ -93,7 +94,7 @@ foreach ($order as $k) {
 	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
 			value="<?php echo implode(",", $eplconf->getEnabledPluginClasses($k))?>"
 			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
-		<div class="col-12 col-md-6 col-xl-4 mb-4">
+		<div class="col-12 mb-4">
 			<div class="card">
 			<h3 class="card-header">
 				<span><?php echo ucfirst($k)?></span>
@@ -167,7 +168,7 @@ foreach ($order as $k) {
 						<?php if (!$catopen) {
     $catopen=true?>
 				<div class="card-body">
-					<h1><?php echo $pcat?></h1>
+					<h3><?php echo $pcat?></h3>
 					<ul class="list-group"><?php } ?>
 						<?php
 							$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
@@ -254,16 +255,11 @@ foreach ($order as $k) {
 	</div>
 	</div>
 	<?php } ?>
-</form>
-	<div class="row">
-		<div class="col-12">
-			<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"
-				<?php if (!$conf_ok) {
-			    ?> disabled="disabled" <?php
-			}?>>Save Profile (<?php echo $profilename?>)
-			</a>
-		</div>
+	<div class="col-12">
+		<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"<?php if (!$conf_ok) { ?> disabled="disabled" <?php } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename ?>)
+		</a>
 	</div>
+</form>
 </div>
 
 <div id="paramchanged" style="display: none">

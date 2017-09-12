@@ -27,9 +27,9 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 }
 ?>
 <?php $zipok=class_exists("ZipArchive");?>
-<div class="row mb-4">
-<div class="col-12 col-md-5 col-xl-4">
-<div class="magmi-update mb-4">
+<div class="container mb-4">
+<div class="row">
+<div id="magmi-update" class="magmi-update col-12 mb-4">
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
 <div class="card">
 	<h3 class="card-header subtitle">
@@ -90,7 +90,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 </div>
 
-<div id="magmi-run" class="magmi-run mb-4">
+<div id="magmi-run" class="magmi-run col-12 mb-4">
 <div class="card">
 	<h3 class="card-header subtitle">
 		<span>Run Magmi</span>
@@ -143,14 +143,13 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 </div>
 </div>
 </div>
-</div>
 
 <?php
 $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
 $cansock = !($dmysqlsock === false);
 ?>
-<div id="magmi-parameters" class="magmi-parameters col-12 col-md-7 col-xl-8 mb-4">
+<div id="magmi-parameters" class="magmi-parameters col-12 mb-4">
 	<div class="card">
 	<h3 class="card-header">
 		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="float-right saveinfo">
