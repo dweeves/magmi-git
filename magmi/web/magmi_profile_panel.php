@@ -45,7 +45,7 @@ Saved:<?php echo $eplconf->getLastSaved("%c")?>
 		<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
 			<h3>Profile to configure</h3>
 				<label for="label">Current Magmi Profile:</label>
-				<select name="profile" class="form-control" onchange="$('chooseprofile').submit()">
+				<select name="profile" onchange="$('chooseprofile').submit()">
 						<option <?php if (null==$profile) { ?> selected="selected" <?php }?>
 							value="default">Default</option>
 			<?php foreach ($profilelist as $profname) {
@@ -58,7 +58,7 @@ Saved:<?php echo $eplconf->getLastSaved("%c")?>
     }?>
 			</select>
 			<label for="label">Copy Selected Profile to:</label>
-			<input type="text" class="form-control" name="newprofile">
+			<input type="text" name="newprofile">
 			<input type="submit" class="btn btn-primary mt-2" value="Copy Profile &amp; switch">
 	<?php
 require_once("magmi_pluginhelper.php");
@@ -108,7 +108,7 @@ foreach ($order as $k) {
     		<div class="card-body">
 			<div class="pluginselect">
 
-				<select name="PLUGINS_DATASOURCES:class" class="form-control mb-2 pl_<?php echo $k?>">
+				<select name="PLUGINS_DATASOURCES:class" class="mb-2 pl_<?php echo $k?>">
 
 
 			<?php
@@ -230,15 +230,15 @@ foreach ($order as $k) {
 								</div>
 							</div>
 
-							<div class="pluginconf" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
-								<a href="javascript:void(0)" class="btn btn-primary btn-sm">Configure</a>
-							</div>
-
 							<?php if (isset($pinfo['url'])) { ?>
 							<div class="plugindoc float-right">
 								<a href="<?php echo $pinfo['url']?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc">Documentation</a>
 							</div>
 							<?php } ?>
+
+							<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
+								<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm">Configure</a>
+							</div>
 
 							<?php if ($enabled) { ?>
 							<div class="pluginconfpanel">

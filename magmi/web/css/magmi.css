@@ -258,6 +258,7 @@ button,
 [role='button'],
 input,
 label,
+.label,
 select,
 summary,
 textarea {
@@ -280,7 +281,8 @@ th {
   text-align: inherit;
 }
 
-label {
+label,
+.label {
   display: inline-block;
   margin-bottom: 0.5rem;
 }
@@ -1472,7 +1474,12 @@ pre code {
   }
 }
 
-.form-control {
+.form-control,
+textarea,
+select,
+input[type='text'],
+input[type='number'],
+input[type='password'] {
   display: block;
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -1486,31 +1493,58 @@ pre code {
   border-radius: 0.25rem;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
-.form-control::-ms-expand {
+.form-control::-ms-expand,
+textarea::-ms-expand,
+select::-ms-expand,
+input[type='text']::-ms-expand,
+input[type='number']::-ms-expand,
+input[type='password']::-ms-expand {
   background-color: transparent;
   border: 0;
 }
-.form-control:focus {
+.form-control:focus,
+textarea:focus,
+select:focus,
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='password']:focus {
   color: #495057;
   background-color: #ffffff;
   border-color: #80bdff;
   outline: none;
 }
-.form-control::placeholder {
+.form-control::placeholder,
+textarea::placeholder,
+select::placeholder,
+input[type='text']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder {
   color: #868e96;
   opacity: 1;
 }
 .form-control:disabled,
-.form-control[readonly] {
+textarea:disabled,
+select:disabled,
+input[type='text']:disabled,
+input[type='number']:disabled,
+input[type='password']:disabled,
+.form-control[readonly],
+textarea[readonly],
+select[readonly],
+input[readonly][type='text'],
+input[readonly][type='number'],
+input[readonly][type='password'] {
   background-color: #e9ecef;
   opacity: 1;
 }
 
-select.form-control:not([size]):not([multiple]) {
+select.form-control:not([size]):not([multiple]),
+select:not([size]):not([multiple]) {
   height: calc(2.25rem + 2px);
 }
 
-select.form-control:focus::-ms-value {
+select.form-control:focus::-ms-value,
+select:focus::-ms-value {
   color: #495057;
   background-color: #ffffff;
 }
@@ -1555,10 +1589,20 @@ select.form-control:focus::-ms-value {
 }
 .form-control-plaintext.form-control-sm,
 .input-group-sm > .form-control-plaintext.form-control,
+.input-group-sm > textarea.form-control-plaintext,
+.input-group-sm > select.form-control-plaintext,
+.input-group-sm > input.form-control-plaintext[type='text'],
+.input-group-sm > input.form-control-plaintext[type='number'],
+.input-group-sm > input.form-control-plaintext[type='password'],
 .input-group-sm > .form-control-plaintext.input-group-addon,
 .input-group-sm > .input-group-btn > .form-control-plaintext.btn,
 .form-control-plaintext.form-control-lg,
 .input-group-lg > .form-control-plaintext.form-control,
+.input-group-lg > textarea.form-control-plaintext,
+.input-group-lg > select.form-control-plaintext,
+.input-group-lg > input.form-control-plaintext[type='text'],
+.input-group-lg > input.form-control-plaintext[type='number'],
+.input-group-lg > input.form-control-plaintext[type='password'],
 .input-group-lg > .form-control-plaintext.input-group-addon,
 .input-group-lg > .input-group-btn > .form-control-plaintext.btn {
   padding-right: 0;
@@ -1567,6 +1611,11 @@ select.form-control:focus::-ms-value {
 
 .form-control-sm,
 .input-group-sm > .form-control,
+.input-group-sm > textarea,
+.input-group-sm > select,
+.input-group-sm > input[type='text'],
+.input-group-sm > input[type='number'],
+.input-group-sm > input[type='password'],
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn {
   padding: 0.25rem 0.5rem;
@@ -1576,14 +1625,18 @@ select.form-control:focus::-ms-value {
 }
 
 select.form-control-sm:not([size]):not([multiple]),
-.input-group-sm > select.form-control:not([size]):not([multiple]),
-.input-group-sm > select.input-group-addon:not([size]):not([multiple]),
+.input-group-sm > select:not([size]):not([multiple]),
 .input-group-sm > .input-group-btn > select.btn:not([size]):not([multiple]) {
   height: calc(1.8125rem + 2px);
 }
 
 .form-control-lg,
 .input-group-lg > .form-control,
+.input-group-lg > textarea,
+.input-group-lg > select,
+.input-group-lg > input[type='text'],
+.input-group-lg > input[type='number'],
+.input-group-lg > input[type='password'],
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn {
   padding: 0.5rem 1rem;
@@ -1593,8 +1646,7 @@ select.form-control-sm:not([size]):not([multiple]),
 }
 
 select.form-control-lg:not([size]):not([multiple]),
-.input-group-lg > select.form-control:not([size]):not([multiple]),
-.input-group-lg > select.input-group-addon:not([size]):not([multiple]),
+.input-group-lg > select:not([size]):not([multiple]),
 .input-group-lg > .input-group-btn > select.btn:not([size]):not([multiple]) {
   height: calc(2.875rem + 2px);
 }
@@ -1673,23 +1725,63 @@ select.form-control-lg:not([size]):not([multiple]),
 }
 
 .was-validated .form-control:valid,
+.was-validated textarea:valid,
+.was-validated select:valid,
+.was-validated input[type='text']:valid,
+.was-validated input[type='number']:valid,
+.was-validated input[type='password']:valid,
 .form-control.is-valid,
+textarea.is-valid,
+select.is-valid,
+input.is-valid[type='text'],
+input.is-valid[type='number'],
+input.is-valid[type='password'],
 .was-validated
 .custom-select:valid,
 .custom-select.is-valid {
   border-color: #28a745;
 }
 .was-validated .form-control:valid:focus,
+.was-validated textarea:valid:focus,
+.was-validated select:valid:focus,
+.was-validated input[type='text']:valid:focus,
+.was-validated input[type='number']:valid:focus,
+.was-validated input[type='password']:valid:focus,
 .form-control.is-valid:focus,
+textarea.is-valid:focus,
+select.is-valid:focus,
+input.is-valid[type='text']:focus,
+input.is-valid[type='number']:focus,
+input.is-valid[type='password']:focus,
 .was-validated
   .custom-select:valid:focus,
 .custom-select.is-valid:focus {
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 .was-validated .form-control:valid ~ .invalid-feedback,
+.was-validated textarea:valid ~ .invalid-feedback,
+.was-validated select:valid ~ .invalid-feedback,
+.was-validated input[type='text']:valid ~ .invalid-feedback,
+.was-validated input[type='number']:valid ~ .invalid-feedback,
+.was-validated input[type='password']:valid ~ .invalid-feedback,
 .was-validated .form-control:valid ~ .invalid-tooltip,
+.was-validated textarea:valid ~ .invalid-tooltip,
+.was-validated select:valid ~ .invalid-tooltip,
+.was-validated input[type='text']:valid ~ .invalid-tooltip,
+.was-validated input[type='number']:valid ~ .invalid-tooltip,
+.was-validated input[type='password']:valid ~ .invalid-tooltip,
 .form-control.is-valid ~ .invalid-feedback,
+textarea.is-valid ~ .invalid-feedback,
+select.is-valid ~ .invalid-feedback,
+input.is-valid[type='text'] ~ .invalid-feedback,
+input.is-valid[type='number'] ~ .invalid-feedback,
+input.is-valid[type='password'] ~ .invalid-feedback,
 .form-control.is-valid ~ .invalid-tooltip,
+textarea.is-valid ~ .invalid-tooltip,
+select.is-valid ~ .invalid-tooltip,
+input.is-valid[type='text'] ~ .invalid-tooltip,
+input.is-valid[type='number'] ~ .invalid-tooltip,
+input.is-valid[type='password'] ~ .invalid-tooltip,
 .was-validated
   .custom-select:valid ~ .invalid-feedback,
 .was-validated
@@ -1729,23 +1821,63 @@ select.form-control-lg:not([size]):not([multiple]),
 }
 
 .was-validated .form-control:invalid,
+.was-validated textarea:invalid,
+.was-validated select:invalid,
+.was-validated input[type='text']:invalid,
+.was-validated input[type='number']:invalid,
+.was-validated input[type='password']:invalid,
 .form-control.is-invalid,
+textarea.is-invalid,
+select.is-invalid,
+input.is-invalid[type='text'],
+input.is-invalid[type='number'],
+input.is-invalid[type='password'],
 .was-validated
 .custom-select:invalid,
 .custom-select.is-invalid {
   border-color: #dc3545;
 }
 .was-validated .form-control:invalid:focus,
+.was-validated textarea:invalid:focus,
+.was-validated select:invalid:focus,
+.was-validated input[type='text']:invalid:focus,
+.was-validated input[type='number']:invalid:focus,
+.was-validated input[type='password']:invalid:focus,
 .form-control.is-invalid:focus,
+textarea.is-invalid:focus,
+select.is-invalid:focus,
+input.is-invalid[type='text']:focus,
+input.is-invalid[type='number']:focus,
+input.is-invalid[type='password']:focus,
 .was-validated
   .custom-select:invalid:focus,
 .custom-select.is-invalid:focus {
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 .was-validated .form-control:invalid ~ .invalid-feedback,
+.was-validated textarea:invalid ~ .invalid-feedback,
+.was-validated select:invalid ~ .invalid-feedback,
+.was-validated input[type='text']:invalid ~ .invalid-feedback,
+.was-validated input[type='number']:invalid ~ .invalid-feedback,
+.was-validated input[type='password']:invalid ~ .invalid-feedback,
 .was-validated .form-control:invalid ~ .invalid-tooltip,
+.was-validated textarea:invalid ~ .invalid-tooltip,
+.was-validated select:invalid ~ .invalid-tooltip,
+.was-validated input[type='text']:invalid ~ .invalid-tooltip,
+.was-validated input[type='number']:invalid ~ .invalid-tooltip,
+.was-validated input[type='password']:invalid ~ .invalid-tooltip,
 .form-control.is-invalid ~ .invalid-feedback,
+textarea.is-invalid ~ .invalid-feedback,
+select.is-invalid ~ .invalid-feedback,
+input.is-invalid[type='text'] ~ .invalid-feedback,
+input.is-invalid[type='number'] ~ .invalid-feedback,
+input.is-invalid[type='password'] ~ .invalid-feedback,
 .form-control.is-invalid ~ .invalid-tooltip,
+textarea.is-invalid ~ .invalid-tooltip,
+select.is-invalid ~ .invalid-tooltip,
+input.is-invalid[type='text'] ~ .invalid-tooltip,
+input.is-invalid[type='number'] ~ .invalid-tooltip,
+input.is-invalid[type='password'] ~ .invalid-tooltip,
 .was-validated
   .custom-select:invalid ~ .invalid-feedback,
 .was-validated
@@ -1793,7 +1925,8 @@ select.form-control-lg:not([size]):not([multiple]),
   width: 100%;
 }
 @media (min-width: 576px) {
-  .form-inline label {
+  .form-inline label,
+  .form-inline .label {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1806,7 +1939,12 @@ select.form-control-lg:not([size]):not([multiple]),
     align-items: center;
     margin-bottom: 0;
   }
-  .form-inline .form-control {
+  .form-inline .form-control,
+  .form-inline textarea,
+  .form-inline select,
+  .form-inline input[type='text'],
+  .form-inline input[type='number'],
+  .form-inline input[type='password'] {
     display: inline-block;
     width: auto;
     vertical-align: middle;
@@ -2694,7 +2832,12 @@ tbody.collapse.show {
   display: flex;
   width: 100%;
 }
-.input-group .form-control {
+.input-group .form-control,
+.input-group textarea,
+.input-group select,
+.input-group input[type='text'],
+.input-group input[type='number'],
+.input-group input[type='password'] {
   position: relative;
   z-index: 2;
   flex: 1 1 auto;
@@ -2702,20 +2845,45 @@ tbody.collapse.show {
   margin-bottom: 0;
 }
 .input-group .form-control:focus,
+.input-group textarea:focus,
+.input-group select:focus,
+.input-group input[type='text']:focus,
+.input-group input[type='number']:focus,
+.input-group input[type='password']:focus,
 .input-group .form-control:active,
-.input-group .form-control:hover {
+.input-group textarea:active,
+.input-group select:active,
+.input-group input[type='text']:active,
+.input-group input[type='number']:active,
+.input-group input[type='password']:active,
+.input-group .form-control:hover,
+.input-group textarea:hover,
+.input-group select:hover,
+.input-group input[type='text']:hover,
+.input-group input[type='number']:hover,
+.input-group input[type='password']:hover {
   z-index: 3;
 }
 
 .input-group-addon,
 .input-group-btn,
-.input-group .form-control {
+.input-group .form-control,
+.input-group textarea,
+.input-group select,
+.input-group input[type='text'],
+.input-group input[type='number'],
+.input-group input[type='password'] {
   display: flex;
   align-items: center;
 }
 .input-group-addon:not(:first-child):not(:last-child),
 .input-group-btn:not(:first-child):not(:last-child),
-.input-group .form-control:not(:first-child):not(:last-child) {
+.input-group .form-control:not(:first-child):not(:last-child),
+.input-group textarea:not(:first-child):not(:last-child),
+.input-group select:not(:first-child):not(:last-child),
+.input-group input[type='text']:not(:first-child):not(:last-child),
+.input-group input[type='number']:not(:first-child):not(:last-child),
+.input-group input[type='password']:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
 
@@ -2758,6 +2926,11 @@ tbody.collapse.show {
 }
 
 .input-group .form-control:not(:last-child),
+.input-group textarea:not(:last-child),
+.input-group select:not(:last-child),
+.input-group input[type='text']:not(:last-child),
+.input-group input[type='number']:not(:last-child),
+.input-group input[type='password']:not(:last-child),
 .input-group-addon:not(:last-child),
 .input-group-btn:not(:last-child) > .btn,
 .input-group-btn:not(:last-child) > .btn-group > .btn,
@@ -2773,6 +2946,11 @@ tbody.collapse.show {
 }
 
 .input-group .form-control:not(:first-child),
+.input-group textarea:not(:first-child),
+.input-group select:not(:first-child),
+.input-group input[type='text']:not(:first-child),
+.input-group input[type='number']:not(:first-child),
+.input-group input[type='password']:not(:first-child),
 .input-group-addon:not(:first-child),
 .input-group-btn:not(:first-child) > .btn,
 .input-group-btn:not(:first-child) > .btn-group > .btn,
@@ -2783,7 +2961,12 @@ tbody.collapse.show {
   border-bottom-left-radius: 0;
 }
 
-.form-control + .input-group-addon:not(:first-child) {
+.form-control + .input-group-addon:not(:first-child),
+textarea + .input-group-addon:not(:first-child),
+select + .input-group-addon:not(:first-child),
+input[type='text'] + .input-group-addon:not(:first-child),
+input[type='number'] + .input-group-addon:not(:first-child),
+input[type='password'] + .input-group-addon:not(:first-child) {
   border-left: 0;
 }
 
@@ -7465,6 +7648,22 @@ body {
   background-color: #f4f4f4;
 }
 
+textarea,
+select,
+input[type='text'],
+input[type='number'],
+input[type='password'] {
+  width: 100% !important;
+}
+
+select {
+  margin-bottom: 1rem;
+}
+
+input[type='checkbox'] {
+  margin-right: 0.2rem;
+}
+
 .card {
   box-shadow: rgba(0, 0, 0, 0.08) 0 1px 2px 0;
 }
@@ -7473,21 +7672,56 @@ body {
   color: rgba(255, 255, 255, 0.95);
   font-size: 1.3rem;
 }
+.card .card-body h1 {
+  margin-bottom: 1.25rem;
+}
 
 #commonconf_form .card-header {
   background-color: #f4f4f4;
   color: #444444;
 }
 
-.pluginconf,
-.plugindoc {
+#saveprofile_form .list-group-item {
+  background-color: #fafafa;
+}
+
+#saveprofile_form .badge {
+  cursor: pointer;
+}
+
+#saveprofile_form .pluginconf,
+#saveprofile_form .plugindoc {
   display: inline-block;
 }
 
-.plugininfo .plugindata .title {
+#saveprofile_form .plugininfo .plugindata .title {
   display: inline-block;
   width: 120px;
   text-transform: capitalize;
+}
+
+#saveprofile_form .pluginconfpanel {
+  display: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 0.75rem;
+  margin: 0.75rem 0;
+}
+#saveprofile_form .pluginconfpanel.selected {
+  display: block;
+}
+#saveprofile_form .pluginconfpanel h3,
+#saveprofile_form .pluginconfpanel h4 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.2rem;
+}
+#saveprofile_form .pluginconfpanel .plugin_description {
+  margin-bottom: 1rem;
+}
+#saveprofile_form .pluginconfpanel ul {
+  padding: 0;
+}
+#saveprofile_form .pluginconfpanel ul li {
+  list-style-type: none;
 }
 
 .datasource_plugin_config,
@@ -7497,30 +7731,16 @@ body {
 }
 
 ul.formline {
-  width: 100%;
+  margin: 0 0 0.75rem;
   padding-left: 0;
-  clear: both;
-  height: 27px;
-  margin-bottom: 6px;
 }
 ul.formline li {
-  padding-left: 0;
-  margin-left: 0;
-  float: left;
   list-style: none;
-}
-ul.formline li.label {
-  text-align: left;
-  width: 200px;
-  line-height: 27px;
-}
-ul.formline li.value {
-  float: left;
 }
 
 .fieldinfo {
-  font-size: x-small;
-  color: #0000cc;
+  font-style: italic;
+  font-size: 0.8rem;
 }
 
 div.title {
@@ -7547,7 +7767,7 @@ div.title {
 
 .title .info {
   float: left;
-  /*width:598px;*/
+  width: 598px;
   border: 1px solid #8888cc;
   height: 100%;
 }
@@ -7635,16 +7855,6 @@ li.value span {
   padding-bottom: 2px;
 }
 
-/*.log_itime,.log_dbtime
-{
-  border:1px solid #cccccc;
-  background: #eeeeee;
-  color:#000000;
-  text-align: left;
-  font-size: 10pt;
-  padding-top:2px;
-  padding-bottom:2px;
-}*/
 .log_end {
   border: 1px solid #00cc00;
   background: #88ff88;
@@ -7747,14 +7957,6 @@ span.pluginname.sponsored {
   background: #eeeeff;
 }
 
-div.pluginconfpanel {
-  display: none;
-}
-
-div.pluginconfpanel.selected {
-  display: block;
-}
-
 #import_current {
   position: absolute;
   left: 0;
@@ -7821,11 +8023,6 @@ div.log_warning {
 
 div.log_error {
   clear: both;
-}
-
-.plugin_description {
-  background-color: #dddddd;
-  padding: 4px 6px;
 }
 
 .plupload_error,
@@ -7950,6 +8147,32 @@ div.group h1 {
 
 footer {
   position: relative;
-  background-color: #563d7c;
-  padding: 15px 0;
+  background: linear-gradient(145deg, #4a356b 15%, #694a97 100%);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding-top: 2rem;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  footer {
+    text-align: initial;
+  }
+}
+footer .info,
+footer .resources,
+footer .support {
+  margin-bottom: 2rem;
+}
+footer a {
+  color: rgba(255, 255, 255, 0.7);
+}
+footer a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+footer h3 {
+  font-size: 1.3rem;
+  color: #ffffff;
+}
+footer .modal {
+  color: initial;
 }

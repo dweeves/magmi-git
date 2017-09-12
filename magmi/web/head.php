@@ -19,6 +19,7 @@
 
 	<link rel="author" href="humans.txt" />
 	<link rel="stylesheet" href="css/magmi.css"></link>
+	<link rel="stylesheet" href="../../node_modules/font-awesome/css/font-awesome.min.css">
 
 	<script type="text/javascript" src="js/prototype.js"></script>
 	<script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>

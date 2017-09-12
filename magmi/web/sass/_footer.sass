@@ -1,0 +1,26 @@
+footer
+  position: relative
+  background: linear-gradient(145deg, darken(bg-color('purple'), 5%) 15%, lighten(bg-color('purple'), 8%) 100%)
+  font-size: 0.9rem
+  color: rgba(color('default'), 0.7)
+  padding-top: 2rem
+  text-align: center
+
+  @include media-breakpoint-up(md)
+    text-align: initial
+
+  .info, .resources, .support
+    margin-bottom: 2rem
+
+  a
+    color: rgba(color('default'), 0.7)
+
+    &:hover
+      color: rgba(color('default'), 0.9)
+
+  h3
+    font-size: 1.3rem
+    color: color('default')
+
+  .modal
+  	color: initial
