@@ -1,0 +1,3 @@
+/* TEAM */
+	Chef: Sebastien Bracquemont
+	Web designer: Benoit Podwinski
