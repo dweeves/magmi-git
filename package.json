@@ -16,6 +16,9 @@
   },
   "homepage": "http://sourceforge.net/projects/magmi/",
   "devDependencies": {
+    "jquery": "^3.2.1",
+    "popper.js": "^1.12.5",
+    "bootstrap": "^4.0.0-beta",
     "browser-sync": "^2.18.13",
     "gulp": "^3.9.1",
     "gulp-csscomb": "^3.0.8",

@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({
-		DEBUG: true,
+		DEBUG: false,
 		pattern: '*'
 	});
 
@@ -31,7 +31,7 @@ gulp.task('browserSync', ['sass'], function() {
 
 // Autoprefixer task
 gulp.task('autoprefixer', function () {
-	gulp.src([paths.css + '/*.css', paths.css + '/**/*.css'])
+	gulp.src(paths.css + '/**/*.css')
 	.pipe(plugins.plumber({
 		errorHandler: function (error) {
 			console.log(error.message);
@@ -44,7 +44,7 @@ gulp.task('autoprefixer', function () {
 
 // Sass task
 gulp.task('sass', function() {
-	gulp.src([paths.sass + '/*.scss', paths.sass + '/**/*.scss'])
+	gulp.src(paths.sass + '/**/*.scss')
 	.pipe(plugins.plumber({
 		errorHandler: function (error) {
 			console.log(error.message);
