@@ -7629,7 +7629,7 @@ a.text-dark:hover {
 
 header {
   position: relative;
-  background-color: #563d7c;
+  background: linear-gradient(130deg, #453164 20%, #674994 100%);
   padding: 0;
 }
 header .logo a,
@@ -8151,7 +8151,7 @@ div.group h1 {
 
 footer {
   position: relative;
-  background: linear-gradient(145deg, #453164 20%, #674994 100%);
+  background: linear-gradient(130deg, #453164 20%, #674994 100%);
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
   padding-top: 2rem;

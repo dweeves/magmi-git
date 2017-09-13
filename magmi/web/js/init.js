@@ -31,7 +31,7 @@ $j(document).ready(function($) {
 				event.preventDefault();
 				$('html, body').animate({
 					scrollTop: target.offset().top -70
-				}, 250, function() {
+				}, 400, function() {
 					var $target = $(target);
 					$target.focus();
 					if ($target.is(":focus")) {

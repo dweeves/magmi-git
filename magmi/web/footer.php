@@ -8,6 +8,7 @@
 					Provided to the community by <b><a href="mailto:&#100;&#119;&#101;&#101;&#118;&#101;&#115;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;" class="author">Dweeves</a></b><br>
 					<b><a href="#license" class="license" title="MIT OSL license" data-toggle="modal" data-target="#license">License</a></b>
 					<?php include('../inc/license.php'); ?>
+					<p class="version">Version: <?php echo Magmi_Version::$version; ?></p>
 			</div>
 			<div class="col-12 col-md-4 resources">
 				<h3>Resources</h3>
