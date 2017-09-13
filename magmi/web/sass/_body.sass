@@ -43,6 +43,13 @@ input[type="checkbox"]
   .pluginconf, .plugindoc
     display: inline-block
 
+    .btn span
+      display: none
+
+    @include media-breakpoint-up(lg)
+      .btn span
+          display: initial
+
   .plugininfo
     .plugindata
       .title

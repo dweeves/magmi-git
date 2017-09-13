@@ -1,11 +1,11 @@
 <?php require_once("head.php"); ?>
 <header class="row sticky-top mb-4">
 	<div class="container">
-		<nav class="navbar navbar-expand navbar-dark">
+		<nav class="navbar navbar-expand-lg navbar-dark">
 			<a href="magmi.php" title="Home" class="navbar-brand logo mr-2">
 				<img src="images/logo_mini.png" alt="Magmi - Logo Design by Dweeves" class="d-inline-block align-top">
 			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop" aria-controls="navbarTop" aria-expanded="false" aria-label="Toggle navigation">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop" aria-controls="navbarTop">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarTop">
@@ -13,7 +13,7 @@
 					<li class="nav-item">
 						<a class="nav-link" href="#magmi-run">Run</a>
 					</li>
-					<li class="nav-item">
+					<li class="nav-item"> 
 						<a class="nav-link" href="#magmi-parameters">Parameters</a>
 					</li>
 					<li class="nav-item">

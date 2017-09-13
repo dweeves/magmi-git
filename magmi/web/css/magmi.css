@@ -7709,6 +7709,16 @@ input[type='checkbox'] {
 #saveprofile_form .plugindoc {
   display: inline-block;
 }
+#saveprofile_form .pluginconf .btn span,
+#saveprofile_form .plugindoc .btn span {
+  display: none;
+}
+@media (min-width: 992px) {
+  #saveprofile_form .pluginconf .btn span,
+  #saveprofile_form .plugindoc .btn span {
+    display: initial;
+  }
+}
 
 #saveprofile_form .plugininfo .plugindata .title {
   display: inline-block;

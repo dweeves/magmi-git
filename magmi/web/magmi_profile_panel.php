@@ -233,12 +233,12 @@ foreach ($order as $k) {
 
 							<?php if (isset($pinfo['url'])) { ?>
 							<div class="plugindoc float-right">
-								<a href="<?php echo $pinfo['url']?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc">Documentation</a>
+								<a href="<?php echo $pinfo['url']?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc"><i class="fa fa-book" aria-hidden="true"></i> <span>Documentation</span></a>
 							</div>
 							<?php } ?>
 
 							<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
-								<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm">Configure</a>
+								<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm"><i class="fa fa-gear" aria-hidden="true"></i> <span>Configure</span></a>
 							</div>
 
 							<?php if ($enabled) { ?>
