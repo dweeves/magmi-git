@@ -14,23 +14,27 @@ foreach ($_REQUEST as $k => $v) {
 }
 ?>
 	</script>
-<div class="clear"></div>
-<div id="import_log" class="container_12">
-	<div class="section_title grid_12">
-		<span>Importing using profile (<?php echo $profile?>)...</span> <span><input
-			id="cancel_button" type="button" value="cancel"
-			onclick="cancelImport()"></span>
-		<div id="progress_container">
-			&nbsp;
-			<div id="import_progress"></div>
-			<div id="import_current">&nbsp;</div>
+<div id="import_log" class="container mb-4">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<h3 class="card-header">
+					<span>Importing using profile (<?php echo $profile?>)...</span>
+					<span><input id="cancel_button" type="button" value="cancel" onclick="cancelImport()"></span>
+					<span id="endimport_div" class="log_info float-right" style="display: none"></span>
+					<span id="startimport_div" class="log_info float-right mr-2" style="display: none"></span>
+				</h3>
+				<div class="card-body">
+					<div id="progress_container" class="progress mb-4">
+						<div id="import_current" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
+					<div id="runlog"></div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class='grid_12 log_info' style="display: none"
-		id='startimport_div'></div>
-	<div id="runlog" class="grid_12"></div>
-	<div class='grid_12 log_info' style="display: none" id='endimport_div'></div>
 </div>
+
 <script type="text/javascript">
 	var pcall=0;
 
@@ -47,7 +51,7 @@ foreach ($_REQUEST as $k => $v) {
 			$('cancel_button').hide();
 			window.upd.stop();
 			window.upd=null;
-			updateTime('endimport_div','Import Ended');
+			updateTime('endimport_div','Ended');
 			if(window._sr!=null)
 			{
 				window._sr.transport.abort();
@@ -67,7 +71,7 @@ foreach ($_REQUEST as $k => $v) {
 
 		if(window._sr==null)
 		{
-			updateTime('startimport_div','Import Started');
+			updateTime('startimport_div','Started');
 			var rq=new Ajax.Request('magmi_run.php',{method:'post',
 								 parameters:imp_params,
 								onCreate:function(r){window._sr=r;},
@@ -80,7 +84,8 @@ foreach ($_REQUEST as $k => $v) {
 	setProgress=function(pc)
 	{
 		$('import_current').setStyle({width:''+pc+'%'});
-		$('import_progress').update(''+pc+'%');
+		$('import_current').setAttribute('aria-valuenow', pc);
+		$('import_current').update(''+pc+'%');
 	};
 
 	cancelImport=function()

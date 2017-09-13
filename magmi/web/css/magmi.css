@@ -4037,7 +4037,10 @@ input[type='password'] + .input-group-addon:not(:first-child) {
   border-radius: 0;
 }
 
-.alert {
+.alert,
+.log_error,
+.mgupload_error,
+.log_warning {
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
   border: 1px solid transparent;
@@ -4108,27 +4111,36 @@ input[type='password'] + .input-group-addon:not(:first-child) {
   color: #062c33;
 }
 
-.alert-warning {
+.alert-warning,
+.log_warning {
   color: #856404;
   background-color: #fff3cd;
   border-color: #ffeeba;
 }
-.alert-warning hr {
+.alert-warning hr,
+.log_warning hr {
   border-top-color: #ffe8a1;
 }
-.alert-warning .alert-link {
+.alert-warning .alert-link,
+.log_warning .alert-link {
   color: #533f03;
 }
 
-.alert-danger {
+.alert-danger,
+.log_error,
+.mgupload_error {
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;
 }
-.alert-danger hr {
+.alert-danger hr,
+.log_error hr,
+.mgupload_error hr {
   border-top-color: #f1b0b7;
 }
-.alert-danger .alert-link {
+.alert-danger .alert-link,
+.log_error .alert-link,
+.mgupload_error .alert-link {
   color: #491217;
 }
 
@@ -7803,38 +7815,17 @@ div.title {
   font-weight: bold;
 }
 
-.saveinfo {
+.saveinfo,
+#startimport_div,
+#endimport_div {
   margin-top: 4px;
   font-style: italic;
   font-size: 0.8rem;
 }
 
-.error {
-  color: #cc0000;
-}
-
 li.value span {
   padding-top: 4px;
   height: 16px;
-}
-
-.log_error,
-.mgupload_error {
-  border: 1px solid #cc0000;
-  background: #ff8888;
-  color: #000000;
-  text-align: center;
-  font-size: 10pt;
-  font-weight: normal;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.log_standard {
-  font-size: 10pt;
-  font-weight: normal;
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 .log_indexing {
@@ -7848,51 +7839,28 @@ li.value span {
   padding-bottom: 2px;
 }
 
-.log_warning {
-  border: 1px solid #cccc00;
-  background: #ffff88;
-  color: #000000;
-  text-align: center;
-  font-size: 10pt;
-  font-weight: normal;
-  padding-top: 2px;
-  padding-bottom: 2px;
+#log_error_details,
+#log_warning_details {
+  display: none;
 }
-
-.log_end {
-  border: 1px solid #00cc00;
-  background: #88ff88;
-  color: #000000;
-  text-align: center;
-  font-size: 10pt;
-  font-weight: normal;
-  padding-top: 2px;
-  padding-bottom: 2px;
+#log_error_details.loaded,
+#log_warning_details.loaded {
+  display: block;
+  overflow-y: scroll;
+  max-height: 25rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  background-color: #f4f4f4;
+  border: 1px solid #d5d5d5;
 }
-
-.log_end span {
-  padding-left: 5px;
-  padding-right: 5px;
+#log_error_details.loaded ul,
+#log_warning_details.loaded ul {
+  padding: 0;
+  margin: 0;
 }
-
-.log_warning span {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.log_info,
-.mgupload_info {
-  border: 1px solid #00cc44;
-  background: #88ffcc;
-  color: #000000;
-  text-align: left;
-  font-size: 10pt;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.log_end a {
-  color: #000000;
+#log_error_details.loaded ul li,
+#log_warning_details.loaded ul li {
+  list-style-type: none;
 }
 
 .import_params {
@@ -7910,28 +7878,11 @@ li.value span {
   line-height: 1.4em;
 }
 
-#import_log {
-  margin-top: 10;
+#import_log #progress_container {
+  height: 2rem;
 }
-
-#progress_container {
-  position: relative;
-  float: right;
-  width: 300;
-  border: 1px solid #888888;
-  font-size: small;
-  margin-top: 0;
-  border-collapse: collapse;
-}
-
-#import_progress {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  text-align: center;
-  font-weight: normal;
-  z-index: 200;
+#import_log #progress_container #import_current {
+  font-weight: bold;
 }
 
 .section_title {
@@ -7959,26 +7910,6 @@ li.value span {
 
 span.pluginname.sponsored {
   background: #eeeeff;
-}
-
-#import_current {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  background-color: #33cc33;
-  border: none;
-  z-index: 20;
-}
-
-#runlog {
-  clear: both;
-  background-color: #ffffff;
-}
-
-#runlog .runtime_info {
-  height: 100;
-  overflow: auto;
 }
 
 .config_error {
@@ -8009,16 +7940,6 @@ span.pluginname.sponsored {
 
 .scrollbox_handle {
   background-color: #888888;
-}
-
-.log_itime table,
-.log_dbtime table {
-  width: 100%;
-}
-
-.log_itime table td,
-.log_dbtime table td {
-  border: 1px solid #eeeeee;
 }
 
 div.log_warning {

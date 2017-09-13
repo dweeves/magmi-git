@@ -138,33 +138,20 @@ div.title
   float: right
   font-weight: bold
 
-.saveinfo
+.saveinfo, #startimport_div, #endimport_div
   margin-top: 4px
   font-style: italic
   font-size: 0.8rem
-
-.error
-  color: #cc0000
 
 li.value span
   padding-top: 4px
   height: 16px
 
 .log_error, .mgupload_error
-  border: 1px solid #cc0000
-  background: #ff8888
-  color: #000000
-  text-align: center
-  font-size: 10pt
-  font-weight: normal
-  padding-top: 2px
-  padding-bottom: 2px
+  @extend .alert
+  @extend .alert-danger
 
 .log_standard
-  font-size: 10pt
-  font-weight: normal
-  padding-top: 2px
-  padding-bottom: 2px
 
 .log_indexing
   border: 1px solid #0000cc
@@ -177,44 +164,28 @@ li.value span
   padding-bottom: 2px
 
 .log_warning
-  border: 1px solid #cccc00
-  background: #ffff88
-  color: #000000
-  text-align: center
-  font-size: 10pt
-  font-weight: normal
-  padding-top: 2px
-  padding-bottom: 2px
+  @extend .alert
+  @extend .alert-warning
 
-.log_end
-  border: 1px solid #00cc00
-  background: #88ff88
-  color: #000000
-  text-align: center
-  font-size: 10pt
-  font-weight: normal
-  padding-top: 2px
-  padding-bottom: 2px
+#log_error_details, #log_warning_details
+  display: none
 
-.log_end span
-  padding-left: 5px
-  padding-right: 5px
+  &.loaded
+    display: block
+    overflow-y: scroll
+    max-height: 25rem
+    padding: 1rem 1.5rem
+    margin-bottom: 1rem
+    background-color: bg-color("primary")
+    border: 1px solid darken(bg-color("primary"), 12%)
 
-.log_warning span
-  padding-left: 5px
-  padding-right: 5px
+    ul
+      padding: 0
+      margin: 0
 
-.log_info, .mgupload_info
-  border: 1px solid #00cc44
-  background: #88ffcc
-  color: #000000
-  text-align: left
-  font-size: 10pt
-  padding-top: 2px
-  padding-bottom: 2px
+      li
+        list-style-type: none
 
-.log_end a
-  color: #000000
 
 .import_params
   margin-top: 10
@@ -229,25 +200,11 @@ li.value span
   line-height: 1.4em
 
 #import_log
-  margin-top: 10
+  #progress_container
+    height: 2rem
 
-#progress_container
-  position: relative
-  float: right
-  width: 300
-  border: 1px solid #888888
-  font-size: small
-  margin-top: 0
-  border-collapse: collapse
-
-#import_progress
-  position: absolute
-  left: 0
-  top: 0
-  width: 100%
-  text-align: center
-  font-weight: normal
-  z-index: 200
+    #import_current
+      font-weight: bold
 
 .section_title
   background-color: #cccccc
@@ -269,23 +226,6 @@ li.value span
 
 span.pluginname.sponsored
   background: #eeeeff
-
-#import_current
-  position: absolute
-  left: 0
-  top: 0
-  width: 0
-  background-color: #33cc33
-  border: none
-  z-index: 20
-
-#runlog
-  clear: both
-  background-color: #ffffff
-
-#runlog .runtime_info
-  height: 100
-  overflow: auto
 
 .config_error
   margin-top: 10
@@ -311,12 +251,6 @@ span.pluginname.sponsored
 
 .scrollbox_handle
   background-color: #888888
-
-.log_itime table, .log_dbtime table
-  width: 100%
-
-.log_itime table td, .log_dbtime table td
-  border: 1px solid #eeeeee
 
 div.log_warning
   clear: both
