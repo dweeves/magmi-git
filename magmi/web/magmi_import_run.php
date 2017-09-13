@@ -20,7 +20,7 @@ foreach ($_REQUEST as $k => $v) {
 			<div class="card">
 				<h3 class="card-header">
 					<span>Importing using profile (<?php echo $profile?>)...</span>
-					<span><input id="cancel_button" type="button" value="cancel" onclick="cancelImport()"></span>
+					<span><input id="cancel_button" class="btn btn-danger btn-sm" type="button" value="Cancel" onclick="cancelImport()"></span>
 					<span id="endimport_div" class="log_info float-right" style="display: none"></span>
 					<span id="startimport_div" class="log_info float-right mr-2" style="display: none"></span>
 				</h3>
