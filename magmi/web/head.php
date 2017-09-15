@@ -1,10 +1,10 @@
 <?php
-	set_include_path(get_include_path() . PATH_SEPARATOR . "../inc");
+	set_include_path(get_include_path() . PATH_SEPARATOR . '../inc');
 	require_once('security.php');
-	ini_set("display_errors", 1);
-	ini_set("error_reporting", E_ALL);
-	ini_set("magic_quotes_gpc", 0);
-	require_once("magmi_version.php");
+	ini_set('display_errors', 1);
+	ini_set('error_reporting', E_ALL);
+	ini_set('magic_quotes_gpc', 0);
+	require_once('magmi_version.php');
 	session_start();
 ?>
 <html>
@@ -16,6 +16,7 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline';">
 
 	<link rel="author" href="humans.txt" />
 	<link rel="stylesheet" href="css/magmi.css"></link>

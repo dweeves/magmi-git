@@ -23,7 +23,13 @@ gulp.task('browserSync', ['sass'], function() {
 	plugins.browserSync.init({
 		proxy: url,
 		reloadOnRestart: true,
-		open: false
+		open: false,
+		rewriteRules: [{
+			match: /Content-Security-Policy/,
+			fn: function (match) {
+				return "DISABLED-Content-Security-Policy";
+			}
+		}]
 	});
     gulp.watch(paths.sass + '/**/*.+(sass|scss)', ['sass']);
 	gulp.watch(paths.js + '/**/*.js').on('change', plugins.browserSync.reload);
