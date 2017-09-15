@@ -76,207 +76,163 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 
 <div id="profile_cfg" class="container mb-4">
 	<form action="" method="POST" id="saveprofile_form" class="row">
-		<input type="hidden" name="profile" id="curprofile"
-			value="<?php echo $profile?>">
-	<?php
-
-foreach ($order as $k) {
-    ?>
-	<input type="hidden" id="plc_<?php echo strtoupper($k)?>"
-			value="<?php echo implode(",", $eplconf->getEnabledPluginClasses($k))?>"
-			name="PLUGINS_<?php echo strtoupper($k)?>:classes">
-		<div class="col-12 mb-4">
-			<div class="card">
-			<h3 class="card-header">
-				<span><?php echo ucfirst($k)?></span>
-			</h3>
-		<?php
-
-    if ($k == "datasources") {
-        ?>
-			<?php $pinf = $plugins[$k]; ?>
-			<?php if (count($pinf) > 0) {
-            ?>
-    		<div class="card-body">
-			<div class="pluginselect">
-
-				<select name="PLUGINS_DATASOURCES:class" class="mb-2 pl_<?php echo $k?>">
-
-
-			<?php
-            $sinst = null;
-            foreach ($pinf as $pclass) {
-                $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-                if ($sinst == null) {
-                    $sinst = $pinst;
-                }
-                $pinfo = $pinst->getPluginInfo();
-                if ($eplconf->isPluginEnabled($k, $pclass)) {
-                    $sinst = $pinst;
-                } ?>
-				<option value="<?php echo $pclass?>" <?php  if ($sinst == $pinst) {
-                    ?>
-						selected="selected" <?php
-                } ?>><?php echo $pinfo["name"]." v".$pinfo["version"]?></option>
-			<?php
-            } ?>
-
-			</select>
-			</div>
-			<?php if (isset($pinfo["url"])) {
-                ?>
-			<div class="plugindoc">
-				<a href="<?php echo $pinfo["url"]?>" target="magmi_doc">documentation</a>
-			</div>
-			<?php
-            } ?>
-			<div class="pluginconfpanel selected">
-			<?php echo $sinst->getOptionsPanel()->getHtml(); ?>
-			</div>
-			</div>
-			<?php
-        } else {
-            $conf_ok = 0; ?>
-			Magmi needs a datasource plugin, please install one
-			<?php
-        } ?>
-			<?php
-    } else {
-        foreach ($pcats as $pcat => $pclasslist) {
-            ?>
-
-				<?php
-            $catopen = false;
-            $pinf = $plugins[$k]; ?>
-
-				<?php
-
-            foreach ($pinf as $pclass) {
-                if (!in_array($pclass, $pclasslist)) {
-                    continue;
-                } else {
-                    ?>
-						<?php if (!$catopen) {
-    $catopen=true?>
-				<div class="card-body">
-					<h3><?php echo $pcat?></h3>
-					<ul class="list-group"><?php } ?>
+		<input type="hidden" name="profile" id="curprofile" value="<?php echo $profile; ?>">
+		<?php foreach ($order as $k) { ?>
+		<input type="hidden" id="plc_<?php echo strtoupper($k); ?>" value="<?php echo implode(',', $eplconf->getEnabledPluginClasses($k)); ?>" name="PLUGINS_<?php echo strtoupper($k); ?>:classes">
+			<div class="col-12 mb-4">
+				<div class="card">
+					<h3 class="card-header">
+						<span><?php echo ucfirst($k); ?></span>
+					</h3>
+					<?php if ($k == 'datasources') { ?>
+					<?php $pinf=$plugins[$k]; ?>
+					<?php if (count($pinf)>0) { ?>
+	    			<div class="card-body">
+						<div class="pluginselect">
+							<select name="PLUGINS_DATASOURCES:class" class="mb-2 pl_<?php echo $k; ?>">
+							<?php
+			            	$sinst = null;
+			    			foreach ($pinf as $pclass) {
+								$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+					        	if ($sinst == null) {
+					        	    $sinst = $pinst;
+					        	}
+					        	$pinfo = $pinst->getPluginInfo();
+					        	if ($eplconf->isPluginEnabled($k, $pclass)) {
+					         	   $sinst = $pinst;
+					    		} ?>
+								<option value="<?php echo $pclass; ?>" <?php if ($sinst==$pinst) { echo 'selected="selected"'; } ?>><?php echo $pinfo['name'] . 'v' . $pinfo['version']; ?></option>
+							<?php } ?>
+							</select>
+						</div>
+						<?php if (isset($pinfo["url"])) { ?>
+						<div class="plugindoc">
+							<a href="<?php echo $pinfo['url']; ?>" target="magmi_doc">documentation</a>
+						</div>
+						<?php } ?>
+						<div class="pluginconfpanel selected"><?php echo $sinst->getOptionsPanel()->getHtml(); ?></div>
+					</div>
+					<?php } else {
+						$conf_ok = 0;
+						echo 'Magmi needs a datasource plugin, please install one';
+					} ?>
+					<?php } else {
+						foreach ($pcats as $pcat => $pclasslist) { ?>
+							<?php
+		            		$catopen = false;
+		            		$pinf = $plugins[$k];
+		            		?>
+							<?php
+							foreach ($pinf as $pclass) { if (!in_array($pclass, $pclasslist)) { continue; } else { ?> <?php if (!$catopen) { $catopen = true; ?>
+					<div class="card-body">
+						<h3><?php echo $pcat; ?></h3>
+						<ul class="list-group"><?php } ?>
 						<?php
-							$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-							$pinfo = $pinst->getPluginInfo();
-							$info = $pinst->getShortDescription();
-							$plrunnable = $pinst->isRunnable();
-							$enabled = $eplconf->isPluginEnabled($k, $pclass);
+						$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+						$pinfo = $pinst->getPluginInfo();
+						$info = $pinst->getShortDescription();
+						$plrunnable = $pinst->isRunnable();
+						$enabled = $eplconf->isPluginEnabled($k, $pclass);
 						?>
-						<li class="list-group-item">
-							<label class="form-check-label pluginselect">
-								<?php if ($plrunnable[0]) { ?>
-								<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>"
-								<?php if ($eplconf->isPluginEnabled($k, $pclass)) { ?> checked="checked" <?php } ?>>
-								<?php } else { ?>
-								<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>" disabled="disabled">
-								<?php } ?>
-								<?php echo $pinfo["name"]; ?> <i>(v<?php echo $pinfo["version"]; ?>)</i>
-							</label>
+							<li class="list-group-item">
+								<label class="form-check-label pluginselect">
+									<?php if ($plrunnable[0]) { ?>
+									<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>"
+									<?php if ($eplconf->isPluginEnabled($k, $pclass)) { ?> checked="checked" <?php } ?>>
+									<?php } else { ?>
+									<input type="checkbox" class="form-check-input pl_<?php echo $k?>" name="<?php echo $pclass; ?>" disabled="disabled">
+									<?php } ?>
+									<?php echo $pinfo["name"]; ?> <i>(v<?php echo $pinfo["version"]; ?>)</i>
+								</label>
 
-							<span class="badge badge-secondary" data-toggle="modal" data-target="#<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>">Info</span>
+								<span class="badge badge-secondary" data-toggle="modal" data-target="#<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>">Info</span>
 
-							<div class="plugininfo modal fade" id="<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-								<div class="plugininfohover modal-dialog" role="document">
-									<div class="plugindata modal-content">
-										<div class="modal-header">
-											<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
-											<h5 class="modal-title" id="exampleModalLongTitle"><?php if ($pik == 'name') { echo $piv; } ?></h5>
-											<?php } ?>
-										</div>
-										<div class="modal-body">
-											<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
-											<div class="<?php if (isset($sp)) { echo 'sponsored'; } ?>">
-												<?php if ($pik == 'url') { ?>
-												<span><b class="title"><?php echo $pik ?>: </b>
-													<a href="<?php echo $piv ?>" target="_blank">Wiki entry</a>
-												</span>
-												<?php } elseif ($pik == 'sponsorinfo') { ?>
-												<span class="sponsor">
-													<b class="title">sponsor: </b>
-													<?php if (isset($piv['url'])) { ?>
-													<a href="<?php echo $piv['url'] ?>" target="_blank"><?php echo $piv['name']; ?></a>
-													<?php } else { ?>
-													<span><?php echo $piv['name']; ?></span>
-													<?php } ?>
-												</span>
-												<?php } else { ?>
-												<span><b class="title"><?php echo $pik ?>:</b> <?php echo $piv ?></span>
+								<div class="plugininfo modal fade" id="<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+									<div class="plugininfohover modal-dialog" role="document">
+										<div class="plugindata modal-content">
+											<div class="modal-header">
+												<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
+												<h5 class="modal-title" id="exampleModalLongTitle"><?php if ($pik == 'name') { echo $piv; } ?></h5>
 												<?php } ?>
 											</div>
-											<?php } ?>
-											<div class="minidoc mt-2"><?php echo $info ?></div>
+											<div class="modal-body">
+												<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
+												<div class="<?php if (isset($sp)) { echo 'sponsored'; } ?>">
+													<?php if ($pik == 'url') { ?>
+													<span><b class="title"><?php echo $pik; ?>: </b>
+														<a href="<?php echo $piv; ?>" target="_blank">Wiki entry</a>
+													</span>
+													<?php } elseif ($pik == 'sponsorinfo') { ?>
+													<span class="sponsor">
+														<b class="title">sponsor: </b>
+														<?php if (isset($piv['url'])) { ?>
+														<a href="<?php echo $piv['url'] ?>" target="_blank"><?php echo $piv['name']; ?></a>
+														<?php } else { ?>
+														<span><?php echo $piv['name']; ?></span>
+														<?php } ?>
+													</span>
+													<?php } else { ?>
+													<span><b class="title"><?php echo $pik; ?>:</b> <?php echo $piv; ?></span>
+													<?php } ?>
+												</div>
+												<?php } ?>
+												<div class="minidoc mt-2"><?php echo $info; ?></div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											</div>
 										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-										</div>
+										<?php if (!$plrunnable[0]) { ?>
+										<div class="error"><pre><?php echo $plrunnable[1]; ?></pre></div>
+										<?php } ?>
 									</div>
-									<?php if (!$plrunnable[0]) { ?>
-									<div class="error"><pre><?php echo $plrunnable[1] ?></pre></div>
-									<?php } ?>
 								</div>
-							</div>
 
-							<?php if (isset($pinfo['url'])) { ?>
-							<div class="plugindoc float-right">
-								<a href="<?php echo $pinfo['url']?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc"><i class="fa fa-book" aria-hidden="true"></i> <span>Documentation</span></a>
-							</div>
+								<?php if (isset($pinfo['url'])) { ?>
+								<div class="plugindoc float-right">
+									<a href="<?php echo $pinfo['url']; ?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc"><i class="fa fa-book" aria-hidden="true"></i> <span>Documentation</span></a>
+								</div>
+								<?php } ?>
+								<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
+									<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm"><i class="fa fa-gear" aria-hidden="true"></i> <span>Configure</span></a>
+								</div>
+								<?php if ($enabled) { ?>
+								<div class="pluginconfpanel">
+									<?php echo $pinst->getOptionsPanel()->getHtml(); ?>
+								</div>
+								<?php } ?>
+							</li>
 							<?php } ?>
-
-							<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
-								<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm"><i class="fa fa-gear" aria-hidden="true"></i> <span>Configure</span></a>
-							</div>
-
-							<?php if ($enabled) { ?>
-							<div class="pluginconfpanel">
-								<?php echo $pinst->getOptionsPanel()->getHtml() ?>
-							</div>
 							<?php } ?>
-						</li>
-						<?php } ?>
+						</ul>
+						<?php if ($catopen) { ?>
+					</div>
 					<?php } ?>
-					</ul>
-		<?php if ($catopen) { ?></div><?php } ?>
-		<?php }} ?>
-	</div>
-	</div>
-	<?php } ?>
-	<div class="col-12">
-		<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"<?php if (!$conf_ok) { ?> disabled="disabled" <?php } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename ?>)
-		</a>
-	</div>
-</form>
+					<?php }} ?>
+				</div>
+			</div>
+		<?php } ?>
+		<div class="col-12">
+			<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"<?php if (!$conf_ok) { echo 'disabled="disabled"'; } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename; ?>)
+			</a>
+		</div>
+	</form>
 </div>
 
 <div id="paramchanged" style="display: none">
 	<div class="subtitle">
 		<h3>Parameters changed</h3>
 	</div>
-
 	<div class="changedesc">
-		<b>You changed parameters without saving profile , would you like to:</b>
+		<b>You changed parameters without saving profile, would you like to:</b>
 	</div>
-
 	<ul>
-		<li><input type="radio" name="paramcr" value="saveprof">Save chosen Profile (<?php echo $profilename ?>) with current parameters
-	</li>
-		<li><input type="radio" name="paramcr" value="applyp"
-			checked="checked">Apply current parameters as profile override
-			without saving</li>
-		<li><input type="radio" name="paramcr" value="useold">Discard changes &amp; apply last saved <?php echo $profilename ?> profile values
-	</li>
+		<li><input type="radio" name="paramcr" value="saveprof">Save chosen Profile (<?php echo $profilename; ?>) with current parameters</input></li>
+		<li><input type="radio" name="paramcr" value="applyp" checked="checked">Apply current parameters as profile overridewithout saving</input></li>
+		<li><input type="radio" name="paramcr" value="useold">Discard changes &amp; apply last saved <?php echo $profilename; ?> profile values</input></li>
 	</ul>
 	<div class="actionbuttons">
-		<a class="actionbutton"
-			href="javascript:handleRunChoice('paramcr',comparelastsaved());"
-			id="paramchangeok">Run with selected option</a> <a
-			class="actionbutton" href="javascript:cancelimport();"
-			id="paramchangecancel">Cancel Run</a>
+		<a class="actionbutton" href="javascript:handleRunChoice('paramcr',comparelastsaved());" id="paramchangeok">Run with selected option</a> <a class="actionbutton" href="javascript:cancelimport();" id="paramchangecancel">Cancel run</a>
 	</div>
 </div>
 
@@ -285,242 +241,222 @@ foreach ($order as $k) {
 		<h3>Plugin selection changed</h3>
 	</div>
 	<div class="changedesc">
-		<b>You changed selected plugins without saving profile , would you
-			like to:</b>
+		<b>You changed selected plugins without saving profile, would you like to:</b>
 	</div>
-
 	<ul>
-		<li><input type="radio" name="plugselcr" value="saveprof"
-			checked="checked">Save chosen Profile (<?php echo $profilename ?>) with current parameters
-	</li>
-		<li><input type="radio" name="plugselcr" value="useold">Discard changes &amp; apply  last saved <?php echo $profilename ?> profile values
-	</li>
+		<li><input type="radio" name="plugselcr" value="saveprof" checked="checked">Save chosen Profile (<?php echo $profilename; ?>) with current parameters</input></li>
+		<li><input type="radio" name="plugselcr" value="useold">Discard changes &amp; apply last saved <?php echo $profilename; ?> profile values</input></li>
 	</ul>
 	<div class="actionbuttons">
-		<a class="actionbutton"
-			href="javascript:handleRunChoice('plugselcr',comparelastsaved());"
-			id="plchangeok">Run with selected option</a> <a class="actionbutton"
-			href="javascript:cancelimport();" id="plchangecancel">Cancel Run</a>
+		<a class="actionbutton" href="javascript:handleRunChoice('plugselcr',comparelastsaved());" id="plchangeok">Run with selected option</a> <a class="actionbutton" href="javascript:cancelimport();" id="plchangecancel">Cancel run</a>
 	</div>
 </div>
 
 <script type="text/javascript">
-
-window.lastsaved={};
-
-handleRunChoice=function(radioname,changeinfo)
-{
-	var changed=changeinfo.changed;
-	var sval=$$('input:checked[type="radio"][name="'+radioname+'"]').pluck('value');
-	if(sval=='saveprof')
-	{
-		saveProfile(1,function(){$('runmagmi').submit();});
-	}
-	if(sval=='useold')
-	{
-		$('runmagmi').submit();
-	}
-	if(sval=='applyp')
-	{
-		changed.each(function(it){
-			$('runmagmi').insert({bottom:'<input type="hidden" name="'+it.key+'" value="'+it.value+'">'});
-		});
-		$('runmagmi').submit();
-	}
+window.lastsaved = {};
+handleRunChoice = function(radioname, changeinfo) {
+    var changed = changeinfo.changed;
+    var sval = $$('input:checked[type="radio"][name="' + radioname + '"]').pluck('value');
+    if (sval == 'saveprof') {
+        saveProfile(1, function() {
+            $('runmagmi').submit();
+        });
+    }
+    if (sval == 'useold') {
+        $('runmagmi').submit();
+    }
+    if (sval == 'applyp') {
+        changed.each(function(it) {
+            $('runmagmi').insert({
+                bottom: '<input type="hidden" name="' + it.key + '" value="' + it.value + '">'
+            });
+        });
+        $('runmagmi').submit();
+    }
 }
 
-cancelimport=function()
-{
- $('overlay').hide();
-}
-
-updatelastsaved=function()
-{
- gatherclasses(['DATASOURCES','GENERAL','ITEMPROCESSORS']);
- window.lastsaved=$H($('saveprofile_form').serialize(true));
+cancelimport = function() {
+    $('overlay').hide();
 };
 
-comparelastsaved=function()
-{
- gatherclasses(['DATASOURCES','GENERAL','ITEMPROCESSORS']);
- var curprofvals=$H($('saveprofile_form').serialize(true));
- var changeinfo={changed:false,target:''};
- var out="";
- var diff={};
- changeinfo.target='paramchanged';
- curprofvals.each(function(kv)
- {
-	 var lastval=window.lastsaved.get(kv.key);
- 	if(kv.value!=lastval)
- 	{
-		diff[kv.key]=kv.value;
-		if(kv.key.substr(0,8)=="PLUGINS_")
-		{
-			changeinfo.target='pluginschanged';
-		}
-	}
- });
-
-changeinfo.changed=$H(diff);
-if(changeinfo.changed.size()==0)
-{
-	changeinfo.changed=false;
-}
- return changeinfo;
+updatelastsaved = function() {
+    gatherclasses(['DATASOURCES', 'GENERAL', 'ITEMPROCESSORS']);
+    window.lastsaved = $H($('saveprofile_form').serialize(true));
 };
 
-addclass=function(it,o)
-{
-	if(it.checked){
-		this.arr.push(it.name);
-	}
+comparelastsaved = function() {
+    gatherclasses(['DATASOURCES', 'GENERAL', 'ITEMPROCESSORS']);
+    var curprofvals = $H($('saveprofile_form').serialize(true));
+    var changeinfo = {
+        changed: false,
+        target: ''
+    };
+    var out = "";
+    var diff = {};
+    changeinfo.target = 'paramchanged';
+    curprofvals.each(function(kv) {
+        var lastval = window.lastsaved.get(kv.key);
+        if (kv.value != lastval) {
+            diff[kv.key] = kv.value;
+            if (kv.key.substr(0, 8) == 'PLUGINS_') {
+                changeinfo.target = 'pluginschanged';
+            }
+        }
+    });
+
+    changeinfo.changed = $H(diff);
+    if (changeinfo.changed.size() == 0) {
+        changeinfo.changed = false;
+    }
+    return changeinfo;
 };
 
-gatherclasses=function(tlist)
-{
-	tlist.each(function(t,o){
-		var context={arr:[]};
-		$$(".pl_"+t.toLowerCase()).each(addclass,context);
-		var target=$("plc_"+t);
-		target.value=context.arr.join(",");
-	});
+addclass = function(it, o) {
+    if (it.checked) {
+        this.arr.push(it.name);
+    }
 };
 
-initConfigureLink=function(maincont)
-{
- var cfgdiv=maincont.select('.pluginconf');
- if(cfgdiv.length>0)
- {
- 	cfgdiv=cfgdiv[0];
- 	var confpanel=maincont.select('.pluginconfpanel');
-	 confpanel=confpanel[0]
-	cfgdiv.stopObserving('click');
- 	cfgdiv.observe('click',function(ev){
- 	 	confpanel.toggleClassName('selected');
- 		 confpanel.select('.ifield').each(function(it){
- 			it.select('.fieldhelp').each(function(fh){
- 				fh.observe('click',function(ev){
- 					it.select('.fieldsyntax').each(function(el){el.toggle();})
- 						});
- 				});
- 			});
- 	 	});
-
- }
-};
-showConfLink=function(maincont)
-{
-	var cfgdiv=maincont.select('.pluginconf');
-	if(cfgdiv.length>0)
-	 {
-
-	cfgdiv=cfgdiv[0];
-	cfgdiv.show();
-	 }
-
+gatherclasses = function(tlist) {
+    tlist.each(function(t, o) {
+        var context = {
+            arr: []
+        };
+        $$(".pl_" + t.toLowerCase()).each(addclass, context);
+        var target = $("plc_" + t);
+        target.value = context.arr.join(",");
+    });
 };
 
-loadConfigPanel=function(container,profile,plclass,pltype)
-{
- new Ajax.Updater({success:container},'ajax_pluginconf.php',
-	{parameters:{
-		profile:profile,
-        plugintype:pltype,
-		pluginclass:plclass},
-		evalScripts:true,
-		onComplete:
-	 	function(){
-	 		showConfLink($(container.parentNode));
-	 		initConfigureLink($(container.parentNode));
-	 	}});
+initConfigureLink = function(maincont) {
+    var cfgdiv = maincont.select('.pluginconf');
+    if (cfgdiv.length > 0) {
+        cfgdiv = cfgdiv[0];
+        var confpanel = maincont.select('.pluginconfpanel');
+        confpanel = confpanel[0];
+        cfgdiv.stopObserving('click');
+        cfgdiv.observe('click', function(ev) {
+            confpanel.toggleClassName('selected');
+            confpanel.select('.ifield').each(function(it) {
+                it.select('.fieldhelp').each(function(fh) {
+                    fh.observe('click', function(ev) {
+                        it.select('.fieldsyntax').each(function(el) {
+                            el.toggle();
+                        })
+                    });
+                });
+            });
+        });
+    }
 };
 
-removeConfigPanel=function(container)
-{
-var cfgdiv=$(container.parentNode).select('.pluginconf');
-cfgdiv=cfgdiv[0];
-cfgdiv.stopObserving('click');
- cfgdiv.hide();
- container.removeClassName('selected');
- container.update('');
+showConfLink = function(maincont) {
+    var cfgdiv = maincont.select('.pluginconf');
+    if (cfgdiv.length > 0) {
+
+        cfgdiv = cfgdiv[0];
+        cfgdiv.show();
+    }
 };
 
-
-initAjaxConf=function(profile)
-{
-	//foreach plugin selection
-	$$('.pluginselect').each(function(pls)
-	{
-		var del=pls.firstDescendant();
-		var evname=(del.tagName=="SELECT"?'change':'click');
-
-		//check the click
-		del.observe(evname,function(ev)
-		{
-			var el=Event.element(ev);
-			var plclass=(el.tagName=="SELECT")?el.value:el.name;
-			var elclasses=el.classNames();
-			var pltype="";
-			elclasses.each(function(it){if(it.substr(0,3)=="pl_"){pltype=it.substr(3);}});
-			var doload=(el.tagName=="SELECT")?true:el.checked;
-			var targets=$(pls.parentNode).select(".pluginconfpanel");
-			var container=targets[0];
-			if(doload)
-			{
-				loadConfigPanel(container,profile,plclass,pltype);
-			}
-			else
-			{
-				removeConfigPanel(container);
-			}
-		});
-	});
+loadConfigPanel = function(container, profile, plclass, pltype) {
+    new Ajax.Updater({
+        success: container
+    }, 'ajax_pluginconf.php', {
+        parameters: {
+            profile: profile,
+            plugintype: pltype,
+            pluginclass: plclass
+        },
+        evalScripts: true,
+        onComplete: function() {
+            showConfLink($(container.parentNode));
+            initConfigureLink($(container.parentNode));
+        }
+    });
 };
 
-initDefaultPanels=function()
-{
-	$$('.pluginselect').each(function(it){initConfigureLink($(it.parentNode));});
-	updatelastsaved();
+removeConfigPanel = function(container) {
+    var cfgdiv = $(container.parentNode).select('.pluginconf');
+    cfgdiv = cfgdiv[0];
+    cfgdiv.stopObserving('click');
+    cfgdiv.hide();
+    container.removeClassName('selected');
+    container.update('');
 };
 
-saveProfile=function(confok,onsuccess)
-{
-	gatherclasses(['DATASOURCES','GENERAL','ITEMPROCESSORS']);
-  	updatelastsaved();
-	new Ajax.Updater('profileconf_msg',
-			 "magmi_saveprofile.php",
-			 {parameters:$('saveprofile_form').serialize('true'),
-			  onSuccess:function(){
-			  if(confok)
-              {
-				 onsuccess();
-			  }
-			  else
-			  {
-			  	$('profileconf_msg').show();
-			  }}
-	  		});
+initAjaxConf = function(profile) {
+    // foreach plugin selection
+    $$('.pluginselect').each(function(pls) {
+        var del = pls.firstDescendant();
+        var evname = (del.tagName == "SELECT" ? 'change' : 'click');
+
+        // Check the click
+        del.observe(evname, function(ev) {
+            var el = Event.element(ev);
+            var plclass = (el.tagName == "SELECT") ? el.value : el.name;
+            var elclasses = el.classNames();
+            var pltype = "";
+            elclasses.each(function(it) {
+                if (it.substr(0, 3) == "pl_") {
+                    pltype = it.substr(3);
+                }
+            });
+            var doload = (el.tagName == "SELECT") ? true : el.checked;
+            var targets = $(pls.parentNode).select(".pluginconfpanel");
+            var container = targets[0];
+            if (doload) {
+                loadConfigPanel(container, profile, plclass, pltype);
+            } else {
+                removeConfigPanel(container);
+            }
+        });
+    });
+};
+
+initDefaultPanels = function() {
+    $$('.pluginselect').each(function(it) {
+        initConfigureLink($(it.parentNode));
+    });
+    updatelastsaved();
+};
+
+saveProfile = function(confok, onsuccess) {
+    gatherclasses(['DATASOURCES', 'GENERAL', 'ITEMPROCESSORS']);
+    updatelastsaved();
+    new Ajax.Updater('profileconf_msg',
+        "magmi_saveprofile.php", {
+            parameters: $('saveprofile_form').serialize('true'),
+            onSuccess: function() {
+                if (confok) {
+                    onsuccess();
+                } else {
+                    $('profileconf_msg').show();
+                }
+            }
+        });
 
 };
 
 initAjaxConf('<?php echo $profile?>');
 initDefaultPanels();
 
+$('saveprofile').observe('click', function() {
+    saveProfile(<?php echo $conf_ok ? 1 : 0 ?>, function() {
+        $('chooseprofile').submit();
+    });
+});
 
-$('saveprofile').observe('click',function()
-								{
-									saveProfile(<?php echo $conf_ok ? 1 : 0 ?>,function(){$('chooseprofile').submit();});
-									});
+$('runmagmi').observe('submit', function(ev) {
 
-$('runmagmi').observe('submit',function(ev){
-
-	var ls=comparelastsaved();
-	if(ls.changed!==false)
-	{
-		 $('overlaycontent').update($(ls.target));
-		 $$('#overlaycontent > div').each(function(el){el.show()});
-		 $('overlay').show();
-		 ev.stop();
-	}
-	});
-	</script>
+    var ls = comparelastsaved();
+    if (ls.changed !== false) {
+        $('overlaycontent').update($(ls.target));
+        $$('#overlaycontent > div').each(function(el) {
+            el.show();
+        });
+        $('overlay').show();
+        ev.stop();
+    }
+});
+</script>
