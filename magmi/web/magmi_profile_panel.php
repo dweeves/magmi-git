@@ -196,11 +196,7 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 								<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
 									<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm"><i class="fa fa-gear" aria-hidden="true"></i> <span>Configure</span></a>
 								</div>
-								<?php if ($enabled) { ?>
-								<div class="pluginconfpanel">
-									<?php echo $pinst->getOptionsPanel()->getHtml(); ?>
-								</div>
-								<?php } ?>
+								<div class="pluginconfpanel"><?php if ($enabled) { echo $pinst->getOptionsPanel()->getHtml(); } ?></div>
 							</li>
 							<?php } ?>
 							<?php } ?>
