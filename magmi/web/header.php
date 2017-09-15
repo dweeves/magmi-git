@@ -22,6 +22,9 @@
 					<li class="nav-item">
 						<a class="nav-link" href="#saveprofile_form">Datasources</a>
 					</li>
+					<li class="nav-item back" style="display: none">
+						<a class="nav-link" href="magmi.php" role="button"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</a>
+					</li>
 				</ul>
 				<ul class="nav navbar-nav menu-right">
 					<li class="nav-item">

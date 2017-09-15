@@ -1,25 +1,31 @@
-	<?php
-    require_once("security.php");
+<?php
+require_once('security.php');
 ini_set('gpc_magic_quotes', 0);
-    require_once("security.php");
-$profile = isset($_REQUEST["profile"]) ? strip_tags($_REQUEST["profile"]) : 'default';
+$profile = isset($_REQUEST['profile']) ? strip_tags($_REQUEST['profile']) : 'default';
 $_SESSION["last_runned_profile"] = $profile;
 session_write_close();
 ?>
+
 <script type="text/javascript">
-	var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine'};
-	<?php
+$j(document).ready(function($) {
+	if ($j('#import_log').length) {
+		$('body').addClass('import-run');
+	}
+});
+var imp_params={engine:'magmi_productimportengine:Magmi_ProductImportEngine'};
+<?php
 foreach ($_REQUEST as $k => $v) {
     echo "imp_params['$k']='$v';\n";
 }
 ?>
-	</script>
+</script>
+
 <div id="import_log" class="container mb-4">
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
 				<h3 class="card-header">
-					<span>Importing using profile (<?php echo $profile?>)...</span>
+					<span>Importing using profile (<?php echo $profile; ?>)...</span>
 					<span><input id="cancel_button" class="btn btn-danger btn-sm" type="button" value="Cancel" onclick="cancelImport()"></span>
 					<span id="endimport_div" class="log_info float-right" style="display: none"></span>
 					<span id="startimport_div" class="log_info float-right mr-2" style="display: none"></span>

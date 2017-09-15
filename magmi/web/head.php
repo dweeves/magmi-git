@@ -1,11 +1,11 @@
 <?php
-	set_include_path(get_include_path() . PATH_SEPARATOR . '../inc');
-	require_once('security.php');
-	ini_set('display_errors', 1);
-	ini_set('error_reporting', E_ALL);
-	ini_set('magic_quotes_gpc', 0);
-	require_once('magmi_version.php');
-	session_start();
+set_include_path(get_include_path() . PATH_SEPARATOR . '../inc');
+require_once('security.php');
+require_once('magmi_version.php');
+ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+ini_set('magic_quotes_gpc', 0);
+session_start();
 ?>
 <html>
 <head>
