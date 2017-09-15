@@ -1,4 +1,4 @@
-<?php require_once("head.php"); ?>
+<?php require_once('head.php'); ?>
 <header class="row sticky-top mb-4">
 	<div class="container">
 		<nav class="navbar navbar-expand-lg navbar-dark">

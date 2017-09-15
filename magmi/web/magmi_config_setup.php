@@ -1,32 +1,33 @@
 <?php
-require_once("security.php");
-require_once("magmi_config.php");
-require_once("magmi_statemanager.php");
-require_once("dbhelper.class.php");
+require_once('security.php');
+require_once('magmi_config.php');
+require_once('magmi_statemanager.php');
+require_once('dbhelper.class.php');
 $conf = Magmi_Config::getInstance();
 $conf->load();
 $conf_ok = 1;
 ?>
-<?php
 
-$profile = "";
-if (isset($_REQUEST["profile"])) {
-    $profile = $_REQUEST["profile"];
+<?php
+$profile = '';
+if (isset($_REQUEST['profile'])) {
+    $profile = $_REQUEST['profile'];
 } else {
-    if (isset($_SESSION["last_runned_profile"])) {
-        $profile = $_SESSION["last_runned_profile"];
+    if (isset($_SESSION['last_runned_profile'])) {
+        $profile = $_SESSION['last_runned_profile'];
     }
 }
-if ($profile == "") {
-    $profile = "default";
+if ($profile == '') {
+    $profile = 'default';
 }
 $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
-if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
+if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
     $conf_ok = 0;
 }
 ?>
-<?php $zipok=class_exists("ZipArchive");?>
+
+<?php $zipok=class_exists('ZipArchive'); ?>
 <div class="container mb-4">
 <div class="row">
 <div id="magmi-update" class="magmi-update col-12 mb-4">
@@ -35,19 +36,15 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 	<h3 class="card-header subtitle">
 		<span>Update Magmi</span>
 	</h3>
-<?php if (false) {
-    ?>
-<form method="post" enctype="multipart/form-data"
-		action="magmi_upload.php">
-		<div class="card-body">
-			<h3>Update Magmi Release</h3>
-			<input type="file" name="magmi_package"></input> <input type="submit"
-				value="Upload Magmi Release"></input>
+<?php if (false) { ?>
+<form method="post" enctype="multipart/form-data" action="magmi_upload.php">
+	<div class="card-body">
+		<h3>Update Magmi Release</h3>
+		<input type="file" name="magmi_package"></input> <input type="submit" value="Upload Magmi release"></input>
 		<?php
-
-    if (isset($_SESSION["magmi_install"])) {
-        $type = $_SESSION["magmi_install"][0];
-        $msg = $_SESSION["magmi_install"][1]; ?>
+    	if (isset($_SESSION['magmi_install'])) {
+        	$type = $_SESSION['magmi_install'][0];
+        	$msg = $_SESSION['magmi_install'][1]; ?>
 		<div class="mgupload_<?php echo $type?>">
 				<?php echo $msg; ?>
 		</div>

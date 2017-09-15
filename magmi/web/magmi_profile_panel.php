@@ -1,85 +1,76 @@
 <?php
-require_once("security.php");
-if (isset($_REQUEST["profile"])) {
-    $profile = strip_tags($_REQUEST["profile"]);
+require_once('security.php');
+if (isset($_REQUEST['profile'])) {
+    $profile = strip_tags($_REQUEST['profile']);
 } else {
-    if (isset($_SESSION["last_runned_profile"])) {
-        $profile = $_SESSION["last_runned_profile"];
+    if (isset($_SESSION['last_runned_profile'])) {
+        $profile = $_SESSION['last_runned_profile'];
     }
 }
-if ($profile == "") {
-    $profile = "default";
+if ($profile == '') {
+    $profile = 'default';
 }
-$profilename = ($profile != "default" ? $profile : "Default");
-?>
-
-<div id="magmi-profile" class="magmi-profile col-12 mb-4">
-	<script type="text/javascript">
-		var profile="<?php echo $profile ?>";
-	</script>
-	<div class="card">
-	<h3 class="card-header subtitle">
-		<span>Configure Current Profile (<?php echo $profilename?>)</span>
-<?php
+$profilename = ($profile != 'default' ? $profile : 'Default');
 $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
 $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 ?>
-<span class="float-right saveinfo<?php if (!$conf_ok) {
-    ?> log_warning<?php
-}?>"
-			id="profileconf_msg">
-<?php if ($conf_ok) {
-        ?>
-Saved:<?php echo $eplconf->getLastSaved("%c")?>
-<?php
-    } else {
-        ?>
-<?php echo $profilename?> Profile Config not saved yet
-<?php
-    }
-?>
-</span>
-	</h3>
-	<div class="card-body">
-		<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
-			<h3>Profile to configure</h3>
-				<label for="label">Current Magmi Profile:</label>
-				<select name="profile" onchange="$('chooseprofile').submit()">
-						<option <?php if (null==$profile) { ?> selected="selected" <?php }?>
-							value="default">Default</option>
-			<?php foreach ($profilelist as $profname) {
-        ?>
-			<option <?php if ($profname == $profile) {
-            ?> selected="selected"
-							<?php
-        } ?> value="<?php echo $profname?>"><?php echo $profname?></option>
+
+<div id="magmi-profile" class="magmi-profile col-12 mb-4">
+	<script type="text/javascript">var profile="<?php echo $profile; ?>";</script>
+	<div class="card">
+		<h3 class="card-header subtitle">
+			<span>Profile (<?php echo $profilename; ?>)</span>
+			<span class="float-right saveinfo<?php if (!$conf_ok) { echo 'log_warning'; } ?>" id="profileconf_msg">
 			<?php
-    }?>
-			</select>
-			<label for="label">Copy Selected Profile to:</label>
-			<input type="text" name="newprofile">
-			<input type="submit" class="btn btn-primary mt-2" value="Copy Profile &amp; switch">
-	<?php
-require_once("magmi_pluginhelper.php");
-$order = array("datasources","general","itemprocessors");
-$plugins = Magmi_PluginHelper::getInstance('main')->getPluginClasses($order);
-$pcats = array();
-foreach ($plugins as $k => $pclasslist) {
-    foreach ($pclasslist as $pclass) {
-        // invoke static method, using call_user_func (5.2 compat mode)
-        $pcat = call_user_func(array($pclass, "getCategory"));
-        if (!isset($pcats[$pcat])) {
-            $pcats[$pcat] = array();
-        }
-        $pcats[$pcat][] = $pclass;
-    }
-}
-?>
-</form>
+			if ($conf_ok) {
+				echo 'Saved:' . $eplconf->getLastSaved('%c');
+			} else {
+				echo $profilename . 'Profile config not saved yet';
+			}
+			?>
+			</span>
+		</h3>
+		<div class="card-body">
+			<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
+				<h3>Profile to configure</h3>
+				<ul class="formline">
+					<li class="label">Current profile:</li>
+					<li class="value">
+						<select name="profile" onchange="$('chooseprofile').submit();">
+							<option <?php if (null==$profile) { echo 'selected="selected"'; } ?> value="default">Default</option>
+							<?php foreach ($profilelist as $profname) { ?>
+							<option <?php if ($profname==$profile) { echo 'selected="selected"'; } ?> value="<?php echo $profname; ?>"><?php echo $profname; ?></option>
+							<?php } ?>
+						</select>
+					</li>
+				</ul>
+				<ul class="formline">
+					<li class="label">Copy selected profile to:</li>
+					<li class="value"><input type="text" name="newprofile"></li>
+				</ul>
+				<input type="submit" class="btn btn-primary mt-2" value="Copy profile & switch">
+			<?php
+			require_once('magmi_pluginhelper.php');
+			$order = array('datasources','general','itemprocessors');
+			$plugins = Magmi_PluginHelper::getInstance('main')->getPluginClasses($order);
+			$pcats = array();
+			foreach ($plugins as $k => $pclasslist) {
+			    foreach ($pclasslist as $pclass) {
+			        // Invoke static method, using call_user_func (5.2 compat mode)
+			        $pcat = call_user_func(array($pclass, 'getCategory'));
+			        if (!isset($pcats[$pcat])) {
+			            $pcats[$pcat] = array();
+			        }
+			        $pcats[$pcat][] = $pclass;
+			    }
+			}
+			?>
+			</form>
+		</div>
 	</div>
 </div>
-</div>
+
 </div>
 </div>
 
