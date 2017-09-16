@@ -9,17 +9,18 @@ session_start();
 ?>
 <html>
 <head>
-	<title>MAGMI (MAGento Mass Importer) by Dweeves - version <?php echo Magmi_Version::$version ?></title>
+	<title>MAGMI (MAGento Mass Importer) by Dweeves - version <?php echo Magmi_Version::$version; ?></title>
 
 	<meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Expires" content="-1">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline';">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:;">
 
-	<link rel="author" href="humans.txt" />
-	<link rel="stylesheet" href="css/magmi.css"></link>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+	<link rel="author" href="humans.txt">
+	<link rel="stylesheet" href="css/magmi.css">
 	<link rel="stylesheet" href="../../node_modules/font-awesome/css/font-awesome.min.css">
 
 	<script type="text/javascript" src="js/prototype.js"></script>
@@ -27,7 +28,6 @@ session_start();
 	<script type="text/javascript" src="../../node_modules/popper.js/dist/umd/popper.min.js"></script>
 	<script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script type="text/javascript">var $j = jQuery.noConflict();</script>
-	<script type="text/javascript" src="js/ScrollBox.js"></script>
 	<script type="text/javascript" src="js/magmi_utils.js"></script>
 	<script type="text/javascript" src="js/init.js"></script>
 </head>

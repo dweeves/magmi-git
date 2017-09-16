@@ -1,3 +1,2 @@
 /* TEAM */
-	Chef: Sebastien Bracquemont
-	Web designer: Benoit Podwinski
+	Creator: Sebastien Bracquemont

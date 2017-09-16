@@ -149,7 +149,7 @@ $cansock = !($dmysqlsock === false);
 <div id="magmi-parameters" class="magmi-parameters col-12 mb-4">
 	<div class="card">
 	<h3 class="card-header">
-		<span>Configure Global Parameters</span> <span id="commonconf_msg" class="float-right saveinfo">
+		<span>Configure global parameters</span> <span id="commonconf_msg" class="float-right saveinfo">
 		Saved:<?php echo $conf->getLastSaved("%c")?>
 		</span>
 	</h3>
@@ -157,7 +157,7 @@ $cansock = !($dmysqlsock === false);
 	<div class="card-body">
 <form method="post" action="magmi_saveconfig.php" id="commonconf_form">
 		<div class="card-group row">
-		<div class="col-12 col-md-4 mb-4">
+		<div class="col-12 col-lg-4 mb-4">
 		<div class="card">
 			<h3 class="card-header">Database</h3>
 			<div class="card-body">
@@ -233,7 +233,7 @@ $cansock = !($dmysqlsock === false);
 		</div>
 		</div>
 
-		<div class="col-12 col-md-4 mb-4">
+		<div class="col-12 col-lg-4 mb-4">
 		<div class="card">
 			<h3 class="card-header">Magento</h3>
 			<div class="card-body">
@@ -255,7 +255,7 @@ $cansock = !($dmysqlsock === false);
 		</div>
 		</div>
 
-		<div class="col-12 col-md-4 mb-4">
+		<div class="col-12 col-lg-4 mb-4">
 		<div class="card omega">
 			<h3 class="card-header">Global</h3>
 			<div class="card-body" id="globstep">
