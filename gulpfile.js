@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({
-		DEBUG: true,
+		DEBUG: false,
 		pattern: '*'
 	});
 

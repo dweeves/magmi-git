@@ -79,7 +79,7 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 } else {
         ?>
 <div class="card-body">
-	<h3>Update Disabled</h3>
+	<h5>Update Disabled</h5>
 	<div class="error">Upgrade/Upload function are disabled for security reasons</div>
 </div>
 <?php
@@ -107,7 +107,7 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 		type="hidden" name="logfile" class="form-group"
 		value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
 		<div id="directrun">
-			<h3>Directly run magmi with existing profile</h3>
+			<h5>Directly run magmi with existing profile</h5>
 			<div class="formline">
 				<label for="profile">Run Magmi With Profile:</label>
 				<?php $profilelist = $conf->getProfileList(); ?>

@@ -7707,8 +7707,43 @@ input[type='checkbox'] {
   padding: 0.4rem 0.9rem;
   line-height: 1.9rem;
 }
-#saveprofile_form .list-group-item input[type='checkbox'] {
+@media (max-width: 575px) {
+  #saveprofile_form .list-group-item {
+    min-height: 50px;
+  }
+  #saveprofile_form .list-group-item .badge,
+  #saveprofile_form .list-group-item .plugindoc,
+  #saveprofile_form .list-group-item .pluginconf {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    margin: 0 !important;
+  }
+  #saveprofile_form .list-group-item .pluginconf {
+    right: 50px;
+  }
+  #saveprofile_form .list-group-item .badge {
+    right: 86px;
+    line-height: 1.5;
+  }
+  #saveprofile_form .list-group-item label,
+  #saveprofile_form .list-group-item .label {
+    width: 100%;
+    min-width: 120px;
+    padding-right: 112px;
+    line-height: 1.1rem;
+    vertical-align: middle;
+  }
+}
+#saveprofile_form .list-group-item label input[type='checkbox'],
+#saveprofile_form .list-group-item .label input[type='checkbox'] {
   margin-top: 0.55rem;
+}
+@media (max-width: 767px) {
+  #saveprofile_form .list-group-item label i,
+  #saveprofile_form .list-group-item .label i {
+    display: none;
+  }
 }
 
 #saveprofile_form .badge {
@@ -8052,32 +8087,8 @@ p.logentry {
   color: #ffffff;
 }
 
-#overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  z-index: 1000;
-  background: url('../images/white50.png');
-}
-
-#overlaycontent {
-  width: 800;
-  margin: 200 auto;
-  background-color: #ffffff;
-  border: 1px solid #000000;
-  text-align: left;
-}
-
-div.changedesc {
-  width: 100%;
-  border-top: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  margin-top: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+#pluginschanged ul {
+  list-style-type: none;
 }
 
 div.group {

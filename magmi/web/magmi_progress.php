@@ -58,22 +58,24 @@ if (file_exists($logfile)) {
 	};
 </script>
 
-<div>
-	<h4>Plugins</h4>
-	<ul>
-		<?php foreach ($parser->getData("plugins") as $pinfo): ?>
-		<li class="log_standard"><?php echo $pinfo["name"] ?> <i>(<?php echo $pinfo["ver"] ?>)</i></li>
-		<?php endforeach ?>
-	</ul>
-</div>
+<div class="row">
+	<div class="col-12 col-md-6">
+		<h5>Plugins</h5>
+		<ul>
+			<?php foreach ($parser->getData("plugins") as $pinfo): ?>
+			<li class="log_standard"><?php echo $pinfo["name"] ?> <i>(<?php echo $pinfo["ver"] ?>)</i></li>
+			<?php endforeach ?>
+		</ul>
+	</div>
 
-<div>
-	<h4>Startup</h4>
-	<ul>
-		<?php foreach ($parser->getData("startup") as $sinfo): ?>
-		<li class="log_standard"><?php echo $sinfo ?></li>
-		<?php endforeach ?>
-	</ul>
+	<div class="col-12 col-md-6">
+		<h5>Startup</h5>
+		<ul>
+			<?php foreach ($parser->getData("startup") as $sinfo): ?>
+			<li class="log_standard"><?php echo $sinfo ?></li>
+			<?php endforeach ?>
+		</ul>
+	</div>
 </div>
 
 <script type="text/javascript">setProgress(<?php echo $percent?>);</script>

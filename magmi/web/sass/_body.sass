@@ -44,8 +44,37 @@ input[type="checkbox"]
     padding: 0.4rem 0.9rem
     line-height: 1.9rem
 
-    input[type="checkbox"]
-      margin-top: .55rem
+    @include media-breakpoint-down(xs)
+      min-height: 50px
+
+      .badge, .plugindoc, .pluginconf
+        position: absolute
+        top: 0.75rem
+        right: 0.9rem
+        margin: 0 !important
+
+      .pluginconf
+        right: 50px
+
+      .badge
+        right: 86px
+        line-height: 1.5
+
+      label
+        width: 100%
+        min-width: 120px
+        padding-right: 112px
+        line-height: 1.1rem
+        vertical-align: middle
+
+    label
+
+      input[type="checkbox"]
+        margin-top: .55rem
+
+      i
+        @include media-breakpoint-down(sm)
+          display: none
 
   .badge
     cursor: pointer
@@ -340,30 +369,9 @@ p.logentry
   background-color: #0000cc
   color: #ffffff
 
-#overlay
-  position: absolute
-  left: 0
-  top: 0
-  width: 100%
-  height: 100%
-  text-align: center
-  z-index: 1000
-  background: url("../images/white50.png")
-
-#overlaycontent
-  width: 800
-  margin: 200 auto
-  background-color: #fff
-  border: 1px solid #000
-  text-align: left
-
-div.changedesc
-  width: 100%
-  border-top: 1px solid #000000
-  border-bottom: 1px solid #000000
-  margin-top: 5px
-  padding-top: 5px
-  padding-bottom: 5px
+#pluginschanged
+  ul
+    list-style-type: none
 
 div.group
   margin-bottom: 5px

@@ -33,7 +33,7 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 		</h3>
 		<div class="card-body">
 			<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
-				<h3>Profile to configure</h3>
+				<h5>Profile to configure</h5>
 				<ul class="formline">
 					<li class="label">Current profile:</li>
 					<li class="value">
@@ -125,7 +125,7 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 							<?php
 							foreach ($pinf as $pclass) { if (!in_array($pclass, $pclasslist)) { continue; } else { ?> <?php if (!$catopen) { $catopen = true; ?>
 					<div class="card-body">
-						<h3><?php echo $pcat; ?></h3>
+						<h5><?php echo $pcat; ?></h5>
 						<ul class="list-group"><?php } ?>
 						<?php
 						$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
@@ -232,19 +232,22 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 	</div>
 </div>
 
-<div id="pluginschanged" style="display: none">
-	<div class="subtitle">
-		<h3>Plugin selection changed</h3>
-	</div>
-	<div class="changedesc">
-		<b>You changed selected plugins without saving profile, would you like to:</b>
-	</div>
-	<ul>
-		<li><input type="radio" name="plugselcr" value="saveprof" checked="checked">Save chosen Profile (<?php echo $profilename; ?>) with current parameters</input></li>
-		<li><input type="radio" name="plugselcr" value="useold">Discard changes &amp; apply last saved <?php echo $profilename; ?> profile values</input></li>
-	</ul>
-	<div class="actionbuttons">
-		<a class="actionbutton" href="javascript:handleRunChoice('plugselcr',comparelastsaved());" id="plchangeok">Run with selected option</a> <a class="actionbutton" href="javascript:cancelimport();" id="plchangecancel">Cancel run</a>
+<div id="pluginschanged" class="modal fade" style="display: none" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">	
+				<h5 class="subtitle modal-title">Plugin selection changed</h5>
+			</div>
+			<div class="changedesc modal-body">
+				<p><b>You changed selected plugins without saving profile, would you like to:</b></p>
+				<input type="radio" name="plugselcr" value="saveprof" checked="checked">Save chosen Profile (<?php echo $profilename; ?>) with current parameters</input><br>
+				<input type="radio" name="plugselcr" value="useold">Discard changes &amp; apply last saved <?php echo $profilename; ?> profile values</input>
+			</div>
+			<div class="actionbuttons modal-footer">
+				<a id="plchangeok" class="actionbutton btn btn-primary" href="javascript:handleRunChoice('plugselcr',comparelastsaved());">Run with selected option</a>
+				<a id="plchangecancel" class="actionbutton btn btn-secondary" href="javascript:cancelimport();">Cancel</a>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -272,7 +275,9 @@ handleRunChoice = function(radioname, changeinfo) {
 }
 
 cancelimport = function() {
-    $('overlay').hide();
+	$('overlay').hide();
+	$('pluginschanged').addClassName('hide');
+	$j('#pluginschanged.hide').modal('hide');
 };
 
 updatelastsaved = function() {
@@ -451,7 +456,9 @@ $('runmagmi').observe('submit', function(ev) {
         $$('#overlaycontent > div').each(function(el) {
             el.show();
         });
-        $('overlay').show();
+		$('overlay').show();
+		$('pluginschanged').addClassName('show');
+		$j('#pluginschanged.show').modal('show');
         ev.stop();
     }
 });
