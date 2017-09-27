@@ -34,22 +34,22 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 		<div class="card-body">
 			<form action="magmi_chooseprofile.php" method="POST" id="chooseprofile">
 				<h5>Profile to configure</h5>
-				<ul class="formline">
-					<li class="label">Current profile:</li>
-					<li class="value">
+				<div class="formline row">
+					<div class="col-12 col-md-6">
+						<label>Current profile:</label>
 						<select name="profile" onchange="$('chooseprofile').submit();">
 							<option <?php if (null==$profile) { echo 'selected="selected"'; } ?> value="default">Default</option>
 							<?php foreach ($profilelist as $profname) { ?>
 							<option <?php if ($profname==$profile) { echo 'selected="selected"'; } ?> value="<?php echo $profname; ?>"><?php echo $profname; ?></option>
 							<?php } ?>
 						</select>
-					</li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Copy selected profile to:</li>
-					<li class="value"><input type="text" name="newprofile"></li>
-				</ul>
-				<input type="submit" class="btn btn-primary mt-2" value="Copy profile & switch">
+					</div>
+					<div class="col-12 col-md-6">
+						<label>Copy selected profile to:</label>
+						<input type="text" name="newprofile">
+					</div>
+				</div>
+				<input type="submit" class="btn btn-primary float-right mt-2" value="Copy profile & switch">
 			<?php
 			require_once('magmi_pluginhelper.php');
 			$order = array('datasources','general','itemprocessors');
@@ -209,7 +209,7 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 			</div>
 		<?php } ?>
 		<div class="col-12">
-			<a id="saveprofile" class="actionbutton btn btn-primary" href="javascript:void(0)"<?php if (!$conf_ok) { echo 'disabled="disabled"'; } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename; ?>)
+			<a id="saveprofile" class="actionbutton btn btn-primary float-right" href="javascript:void(0)"<?php if (!$conf_ok) { echo 'disabled="disabled"'; } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename; ?>)
 			</a>
 		</div>
 	</form>

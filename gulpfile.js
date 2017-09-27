@@ -7,7 +7,7 @@ var plugins = require('gulp-load-plugins')({
 	});
 
 // Variables
-var url = 'http://dagoth.bp.local/github/magmi-git/';
+var url = 'localhost';
 var magmi = 'magmi';
 
 var paths = {
@@ -18,7 +18,7 @@ var paths = {
 };
 
 // BrowserSync task
-gulp.task('browserSync', ['sass'], function() {
+gulp.task('browserSync', ['sass:dev'], function() {
 	plugins.browserSync.init({
 		proxy: url,
 		reloadOnRestart: true,
@@ -35,21 +35,8 @@ gulp.task('browserSync', ['sass'], function() {
 	gulp.watch(magmi + '/**/*.php').on('change', plugins.browserSync.reload);
 });
 
-// Clean CSS task
-gulp.task('cleancss', function () {
-	gulp.src(paths.css + '/**/*.css')
-	.pipe(plugins.plumber({
-		errorHandler: function (error) {
-			console.log(error.message);
-			this.emit('end');
-	}}))
-	.pipe(plugins.cleanCss())
-	.on('error', function(err) {})
-	.pipe(gulp.dest(paths.css));
-});
-
-// Sass task
-gulp.task('sass', function() {
+// Sass dev task
+gulp.task('sass:dev', function() {
 	gulp.src(paths.sass + '/**/*.sass')
 	.pipe(plugins.plumber({
 		errorHandler: function (error) {
@@ -63,5 +50,23 @@ gulp.task('sass', function() {
 	.pipe(plugins.browserSync.stream());
 });
 
+// Sass prod task
+gulp.task('sass:prod', function() {
+	gulp.src(paths.sass + '/**/*.sass')
+	.pipe(plugins.plumber({
+		errorHandler: function (error) {
+			console.log(error.message);
+			this.emit('end');
+	}}))
+	.pipe(plugins.sass.sync().on('error', plugins.sass.logError))
+	.on('error', function(err) {})
+	.pipe(plugins.csscomb())
+	.pipe(plugins.cleanCss())
+	.pipe(gulp.dest(paths.css));
+});
+
+// Dev task
+gulp.task('dev', ['browserSync']);
+
 // Default task
-gulp.task('default', ['browserSync']);
+gulp.task('default', ['sass:prod']);

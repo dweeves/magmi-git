@@ -93,50 +93,41 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 		<span>Run Magmi</span>
 	</h3>
 <div class="card-body">
-<?php if (!$conf_ok) {
-        ?>
-<span class="float-right saveinfo log_warning"><b>No Profile saved yet, Run disabled!</b></span>
-<?php
-    }?>
-<form method="POST" id="runmagmi"
-	action="magmi.php?ts=<?php echo time()?>" <?php if (!$conf_ok) {
-        ?>
-	style="display: none" <?php
-    }?>>
-	<input type="hidden" name="run" class="form-group" value="import"></input> <input
-		type="hidden" name="logfile" class="form-group"
-		value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
-		<div id="directrun">
-			<h5>Directly run magmi with existing profile</h5>
-			<div class="formline">
-				<label for="profile">Run Magmi With Profile:</label>
-				<?php $profilelist = $conf->getProfileList(); ?>
+
+<?php if (!$conf_ok) { ?>
+
+<span class="float-right saveinfo log_warning"><b>No profile saved yet, Run disabled!</b></span>
+
+<?php } ?>
+
+<form method="POST" id="runmagmi" action="magmi.php?ts=<?php echo time(); ?>" <?php if (!$conf_ok) { ?> style="display: none" <?php } ?>>
+	<input type="hidden" name="run" class="form-group" value="import"></input>
+	<input type="hidden" name="logfile" class="form-group" value="<?php echo Magmi_StateManager::getProgressFile(); ?>"></input>
+	<div id="directrun">
+		<h5>Directly run magmi with existing profile</h5>
+		<div class="formline row">
+			<div class="col-12 col-md-6">
+				<label for="profile">Profile:</label>
+				<?php $profilelist=$conf->getProfileList(); ?>
 				<select name="profile" id="runprofile">
-					<option <?php if (null == $profile) {
-        ?> selected="selected" <?php
-    }?>
-						value="default">Default</option>
-					<?php foreach ($profilelist as $profilename) {
-        ?>
-					<option <?php if ($profilename == $profile) {
-            ?> selected="selected"
-						<?php
-        } ?> value="<?php echo $profilename?>"><?php echo $profilename?></option>
-					<?php
-    }?>
-				</select> <label for="mode">Using mode:</label> <select name="mode" id="mode">
+					<option <?php if (null==$profile) { ?> selected="selected" <?php }?> value="default">Default</option>
+					<?php foreach ($profilelist as $profilename) { ?>
+					<option <?php if ($profilename==$profile) { ?> selected="selected" <?php } ?> value="<?php echo $profilename; ?>"><?php echo $profilename; ?></option><?php } ?>
+				</select>
+			</div>
+			<div class="col-12 col-md-6">
+				<label for="mode">Mode:</label>
+				<select name="mode" id="mode">
 					<option value="update">Update existing items only and skip new ones</option>
 					<option value="create">Create new items and update existing ones</option>
 					<option value="xcreate">Create new items only and skip existing ones</option>
-
-				</select> <input type="submit" value="Run Import" class="btn btn-primary btn-lg btn-block active mt-2"
-					<?php if (!$conf_ok) {
-        ?> disabled="disabled" <?php
-    }?>></input>
+				</select>
 			</div>
+		</div>
 	</div>
+<input type="submit" value="Run Import" class="btn btn-primary active float-right"<?php if (!$conf_ok) { ?> disabled="disabled" <?php } ?>></input>
+<a href="magmi_utilities.php" class="btn btn-secondary float-right mr-2" role="button">Advanced Utilities</a>
 </form>
-<a href="magmi_utilities.php" class="btn btn-secondary" role="button">Advanced Utilities</a>
 </div>
 </div>
 </div>
@@ -298,10 +289,8 @@ $cansock = !($dmysqlsock === false);
 		</div>
 		</div>
 		</div>
-		<div class="col-12">
-			<a id="save_commonconf" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true" href="#">Save global parameters</a>
-		</div>
 	</div>
+	<a id="save_commonconf" class="btn btn-primary float-right" role="button" aria-pressed="true" href="#"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save parameters</a>
 	<?php if ($conf->get("USE_ALTERNATE", "file", "") != "") {
         ?>
 	<input type="hidden" name="USE_ALTERNATE:file"
