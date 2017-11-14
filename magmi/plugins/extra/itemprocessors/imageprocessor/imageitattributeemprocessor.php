@@ -460,7 +460,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         // magento image value (relative to media catalog)
         $impath = "/$i1/$i2/$bimgfile";
         // target directory;
-        $l2d = "media/catalog/product/$i1/$i2";
+        $l2d = "pub/media/catalog/product/$i1/$i2";
         // test for existence
         $targetpath = "$l2d/$bimgfile";
         /* test for same image (without problem) */
