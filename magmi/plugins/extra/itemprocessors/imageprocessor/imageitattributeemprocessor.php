@@ -327,7 +327,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
                 $this->insert($sql, $data);
                 // insert to catalog_product_entity_media_gallery_value_to_entity
-                $galleryRelationTable = 'catalog_product_entity_media_gallery_value_to_entity';
+                $galleryRelationTable = $this->tablename('catalog_product_entity_media_gallery_value_to_entity');
                 $relationData = array($vid, $pid);
                 $sql_insert_relation = "INSERT INTO {$galleryRelationTable} VALUES (?, ?)";
                 $this->insert($sql_insert_relation, $relationData);
