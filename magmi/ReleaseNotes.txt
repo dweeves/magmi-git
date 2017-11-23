@@ -20,3 +20,4 @@ The package now includes all plugins.
 
 Seem to work ok with magento 1.8 & 1.9 unless proven otherwise.
 
+Change
