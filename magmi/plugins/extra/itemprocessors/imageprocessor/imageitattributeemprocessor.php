@@ -242,9 +242,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $sql .= "JOIN $vc ON $t.value_id=$vc.value_id WHERE $vc.attribute_id=? AND $t.entity_id=? AND $t.store_id=?";
             $imgid = $this->selectone($sql, array($refid, $pid, $store_id), 'value_id');
         } else {
-            $sql .= "JOIN $vc ON $t.value_id=$vc.value_id WHERE $vc.entity_id=? AND $vc.store_id=?";
-            $sql .= " WHERE $vc.value=? AND $vc.entity_id=? AND $t.attribute_id=?";
-            $imgid = $this->selectone($sql, array($imgname, $pid, $attid), 'value_id');
+            $sql .= "JOIN $vc ON $t.value_id=$vc.value_id WHERE $t.entity_id=? AND $t.store_id=?";
+            $sql .= " AND $vc.value=? AND $vc.attribute_id=?";
+            $imgid = $this->selectone($sql, array($pid, $store_id, $imgname, $attid), 'value_id');
         }
 
         if ($imgid == null) {
@@ -255,7 +255,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				(?,?)";
             $imgid = $this->insert($sql, array($attid, $imgname));
         } else {
-            $sql = "UPDATE $t
+            $sql = "UPDATE $vc
 				 SET value=?
 				 WHERE value_id=?";
             $this->update($sql, array($imgname, $imgid));
@@ -275,7 +275,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $sql = "DELETE emgv,emg FROM `$tgv` as emgv
 			JOIN `$tg` AS emg ON emgv.value_id = emg.value_id AND emgv.store_id=?
-			WHERE emg.entity_id=? AND emg.attribute_id=?";
+			WHERE emgv.entity_id=? AND emg.attribute_id=?";
         $this->delete($sql, array($storeid, $pid, $attid));
     }
 
@@ -329,7 +329,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 // insert to catalog_product_entity_media_gallery_value_to_entity
                 $galleryRelationTable = $this->tablename('catalog_product_entity_media_gallery_value_to_entity');
                 $relationData = array($vid, $pid);
-                $sql_insert_relation = "INSERT INTO {$galleryRelationTable} VALUES (?, ?)";
+                $sql_insert_relation = "INSERT IGNORE INTO {$galleryRelationTable} VALUES (?, ?)";
                 $this->insert($sql_insert_relation, $relationData);
                 $this->exec_stmt('SET foreign_key_checks = 1');
             }
