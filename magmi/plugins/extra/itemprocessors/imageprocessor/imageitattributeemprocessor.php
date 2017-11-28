@@ -321,11 +321,18 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
             if (count($data) > 0) {
                 $this->exec_stmt('SET foreign_key_checks = 0');
-                $sql = "INSERT INTO $tgv
+                $sql = "SELECT value_id FROM $tgv WHERE value_id = ?";
+                $valueId = $this->selectone($sql, array($vid), 'value_id');
+                if ($valueId) {
+                    $sql = "UPDATE $tgv SET store_id = ?, entity_id = ?, label = ?, position = ? WHERE value_id = ?";
+                    $this->update($sql, array($storeid, $pid, $imglabel, $pos, $valueId));
+                } else {
+                    $sql = "INSERT INTO $tgv
 					(value_id,store_id,position,disabled,entity_id,label)
 					VALUES " . implode(",", $vinserts) . "
 					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
-                $this->insert($sql, $data);
+                    $this->insert($sql, $data);
+                }
                 // insert to catalog_product_entity_media_gallery_value_to_entity
                 $galleryRelationTable = $this->tablename('catalog_product_entity_media_gallery_value_to_entity');
                 $relationData = array($vid, $pid);
