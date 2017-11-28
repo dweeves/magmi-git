@@ -17,6 +17,4 @@ Current version in **experimental** and tested only for import simple and config
 - On the fly category creator/importer
 - On the fly indexer
 - Configurable Item processor
-
-**Known plugins with bugs:**
-- Image attributes processor - **"media_gallery" import not working**
+- Image attributes processor 
