@@ -252,6 +252,11 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // create an attribute code based array for the wanted columns
             foreach ($result as $r)
             {
+                // It is for consistent for magento 1 data structure
+                if ($r['attribute_code'] == 'media_gallery') {
+                    $r['backend_type'] = 'varchar';
+                }
+
                 $attrinfs[$r["attribute_code"]] = $r;
             }
             unset($result);
