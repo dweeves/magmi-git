@@ -1,14 +1,15 @@
 {
-    "name": "tagesjump/magmi2",
-    "description": "Magmi for Magento 2.0",
+    "name": "macopedia/magmi2",
+    "description": "Magento Mass Importer 'Magmi' for Magento 2",
     "license": "MIT License",
-    "homepage": "http://tagesjump.ru",
+    "homepage": "http://macopedia.com",
     "authors":[
         {
-            "name":"Sebastien Bracquemont"
+            "name": "Sebastien Bracquemont",
+            "homepage": "http://sourceforge.net/projects/magmi/"
         },
         {
-            "name":"Tagesjump"
+            "name": "Macopedia.com team"
         }
     ],
     "bin": [
