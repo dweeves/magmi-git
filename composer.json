@@ -1,7 +1,7 @@
 {
     "name": "macopedia/magmi2",
     "description": "Magento Mass Importer 'Magmi' for Magento 2",
-    "license": "MIT License",
+    "license": "MIT",
     "homepage": "http://macopedia.com",
     "authors":[
         {
