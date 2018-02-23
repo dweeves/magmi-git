@@ -494,11 +494,18 @@ abstract class Magmi_Engine extends DbHelper
                 }
                 $xml = new SimpleXMLElement(file_get_contents($xmlPath));
                 $default_setup = $xml->global->resources->{$this->getProp('DATABASE', 'resource', 'default_setup')}->connection;
-                $host = $default_setup->host;
-                $dbname = $default_setup->dbname;
-                $user = $default_setup->username;
-                $pass = $default_setup->password;
-                $port = $default_setup->port;
+
+                $host = (string)$default_setup->host;
+                $dbname = (string)$default_setup->dbname;
+                $user = (string)$default_setup->username;
+                $pass = (string)$default_setup->password;
+                $port = (string)$default_setup->port;
+
+                $host = !empty($host) && $host[0] == '$' ? getenv(mb_substr($host, 1)) : $host;
+                $dbname = !empty($dbname) && $dbname[0] == '$' ? getenv(mb_substr($dbname, 1)) : $dbname;
+                $user = !empty($user) && $user[0] == '$' ? getenv(mb_substr($user, 1)) : $user;
+                $pass = !empty($pass) && $pass[0] == '$' ? getenv(mb_substr($pass, 1)) : $pass;
+                $port = !empty($port) && $port[0] == '$' ? getenv(mb_substr($port, 1)) : $port;
             } else {
                 $host = $this->getProp("DATABASE", "host", "localhost");
                 $dbname = $this->getProp("DATABASE", "dbname", "magento");
