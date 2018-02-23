@@ -100,7 +100,9 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                 }
                 //fix for some servers not able to follow location & failing downloads
                 //only set follow location if compatible with PHP settings
-                if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
+                $safeMode = ini_get('safe_mode');
+                $safeModeDisabled = ($safeMode == 'Off') || !$safeMode;
+                if (ini_get('open_basedir') == '' && $safeModeDisabled) {
                     $curlopts[CURLOPT_FOLLOWLOCATION]=1;
                 }
                 break;
