@@ -330,7 +330,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $bt = $attrinf['backend_type'];
         $user = $attrinf['is_user_defined'];
         //checking specific extension custom model for selects that might not respect magento default model
-        if ($user == 1 && $bt == 'int' && $finp == 'select' && isset($smodel) && $smodel != "eav/entity_attribute_source_table")
+        if ($user == 1 && $bt == 'int' && $finp == 'select' && isset($smodel) && $smodel != "eav/entity_attribute_source_table" && $smodel != "Magento\Eav\Model\Entity\Attribute\Source\Table")
         {
             $this->log("Potential assignment problem, specific model found for select attribute => " . $attrinf['attribute_code'] . "($smodel)", "warning");
         }
