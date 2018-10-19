@@ -113,7 +113,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
         if (session_id() !== "") {
             session_write_close();
         }
-        $cl = $this->getParam("REINDEX:phpcli") . " shell/indexer.php";
+        $cl = $this->getParam("REINDEX:phpcli") . " bin/magento";
         $idxlstr = $this->getParam("REINDEX:indexes", "");
         $idxlist = explode(",", $idxlstr);
         if (count($idxlist) == 0) {
@@ -125,7 +125,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             $this->log("Reindexing $idx....", "info");
 
             // Execute Reindex command, and specify that it should be ran from Magento directory
-            $out = $this->_mdh->exec_cmd($cl, "--reindex $idx", $this->_mdh->getMagentoDir());
+            $out = $this->_mdh->exec_cmd($cl, "indexer:reindex $idx", $this->_mdh->getMagentoDir());
             $this->log($out, "info");
             $tend = microtime(true);
             $this->log("done in " . round($tend - $tstart, 2) . " secs", "info");
