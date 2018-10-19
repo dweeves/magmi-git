@@ -1138,7 +1138,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         $res = array("ok" => 0, "last" => 0);
         $canceled = false;
         $this->_current_row++;
-		if ($rstep == 0) {$rstep = 1;} 
+        if ($rstep == 0)
+        {
+            $rstep = 1;
+        }
         if ($this->_current_row % $rstep == 0)
         {
             $this->reportStats($this->_current_row, $tstart, $tdiff, $lastdbtime, $lastrec);

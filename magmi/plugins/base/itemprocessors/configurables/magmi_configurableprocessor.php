@@ -118,11 +118,11 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function processItemBeforeId(&$item, $params = null)
     {
         // if item is not configurable, nothing to do
-        if ($item["type"] !== "configurable") {
+        if (isset($item["type"]) && $item["type"] !== "configurable") {
             return true;
         }
         if ($this->_use_defaultopc ||
-             ($item["options_container"] != "container1" && $item["options_container"] != "container2")) {
+             ($item["options_container"] !== "container1" && $item["options_container"] !== "container2")) {
             $item["options_container"] = "container2";
         }
         // reset option price info
