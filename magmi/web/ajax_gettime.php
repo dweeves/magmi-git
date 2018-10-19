@@ -1,2 +1,2 @@
 <?php
-echo $_REQUEST["prefix"] . ":" . strftime("%c");
+echo htmlspecialchars($_REQUEST["prefix"]) . ":" . strftime("%c");
