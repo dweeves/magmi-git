@@ -57,7 +57,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
             $inserts=array();
             foreach ($group_cols as $key) {
                 $price=str_replace(",", ".", $item[$key]);
-                if (!empty($price)) {
+                if (is_numeric($price)) {
                     $group_id = $this->_groups[$key]['id'];
 
                     foreach ($website_ids as $website_id) {

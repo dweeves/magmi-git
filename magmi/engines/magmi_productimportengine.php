@@ -1619,10 +1619,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // get the item value
                 $ivalue = $item[$attrcode];
                 // get item store id for the current attribute
-                //if is global then , global scope applies but if configurable, back to store view scope since
-                //it's a select
+                // if the attribute is global, then global scope applies. However, for select & multiselect 
+                // attributes, we go back to the store view scope to allow for values translation
                 $scope = $attrdesc["is_global"];
-                if ($attrcode != "price" && $attrdesc["is_configurable"] == 1)
+                if ($attrcode != "price" && $attrdesc["is_global"] && ($attrdesc["frontend_input"] == 'select' || $attrdesc["frontend_input"] == 'multiselect'))
                 {
                     $scope = 0;
                 }
