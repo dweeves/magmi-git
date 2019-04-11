@@ -163,9 +163,9 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
 
                     if (!empty($option['title'])) {
                         if (empty($existingOption['title'])) {
-                            $sql = "INSERT INTO $optv (option_id, store_id, title) VALUES(:option_id, :store_id, :title)";
+                            $sql = "INSERT INTO $optv (option_id, store_id, title,parent_product_id) VALUES(:option_id, :store_id, :title, :parent_product_id)";
                             $bind = array('option_id'=>$option['option_id'],'store_id'=>$option['store_id'],
-                                'title'=>$option['title']);
+                                'title'=>$option['title'],'parent_product_id' => $option['parent_id']);
                             $this->insert($sql, $bind);
                         } elseif ($existingOption['title'] != $option['title']) {
                             $sql = "UPDATE $optv SET title = :title WHERE option_id = :option_id AND store_id = :store_id";
@@ -181,13 +181,13 @@ class Magmi_BundleItemProcessor extends Magmi_ItemProcessor
                     $optionId = $this->insert($sql, $bind);
                     $option['option_id'] = $optionId;
 
-                    $sql = "INSERT INTO $optv (option_id, store_id, title) VALUES(:option_id, :store_id, :title)";
-                    $bind = array('option_id'=>$option['option_id'],'store_id'=>0,'title'=>$option['code']);
+                    $sql = "INSERT INTO $optv (option_id, store_id, title, parent_product_id) VALUES(:option_id, :store_id, :title, :parent_product_id)";
+                    $bind = array('option_id'=>$option['option_id'],'store_id'=>0,'title'=>$option['code'],'parent_product_id' => $option['parent_id']);
                     $this->insert($sql, $bind);
 
                     if (!empty($option['title']) && $option['store_id'] != 0) {
                         $bind = array('option_id'=>$option['option_id'],'store_id'=>$option['store_id'],
-                            'title'=>$option['title']);
+                            'title'=>$option['title'],'parent_product_id' => $option['parent_id']);
                         $this->insert($sql, $bind);
                     }
                 }
