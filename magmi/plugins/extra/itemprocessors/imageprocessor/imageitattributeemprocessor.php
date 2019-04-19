@@ -559,11 +559,11 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
         $vc = $this->tablename('catalog_product_entity_varchar');
         $sql = "UPDATE $tgv as emgv
-		JOIN $tg as emg ON emg.value_id=emgv.value_id AND emg.entity_id=?
-		JOIN $vc  as ev ON ev.entity_id=emg.entity_id AND ev.value=emg.value and ev.attribute_id=?
+		JOIN $tg as emg ON emg.value_id=emgv.value_id
+		JOIN $vc  as ev ON ev.entity_id=emgv.entity_id AND ev.value=emg.value and ev.attribute_id=?
 		SET label=?
-		WHERE emgv.store_id IN (" . implode(",", $sids) . ")";
-        $this->update($sql, array($pid, $attrdesc["attribute_id"], $label));
+		WHERE emgv.store_id IN (" . implode(",", $sids) . ") AND emgv.entity_id=?";
+        $this->update($sql, array($attrdesc["attribute_id"], $label, $pid));
     }
 
     public function processItemAfterId(&$item, $params = null)
