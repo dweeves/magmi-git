@@ -247,7 +247,6 @@ class ItemIndexer extends Magmi_ItemProcessor
         }
         // see what we get as available product attributes
         foreach ($result as $row) {
-            echo $row;
             if ($row["attribute_code"] == "url_key") {
                 $pburlk = nullifempty($row["value"]);
             }
