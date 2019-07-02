@@ -75,7 +75,11 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                                // we don't want the body
                                CURLOPT_NOBODY=>true,
                                // some stats on target
-                                CURLOPT_FILETIME=>true);
+                                CURLOPT_FILETIME=>true,
+                            // enable following redirects
+                            CURLOPT_FOLLOWLOCATION=>true,
+                            CURLOPT_MAXREDIRS=>3
+                        );
                         break;
                     case 'dl':
                         $curlopts=array(
@@ -92,7 +96,10 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                             // we don't want the response as we will store it in a file
                             CURLOPT_RETURNTRANSFER=>false,
                             //use binary
-                            CURLOPT_BINARYTRANSFER=>true
+                            CURLOPT_BINARYTRANSFER=>true,
+                            // enable following redirects
+                            CURLOPT_FOLLOWLOCATION=>true,
+                            CURLOPT_MAXREDIRS=>3
                         );
                         break;
                     default:
@@ -100,7 +107,9 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                 }
                 //fix for some servers not able to follow location & failing downloads
                 //only set follow location if compatible with PHP settings
-                if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
+                $safeMode = ini_get('safe_mode');
+                $safeModeDisabled = ($safeMode == 'Off') || !$safeMode;
+                if (ini_get('open_basedir') == '' && $safeModeDisabled) {
                     $curlopts[CURLOPT_FOLLOWLOCATION]=1;
                 }
                 break;
