@@ -1139,7 +1139,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             if (is_array($item) && count($item) > 0)
             {
                 // import item
-                $this->beginTransaction();
+                $transactionStarted = $this->beginTransaction();
+                if (!$transactionStarted) {
+                    $this->log("ERROR - RECORD #$this->_current_row - could not start transaction", "error");
+                }
                 $importedok = $this->importItem($item);
                 if ($importedok)
                 {
@@ -1149,7 +1152,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 else
                 {
                     $res["ok"] = false;
-                    $this->rollbackTransaction();
+                    $rolledBack = $this->rollbackTransaction();
+                    if (!$rolledBack) {
+                        $this->log("ERROR - RECORD #$this->_current_row - could not roll back transaction, status: " . $rolledBack === null ? 'null' : 'false', "error");
+                    }
                 }
             }
             else
@@ -1159,7 +1165,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // intermediary measurement
         } catch (Exception $e)
         {
-            $this->rollbackTransaction();
+            $rolledBack = $this->rollbackTransaction();
+            if (!$rolledBack) {
+                $this->log("ERROR - RECORD #$this->_current_row - could not roll back transaction on Exception", "error");
+            }
             $res["ok"] = false;
             $this->logException($e, "ERROR ON RECORD #$this->_current_row");
             if ($e->getMessage() == "MAGMI_RUN_CANCELED")
@@ -1483,6 +1492,12 @@ class Magmi_ProductImportEngine extends Magmi_Engine
      */
     public function updateProduct($item, $pid)
     {
+        //do not update catalog_product_entity table when not needed e.g. usually magmi updates sku, entity_type_id
+        //to the same values as they were before. The updated_at is also updated at the end of processing in touchProduct()
+        $shouldUpdateProductTable = (bool)$this->_conf->get('MAGENTO', 'catalog_product_entity_update', true);
+        if (!$shouldUpdateProductTable) {
+            return;
+        }
         $tname = $this->tablename('catalog_product_entity');
         if (isset($item['type']))
         {

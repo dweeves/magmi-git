@@ -25,6 +25,10 @@ abstract class Magmi_Engine extends DbHelper
     protected $_builtinplugins = array();
     protected $_ploop_callbacks = array();
     private $_excid = 0;
+
+    /**
+     * @var null|Magmi_Logger
+     */
     public $logger = null;
     protected $_timingcats = array();
 
@@ -364,6 +368,11 @@ abstract class Magmi_Engine extends DbHelper
         return date('Y-m-d h:i:', $timeStamp) . (date('s', $timeStamp) + $microSec);
     }
 
+    /**
+     * @param $data
+     * @param string $type
+     * @param null|Magmi_Logger $logger
+     */
     public function log($data, $type = "default", $logger = null)
     {
         $usedlogger = ($logger == null ? $this->logger : $logger);
