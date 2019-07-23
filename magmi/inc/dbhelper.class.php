@@ -10,6 +10,9 @@ include_once("timecounter.php");
 
 class DBHelper
 {
+    /**
+     * @var PDO
+     */
     protected $_db;
     protected $_debug;
     protected $_laststmt;
@@ -22,6 +25,7 @@ class DBHelper
     protected $_tcats;
     protected $_tables2columns = array();
     protected $_dbname;
+    protected $_debugfile;
 
     public function __construct()
     {
@@ -476,9 +480,10 @@ class DBHelper
      */
     public function beginTransaction()
     {
-        $this->_db->beginTransaction();
+        $success = $this->_db->beginTransaction();
         $this->_intrans = true;
         //$this->logdebug("-- TRANSACTION BEGIN --");
+        return $success;
     }
 
     /**
@@ -486,9 +491,10 @@ class DBHelper
      */
     public function commitTransaction()
     {
-        $this->_db->commit();
+        $committed = $this->_db->commit();
         $this->_intrans = false;
         //$this->logdebug("-- TRANSACTION COMMIT --");
+        return $committed;
     }
 
     /**
@@ -496,11 +502,13 @@ class DBHelper
      */
     public function rollbackTransaction()
     {
+        $rolledBack = null;
         if ($this->_intrans) {
-            $this->_db->rollBack();
+            $rolledBack = $this->_db->rollBack();
             $this->_intrans = false;
            // $this->logdebug("-- TRANSACTION ROLLBACK --");
         }
+        return $rolledBack;
     }
 
     /**
