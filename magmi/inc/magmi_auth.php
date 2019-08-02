@@ -44,10 +44,39 @@ class Magmi_Auth extends Magmi_Engine {
         $hash = explode(":",$hash);
         $cecheck = md5($hash[1] . $pass);
         $eecheck = hash('sha256',$hash[1] . $pass);
-        $valid=($cecheck == $hash[0] || $eecheck== $hash[0]);
+        $eecheckArgo = $this->getArgonHash($pass, $hash[1]);
+        $valid = ($cecheck == $hash[0] || $eecheck == $hash[0] || $eecheckArgo == $hash[0]);
 
         return $valid;
     }
+	
+    /**
+     * Generate Argon2ID13 hash.
+     * Got from \Magento\Framework\Encryption\Encryptor
+     *
+     * @param string $data
+     * @param string $salt
+     * @return string      
+     */	
+    private function getArgonHash($data, $salt = ''){
+        $salt = empty($salt) ?
+            random_bytes(SODIUM_CRYPTO_PWHASH_SALTBYTES) :
+            substr($salt, 0, SODIUM_CRYPTO_PWHASH_SALTBYTES);
+
+        if (strlen($salt) < SODIUM_CRYPTO_PWHASH_SALTBYTES) {
+            $salt = str_pad($salt, SODIUM_CRYPTO_PWHASH_SALTBYTES, $salt);
+        }
+
+        return bin2hex(sodium_crypto_pwhash(
+            SODIUM_CRYPTO_SIGN_SEEDBYTES,
+            $data,
+            $salt,
+            SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
+            SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE,
+            SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13
+        ));
+    }
+
 
     public function engineInit($params)
     {
