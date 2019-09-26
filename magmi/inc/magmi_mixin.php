@@ -2,7 +2,7 @@
 
 class Magmi_Mixin
 {
-    protected $_callers;
+    protected $_callers = array();
 
     public function bind($caller)
     {
@@ -25,7 +25,7 @@ class Magmi_Mixin
         if (substr($data, 0, 8) == "_caller_") {
             $data = substr($data, 8);
         }
-        $ccallers = count($this->_callers);
+        $ccallers = empty($this->_callers) ? 0 : count($this->_callers);
         for ($i = 0; $i < $ccallers; $i++) {
             if (method_exists($this->_callers[$i], $data)) {
                 return call_user_func_array(array($this->_callers[$i], $data), $arg);
