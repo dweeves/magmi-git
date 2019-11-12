@@ -221,6 +221,10 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
                 $psaid = $this->insert($sql, array($pid, $attrid, $idx));
             }
 
+            // Allow position update to update attribute ordering
+            $sql = "UPDATE `$cpsa` SET position=? WHERE product_super_attribute_id=?";
+            $this->update($sql, array($idx, $psaid));
+
             // for all stores defined for the item
             $sids = $this->getItemStoreIds($item, 0);
             $data = array();
