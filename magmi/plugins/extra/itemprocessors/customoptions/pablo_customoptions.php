@@ -36,7 +36,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 
     public function getOptTypeIds($field)
     {
-        return isset($this->_opttypeids[$field]) ? $this->_opttypeids[$field] : null;
+        return isset($this->_opttypeids[$field]) ? $this->_opttypeids[$field] : [];
     }
 
     public function setOptTypeIds($field, $arr)
