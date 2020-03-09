@@ -1611,18 +1611,6 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 $attid = $attrdesc["attribute_id"];
                 // get attribute set id
                 $asid = $itemids["asid"];
-
-                // Ignore user defined attributes not in current attribute set!
-                if ($attrdesc["is_user_defined"] && !isset($this->attribute_set_infos[$asid][$attid]))
-                {
-                    continue;
-                }
-                // check item type is compatible with attribute apply_to
-                if ($attrdesc["apply_to"] != null && strpos($attrdesc["apply_to"], strtolower($itemids["type"])) === false)
-                {
-                    // do not handle attribute if it does not apply to the product type
-                    continue;
-                }
                 // get attribute value in the item to insert based on code
                 $attrcode = $attrdesc["attribute_code"];
 
@@ -1632,8 +1620,27 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 {
                     continue;
                 }
+
                 // get the item value
                 $ivalue = $item[$attrcode];
+                
+                // Ignore user defined attributes not in current attribute set!
+                if ($attrdesc["is_user_defined"] && !isset($this->attribute_set_infos[$asid][$attid]))
+                {
+                    if (!empty($ivalue)) {
+                        $this->log("Ignoring $attrcode value as it is not in the attribute set $asid", "warning");
+                    }
+                    continue;
+                }
+                // check item type is compatible with attribute apply_to
+                if ($attrdesc["apply_to"] != null && strpos($attrdesc["apply_to"], strtolower($itemids["type"])) === false)
+                {
+                    if (!empty($ivalue)) {
+                        $this->log("Ignoring $attrcode value as it does not apply to item type", "warning");
+                    }
+                    continue;
+                }
+
                 // get item store id for the current attribute
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
