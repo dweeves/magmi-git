@@ -405,16 +405,14 @@ class CategoryImporter extends Magmi_ItemProcessor
 
             foreach ($attinfo as $attrcode => $attdata) {
                 if (isset($attdata['attribute_id'])) {
-                    $placeholders[] = '(?,?,?,?,?)';
-                    $values[] = $this->_cat_eid;//$info['entity_type_id'];
+                    $placeholders[] = '(?,?,?,?)';
                     $values[] = $attdata['attribute_id'];
                     $values[] = $store_id;
                     $values[] = $category_id;
                     $values[] = $attributes[$attrcode];
                 }
             }
-
-            $sql = "INSERT INTO $table (entity_type_id,attribute_id,store_id,entity_id,value) VALUES " .
+            $sql = "INSERT INTO $table (attribute_id,store_id,entity_id,value) VALUES " .
                  implode(",", $placeholders) . " ON DUPLICATE KEY UPDATE value=VALUES(`value`)";
             $this->insert($sql, $values);
 
