@@ -1032,13 +1032,16 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * retrieves attribute set id for a given attribute set name
-     *
-     * @param string $asname
-     *            : attribute set name
+     * @param $asname
+     * @return int
+     * @throws Exception
      */
     public function getAttributeSetId($asname)
     {
         $this->initAttrSetInfos();
+        if (!isset($this->attribute_sets[$asname])) {
+            throw new \Exception("Unknown attribute set '$asname'");
+        }
         return $this->attribute_sets[$asname];
     }
 
@@ -1284,7 +1287,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 if (isset($item['attribute_set']))
                 {
                     $newAsId = $this->getAttributeSetId($item['attribute_set']);
-                    if (isset($newAsId) && $newAsId != $asid)
+                    if ($newAsId != $asid)
                     {
                         // attribute set changed!
                         $item['attribute_set_id'] = $newAsId;
