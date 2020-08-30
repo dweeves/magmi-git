@@ -1,4 +1,10 @@
 ------------------------------------------------
+-     RELEASE NOTES FOR MAGMI 0.7.24           -
+-------------------------------------------------
+
+IMPORTANT Security fix, remove default login magmi:magmi since it can be exploited.
+
+------------------------------------------------
 -     RELEASE NOTES FOR MAGMI 0.7.23           -
 -------------------------------------------------
 
