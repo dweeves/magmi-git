@@ -274,9 +274,27 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     {
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
         $tg = $this->tablename('catalog_product_entity_media_gallery');
-        $sql = "DELETE emgv,emg FROM `$tgv` as emgv
+        $sql = "DELETE emgv FROM `$tgv` as emgv
 			JOIN `$tg` AS emg ON emgv.value_id = emg.value_id AND emgv.store_id=?
 			WHERE emg.entity_id=? AND emg.attribute_id=?";
+        $this->delete($sql, array($storeid, $pid, $attid));
+    }
+
+    /**
+     * Removes images from gallery
+     * without a corresponding value
+     * in the current store.
+     *
+     * @param int $pid
+     *            : product id
+     */
+    public function removeImagesWithoutValues($pid, $storeid, $attid)
+    {
+        $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
+        $tg = $this->tablename('catalog_product_entity_media_gallery');
+        $sql = "DELETE emg FROM `$tg` as emg
+			LEFT JOIN `$tgv` AS emgv ON emgv.value_id = emg.value_id AND emgv.store_id=?
+			WHERE emg.entity_id=? AND emg.attribute_id=? AND emgv.value_id IS NULL";
         $this->delete($sql, array($storeid, $pid, $attid));
     }
 
@@ -290,29 +308,27 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      * @param string $imgname
      *            : image file name (relative to /products/media in magento dir)
      */
-    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false,
-        $refid = null)
+    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false, $refid = null)
     {
         $gal_attinfo = $this->getAttrInfo("media_gallery");
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
-        $vid = $this->getImageId($pid, $gal_attinfo["attribute_id"], $imgname, $refid, $storeid);
+        $vid = $this->getImageId($pid, $gal_attinfo["attribute_id"], $imgname, $refid);
         if ($vid != null) {
-
-            // et maximum current position in the product gallery
-            $sql = "SELECT MAX( position ) as maxpos
-					 FROM $tgv AS emgv
-					 JOIN $tg AS emg ON emg.value_id = emgv.value_id AND emg.entity_id = ?
-					 WHERE emgv.store_id=?
-			 		 GROUP BY emg.entity_id";
-            $pos = $this->selectone($sql, array($pid, $storeid), 'maxpos');
-            $pos = ($pos == null ? 0 : $pos + 1);
-            // nsert new value (ingnore duplicates)
+            // Insert new value (ingnore duplicates)
 
             $vinserts = array();
             $data = array();
 
             foreach ($targetsids as $tsid) {
+                // Get maximum current position in the product gallery
+                $sql = "SELECT MAX( position ) as maxpos
+                         FROM $tgv AS emgv
+                         JOIN $tg AS emg ON emg.value_id = emgv.value_id AND emg.entity_id = ?
+                         WHERE emgv.store_id=?
+                         GROUP BY emg.entity_id";
+                $pos = $this->selectone($sql, array($pid, $tsid), 'maxpos');
+                $pos = ($pos == null ? 0 : $pos + 1);
                 $vinserts[] = "(?,?,?,?," . ($imglabel == null ? "NULL" : "?") . ")";
                 $data = array_merge($data, array($vid, $tsid, $pos, $excluded ? 1 : 0));
                 if ($imglabel != null) {
@@ -432,10 +448,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         //handle amazon specific
         if (is_remote_path($imgfile)) {
             // Amazon images patch , remove SLXXXX part
-           if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
-               $pattern = '/\bSL[0-9]+\./i';
-               $imgfile = preg_replace($pattern, '', $imgfile);
-           }
+            if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
+                $pattern = '/\bSL[0-9]+\./i';
+                $imgfile = preg_replace($pattern, '', $imgfile);
+            }
         }
 
         $source = $this->findImageFile($imgfile);
@@ -566,8 +582,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             if (isset($item[$attrcode . "_label"]) && !isset($item[$attrcode])) {
                 // force label update
                 $attrdesc = $this->getAttrInfo($attrcode);
-                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attrdesc["is_global"]),
-                    $item[$attrcode . "_label"]);
+                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attrdesc["is_global"]), $item[$attrcode . "_label"]);
                 unset($attrdesc);
             }
         }
@@ -577,7 +592,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
         if ((isset($item["media_gallery"]) && $galreset) || $forcereset) {
             $gattrdesc = $this->getAttrInfo("media_gallery");
-            $sids = $this->getItemStoreIds($item, $gattrdesc["is_global"]);
+            $sids = $this->getItemStoreIds($item);
             foreach ($sids as $sid) {
                 $this->resetGallery($pid, $sid, $gattrdesc["attribute_id"]);
             }
@@ -588,10 +603,31 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         return true;
     }
 
+    public function processItemAfterImport(&$item, $params = null)
+    {
+        if (!$this->_active) {
+            return true;
+        }
+        $this->_newitem = $params["new"];
+        $pid = $params["product_id"];
+        // Reset media_gallery
+        $galreset = !(isset($item["media_gallery_reset"])) || $item["media_gallery_reset"] == 1;
+        $forcereset = (isset($item["media_gallery_reset"])) && $item["media_gallery_reset"] == 1;
+
+        if ((isset($item["media_gallery"]) && $galreset) || $forcereset) {
+            $gattrdesc = $this->getAttrInfo("media_gallery");
+            $sids = $this->getItemStoreIds($item);
+            foreach ($sids as $sid) {
+                $this->removeImagesWithoutValues($pid, $sid, $gattrdesc["attribute_id"]);
+            }
+        }
+        return true;
+    }
+
     public function processColumnList(&$cols, $params = null)
     {
         // automatically add modified attributes if not found in datasource
-
+        
         // automatically add media_gallery for attributes to handle
         $imgattrs = array_intersect(array_merge($this->_img_baseattrs, array('media_gallery', 'image_remove')), $cols);
         if (count($imgattrs) > 0) {
