@@ -92,7 +92,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         }
         // use ";" as image separator
         $images = explode(";", $ivalue);
-        $imageindex = 0;
+
+        // starting at 1, because otherwise if image renaming is used the main product image is already used for 0.
+        $imageindex = 1;
+
         // for each image
         foreach ($images as $imagefile) {
             // trim image file in case of spaced split
@@ -106,7 +109,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $imagefile = $infolist[0];
             }
             unset($infolist);
-            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex);
             // copy it from source dir to product media dir
             $imagefile = $this->copyImageFile($imagefile, $item, $extra);
             unset($extra);
@@ -184,7 +187,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $imagefile = trim($ivalue);
 
         // else copy image file
-        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid, "attr_code"=>$attrcode));
+        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid, "attr_code"=>$attrcode,"imageindex"=>0));
         $ovalue = $imagefile;
         // add to gallery as excluded
         if ($imagefile !== false) {
