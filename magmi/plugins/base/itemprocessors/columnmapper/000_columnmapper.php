@@ -12,8 +12,8 @@ class ColumnMappingItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Column mapper","author"=>"Dweeves","version"=>"0.0.3b",
-            "url"=>$this->pluginDocUrl("Column_mapper"));
+        return array("name" => "Column mapper","author" => "Dweeves","version" => "0.0.3b",
+            "url" => $this->pluginDocUrl("Column_mapper"));
     }
 
     /**

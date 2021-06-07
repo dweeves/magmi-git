@@ -50,56 +50,56 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 
     public function __construct()
     {
-        $this->_opts=array(
-           'http'=>array('lookup'=>$this->initBaseOptions('http', 'lookup'),
-                          'dl'=>$this->initBaseOptions('http', 'dl')),
-            'https'=>array('lookup'=>$this->initBaseOptions('https', 'lookup'),
-                           'dl'=>$this->initBaseOptions('https', 'dl')),
-            'ftp'=>array('dl'=>$this->initBaseOptions('ftp', 'dl'))
+        $this->_opts = array(
+           'http' => array('lookup' => $this->initBaseOptions('http', 'lookup'),
+                          'dl' => $this->initBaseOptions('http', 'dl')),
+            'https' => array('lookup' => $this->initBaseOptions('https', 'lookup'),
+                           'dl' => $this->initBaseOptions('https', 'dl')),
+            'ftp' => array('dl' => $this->initBaseOptions('ftp', 'dl'))
         );
     }
 
     public function initBaseOptions($protocol, $mode)
     {
-        $curlopts=array();
+        $curlopts = array();
         switch ($protocol) {
             case 'http':
             case 'https':
                 switch ($mode) {
                     case 'lookup':
-                        $curlopts=array(
+                        $curlopts = array(
                                // we want the response
-                               CURLOPT_RETURNTRANSFER=>true,
+                               CURLOPT_RETURNTRANSFER => true,
                                // we want the headers
-                               CURLOPT_HEADER=>true,
+                               CURLOPT_HEADER => true,
                                // we don't want the body
-                               CURLOPT_NOBODY=>true,
+                               CURLOPT_NOBODY => true,
                                // some stats on target
-                                CURLOPT_FILETIME=>true,
+                                CURLOPT_FILETIME => true,
                             // enable following redirects
-                            CURLOPT_FOLLOWLOCATION=>true,
-                            CURLOPT_MAXREDIRS=>3
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_MAXREDIRS => 3
                         );
                         break;
                     case 'dl':
-                        $curlopts=array(
+                        $curlopts = array(
                             //longer timeouts for big files
-                            CURLOPT_TIMEOUT =>600,
+                            CURLOPT_TIMEOUT => 600,
                             // force get
-                            CURLOPT_HTTPGET=>true,
+                            CURLOPT_HTTPGET => true,
                             // no header
-                            CURLOPT_HEADER=>false,
+                            CURLOPT_HEADER => false,
                             // we want body
-                            CURLOPT_NOBODY=>false,
+                            CURLOPT_NOBODY => false,
                             // handle 100 continue
-                            CURLOPT_HTTPHEADER=>array('Expect:'),
+                            CURLOPT_HTTPHEADER => array('Expect:'),
                             // we don't want the response as we will store it in a file
-                            CURLOPT_RETURNTRANSFER=>false,
+                            CURLOPT_RETURNTRANSFER => false,
                             //use binary
-                            CURLOPT_BINARYTRANSFER=>true,
+                            CURLOPT_BINARYTRANSFER => true,
                             // enable following redirects
-                            CURLOPT_FOLLOWLOCATION=>true,
-                            CURLOPT_MAXREDIRS=>3
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_MAXREDIRS => 3
                         );
                         break;
                     default:
@@ -110,7 +110,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
                 $safeMode = ini_get('safe_mode');
                 $safeModeDisabled = ($safeMode == 'Off') || !$safeMode;
                 if (ini_get('open_basedir') == '' && $safeModeDisabled) {
-                    $curlopts[CURLOPT_FOLLOWLOCATION]=1;
+                    $curlopts[CURLOPT_FOLLOWLOCATION] = 1;
                 }
                 break;
                 /*
@@ -119,33 +119,33 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             case 'ftp':
                 $curlopts = array(
                     //longer timeouts for big files
-                    CURLOPT_TIMEOUT =>600,
+                    CURLOPT_TIMEOUT => 600,
                     //use binary
-                    CURLOPT_BINARYTRANSFER=>true,
-                    CURLOPT_FOLLOWLOCATION=> 1,
+                    CURLOPT_BINARYTRANSFER => true,
+                    CURLOPT_FOLLOWLOCATION => 1,
                     //Better compatibility with some FTP Servers
-                    CURLOPT_FTP_USE_EPSV=>0,
+                    CURLOPT_FTP_USE_EPSV => 0,
                     //no need to return anything, we'll have a file pointer
-                    CURLOPT_RETURNTRANSFER=>0);
+                    CURLOPT_RETURNTRANSFER => 0);
                 break;
         }
         return $curlopts;
     }
 
-    public function setAuthOptions($context, &$opts, $user=null, $pass=null)
+    public function setAuthOptions($context, &$opts, $user = null, $pass = null)
     {
-        $creds="";
+        $creds = "";
         if ($user == null) {
-            $user=$this->_user;
-            $pass=$this->_password;
+            $user = $this->_user;
+            $pass = $this->_password;
         }
 
         if ($user) {
-            $creds=$user.":";
+            $creds = $user.":";
         }
 
         if ($pass) {
-            $creds.=$pass;
+            $creds .= $pass;
         }
 
         if (!is_null($creds) && $creds != "" && !isset($opts[CURLOPT_USERPWD])) {
@@ -170,14 +170,14 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 
         // create a curl context
         $ch = curl_init();
-        $opts=$this->_opts[$comps['scheme']];
-        $ctx=array("curlhandle"=>$ch,"opts"=>$opts,"scheme"=>$comps['scheme']);
+        $opts = $this->_opts[$comps['scheme']];
+        $ctx = array("curlhandle" => $ch,"opts" => $opts,"scheme" => $comps['scheme']);
 
         /*
          * Inline user/pass if in url
         */
         if (isset($comps['user'])) {
-            $ctx["creds"]=array($comps['user'],$comps['password']);
+            $ctx["creds"] = array($comps['user'],$comps['password']);
         }
         return $ctx;
     }
@@ -195,8 +195,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
         if (!isset($context["opts"]["lookup"])) {
             return true;
         }
-        $ch=$context["curlhandle"];
-        $opts=$context["opts"]["lookup"];
+        $ch = $context["curlhandle"];
+        $opts = $context["opts"]["lookup"];
         $this->setAuthOptions($context, $opts);
         //adding url to curl
         $this->setURLOptions($remoteurl, $opts);
@@ -240,11 +240,11 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
     public function copyRemoteFile($url, $dest)
     {
         $result = false;
-        $this->_errors=array();
+        $this->_errors = array();
         try {
             $result = $this->getRemoteFile($url, $dest, $this->_cookie);
         } catch (Exception $e) {
-            $this->_errors = array("type"=>"source error","message"=>$e->getMessage(),"exception"=>$e);
+            $this->_errors = array("type" => "source error","message" => $e->getMessage(),"exception" => $e);
         }
         return $result;
     }
@@ -260,7 +260,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
     public function getRemoteFile($url, $dest, $authmode = null, $cookies = null)
     {
         $context = $this->createContext($url);
-        $ch=$context['curlhandle'];
+        $ch = $context['curlhandle'];
         $dl_opts = $context['opts']['dl'];
         $outname = $dest;
 
@@ -294,8 +294,8 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
             unlink($dest);
             throw new Exception($err);
         } else {
-            $proto=$context['scheme'];
-            if ($proto=='http' || $proto=='https') {
+            $proto = $context['scheme'];
+            if ($proto == 'http' || $proto == 'https') {
                 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 $ok = ($httpCode < 400);
                 if (!$ok) {
@@ -329,7 +329,7 @@ class URLFopen_RemoteFileGetter extends RemoteFileGetter
     public function copyRemoteFile($url, $dest)
     {
         if (!$this->urlExists($url)) {
-            $this->_errors = array("type"=>"target error","message"=>"URL $url is unreachable");
+            $this->_errors = array("type" => "target error","message" => "URL $url is unreachable");
             return false;
         }
 

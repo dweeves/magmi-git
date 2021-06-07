@@ -13,8 +13,8 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Value Replacer","author"=>"Dweeves","version"=>"0.0.8a",
-            "url"=>$this->pluginDocUrl("Value_Replacer"));
+        return array("name" => "Value Replacer","author" => "Dweeves","version" => "0.0.8a",
+            "url" => $this->pluginDocUrl("Value_Replacer"));
     }
 
     public function processItemBeforeId(&$item, $params = null)

@@ -35,23 +35,23 @@
 			<option value="select"
 				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'select') {
     ?>
-				selected="selected" <?php 
+				selected="selected" <?php
 } ?>>Drop-down</option>
 			<option value="radio"
 				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'radio') {
-    ?>
-				selected="selected" <?php 
-} ?>>Radio Buttons</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Radio Buttons</option>
 			<option value="checkbox"
 				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'checkbox') {
-    ?>
-				selected="selected" <?php 
-} ?>>Checkbox</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Checkbox</option>
 			<option value="multi"
 				<?php if ($plugin->getConfiguredDefault('option', 'type') == 'multi') {
-    ?>
-				selected="selected" <?php 
-} ?>>Multiple Select</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Multiple Select</option>
 	</select></li>
 </ul>
 
@@ -62,14 +62,14 @@
 		name="BNDL:option_required">
 			<option value="1"
 				<?php if ($plugin->getConfiguredDefault('option', 'required') == '1') {
-    ?>
-				selected="selected" <?php 
-} ?>>Yes</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Yes</option>
 			<option value="0"
 				<?php if ($plugin->getConfiguredDefault('option', 'required') == '0') {
-    ?>
-				selected="selected" <?php 
-} ?>>No</option>
+        ?>
+				selected="selected" <?php
+    } ?>>No</option>
 	</select></li>
 </ul>
 
@@ -99,14 +99,14 @@
 		name="BNDL:sku_selection_can_change_qty">
 			<option value="1"
 				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '1') {
-    ?>
-				selected="selected" <?php 
-} ?>>Yes</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Yes</option>
 			<option value="0"
 				<?php if ($plugin->getConfiguredDefault('sku', 'selection_can_change_qty') == '0') {
-    ?>
-				selected="selected" <?php 
-} ?>>No</option>
+        ?>
+				selected="selected" <?php
+    } ?>>No</option>
 	</select></li>
 </ul>
 
@@ -126,14 +126,14 @@
 		name="BNDL:sku_is_default">
 			<option value="1"
 				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '1') {
-    ?>
-				selected="selected" <?php 
-} ?>>Yes</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Yes</option>
 			<option value="0"
 				<?php if ($plugin->getConfiguredDefault('sku', 'is_default') == '0') {
-    ?>
-				selected="selected" <?php 
-} ?>>No</option>
+        ?>
+				selected="selected" <?php
+    } ?>>No</option>
 	</select></li>
 </ul>
 
@@ -154,13 +154,13 @@
 		name="BNDL:sku_selection_price_type">
 			<option value="0"
 				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '0') {
-    ?>
-				selected="selected" <?php 
-} ?>>Fixed</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Fixed</option>
 			<option value="1"
 				<?php if ($plugin->getConfiguredDefault('sku', 'selection_price_type') == '1') {
-    ?>
-				selected="selected" <?php 
-} ?>>Percent</option>
+        ?>
+				selected="selected" <?php
+    } ?>>Percent</option>
 	</select></li>
 </ul>

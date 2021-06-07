@@ -13,8 +13,8 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Value Trimmer for select/multiselect","author"=>"Dweeves","version"=>"0.0.3",
-            "url"=>$this->pluginDocUrl("Value_Trimmer_for_select/multiselect"));
+        return array("name" => "Value Trimmer for select/multiselect","author" => "Dweeves","version" => "0.0.3",
+            "url" => $this->pluginDocUrl("Value_Trimmer_for_select/multiselect"));
     }
 
     /**

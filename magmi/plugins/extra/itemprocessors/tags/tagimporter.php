@@ -13,9 +13,9 @@ class TagProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Product Tags Importer","author"=>"Dweeves,Pawel Kazakow",
-            "sponsorinfo"=>array("name"=>"Pawel Kazakow","url"=>"http://xonu.de"),"version"=>"0.0.3",
-            "url"=>$this->pluginDocUrl("Tag_importer"));
+        return array("name" => "Product Tags Importer","author" => "Dweeves,Pawel Kazakow",
+            "sponsorinfo" => array("name" => "Pawel Kazakow","url" => "http://xonu.de"),"version" => "0.0.3",
+            "url" => $this->pluginDocUrl("Tag_importer"));
     }
 
     public function createTag($taginfo)
@@ -139,7 +139,7 @@ class TagProcessor extends Magmi_ItemProcessor
 
     public function parseTag($tag)
     {
-        $taginfo = array("name"=>null,"status"=>1,"user"=>1);
+        $taginfo = array("name" => null,"status" => 1,"user" => 1);
         $tagparts = explode("::", $tag);
         $tn = $tagparts[0];
         // matching pending status name, remove whitespaces on capture

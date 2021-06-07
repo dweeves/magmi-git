@@ -57,7 +57,7 @@ handle_auth=function()
 			});
 	$('<?php echo $prefix ?>:remoteauth').observe('click',handle_auth);
 	$('<?php echo $prefix ?>:remoteurl').observe('blur',handle_auth);
-<?php 
+<?php
 } ?>
 
 	$('<?php echo $prefix ?>:prune_cb').observe('click',function() {
@@ -76,7 +76,7 @@ handle_auth=function()
     	});
 	}
 <?php if ($prefix == '5B5ASI') {
-    ?>
+        ?>
 	showHideAttributeGroups = function() {
 		if($('<?php echo $prefix ?>:create_cb').checked || $('<?php echo $prefix ?>:update_cb').checked) {
 			$('<?php echo $prefix ?>:attribute_groups').show();
@@ -86,6 +86,6 @@ handle_auth=function()
 	};
 	$('<?php echo $prefix ?>:create_cb').observe('click',showHideAttributeGroups);
 	$('<?php echo $prefix ?>:update_cb').observe('click',showHideAttributeGroups);
-<?php 
-} ?>
+<?php
+    } ?>
 </script>

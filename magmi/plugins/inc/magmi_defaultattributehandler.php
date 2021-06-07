@@ -2,13 +2,13 @@
 
 class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 {
-    protected $_basecols = array("store"=>"admin","type"=>"simple");
-    protected $_baseattrs = array("status"=>1,"visibility"=>4,"page_layout"=>"","tax_class_id"=>"Taxable Goods");
-    protected $_forcedefault = array("store"=>"admin");
+    protected $_basecols = array("store" => "admin","type" => "simple");
+    protected $_baseattrs = array("status" => 1,"visibility" => 4,"page_layout" => "","tax_class_id" => "Taxable Goods");
+    protected $_forcedefault = array("store" => "admin");
     protected $_missingcols = array();
     protected $_missingattrs = array();
-    protected $_hasurlkeytable=false;
-    protected $_urlkeytablename="";
+    protected $_hasurlkeytable = false;
+    protected $_urlkeytablename = "";
     /**
      * (non-PHPdoc)
      *
@@ -16,11 +16,11 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function initialize($params)
     {
-        $this->_urlkeytablename=$this->tablename('catalog_product_entity_url_key');
+        $this->_urlkeytablename = $this->tablename('catalog_product_entity_url_key');
         $this->registerAttributeHandler($this, array("attribute_code:.*"));
-        $sql="SHOW TABLES LIKE ?";
-        $result=$this->selectAll($sql, array($this->_urlkeytablename));
-        $this->_hasurlkeytable=(count($result)>0);
+        $sql = "SHOW TABLES LIKE ?";
+        $result = $this->selectAll($sql, array($this->_urlkeytablename));
+        $this->_hasurlkeytable = (count($result) > 0);
     }
 
     /**
@@ -30,7 +30,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
      */
     public function getPluginInfo()
     {
-        return array("name"=>"Standard Attribute Import","author"=>"Dweeves","version"=>"1.1");
+        return array("name" => "Standard Attribute Import","author" => "Dweeves","version" => "1.1");
     }
 
     /**
@@ -49,7 +49,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             $cols = array_merge($cols, $this->_missingcols, $this->_missingattrs);
             $this->log(
                 "Newly created items will have default values for columns:" .
-                     implode(",", array_merge($this->_missingcols, $this->_missingattrs)), "startup");
+                     implode(",", array_merge($this->_missingcols, $this->_missingattrs)),
+                "startup"
+            );
         }
     }
 
@@ -89,12 +91,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             $this->initializeBaseAttrs($item);
             //force url key for new items for magento > 1.7.x
             if ($this->checkMagentoVersion("1.7.x", ">") && empty($item['url_key'])) {
-                $item["url_key"]=Slugger::slug($item["name"]);
+                $item["url_key"] = Slugger::slug($item["name"]);
             }
         } else {
             //if we have an existing item, get some structural info from identification meta
             if (!isset($item["type"])) {
-                $item["type"]=$params["type"];
+                $item["type"] = $params["type"];
             }
         }
         // forcing default values for mandatory processing columns
@@ -214,7 +216,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         }
         $ovalue = deleteifempty($ivalue);
         $attid = $attrdesc["attribute_id"];
-         // --- ExtensionsMall multiselect 1.9.3 varchar -> text ----
+        // --- ExtensionsMall multiselect 1.9.3 varchar -> text ----
         if ($attrdesc["frontend_input"] == "multiselect") {
             // if empty delete entry
             if ($ivalue == "") {
@@ -278,7 +280,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $attid = $attrdesc["attribute_id"];
         // if we've got a select type value
         if ($attrdesc["frontend_input"] == "select") {
-            $smodel=$attrdesc["source_model"];
+            $smodel = $attrdesc["source_model"];
             // we need to identify its type since some have no options
             switch ($smodel) {
                 // if its status, default to 1 (Enabled) if not correcly mapped
@@ -346,11 +348,11 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     {
         //specific behaviour for url key table if exists
         //no more conflict checking at this point, will only do for url rewrite
-        $urlk=$ivalue;
+        $urlk = $ivalue;
         if ($this->_hasurlkeytable) {
             $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
             #fix for url key "unique store value index"
-            $sql.=' ON DUPLICATE KEY UPDATE value=VALUES(value) ';
+            $sql .= ' ON DUPLICATE KEY UPDATE value=VALUES(value) ';
             $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $storeid, $ivalue));
         }
         return $urlk;

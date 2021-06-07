@@ -9,7 +9,7 @@ class ArrayReader
 {
     protected $_array;
     protected $_leftKeys;
-    protected $_currentKey=null;
+    protected $_currentKey = null;
     protected $_columnNames = array();
 
     public function initialize($array)

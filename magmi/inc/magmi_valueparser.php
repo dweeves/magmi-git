@@ -2,40 +2,33 @@
 
 class Magmi_ValueParser
 {
-    
-    public static function getParseInfo($pvalue,$dictarray)
+    public static function getParseInfo($pvalue, $dictarray)
     {
-        $parseinfo=array();
+        $parseinfo = array();
 
-        foreach ($dictarray as $key=>$v)
-        {  
-            if(preg_match("|\{\{\s*(.*?)\s*\}\}|s", $pvalue,$matches))
-            {
-                if(!isset($parseinfo["complex"])){
-                    $parseinfo["complex"]=array();
+        foreach ($dictarray as $key => $v) {
+            if (preg_match("|\{\{\s*(.*?)\s*\}\}|s", $pvalue, $matches)) {
+                if (!isset($parseinfo["complex"])) {
+                    $parseinfo["complex"] = array();
                 }
-                for($i=1;$i<count($matches);$i++)
-                {
-                    $parseinfo["complex"][]=$matches[$i];
+                for ($i = 1;$i < count($matches);$i++) {
+                    $parseinfo["complex"][] = $matches[$i];
                 }
             }
 
-            if(preg_match("|\{$key\.(.*?)\}|", $pvalue,$matches))
-            {
-                if(!isset($parseinfo["simple"]))
-                {
-                    $parseinfo["simple"] = array("$key"=>array());
+            if (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches)) {
+                if (!isset($parseinfo["simple"])) {
+                    $parseinfo["simple"] = array("$key" => array());
                 }
 
-                for($i=1;$i<count($matches);$i++)
-                {
-                    $parseinfo["simple"][$key]=$matches[$i];
+                for ($i = 1;$i < count($matches);$i++) {
+                    $parseinfo["simple"][$key] = $matches[$i];
                 }
             }
         }
         return $parseinfo;
     }
-    
+
     public static function parseValue($pvalue, $dictarray)
     {
         $matches = array();
@@ -49,7 +42,7 @@ class Magmi_ValueParser
             }
 
             $ik = array_keys($vals);
-            
+
             // replace base values
             while (preg_match("|\{$key\.(.*?)\}|", $pvalue, $matches)) {
                 foreach ($matches as $match) {
@@ -72,8 +65,8 @@ class Magmi_ValueParser
                 if ($match != $matches[0]) {
                     $code = trim($match);
                     $code = str_replace($renc, '"', $code);
-                    $code = str_replace("'\"","'",$code);
-                    $code = str_replace("\"'","'",$code);
+                    $code = str_replace("'\"", "'", $code);
+                    $code = str_replace("\"'", "'", $code);
 
                     $rep = eval("return ($code);");
                     // escape potential "{{xxx}}" values in interpreted target

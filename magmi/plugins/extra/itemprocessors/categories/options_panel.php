@@ -20,16 +20,16 @@
 	</div>
 </div>
 <div class="formline">
-<?php $lastonly=$this->getParam("CAT:lastonly", 0)?>
+<?php $lastonly = $this->getParam("CAT:lastonly", 0)?>
 <span>Assign product to :</span><select name="CAT:lastonly">
-		<option value="0" <?php if ($lastonly==0) {
+		<option value="0" <?php if ($lastonly == 0) {
     ?> selected="selected"
-			<?php 
+			<?php
 }?>>all categories in tree</option>
-		<option value="1" <?php if ($lastonly==1) {
-    ?> selected="selected"
-			<?php 
-}?>>last category of each branch</option>
+		<option value="1" <?php if ($lastonly == 1) {
+        ?> selected="selected"
+			<?php
+    }?>>last category of each branch</option>
 	</select>
 	<div class="fieldinfo">When checked, this options will assign product
 		only to the categories that are located at the last level of the

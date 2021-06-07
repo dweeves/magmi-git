@@ -14,8 +14,8 @@ class tierpriceprocessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Tier price importer","author"=>"Dweeves,bepixeld","version"=>"0.0.9a",
-            "url"=>$this->pluginDocUrl("Tier_price_importer"));
+        return array("name" => "Tier price importer","author" => "Dweeves,bepixeld","version" => "0.0.9a",
+            "url" => $this->pluginDocUrl("Tier_price_importer"));
     }
 
     /**
@@ -145,7 +145,7 @@ class tierpriceprocessor extends Magmi_ItemProcessor
         // inspect column list for getting tier price columns info
         foreach ($cols as $col) {
             if (preg_match("|tier_price:(.*)|", $col, $matches)) {
-                $tpinf = array("name"=>$matches[1],"id"=>null);
+                $tpinf = array("name" => $matches[1],"id" => null);
 
                 // if specific tier price
                 if ($tpinf["name"] !== "_all_") {

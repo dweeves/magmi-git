@@ -31,8 +31,7 @@ foreach ($data as $line) {
     } else {
         $errnum = null;
         $xdata = $line;
-    }
-    ?>
+    } ?>
  <li>
  <?php
 
@@ -42,17 +41,14 @@ foreach ($data as $line) {
 		href="#trace_<?php echo $errnum?>"
 		onclick="showtrace('<?php echo $errnum?>')"><?php echo $errnum?></a>
  	<?php
-
-    }
-    ?><span><?php echo $xdata?></span>
- <?php if ($errnum!=null) {
-    ?>
+    } ?><span><?php echo $xdata?></span>
+ <?php if ($errnum != null) {
+        ?>
  	<div style="display: none" class="trace"
 			id="trace_<?php echo $errnum?>"></div>
 	</li>
  <?php
-
-}
+    }
 }
 ?>
  </ul>

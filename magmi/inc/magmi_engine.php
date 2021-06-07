@@ -1,4 +1,5 @@
 <?php
+
 require_once("dbhelper.class.php");
 require_once("magmi_config.php");
 require_once("magmi_version.php");
@@ -37,7 +38,7 @@ abstract class Magmi_Engine extends DbHelper
      */
     public function getEngineInfo()
     {
-        return array("name"=>"Generic Magmi Engine","version"=>"1.1","author"=>"dweeves");
+        return array("name" => "Generic Magmi Engine","version" => "1.1","author" => "dweeves");
     }
 
     /**
@@ -274,9 +275,10 @@ abstract class Magmi_Engine extends DbHelper
         if ($order < 0) {
             $order += count($this->_activeplugins[$family]);
         }
-        
-        if (is_array($this->_activeplugins) && isset($this->_activeplugins[$family]) && isset($this->_activeplugins[$family][$order]))
+
+        if (is_array($this->_activeplugins) && isset($this->_activeplugins[$family]) && isset($this->_activeplugins[$family][$order])) {
             return $this->_activeplugins[$family][$order];
+        }
     }
 
     /*
@@ -285,7 +287,7 @@ abstract class Magmi_Engine extends DbHelper
     public function callPlugins($types, $callback, &$data = null, $params = null, $break = true)
     {
         $result = true;
-      //  $tclass=get_class($this);
+        //  $tclass=get_class($this);
         // If plugin type list is not an array , process it as string
         if (!is_array($types)) {
             // If plugin is not wildcard , build array of types based on comma separated string
@@ -297,7 +299,7 @@ abstract class Magmi_Engine extends DbHelper
         }
 
         // Timing initialization (global processing step)
-       // $this->_timecounter->initTime($callback, get_class($this));
+        // $this->_timecounter->initTime($callback, get_class($this));
 
         // Iterate on plugin types (families)
         foreach ($types as $ptype) {
@@ -305,7 +307,7 @@ abstract class Magmi_Engine extends DbHelper
             if (isset($this->_activeplugins[$ptype])) {
                 // For all instances in the family
                 foreach ($this->_activeplugins[$ptype] as $pinst) {
-                    $pclass=get_class($pinst);
+                    $pclass = get_class($pinst);
                     // If the plugin has a hook for the defined processing step
                     if (method_exists($pinst, $callback)) {
                         // Timing initialization for current plugin in processing step
@@ -314,7 +316,9 @@ abstract class Magmi_Engine extends DbHelper
                         // either with or without parameters,or parameters & data
                         // store execution result
                         $callres = ($data == null ? ($params == null ? $pinst->$callback() : $pinst->$callback($params)) : $pinst->$callback(
-                            $data, $params));
+                            $data,
+                            $params
+                        ));
                         // End Timing for current plugin in current step
                         //$this->_timecounter->exitTime($callback, get_class($pinst));
                         // if plugin call result is false with data set
@@ -328,7 +332,7 @@ abstract class Magmi_Engine extends DbHelper
                             // Call the plugin processing loop callback , time it
                             //$this->_timecounter->initTime($callback, $pclass);
                             $this->$cb($pinst, $data, $result);
-                           // $this->_timecounter->exitTime($callback, $pclass);
+                            // $this->_timecounter->exitTime($callback, $pclass);
                         }
                         // if last result plugin is false & break flag
                         if ($result === false && $break) {

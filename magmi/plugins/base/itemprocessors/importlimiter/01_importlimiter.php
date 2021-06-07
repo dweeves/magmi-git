@@ -9,8 +9,8 @@ class importlimiter extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Magmi Import Limiter","author"=>"Dweeves","version"=>"0.0.7",
-            "url"=>$this->pluginDocUrl("Magmi_Import_Limiter"));
+        return array("name" => "Magmi Import Limiter","author" => "Dweeves","version" => "0.0.7",
+            "url" => $this->pluginDocUrl("Magmi_Import_Limiter"));
     }
 
     /**
@@ -49,9 +49,9 @@ class importlimiter extends Magmi_ItemProcessor
      */
     public function processItemBeforeId(&$item, $params = null)
     {
-        $ok=true;
+        $ok = true;
         //filtering row
-        if (count($this->_recranges)>0) {
+        if (count($this->_recranges) > 0) {
             $crow = $this->getCurrentRow();
             // check if we are at the last wanted line by range list
             if ($this->_rmax > -1 && $crow == $this->_rmax) {
@@ -71,7 +71,7 @@ class importlimiter extends Magmi_ItemProcessor
         }
 
         //filtering based on values
-        if ($ok && count($this->_filters)>0) {
+        if ($ok && count($this->_filters) > 0) {
             foreach ($this->_filters as $fltdef) {
                 // negative filters
                 $ok = $ok && (!$this->filtermatch($item, $fltdef));
@@ -82,8 +82,8 @@ class importlimiter extends Magmi_ItemProcessor
         }
 
         //filtering importable columns if not skipped by another.
-        if (count($this->_col_filter)>0 && $ok) {
-            $item=array_intersect_key($item, array_flip($this->_col_filter));
+        if (count($this->_col_filter) > 0 && $ok) {
+            $item = array_intersect_key($item, array_flip($this->_col_filter));
         }
 
         return $ok;

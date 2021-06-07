@@ -59,7 +59,7 @@ class DBHelper
             $pdostr = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
         }
 
-        $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"));
+        $this->_db = new PDO($pdostr, $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
         // use exception error mode
         $this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->_db->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_NATURAL);
@@ -506,7 +506,7 @@ class DBHelper
         if ($this->_intrans) {
             $rolledBack = $this->_db->rollBack();
             $this->_intrans = false;
-           // $this->logdebug("-- TRANSACTION ROLLBACK --");
+            // $this->logdebug("-- TRANSACTION ROLLBACK --");
         }
         return $rolledBack;
     }

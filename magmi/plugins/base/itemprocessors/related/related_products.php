@@ -4,8 +4,8 @@ class RelatedProducts extends Magmi_ItemProcessor
 {
     public function getPluginInfo()
     {
-        return array("name"=>"Product relater","author"=>"Dweeves,jwtechniek","version"=>"1.0.3",
-            "url"=>$this->pluginDocUrl("Product_relater"));
+        return array("name" => "Product relater","author" => "Dweeves,jwtechniek","version" => "1.0.3",
+            "url" => $this->pluginDocUrl("Product_relater"));
     }
 
     public function checkRelated(&$rinfo)
@@ -89,9 +89,15 @@ class RelatedProducts extends Magmi_ItemProcessor
 		  JOIN " . $this->tablename("catalog_product_entity") . " as cpe2 ON cpe2.sku!=cpe.sku AND (cpe2.sku=? OR $j2)
 		  JOIN " . $this->tablename("catalog_product_link_type") . " as cplt ON cplt.code='relation'
 		  WHERE cpe.sku=? OR $j";
-            $this->delete($sql,
-                array_merge(array($item["sku"]), $joininfo["data"]["cpe2.sku"], array($item["sku"]),
-                    $joininfo["data"]["cpe.sku"]));
+            $this->delete(
+                $sql,
+                array_merge(
+                    array($item["sku"]),
+                    $joininfo["data"]["cpe2.sku"],
+                    array($item["sku"]),
+                    $joininfo["data"]["cpe.sku"]
+                )
+            );
         }
     }
 
@@ -108,8 +114,8 @@ class RelatedProducts extends Magmi_ItemProcessor
     public function getRelInfos($relationdef)
     {
         $relinfos = explode(",", $relationdef);
-        $relskusadd = array("direct"=>array(),"re"=>array());
-        $relskusdel = array("direct"=>array(),"re"=>array());
+        $relskusadd = array("direct" => array(),"re" => array());
+        $relskusdel = array("direct" => array(),"re" => array());
         foreach ($relinfos as $relinfo) {
             $rinf = explode("::", $relinfo);
             if (count($rinf) == 1) {
@@ -138,7 +144,7 @@ class RelatedProducts extends Magmi_ItemProcessor
             }
         }
 
-        return array("add"=>$relskusadd,"del"=>$relskusdel);
+        return array("add" => $relskusadd,"del" => $relskusdel);
     }
 
     public function buildJoinCond($item, $rinfo, $keys)
@@ -164,7 +170,7 @@ class RelatedProducts extends Magmi_ItemProcessor
                 $joins[$key] = "({$joins[$key]})";
             }
         }
-        return array("join"=>$joins,"data"=>$data);
+        return array("join" => $joins,"data" => $data);
     }
 
     public function setRelatedItems($item, $rinfo)
@@ -206,8 +212,12 @@ class RelatedProducts extends Magmi_ItemProcessor
                 }
                 $sql = "INSERT IGNORE INTO " . $this->tablename("catalog_product_link") .
                      " (link_type_id,product_id,linked_product_id)  $bsql";
-                $data = array_merge(array($item["sku"]), $joininfo["data"]["cpe2.sku"], array($item["sku"]),
-                    $joininfo["data"]["cpe.sku"]);
+                $data = array_merge(
+                    array($item["sku"]),
+                    $joininfo["data"]["cpe2.sku"],
+                    array($item["sku"]),
+                    $joininfo["data"]["cpe.sku"]
+                );
                 if (!$fullrel) {
                     $data = array_merge($data, $joininfo["data"]["cpe.sku"], $joininfo["data"]["cpe.sku"]);
                 }

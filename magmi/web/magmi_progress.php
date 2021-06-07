@@ -4,7 +4,7 @@ require_once("../inc/magmi_statemanager.php");
 require_once("progress_parser.php");
 
 if (isset($_REQUEST["logfile"])) {
-    $logfile=$_REQUEST["logfile"];
+    $logfile = $_REQUEST["logfile"];
 }
 if (!isset($logfile)) {
     $logfile = Magmi_StateManager::getProgressFile();
@@ -93,7 +93,7 @@ if (file_exists($logfile)) {
 					<td><?php echo $count?> items (<?php echo $percent?>%)</td>
 					<td><?php echo $parser->getData("itime:elapsed")?></td>
 					<td><?php echo $parser->getData("itime:speed")?></td>
-					<td><?php echo $parser->getData("itime:speed")*$parser->getData("columns")?></td>
+					<td><?php echo $parser->getData("itime:speed") * $parser->getData("columns")?></td>
 					<td><?php echo $parser->getData("itime:incelapsed")?></td>
 				</tr>
 			</tbody>
@@ -119,8 +119,8 @@ if (file_exists($logfile)) {
 					<td><?php echo $parser->getData("dbtime:count")?></td>
 					<td><?php echo $parser->getData("dbtime:elapsed")?></td>
 					<td><?php echo $parser->getData("dbtime:speed")?> reqs/min</td>
-					<td><?php echo round($parser->getData("dbtime:count")/$parser->getData("itime:count"), 2)?>/item</td>
-					<td><?php echo round(($parser->getData("dbtime:elapsed")*100/$parser->getData("itime:elapsed")), 2)?>%</td>
+					<td><?php echo round($parser->getData("dbtime:count") / $parser->getData("itime:count"), 2)?>/item</td>
+					<td><?php echo round(($parser->getData("dbtime:elapsed") * 100 / $parser->getData("itime:elapsed")), 2)?>%</td>
 					<td><?php echo $parser->getData("dbtime:lastcount")?> reqs</td>
 				</tr>
 			</tbody>
@@ -142,13 +142,13 @@ foreach (array("error", "warning") as $gtype)
 		id="<?php echo $gtype?>_link">Show Details</a>
 </div>
 <div id="log_<?php echo $gtype?>_details"></div>
-<?php 
+<?php
     }?>
 <?php endforeach?>
 
 <?php
-$info=$parser->getData("info");
-if (count($info)>0):?>
+$info = $parser->getData("info");
+if (count($info) > 0):?>
 <div class="col">
 	<h3>Runtime infos</h3>
 	<div class="runtime_info">
@@ -168,7 +168,7 @@ if (!is_array($skipped) && $skipped > 0)
 <div class='log_info'>Skipped <?php echo $parser->getData("skipped")?> records</div>
 <?php endif?>
 
-<?php if (Magmi_StateManager::getState()=="canceled"):?>
+<?php if (Magmi_StateManager::getState() == "canceled"):?>
 <div class='log_warning'>Canceled by user</div>
 <div class='log_warning'>
 	<span><a href='magmi.php'>Back to Configuration Page</a></span>
@@ -177,9 +177,9 @@ if (!is_array($skipped) && $skipped > 0)
 <?php else:?>
 	<?php if ($parser->getData("ended")):?>
 <div
-	class='log_end <?php if (count($parser->getData("error"))>0) {
-    ?> log_error<?php 
-}?>'>
+	class='log_end <?php if (count($parser->getData("error")) > 0) {
+        ?> log_error<?php
+    }?>'>
 	<span><a href='magmi.php'>Back to Configuration Page</a></span>
 </div>
 <script type="text/javascript">endImport();</script>

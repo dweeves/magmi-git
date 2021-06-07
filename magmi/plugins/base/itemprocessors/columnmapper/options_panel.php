@@ -7,7 +7,7 @@
 		the column mapper will replicate values of column to map to all mapped
 		columns !!!</b>
 </div>
-<?php $clist=$this->fixListParam($this->getParam("CMAP:columnlist"))?>
+<?php $clist = $this->fixListParam($this->getParam("CMAP:columnlist"))?>
 <div>
 	<ul class="formline">
 		<li class="label">Mapped columns list</li>

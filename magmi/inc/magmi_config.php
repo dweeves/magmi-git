@@ -1,4 +1,5 @@
 <?php
+
 require_once("properties.php");
 
 /**
@@ -17,7 +18,7 @@ class DirbasedConfig extends Properties
     {
         $this->_basedir = $basedir;
         $this->_confname = $basedir . DIRSEP . $confname;
-        $this->inifile=$this->_confname;
+        $this->inifile = $this->_confname;
     }
 
     public function get($secname, $pname, $default = null)
@@ -36,9 +37,9 @@ class DirbasedConfig extends Properties
     public function getLastSaved($fmt)
     {
         if (file_exists($this->inifile)) {
-            $lastsaved=strftime($fmt, filemtime($this->inifile));
+            $lastsaved = strftime($fmt, filemtime($this->inifile));
         } else {
-            $lastsaved="never";
+            $lastsaved = "never";
         }
         return $lastsaved;
     }
@@ -117,7 +118,7 @@ class Magmi_Config extends DirbasedConfig
 
     public function getConfDir()
     {
-        if ($this->_confname==null) {
+        if ($this->_confname == null) {
             $confdir = realpath(dirname(dirname(__FILE__)) . DIRSEP . "conf");
             return $confdir;
         } else {
@@ -127,7 +128,7 @@ class Magmi_Config extends DirbasedConfig
 
     public function saveToFile($path)
     {
-        $this->inifile=$path;
+        $this->inifile = $path;
         parent::save();
     }
 
@@ -149,7 +150,7 @@ class Magmi_Config extends DirbasedConfig
     public function getMagentoDir()
     {
         $bd = $this->get("MAGENTO", "basedir");
-        if ($bd!=null) {
+        if ($bd != null) {
             $dp = $bd[0] == "." ? dirname(__FILE__) . "/" . $bd : $bd;
             return realpath($dp);
         } else {
@@ -172,20 +173,20 @@ class Magmi_Config extends DirbasedConfig
 
     public function load($name = null)
     {
-        if ($name!=null) {
-            $this->inifile=$name;
+        if ($name != null) {
+            $this->inifile = $name;
         }
 
         if (file_exists($this->inifile)) {
-            $conf=$this->inifile;
-            $this->_default=false;
+            $conf = $this->inifile;
+            $this->_default = false;
             parent::load($conf);
             $this->_confname = basename($conf);
-            if ($this->_confname!=$conf) {
-                $this->_basedir=dirname($conf);
+            if ($this->_confname != $conf) {
+                $this->_basedir = dirname($conf);
             }
         } else {
-            $this->_default=true;
+            $this->_default = true;
         }
 
 

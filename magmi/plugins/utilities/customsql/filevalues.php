@@ -17,5 +17,5 @@ foreach ($rparams as $plabel => $pinfo) {
 		type="text"
 		value="<?php echo $this->getParam("UTCSQL:{$pinfo["name"]}", $pinfo["default"]) ?>" /></li>
 </ul>
-<?php 
+<?php
 } ?>

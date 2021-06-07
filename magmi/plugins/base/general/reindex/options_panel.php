@@ -23,11 +23,10 @@ foreach ($idxarr as $indexname) {
     ?>
 		<li><input type="checkbox" name="<?php echo $indexname?>"
 			class="_magindex" <?php if (in_array($indexname, $indexes)) {
-    ?>
-			checked=checked <?php 
-}
-    ?>><?php echo $indexname?></li>
-	<?php 
+        ?>
+			checked=checked <?php
+    } ?>><?php echo $indexname?></li>
+	<?php
 }?>
 	</ul>
 </div>

@@ -10,7 +10,7 @@ class SampleCustomItemProcessor extends Magmi_ItemProcessor
 {
     public function getPluginInfo()
     {
-        return array("name"=>"Sample Custom","author"=>"Your Name","version"=>"0.0.1");
+        return array("name" => "Sample Custom","author" => "Your Name","version" => "0.0.1");
     }
 
     /**

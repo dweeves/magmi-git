@@ -41,8 +41,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array("name"=>"Image attributes processor","author"=>"Dweeves, Tommy Goode","version"=>"1.0.33a",
-            "url"=>$this->pluginDocUrl("Image_attributes_processor"));
+        return array("name" => "Image attributes processor","author" => "Dweeves, Tommy Goode","version" => "1.0.33a",
+            "url" => $this->pluginDocUrl("Image_attributes_processor"));
     }
 
     public function isErrorImage($img)
@@ -106,7 +106,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $imagefile = $infolist[0];
             }
             unset($infolist);
-            $extra=array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex == 0 ? "" : $imageindex);
+            $extra = array("store" => $storeid,"attr_code" => $attrcode,"imageindex" => $imageindex == 0 ? "" : $imageindex);
             // copy it from source dir to product media dir
             $imagefile = $this->copyImageFile($imagefile, $item, $extra);
             unset($extra);
@@ -184,7 +184,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $imagefile = trim($ivalue);
 
         // else copy image file
-        $imagefile = $this->copyImageFile($imagefile, $item, array("store"=>$storeid, "attr_code"=>$attrcode));
+        $imagefile = $this->copyImageFile($imagefile, $item, array("store" => $storeid, "attr_code" => $attrcode));
         $ovalue = $imagefile;
         // add to gallery as excluded
         if ($imagefile !== false) {
@@ -193,8 +193,16 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
                 $label = $item[$attrcode . "_label"];
             }
             $targetsids = $this->getStoreIdsForStoreScope($item["store"]);
-            $vid = $this->addImageToGallery($pid, $storeid, $attrdesc, $imagefile, $targetsids, $label, $exclude,
-                $attrdesc["attribute_id"]);
+            $vid = $this->addImageToGallery(
+                $pid,
+                $storeid,
+                $attrdesc,
+                $imagefile,
+                $targetsids,
+                $label,
+                $exclude,
+                $attrdesc["attribute_id"]
+            );
         }
         return $ovalue;
     }
@@ -204,7 +212,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 
         // trimming
         $ivalue = trim($ivalue);
-        if ($ivalue=="") {
+        if ($ivalue == "") {
             return $ivalue;
         }
 
@@ -290,9 +298,16 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
      * @param string $imgname
      *            : image file name (relative to /products/media in magento dir)
      */
-    public function addImageToGallery($pid, $storeid, $attrdesc, $imgname, $targetsids, $imglabel = null, $excluded = false,
-        $refid = null)
-    {
+    public function addImageToGallery(
+        $pid,
+        $storeid,
+        $attrdesc,
+        $imgname,
+        $targetsids,
+        $imglabel = null,
+        $excluded = false,
+        $refid = null
+    ) {
         $gal_attinfo = $this->getAttrInfo("media_gallery");
         $tg = $this->tablename('catalog_product_entity_media_gallery');
         $tgv = $this->tablename('catalog_product_entity_media_gallery_value');
@@ -374,7 +389,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             $extra["imagename.noext"] = $matches[1];
         } else {
             $uid = uniqid("img", true);
-            $extra = array_merge($extra, array("imagename"=>"$uid.jpg", "imagename.ext"=>"jpg", "imagename.noext"=>$uid));
+            $extra = array_merge($extra, array("imagename" => "$uid.jpg", "imagename.ext" => "jpg", "imagename.noext" => $uid));
         }
 
         return $extra;
@@ -432,10 +447,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         //handle amazon specific
         if (is_remote_path($imgfile)) {
             // Amazon images patch , remove SLXXXX part
-           if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
-               $pattern = '/\bSL[0-9]+\./i';
-               $imgfile = preg_replace($pattern, '', $imgfile);
-           }
+            if (preg_match('|amazon\..*?/images/I|', $imgfile)) {
+                $pattern = '/\bSL[0-9]+\./i';
+                $imgfile = preg_replace($pattern, '', $imgfile);
+            }
         }
 
         $source = $this->findImageFile($imgfile);
@@ -566,8 +581,12 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
             if (isset($item[$attrcode . "_label"]) && !isset($item[$attrcode])) {
                 // force label update
                 $attrdesc = $this->getAttrInfo($attrcode);
-                $this->updateLabel($attrdesc, $pid, $this->getItemStoreIds($item, $attrdesc["is_global"]),
-                    $item[$attrcode . "_label"]);
+                $this->updateLabel(
+                    $attrdesc,
+                    $pid,
+                    $this->getItemStoreIds($item, $attrdesc["is_global"]),
+                    $item[$attrcode . "_label"]
+                );
                 unset($attrdesc);
             }
         }

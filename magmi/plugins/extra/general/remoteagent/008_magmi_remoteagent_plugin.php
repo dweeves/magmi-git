@@ -1,4 +1,5 @@
 <?php
+
 require_once(dirname(__FILE__) . "/magmi_remoteagent_proxy.php");
 require_once(dirname(__FILE__) . "/magmi_remoteagent.php");
 
@@ -14,9 +15,9 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Remote Agent Plugin","author"=>"Dweeves","version"=>"0.0.1",
-            "sponsorinfo"=>array("name"=>"Eydun Lamhauge","url"=>"http://www.admind.fo/"),
-            "url"=>$this->pluginDocUrl("Remote_Agent"));
+        return array("name" => "Remote Agent Plugin","author" => "Dweeves","version" => "0.0.1",
+            "sponsorinfo" => array("name" => "Eydun Lamhauge","url" => "http://www.admind.fo/"),
+            "url" => $this->pluginDocUrl("Remote_Agent"));
     }
 
     public function initialize($params)
@@ -53,14 +54,15 @@ class Magmi_RemoteAgentPlugin extends Magmi_GeneralImportPlugin
     public function deployPlugin($url)
     {
         $sep = (substr($url, -1) == "/" ? "" : "/");
-        $ctx = stream_context_create(array('ftp'=>array('overwrite'=>true)));
+        $ctx = stream_context_create(array('ftp' => array('overwrite' => true)));
 
         $ok = @copy(dirname(__FILE__) . "/magmi_remoteagent.php", $url . $sep . "magmi_remoteagent.php", $ctx);
         if ($ok == false) {
             $err = error_get_last();
             $this->log(
                 "Cannot deploy Remote agent to $url (" . $err['message'] . "), remote file operation & indexing disabled",
-                "warning");
+                "warning"
+            );
         }
         return $ok;
     }

@@ -1,4 +1,5 @@
 <?php
+
 require_once("magmi_mixin.php");
 require_once("magmi_utils.php");
 
@@ -21,11 +22,11 @@ class Magmi_CSVReader extends Magmi_Mixin
     protected $_ignored = array();
     protected $_prefix;
 
-    public function initialize($params=null, $prefix='CSV')
+    public function initialize($params = null, $prefix = 'CSV')
     {
         $this->_prefix = $prefix;
         if (isset($params)) {
-            $this->_params=$params;
+            $this->_params = $params;
         }
         $this->_filename = $this->getParam($this->_prefix.":filename");
         $this->_csep = $this->getParam($this->_prefix.":separator", ",");
@@ -40,9 +41,9 @@ class Magmi_CSVReader extends Magmi_Mixin
         $this->_ignored = explode(",", $this->getParam($this->_prefix.":ignore"));
     }
 
-    public function getParam($paramname, $default='')
+    public function getParam($paramname, $default = '')
     {
-        return (isset($this->_params[$paramname]) && $this->_params[$paramname] != "")?$this->_params[$paramname]:$default;
+        return (isset($this->_params[$paramname]) && $this->_params[$paramname] != "") ? $this->_params[$paramname] : $default;
     }
 
     public function getLinesCount()
@@ -83,8 +84,10 @@ class Magmi_CSVReader extends Magmi_Mixin
         if (!file_exists($this->_filename)) {
             throw new Magmi_CSVException("{$this->_filename} not found");
         }
-        $this->log("Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]",
-            "startup");
+        $this->log(
+            "Importing CSV : $this->_filename using separator [ $this->_dcsep ] enclosing [ $this->_cenc ]",
+            "startup"
+        );
     }
 
     public function openCSV()
@@ -180,7 +183,8 @@ class Magmi_CSVReader extends Magmi_Mixin
                     // if strict matching, warning & continue
                     $this->log(
                         "warning: line $this->_curline , wrong column number : $rcols found over $this->_nhcols, line skipped",
-                        "warning");
+                        "warning"
+                    );
                     continue;
                 }
                 break;

@@ -91,8 +91,7 @@ class AttributeDeleter extends Magmi_ItemProcessor
      */
     public function handleIntAttribute($pid, &$item, $storeid, $attrcode, $attrdesc, $ivalue)
     {
-        if ($attrdesc["frontend_input"] == "select" && $ivalue == '__MAGMI_DELETE__')
-        {
+        if ($attrdesc["frontend_input"] == "select" && $ivalue == '__MAGMI_DELETE__') {
             return $ivalue;
         }
         return null;

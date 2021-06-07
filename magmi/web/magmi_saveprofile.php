@@ -1,4 +1,5 @@
 <?php
+
 require_once("security.php");
 $profile = $_REQUEST["profile"];
 $dslist = $_REQUEST["PLUGINS_DATASOURCES:class"];
@@ -29,8 +30,9 @@ require_once("../inc/magmi_config.php");
 // saving plugin selection
 $epc = new EnabledPlugins_Config($profile);
 $epc->setPropsFromFlatArray(
-    array("PLUGINS_DATASOURCES:class"=>$dslist, "PLUGINS_GENERAL:classes"=>$genlist,
-        "PLUGINS_ITEMPROCESSORS:classes"=>$iplist));
+    array("PLUGINS_DATASOURCES:class" => $dslist, "PLUGINS_GENERAL:classes" => $genlist,
+        "PLUGINS_ITEMPROCESSORS:classes" => $iplist)
+);
 if ($epc->save()) {
 
     // saving plugins params
