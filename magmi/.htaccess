@@ -1,0 +1,14 @@
+<FilesMatch "\.(ini)$">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
+<FilesMatch "^\.">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
+<FilesMatch "ReleaseNotes.txt">
+Order allow,deny
+Deny from all
+</FilesMatch>
