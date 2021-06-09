@@ -1,0 +1,383 @@
+body
+  background-color: bg-color("primary")
+
+textarea, select, input[type="text"], input[type="number"], input[type="password"]
+  @extend .form-control
+  width: 100% !important
+
+select
+  margin-bottom: 1rem
+
+input[type="checkbox"]
+  margin-right: .2rem
+
+.import-run .menu-main
+  .nav-item
+    display: none
+
+    &.back
+      display: initial !important
+
+      i
+        font-size: .85rem
+
+.card
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px 0px
+
+  .card-header
+    background-color: bg-color("purple")
+    color: rgba(color("default"), 0.95)
+    font-size: 1.3rem
+
+  .card-body
+    h1
+      margin-bottom: 1.25rem
+
+#commonconf_form
+  .card-header
+    background-color: bg-color("primary")
+    color: rgba(color("primary"), 1)
+
+#saveprofile_form
+  .list-group-item
+    background-color: bg-color("light")
+    padding: 0.4rem 0.9rem
+    line-height: 1.9rem
+
+    @include media-breakpoint-down(xs)
+      min-height: 50px
+
+      .badge, .plugindoc, .pluginconf
+        position: absolute
+        top: 0.75rem
+        right: 0.9rem
+        margin: 0 !important
+
+      .pluginconf
+        right: 50px
+
+      .badge
+        right: 86px
+        line-height: 1.5
+
+      label
+        width: 100%
+        min-width: 120px
+        padding-right: 112px
+        line-height: 1.1rem
+        vertical-align: middle
+
+    label
+
+      input[type="checkbox"]
+        margin-top: .55rem
+
+      i
+        @include media-breakpoint-down(sm)
+          display: none
+
+  .badge
+    cursor: pointer
+
+  .pluginconf, .plugindoc
+    display: inline-block
+
+    .btn span
+      display: none
+
+    @include media-breakpoint-up(lg)
+      .btn span
+          display: initial
+
+  .plugininfo
+    .plugindata
+      .title
+        display: inline-block
+        width: 120px
+        text-transform: capitalize
+
+  .pluginconfpanel
+    display: none
+
+    &.selected
+      display: block
+
+    border-top: 1px solid rgba(0, 0, 0, 0.1)
+    padding-top: 0.75rem
+    margin: 0.75rem 0
+
+    h3, h4
+      margin: 1rem 0 0.5rem
+      font-size: 1.2rem
+
+    .plugin_description
+      margin-bottom: 1rem
+
+    ul
+      padding: 0
+
+      li
+        list-style-type: none
+
+.datasource_plugin_config, .itemprocessor_plugin_config, .general_plugin_config
+  clear: both
+
+ul.formline
+  margin: 0 0 0.75rem
+  padding-left: 0
+
+  li
+    list-style: none
+
+.label
+  @extend label
+
+.fieldinfo
+  font-style: italic
+  font-size: 0.8rem
+
+div.title
+  width: 100%
+  position: relative
+  height: 120
+  background-color: #ffffff
+
+.title .logo
+  float: left
+  height: 120
+  width: 340
+  background: url("../images/logo.png") no-repeat transparent
+  background-color: #ffffff
+
+.title .logoauth
+  position: absolute
+  top: 104px
+  left: 5px
+  font-size: xx-small
+
+.title .info
+  float: left
+  width: 598px
+  border: 1px solid #8888cc
+  height: 100%
+
+.title .info h3
+  background-color: #8888cc
+  width: 100%
+  color: #ffffff
+
+.title .author
+  width: 100%
+  float: right
+  font-size: 12pt
+
+#m_license
+  font-family: monospace
+  display: block
+  z-index: 200
+  background: #ffffcc
+  border: 1px solid #000000
+  color: #000000
+
+.title .version
+  width: 100%
+  float: right
+  font-weight: bold
+
+.saveinfo, #startimport_div, #endimport_div
+  margin-top: 4px
+  font-style: italic
+  font-size: 0.8rem
+
+li.value span
+  padding-top: 4px
+  height: 16px
+
+.log_error, .mgupload_error
+  @extend .alert
+  @extend .alert-danger
+
+.log_standard
+
+.log_indexing
+  border: 1px solid #0000cc
+  background: #8888ff
+  color: #000000
+  text-align: center
+  font-size: 10pt
+  font-weight: normal
+  padding-top: 2px
+  padding-bottom: 2px
+
+.log_warning
+  @extend .alert
+  @extend .alert-warning
+
+#log_error_details, #log_warning_details
+  display: none
+
+  &.loaded
+    display: block
+    overflow-y: scroll
+    max-height: 25rem
+    padding: 1rem 1.5rem
+    margin-bottom: 1rem
+    background-color: bg-color("primary")
+    border: 1px solid darken(bg-color("primary"), 12%)
+
+    ul
+      padding: 0
+      margin: 0
+
+      li
+        list-style-type: none
+
+
+.import_params
+  margin-top: 10
+  line-height: 1.4em
+  border: 1px solid #cccccc
+
+.import_params h2
+  background-color: #cccccc
+  line-height: 1.4em
+
+.import_running h2
+  line-height: 1.4em
+
+#import_log
+  #progress_container
+    height: 2rem
+
+    #import_current
+      font-weight: bold
+
+.section_title
+  background-color: #cccccc
+  line-height: 1.4em
+  font-weight: bold
+  border: 1px solid #cccccc
+  border-collapse: collapse
+  padding-bottom: 2px
+
+#common_config input[type=text], #common_config input[type=password]
+  width: 180px
+
+#common_config ul.formline li.label
+  width: 120px
+
+#profile_action li.label
+  height: 18px
+  padding-top: 3px
+
+span.pluginname.sponsored
+  background: #eeeeff
+
+.config_error
+  margin-top: 10
+  border: 1px solid #cc0000
+  background: #ff8888
+  color: #000000
+  text-align: center
+  font-size: 10pt
+  font-weight: normal
+
+.scrollbox
+  height: 200
+  position: relative
+
+.scrollbox_content
+  margin-right: 8px
+
+.scrollbox_scrollbar
+  background-color: silver
+  border-left: solid black 1px
+  height: 100%
+  width: 8px
+
+.scrollbox_handle
+  background-color: #888888
+
+div.log_warning
+  clear: both
+
+div.log_error
+  clear: both
+
+.plupload_error, .magmi_error
+  border: 1px #cc0000 solid
+  background-color: #ffaaaa
+  color: #000000
+  font-weight: normal
+
+.magmi_error li
+  list-style: disc inside
+
+.message
+  padding-top: 4px
+
+.fieldhelp
+  float: right
+  width: 24px
+  height: 24px
+  margin-right: 4px
+  cursor: pointer
+  background: url("../images/fieldhelp.png") no-repeat
+
+div.trace
+  font-size: small
+  font-family: courier, monospace
+  background-color: #fff
+  border: 1px solid #cc0000
+
+#directrun ul.formline li.label
+  width: 200
+
+ul#globstep input[type=text]
+  width: 100
+
+ul#globstep.formline li.label
+  width: 200
+
+ul#mssep input[type=text]
+  width: 50
+
+ul#mssep.formline li.label
+  width: 250
+
+li.utility
+  margin-top: 2px
+
+.utility .pluginoptionpanel
+  clear: both
+
+.separator
+  width: 100%
+  border-top: 1px solid color("lighter")
+  margin: 10px 0
+  clear: both
+
+.pluginrun_results
+  border: 1px solid #0000cc
+
+p.logentry
+  margin: 0
+  padding: 0
+  border-bottom: 1px solid #cccccc
+
+.pluginrun_results h3
+  background-color: #0000cc
+  color: #ffffff
+
+#pluginschanged
+  ul
+    list-style-type: none
+
+div.group
+  margin-bottom: 5px
+  margin-left: 0
+  margin-right: 0
+
+div.group h1
+  margin-top: 2px
+  margin-bottom: 3px

@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(dirname(__FILE__))."/inc/magmi_auth.php");
+require_once(dirname(dirname(__FILE__)) . '/inc/magmi_auth.php');
 function authenticate($username = "", $password = "")
 {
     $auth = new Magmi_Auth($username, $password);

@@ -1,14 +1,14 @@
 <?php
 
-require_once("security.php");
-require_once("../inc/magmi_config.php");
+require_once('security.php');
+require_once('../inc/magmi_config.php');
 
-$currentprofile = $_REQUEST["profile"];
-if ($currentprofile == "default") {
+$currentprofile = $_REQUEST['profile'];
+if ($currentprofile == 'default') {
     $currentprofile = null;
 }
-$newprofile = $_REQUEST["newprofile"];
-if ($newprofile != "") {
+$newprofile = $_REQUEST['newprofile'];
+if ($newprofile != '') {
     $bcfg = new EnabledPlugins_Config($currentprofile);
     $confdir = Magmi_Config::getInstance()->getConfDir();
     $npdir = $confdir . DIRSEP . $newprofile;
@@ -16,7 +16,7 @@ if ($newprofile != "") {
     $cpdir = $bcfg->getProfileDir();
     $filelist = scandir($cpdir);
     foreach ($filelist as $fname) {
-        if (substr($fname, -5) == ".conf") {
+        if (substr($fname, -5) == '.conf') {
             copy($cpdir . DIRSEP . $fname, $npdir . DIRSEP . $fname);
         }
     }

@@ -47,10 +47,11 @@ require_once("../engines/magmi_utilityengine.php");
 		$("plugin_run:"+pclass).hide();
 	};
 </script>
-<div class="container_12">
-	<div class="grid_12  omega subtitle">
-		<h3>Magmi Utilities</h3>
-	</div>
+<div class="container">
+<div class="row">
+<div class="col-12">
+	<h3 class="subtitle omega">Magmi Utilities</h3>
+    <div class="list-group">
 	<?php
 $mmi = new Magmi_UtilityEngine();
 $mmi->initialize();
@@ -64,26 +65,19 @@ foreach ($plist as $pinst) {
     $pclass = $pinst->getPluginClass();
     $pinfo = $pinst->getPluginInfo();
     $info = $pinst->getShortDescription(); ?>
-	<div class="grid_12 col utility">
-		<h3 class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"]; ?></h3>
-		<?php
-    ?>
-		<div>
-			<div class="plugindescription">
-			<?php if ($info !== null) {
-        ?>
+	<div class="list-group-item bg-light utility">
+		<h4 class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"]; ?></h4>
+		<?php ?>
+			<p class="plugindescription">
+			<?php if ($info !== null) { ?>
 				<?php echo $info?>
-			<?php
-    } ?>
-		</div>
-			<div class="plugininfo" style="float: right">
-				<a href="javascript:togglePanel('<?php echo $pclass?>')">Options</a>
+			<?php } ?>
+			</p>
+			<div class="plugininfo mb-2 clearfix">
+				<a href="javascript:togglePanel('<?php echo $pclass?>')" class="btn btn-primary btn-sm float-right">Options</a>
 			</div>
-		</div>
 
-		<div class="pluginoptionpanel" id="pluginoptions:<?php echo $pclass?>"
-			style="display: none; clear: both;">
-
+		<div class="pluginoptionpanel" id="pluginoptions:<?php echo $pclass?>" style="display: none; clear: both;">
 			<form id="<?php echo $pclass?>_params">
 				<?php echo $pinst->getOptionsPanel()->getHtml()?>
 			</form>
@@ -97,17 +91,21 @@ foreach ($plist as $pinst) {
 
 		<div class="separator"></div>
 		<div class="utility_run actionbutton">
-			<a id="plrun_<?php echo $pclass?>"
-				href="javascript:runUtility('<?php echo $pclass?>')">Run Utility</a>
+			<a id="plrun_<?php echo $pclass?>" class="btn btn-secondary btn-sm float-right" href="javascript:runUtility('<?php echo $pclass?>')">Runutility</a>
 		</div>
 	</div>
 	<?php
 }?>
 </div>
+</div>
+</div>
+</div>
 
-<div class="container_12">
-	<div class="grid_12">
-		<a href="magmi.php"> Back to Magmi Config Interface </a>
+<div class="container mt-2 mb-2">
+	<div class="row">
+		<div class="col-12">
+			<a href="magmi.php" class="btn btn-secondary">Back to Magmi Config Interface</a>
+		</div>
 	</div>
 </div>
 <script type="text/javascript">

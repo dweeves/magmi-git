@@ -1,5 +1,17 @@
 .idea
+sftp-config.json
+*.sublime-project
+*.sublime-workspace
 /magmi/state/*
 !/magmi/state/dummy.txt
+/node_modules/*
+!/node_modules/bootstrap
+!/node_modules/font-awesome
+!/node_modules/jquery
+/node_modules/jquery/*
+!/node_modules/jquery/dist
+!/node_modules/popper.js
+/node_modules/popper.js/*
+!/node_modules/popper.js/dist
 .php-cs-fixer.cache
 .php_cs.cache

@@ -1,67 +1,65 @@
 <?php
-require_once("security.php");
-require_once("magmi_config.php");
-require_once("magmi_statemanager.php");
-require_once("dbhelper.class.php");
+require_once('security.php');
+require_once('magmi_config.php');
+require_once('magmi_statemanager.php');
+require_once('dbhelper.class.php');
 $conf = Magmi_Config::getInstance();
 $conf->load();
 $conf_ok = 1;
 ?>
-<?php
 
-$profile = "";
-if (isset($_REQUEST["profile"])) {
-    $profile = $_REQUEST["profile"];
+<?php
+$profile = '';
+if (isset($_REQUEST['profile'])) {
+    $profile = $_REQUEST['profile'];
 } else {
-    if (isset($_SESSION["last_runned_profile"])) {
-        $profile = $_SESSION["last_runned_profile"];
+    if (isset($_SESSION['last_runned_profile'])) {
+        $profile = $_SESSION['last_runned_profile'];
     }
 }
-if ($profile == "") {
-    $profile = "default";
+if ($profile == '') {
+    $profile = 'default';
 }
 $eplconf = new EnabledPlugins_Config($profile);
 $eplconf->load();
-if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
+if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
     $conf_ok = 0;
 }
 ?>
-<!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
-<?php $zipok = class_exists("ZipArchive");?>
-<div class="container_12">
-	<div class="grid_12 subtitle">
-		<span>Update Magmi</span>
-	</div>
-</div>
-<div class="container_12">
-<?php if (false) {
-    ?>
-<form method="post" enctype="multipart/form-data"
-		action="magmi_upload.php">
-		<div class="grid_12 col">
-			<h3>Update Magmi Release</h3>
-			<input type="file" name="magmi_package"></input> <input type="submit"
-				value="Upload Magmi Release"></input>
-		<?php
 
-    if (isset($_SESSION["magmi_install"])) {
-        $type = $_SESSION["magmi_install"][0];
-        $msg = $_SESSION["magmi_install"][1]; ?>
+<?php $zipok = class_exists('ZipArchive'); ?>
+<div class="container mb-4">
+<div class="row">
+<div id="magmi-update" class="magmi-update col-12 mb-4">
+<!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
+<div class="card">
+	<h3 class="card-header subtitle">
+		<span>Update Magmi</span>
+	</h3>
+<?php if (false) { ?>
+<form method="post" enctype="multipart/form-data" action="magmi_upload.php">
+	<div class="card-body">
+		<h3>Update Magmi Release</h3>
+		<input type="file" name="magmi_package"></input> <input type="submit" value="Upload Magmi release"></input>
+		<?php
+        if (isset($_SESSION['magmi_install'])) {
+            $type = $_SESSION['magmi_install'][0];
+            $msg = $_SESSION['magmi_install'][1]; ?>
 		<div class="mgupload_<?php echo $type?>">
 				<?php echo $msg; ?>
 		</div>
 		<?php
         unset($_SESSION["magmi_install"]);
-    } ?>
+        } ?>
 	</div>
 	</form>
 </div>
 
 <!--  PLUGIN UPLOADER -->
-<div class="container_12">
+<div class="card-body">
 	<form method="post" enctype="multipart/form-data"
 		action="plugin_upload.php">
-		<div class="grid_12 col">
+		<div class="col-12">
 			<h3>Upload New Plugins</h3>
 			<input type="file" name="plugin_package"></input> <input
 				type="submit" value="Upload Plugins"></input>
@@ -80,93 +78,85 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 <?php
 } else {
         ?>
-<div class="grid_12 col">
-		<h3>Update Disabled</h3>
-		<div class="error">Upgrade/Upload function
-			are disabled for security reasons</div>
-	</div>
+<div class="card-body">
+	<h5>Update Disabled</h5>
+	<div class="error">Upgrade/Upload function are disabled for security reasons</div>
+</div>
 <?php
     }?>
 </div>
-<div class="container_12">
-	<div class="grid_12 subtitle">
+</div>
+
+<div id="magmi-run" class="magmi-run col-12 mb-4">
+<div class="card">
+	<h3 class="card-header subtitle">
 		<span>Run Magmi</span>
-<?php if (!$conf_ok) {
-        ?>
-<span class="saveinfo log_warning"><b>No Profile saved yet, Run
-				disabled!!</b></span>
-<?php
-    }?>
-</div>
-</div>
-<form method="POST" id="runmagmi"
-	action="magmi.php?ts=<?php echo time()?>" <?php if (!$conf_ok) {
-        ?>
-	style="display: none" <?php
-    }?>>
-	<input type="hidden" name="run" value="import"></input> <input
-		type="hidden" name="logfile"
-		value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
-	<div class="container_12">
-		<div class="grid_12 col" id="directrun">
-			<h3>Directly run magmi with existing profile</h3>
-			<div class="formline">
-				<span class="label">Run Magmi With Profile:</span>
+	</h3>
+<div class="card-body">
+
+<?php if (!$conf_ok) { ?>
+
+<span class="float-right saveinfo log_warning"><b>No profile saved yet, Run disabled!</b></span>
+
+<?php } ?>
+
+<form method="POST" id="runmagmi" action="magmi.php?ts=<?php echo time(); ?>" <?php if (!$conf_ok) { ?> style="display: none" <?php } ?>>
+	<input type="hidden" name="run" class="form-group" value="import"></input>
+	<input type="hidden" name="logfile" class="form-group" value="<?php echo Magmi_StateManager::getProgressFile(); ?>"></input>
+	<div id="directrun">
+		<h5>Directly run magmi with existing profile</h5>
+		<div class="formline row">
+			<div class="col-12 col-md-6">
+				<label for="profile">Profile:</label>
 				<?php $profilelist = $conf->getProfileList(); ?>
 				<select name="profile" id="runprofile">
-					<option <?php if (null == $profile) {
-        ?> selected="selected" <?php
-    }?>
-						value="default">Default</option>
-					<?php foreach ($profilelist as $profilename) {
-        ?>
-					<option <?php if ($profilename == $profile) {
-            ?> selected="selected"
-						<?php
-        } ?> value="<?php echo $profilename?>"><?php echo $profilename?></option>
-					<?php
-    }?>
-				</select> <span>using mode:</span> <select name="mode" id="mode">
-					<option value="update">Update existing items only,skip new ones</option>
-					<option value="create">create new items &amp; update existing ones</option>
-					<option value="xcreate">create new items only, skip existing ones</option>
-
-				</select> <input type="submit" value="Run Import"
-					<?php if (!$conf_ok) {
-        ?> disabled="disabled" <?php
-    }?>></input>
+					<option <?php if (null == $profile) { ?> selected="selected" <?php }?> value="default">Default</option>
+					<?php foreach ($profilelist as $profilename) { ?>
+					<option <?php if ($profilename == $profile) { ?> selected="selected" <?php } ?> value="<?php echo $profilename; ?>"><?php echo $profilename; ?></option><?php } ?>
+				</select>
+			</div>
+			<div class="col-12 col-md-6">
+				<label for="mode">Mode:</label>
+				<select name="mode" id="mode">
+					<option value="update">Update existing items only and skip new ones</option>
+					<option value="create">Create new items and update existing ones</option>
+					<option value="xcreate">Create new items only and skip existing ones</option>
+				</select>
 			</div>
 		</div>
 	</div>
+<input type="submit" value="Run Import" class="btn btn-primary active float-right"<?php if (!$conf_ok) { ?> disabled="disabled" <?php } ?>></input>
+<a href="magmi_utilities.php" class="btn btn-secondary float-right mr-2" role="button">Advanced Utilities</a>
 </form>
-<div class="container_12">
-	<div class="grid_12">
-		<a href="magmi_utilities.php">Advanced Utilities</a>
-	</div>
 </div>
-<div class="container_12">
-	<div class="grid_12 subtitle">
-		<span>Configure Global Parameters</span> <span id="commonconf_msg"
-			class="saveinfo">
-Saved:<?php echo $conf->getLastSaved("%c")?>
-</span>
-	</div>
 </div>
+</div>
+
 <?php
 $cansock = true;
 $dmysqlsock = DBHelper::getMysqlSocket();
 $cansock = !($dmysqlsock === false);
 ?>
-<div class="clear"></div>
+<div id="magmi-parameters" class="magmi-parameters col-12 mb-4">
+	<div class="card">
+	<h3 class="card-header">
+		<span>Configure global parameters</span> <span id="commonconf_msg" class="float-right saveinfo">
+		Saved:<?php echo $conf->getLastSaved("%c")?>
+		</span>
+	</h3>
+
+	<div class="card-body">
 <form method="post" action="magmi_saveconfig.php" id="commonconf_form">
-	<div class="container_12" id="common_config">
-		<div class="grid_4 col">
-			<h3>Database</h3>
+		<div class="card-group row">
+		<div class="col-12 col-lg-4 mb-4">
+		<div class="card">
+			<h3 class="card-header">Database</h3>
+			<div class="card-body">
+			<div id="connectivity" class="form-group">
 	<?php $curconn = $conf->get("DATABASE", "connectivity", "net");?>
-			<ul class="formline">
-				<li class="label">Connectivity</li>
-				<li class="value"><select name="DATABASE:connectivity" id="DATABASE:connectivity">
-					<option value="net" <?php if ($curconn == "net") {
+				<label for="DATABASE:connectivity">Connectivity</label>
+				<select name="DATABASE:connectivity" id="DATABASE:connectivity">
+					<option value="net" <?php if ($curconn === "net") {
     ?>
 						selected="selected" <?php
 } ?>>Using host/port</option>
@@ -179,31 +169,24 @@ $cansock = !($dmysqlsock === false);
 					<?php
     }?>
 					<option value="localxml" <?php echo $curconn == "localxml" ? 'selected="selected"' : '' ?>>Using magento.xml</option>
-				</select></li>
-			</ul>
-
-			<div id="connectivity:net" class="connectivity"
+				</select>
+				</div>
+			<div id="connectivity:net" class="form-group connectivity"
 				<?php if ($curconn != "net") {
         ?> style="display: none" <?php
     }?>>
-				<ul class="formline">
-					<li class="label">Host:</li>
-					<li class="value"><input type="text" name="DATABASE:host"
-						value="<?php echo $conf->get("DATABASE", "host", "localhost")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Port:</li>
-					<li class="value"><input type="text" name="DATABASE:port"
-						value="<?php echo $conf->get("DATABASE", "port", "3306")?>"></input></li>
-				</ul>
+
+					<label for="DATABASE:host">Host:</label>
+					<input type="text" name="DATABASE:host" value="<?php echo $conf->get("DATABASE", "host", "localhost")?>"></input>
+
+					<label for="DATABASE:port">Port:</label>
+					<input type="text" name="DATABASE:port" value="<?php echo $conf->get("DATABASE", "port", "3306")?>"></input>
 			</div>
 			<div id="connectivity:localxml" class="connectivity" <?php echo $curconn != 'localxml' ? 'style="display: none;"' : '' ?>>
-				<ul class="formline">
-					<li class="label">Resource:</li>
-					<li class="value"><select id="select_localxml_resources" name="DATABASE:resource">
+					<label for="DATABASE:host">Resource:</label>
+					<select id="select_localxml_resources" name="DATABASE:resource">
 						<option value="<?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?>"><?php echo $conf->get('DATABASE', 'resource', 'default_setup'); ?></option>
 					</select>
-				</ul>
 			</div>
 			<?php if ($cansock) {
         ?>
@@ -211,50 +194,42 @@ $cansock = !($dmysqlsock === false);
 							<?php if ($curconn != "socket") {
             ?> style="display: none" <?php
         } ?>>
-							<ul class="formline">
-								<li class="label">Unix Socket:</li>
+
+								<label for="DATABASE:host">Unix Socket:</label>
 
 					<?php
                         $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
         if (!file_exists($mysqlsock)) {
             $mysqlsock = $dmysqlsock;
         } ?>
-					<li class="value"><input type="text" name="DATABASE:unix_socket"
-									value="<?php echo $mysqlsock?>"></input></li>
-					</ul>
+					<input type="text" name="DATABASE:unix_socket" value="<?php echo $mysqlsock?>"></input>
 			</div>
 			<?php
     }?>
 			<div id="connectivity_extra" <?php echo $curconn == 'localxml' ? 'style="display: none;"' : ''; ?>>
-				<hr />
-				<ul class="formline">
-					<li class="label">DB Name:</li>
-					<li class="value"><input type="text" name="DATABASE:dbname"
-						value="<?php echo $conf->get("DATABASE", "dbname")?>"></input></li>
-				</ul>
+				<hr/>
+				<label for="DATABASE:dbname">DB Name:</label>
+				<input type="text" name="DATABASE:dbname" value="<?php echo $conf->get("DATABASE", "dbname")?>"></input>
 
-				<ul class="formline">
-					<li class="label">Username:</li>
-					<li class="value"><input type="text" name="DATABASE:user"
-						value="<?php echo $conf->get("DATABASE", "user")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Password:</li>
-					<li class="value"><input type="password" name="DATABASE:password"
-						value="<?php echo $conf->get("DATABASE", "password")?>"></input></li>
-				</ul>
-				<ul class="formline">
-					<li class="label">Table prefix:</li>
-					<li class="value"><input type="text" name="DATABASE:table_prefix"
-						value="<?php echo $conf->get("DATABASE", "table_prefix")?>"></input></li>
-				</ul>
+				<label for="DATABASE:user">Username:</label>
+				<input type="text" name="DATABASE:user" value="<?php echo $conf->get("DATABASE", "user")?>"></input>
+
+				<label for="DATABASE:password">Password:</label>
+				<input type="password" name="DATABASE:password" value="<?php echo $conf->get("DATABASE", "password")?>"></input>
+
+				<label for="DATABASE:table_prefix">Table prefix:</label>
+				<input type="text" name="DATABASE:table_prefix" value="<?php echo $conf->get("DATABASE", "table_prefix")?>"></input>
 			</div>
 		</div>
-		<div class="grid_4 col">
-			<h3>Magento</h3>
-			<ul class="formline">
-				<li class="label">Version:</li>
-				<li class="value"><select name="MAGENTO:version">
+		</div>
+		</div>
+
+		<div class="col-12 col-lg-4 mb-4">
+		<div class="card">
+			<h3 class="card-header">Magento</h3>
+			<div class="card-body">
+				<label for="MAGENTO:version">Version:</label>
+				<select name="MAGENTO:version">
 			<?php foreach (array("1.9.x", "1.8.x", "1.7.x", "1.6.x", "1.5.x", "1.4.x", "1.3.x") as $ver) {
         ?>
 				<option value="<?php echo $ver?>"
@@ -264,48 +239,42 @@ $cansock = !($dmysqlsock === false);
         } ?>><?php echo $ver?></option>
 			<?php
     }?>
-		</select></li>
-			</ul>
-			<ul class="formline" style="height: 40px">
-				<li class="label">Filesystem Path to magento directory:</li>
-				<li class="value"><input type="text" name="MAGENTO:basedir"
-					value="<?php echo $conf->get("MAGENTO", "basedir")?>"></input></li>
-			</ul>
+		</select>
+				<label for="MAGENTO:basedir">Filesystem Path to magento directory:</label>
+				<input type="text" name="MAGENTO:basedir" value="<?php echo $conf->get("MAGENTO", "basedir")?>"></input>
+			</div>
 		</div>
-		<div class="grid_4 col omega">
-			<h3>Global</h3>
-			<ul class="formline" id="globstep">
-				<li class="label">Reporting step in %:</li>
-				<li class="value"><input type="text" name="GLOBAL:step" size="5"
-					value="<?php echo $conf->get("GLOBAL", "step")?>"></input></li>
-			</ul>
-			<ul class="formline" id="mssep">
-				<li class="label">Multiselect value separator:</li>
-				<li class="value"><input type="text" name="GLOBAL:multiselect_sep"
-					size="3"
-					value="<?php echo $conf->get("GLOBAL", "multiselect_sep", ",")?>"></input></li>
-			</ul>
-			<h3>Dir &amp; File permissions</h3>
-			<ul class="formline" id="dirperms">
-				<li class="label">Directory permissions:</li>
-				<li class="value"><input type="text" name="GLOBAL:dirmask" size="3"
-					value="<?php echo $conf->get("GLOBAL", "dirmask", "755")?>"></input></li>
-			</ul>
-			<ul class="formline" id="fileperms">
-				<li class="label">File permissions:</li>
-				<li class="value"><input type="text" name="GLOBAL:filemask" size="3"
-					value="<?php echo $conf->get("GLOBAL", "filemask", "644")?>"></input></li>
-			</ul>
-			<h3>Backward compatibility</h3>
-			<ul class="formline" id="noattsetupdate">
-				<li class="label">Disable attribute set update:</li>
-				<li class="value">
-					<input type="checkbox" id="noattsetupdate_cb"
+		</div>
+
+		<div class="col-12 col-lg-4 mb-4">
+		<div class="card omega">
+			<h3 class="card-header">Global</h3>
+			<div class="card-body" id="globstep">
+				<label for="GLOBAL:step">Reporting step in %:</label>
+				<input type="text" name="GLOBAL:step" size="5" value="<?php echo $conf->get("GLOBAL", "step")?>"></input>
+
+				<label for="GLOBAL:multiselect_sep">Multiselect value separator:</label>
+				<input type="text" name="GLOBAL:multiselect_sep" size="3" value="<?php echo $conf->get("GLOBAL", "multiselect_sep", ",")?>"></input>
+
+			<h6 class="card-subtitle mb-2 mt-2 text-muted">Dir &amp; File permissions</h6>
+
+				<label for="GLOBAL:dirmask">Directory permissions:</label>
+				<input type="text" name="GLOBAL:dirmask" size="3" value="<?php echo $conf->get("GLOBAL", "dirmask", "755")?>"></input>
+
+				<label for="GLOBAL:filemask">File permissions:</label>
+				<input type="text" name="GLOBAL:filemask" size="3" value="<?php echo $conf->get("GLOBAL", "filemask", "644")?>"></input>
+
+			<h6 class="card-subtitle mb-2 mt-2 text-muted">Backward compatibility</h6>
+
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="checkbox" id="noattsetupdate_cb" class="form-check-input"
 						<?php if ($conf->get("GLOBAL", "noattsetupdate", "off") == "on") {
         ?>
 						checked="checked" <?php
     }?>>
-						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" value="<?php echo $conf->get("GLOBAL", "noattsetupdate", "off") ?>"/>
+					Disable attribute set update:</label>
+						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" class="form-check-input" value="<?php echo $conf->get("GLOBAL", "noattsetupdate", "off") ?>"/>
 						<script type="text/javascript">
 						$('noattsetupdate_cb').observe('click',function(){
 							if($('noattsetupdate_cb').checked) {
@@ -314,21 +283,14 @@ $cansock = !($dmysqlsock === false);
 								$('noattsetupdate_hf').value = 'off';
 							}
 						});
-					</script></li>
-			</ul>
+					</script>
+			</div>
 
 		</div>
-		<div class="clear"></div>
-
-		<div class="container_12">
-			<div class="grid_12">
-				<div style="float: right">
-					<a id="save_commonconf" class="actionbutton" href="#">Save global
-						parameters</a>
-				</div>
-			</div>
+		</div>
 		</div>
 	</div>
+	<a id="save_commonconf" class="btn btn-primary float-right" role="button" aria-pressed="true" href="#"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save parameters</a>
 	<?php if ($conf->get("USE_ALTERNATE", "file", "") != "") {
         ?>
 	<input type="hidden" name="USE_ALTERNATE:file"
@@ -336,8 +298,9 @@ $cansock = !($dmysqlsock === false);
 	<?php
     }?>
 </form>
+</div>
+</div>
 
-<div class="clear"></div>
 <script type="text/javascript">
 
 $('save_commonconf').observe('click',function()
@@ -391,3 +354,4 @@ if ($('DATABASE:connectivity').value == 'localxml') {
 	);
 }
 </script>
+</div>

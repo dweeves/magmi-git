@@ -1,46 +1,43 @@
-<?php require_once("head.php")?>
-<div class="container_12">
-	<div class="grid_12 title ">
-		<div class="logo">
-			<div class="logoauth">Logo Design by dewi</div>
-		</div>
-		<div class="info" style="width: 400px">
-			<h3>Release Information</h3>
-			<div class="version">
- 				v<?php echo Magmi_Version::$version?>
- 			</div>
-			<div class="author">
-				Provided to the community by <b><i><a
-						href="mailto:dweeves@gmail.com">Dweeves</a></i></b>
+<?php require_once('head.php'); ?>
+<header class="row sticky-top mb-4">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-dark">
+			<a href="magmi.php" title="Home" class="navbar-brand logo mr-2">
+				<img src="images/logo_mini.png" alt="Magmi - Logo Design by Dweeves" class="d-inline-block align-top">
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop" aria-controls="navbarTop">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarTop">
+				<ul class="navbar-nav mr-auto menu-main">
+					<li class="nav-item">
+						<a class="nav-link" href="#magmi-run">Run</a>
+					</li>
+					<li class="nav-item"> 
+						<a class="nav-link" href="#magmi-parameters">Parameters</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#magmi-profile">Profile</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#saveprofile_form">Datasources</a>
+					</li>
+					<li class="nav-item back" style="display: none">
+						<a class="nav-link" href="magmi.php" role="button"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav menu-right">
+					<li class="nav-item">
+						<a href="http://wiki.magmi.org" target="_blank" class="nav-link">Documentation</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://sourceforge.net/p/magmi/discussion/" target="_blank" class="nav-link">Discussion Forum</a>
+					</li>
+					<li class="nav-item">
+						<a href="https://github.com/dweeves/magmi-git/issues" target="_blank" class="nav-link">Github Issues</a>
+					</li>
+				</ul>
 			</div>
-			<div class="license">
-				Released under <a href="javascript:togglelicense();">MIT OSL License</a>
-			</div>
-			<div id="m_license" style="display: none">
- 			<?php echo nl2br(file_get_contents("../inc/license.txt"))?>
- 			</div>
-			<div>
-				Online Help : see <a
-					href="http://wiki.magmi.org" target="wiki">Wiki</a>
-				or plugin panels documentation link
-			</div>
-		</div>
-		<div class="info" style="float: right; width: 180px">
-			<h3>Support Magmi!!</h3>
-			<div class="donate">
-				If Magmi saves you countless hours or simply if you like it , you
-				can <br /> <a
-					href="http://sourceforge.net/donate/index.php?group_id=350817"
-					target="_blank">donate to support development !</a>
-			</div>
-		</div>
+		</nav>
 	</div>
-</div>
-<script type="text/javascript">
-togglelicense=function()
-{
- $('m_license').toggle();
-}
-</script>
-
-
+</header>
