@@ -4,7 +4,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
 {
     public function getPluginInfo()
     {
-        return array("name"=>"Clear Catalog, Categories and Reviews","author"=>"www.blinkdata.com,dweeves","version"=>"1.0.2");
+        return array("name" => "Clear Catalog, Categories and Reviews","author" => "www.blinkdata.com,dweeves","version" => "1.0.2");
     }
 
     public function runUtility()
@@ -66,7 +66,7 @@ class ClearProductandcategoryUtility extends Magmi_UtilityPlugin
 
         //safely remove all non root categories (not destroying structural categories)
         //all sub values would be removed by cascading triggers.
-        $sql="DELETE FROM ".$this->tablename('catalog_category_entity')." WHERE level>1";
+        $sql = "DELETE FROM ".$this->tablename('catalog_category_entity')." WHERE level>1";
         $this->exec_stmt($sql);
 
         //default cat stock

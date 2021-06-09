@@ -12,7 +12,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
 
     public function getPluginInfo()
     {
-        return array('name'=>'Group Price Importer','author'=>'Tim Bezhashvyly,dweeves','version'=>'0.0.4');
+        return array('name' => 'Group Price Importer','author' => 'Tim Bezhashvyly,dweeves','version' => '0.0.4');
     }
 
     public function processItemAfterId(&$item, $params = null)
@@ -30,16 +30,15 @@ class grouppriceprocessor extends Magmi_ItemProcessor
                     $group_ids[] = $this->_groups[$key]['id'];
                 }
             }
-            
+
             if (!empty($group_ids)) {
-                
                 $sql = 'SELECT * FROM ' . $table_name . '
                               WHERE entity_id=?
                                 AND customer_group_id IN (' . implode(', ', $group_ids) . ')
                                 AND website_id IN (' . implode(', ', $website_ids) . ')';
                 $rows = $this->select($sql, array($params['product_id']))->fetchAll();
-                
-                foreach ($rows as $row){
+
+                foreach ($rows as $row) {
                     $reusableIds[] = $row['value_id'];
                 }
 
@@ -53,10 +52,10 @@ class grouppriceprocessor extends Magmi_ItemProcessor
 
             $sql = 'INSERT INTO ' . $table_name .
             ' (value_id,entity_id, all_groups, customer_group_id, value, website_id) VALUES ';
-            $data=array();
-            $inserts=array();
+            $data = array();
+            $inserts = array();
             foreach ($group_cols as $key) {
-                $price=str_replace(",", ".", $item[$key]);
+                $price = str_replace(",", ".", $item[$key]);
                 if (!empty($price)) {
                     $group_id = $this->_groups[$key]['id'];
 
@@ -85,10 +84,10 @@ class grouppriceprocessor extends Magmi_ItemProcessor
 
     public function createGroup($groupname)
     {
-        $cg=$this->tablename('customer_group');
-        $sql="INSERT INTO $cg (customer_group_code,tax_class_id)
+        $cg = $this->tablename('customer_group');
+        $sql = "INSERT INTO $cg (customer_group_code,tax_class_id)
     				VALUES (?,?)";
-        $gid=$this->insert($sql, array($groupname, $this->_tax_class_id));
+        $gid = $this->insert($sql, array($groupname, $this->_tax_class_id));
         return $gid;
     }
 
@@ -104,18 +103,17 @@ class grouppriceprocessor extends Magmi_ItemProcessor
     {
         foreach ($cols as $col) {
             if (preg_match("|group_price:(.*)|", $col, $matches)) {
-                $groupname=$matches[1];
+                $groupname = $matches[1];
                 $sql = 'SELECT customer_group_id FROM ' . $this->tablename("customer_group") .
                      ' WHERE UPPER(customer_group_code) = ?';
                 if ($id = $this->selectone($sql, strtoupper($groupname), "customer_group_id")) {
-                    $this->_groups[$col] = array('name'=>$groupname,'id'=>$id);
+                    $this->_groups[$col] = array('name' => $groupname,'id' => $id);
                 } else {
-                    if($groupname == 'NOT LOGGED IN'){
-                        $this->_groups[$col] = array('name'=>$groupname,'id'=>$id);
-                    }
-                    else{
+                    if ($groupname == 'NOT LOGGED IN') {
+                        $this->_groups[$col] = array('name' => $groupname,'id' => $id);
+                    } else {
                         $this->_groups[$col] =
-                            array('name'=>$groupname,'id'=>$this->createGroup($groupname));
+                            array('name' => $groupname,'id' => $this->createGroup($groupname));
                     }
                 }
             }
@@ -134,7 +132,7 @@ class grouppriceprocessor extends Magmi_ItemProcessor
         $sql = 'SELECT value FROM ' . $this->tablename('core_config_data') . ' WHERE path = ?';
         $this->_priceScope = intval($this->selectone($sql, array('catalog/price/scope'), 'value'));
         /* Getting customer tax class */
-        $sql="SELECT class_id FROM " . $this->tablename('tax_class') . " WHERE class_type='CUSTOMER'";
-        $this->_tax_class_id=$this->selectone($sql, null, 'class_id');
+        $sql = "SELECT class_id FROM " . $this->tablename('tax_class') . " WHERE class_type='CUSTOMER'";
+        $this->_tax_class_id = $this->selectone($sql, null, 'class_id');
     }
 }

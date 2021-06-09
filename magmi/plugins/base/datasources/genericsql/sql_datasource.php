@@ -1,4 +1,5 @@
 <?php
+
 require_once("dbhelper.class.php");
 
 class ExtDBHelper extends DBHelper
@@ -53,7 +54,7 @@ class SQL_Datasource extends Magmi_Datasource
 
     public function getPluginInfo()
     {
-        return array("name"=>"Generic SQL Datasource","author"=>"Dweeves","version"=>"1.0.3");
+        return array("name" => "Generic SQL Datasource","author" => "Dweeves","version" => "1.0.3");
     }
 
     public function getPluginParamNames()

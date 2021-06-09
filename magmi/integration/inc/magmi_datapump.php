@@ -1,4 +1,5 @@
 <?php
+
 require_once("properties.php");
 
 class Magmi_DataPumpFactory

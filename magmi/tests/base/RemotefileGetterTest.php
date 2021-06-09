@@ -1,4 +1,5 @@
 <?php
+
 require_once(__DIR__ . '/../../inc/remotefilegetter.php');
 
 function rmrf($dir)
@@ -72,8 +73,10 @@ class RemotefileGetterTest extends PHPUnit_Framework_TestCase
     public function testHttpAmazonS3NoLookup()
     {
         $rfg = self::$_rfg;
-        $rfg->copyRemoteFile('https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png',
-            self::$_dldir . '/Logo.png');
+        $rfg->copyRemoteFile(
+            'https://s3-eu-west-1.amazonaws.com/dweeves/magmitest/Logo.png',
+            self::$_dldir . '/Logo.png'
+        );
         $errs = $rfg->getErrors();
         $this->assertCount(0, $errs);
         $this->assertFileExists(self::$_dldir . '/Logo.png');
@@ -83,8 +86,10 @@ class RemotefileGetterTest extends PHPUnit_Framework_TestCase
     {
         $rfg = self::$_rfg;
         $rfg->setCredentials('testftp', 'badpass');
-        $rfg->copyRemoteFile('ftp://www.softarchconsulting.com/ruby-2.1.1.tar.gz',
-            self::$_dldir . '/ruby-2.1.1.tar.gz');
+        $rfg->copyRemoteFile(
+            'ftp://www.softarchconsulting.com/ruby-2.1.1.tar.gz',
+            self::$_dldir . '/ruby-2.1.1.tar.gz'
+        );
         $errs = $rfg->getErrors();
         $this->assertArrayHasKey('exception', $errs);
         $this->assertFileNotExists(self::$_dldir . '/ruby-2.1.1.tar.gz');
@@ -102,8 +107,10 @@ class RemotefileGetterTest extends PHPUnit_Framework_TestCase
     {
         $rfg = self::$_rfg;
         $rfg->setCredentials('testftp', 'test123');
-        $rfg->copyRemoteFile('ftp://www.softarchconsulting.com/ruby-2.1.1.tar.gz',
-            self::$_dldir . '/ruby-2.1.1.tar.gz');
+        $rfg->copyRemoteFile(
+            'ftp://www.softarchconsulting.com/ruby-2.1.1.tar.gz',
+            self::$_dldir . '/ruby-2.1.1.tar.gz'
+        );
         $errs = $rfg->getErrors();
         if (isset($errs["message"])) {
             echo $errs["message"];

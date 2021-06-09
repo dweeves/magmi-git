@@ -11,13 +11,13 @@ class AdditionalDataCSVReader extends Magmi_CSVReader
      * Stores all used values in original (CSV) data for each column.
      * @var array (column name => array of values)
      */
-    private $_availableValuesPerColumn=null;
+    private $_availableValuesPerColumn = null;
 
     /**
      * Array storing the manually added data.
      * @var array of records( array ( column name => column data ) )
      */
-    private $_addedData=array();
+    private $_addedData = array();
 
     /**
      * Index for iteration.
@@ -32,7 +32,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader
     {
         $this->openCSV();
         $this->getColumnNames();
-        $this->_availableValuesPerColumn= array();
+        $this->_availableValuesPerColumn = array();
         while ($record = $this->getNextRecord()) {
             foreach ($record as $columnName => $value) {
                 if (!isset($this->_availableValuesPerColumn[$columnName])) {
@@ -126,7 +126,7 @@ class AdditionalDataCSVReader extends Magmi_CSVReader
      */
     public function getLinesCount()
     {
-        return (parent::getLinesCount()+sizeof($this->_addedData));
+        return (parent::getLinesCount() + sizeof($this->_addedData));
     }
 
     /**

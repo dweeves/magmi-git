@@ -1,4 +1,5 @@
 <?php
+
 require_once("magmi_csvreader.php");
 
 class MassOptionRemapper extends Magmi_UtilityPlugin
@@ -9,7 +10,7 @@ class MassOptionRemapper extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Mass Select Option Remapper","author"=>"Dweeves","version"=>"1.0.0");
+        return array("name" => "Mass Select Option Remapper","author" => "Dweeves","version" => "1.0.0");
     }
 
     public function getStoreId($sc)

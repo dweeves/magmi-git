@@ -34,7 +34,6 @@ if (file_exists($postinst)) {
 	</div>
 </div>
 <?php
-
         }
         rename($postinst, $postinst . "." . strval(time()));
     }
@@ -65,18 +64,15 @@ if (count($badrights) == 0) {
 		<?php
 
     foreach ($badrights as $dirname) {
-        $trname = str_replace("..", "magmi", $dirname);
-        ?>
+        $trname = str_replace("..", "magmi", $dirname); ?>
 			<li><?php echo $trname?> not writable!</li>
-		<?php 
-    }
-    ?>
+		<?php
+    } ?>
 		</ul>
 		</div>
 	</div>
 </div>
 <?php
-
 }
 ?>
 <?php require_once("footer.php");?>

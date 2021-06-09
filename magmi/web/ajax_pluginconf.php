@@ -1,4 +1,5 @@
 <?php
+
 require_once("security.php");
 require_once("../inc/magmi_defs.php");
 require_once("magmi_pluginhelper.php");

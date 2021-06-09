@@ -1,4 +1,4 @@
-<?php $clist=$this->fixListParam($this->getParam("DEFAULT:columnlist"))?>
+<?php $clist = $this->fixListParam($this->getParam("DEFAULT:columnlist"))?>
 <div class="plugin_description">This plugin enables to set some default
 	item values if not found in input source. enter columns to set default
 	value for in default attribute list field, separated by commas (,) when

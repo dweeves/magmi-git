@@ -28,8 +28,7 @@ foreach ($stats as $type => $data) {
         $style = "background-color:#ffff88";
     } else {
         $style = "background-color:#ff8888";
-    }
-    ?>
+    } ?>
 	<tr>
 				<td style="<?php echo $style?>">&nbsp;</td>
 				<td><?php echo $type?></td>
@@ -38,7 +37,6 @@ foreach ($stats as $type => $data) {
 				<td><?php echo $data["pc"]?></td>
 			</tr>
 <?php
-
 }
 ?>
 </tbody>

@@ -1,4 +1,5 @@
 <?php
+
 require_once("security.php");
 header('Pragma: public'); // required
 header('Expires: -1'); // no cache

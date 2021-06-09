@@ -95,7 +95,7 @@ class DefaultProgressLineParser extends ProgressLineParser
         switch ($type) {
             case "pluginhello":
                 list($name, $ver, $auth) = explode("-", $info);
-                $this->storeData("plugins", array("name"=>$name, "ver"=>$ver, "auth"=>$auth));
+                $this->storeData("plugins", array("name" => $name, "ver" => $ver, "auth" => $auth));
                 break;
             case "lookup":
                 $this->setData("lookup", array_combine(array("nlines", "time"), explode(":", $info)));

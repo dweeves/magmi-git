@@ -27,7 +27,7 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 }
 ?>
 <!-- MAGMI UPLOADER DISABLED FOR SECURITY REASONS -->
-<?php $zipok=class_exists("ZipArchive");?>
+<?php $zipok = class_exists("ZipArchive");?>
 <div class="container_12">
 	<div class="grid_12 subtitle">
 		<span>Update Magmi</span>
@@ -46,16 +46,13 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 
     if (isset($_SESSION["magmi_install"])) {
         $type = $_SESSION["magmi_install"][0];
-        $msg = $_SESSION["magmi_install"][1];
-        ?>
+        $msg = $_SESSION["magmi_install"][1]; ?>
 		<div class="mgupload_<?php echo $type?>">
-				<?php echo $msg;
-        ?>
+				<?php echo $msg; ?>
 		</div>
 		<?php
         unset($_SESSION["magmi_install"]);
-    }
-    ?>
+    } ?>
 	</div>
 	</form>
 </div>
@@ -72,44 +69,41 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 
     if (isset($_SESSION["plugin_install"])) {
         $type = $_SESSION["plugin_install"][0];
-        $msg = $_SESSION["plugin_install"][1];
-        ?>
+        $msg = $_SESSION["plugin_install"][1]; ?>
 <div class="plupload_$type">
-<?php echo $msg;
-        ?>
+<?php echo $msg; ?>
 </div>
 <?php unset($_SESSION["magmi_install"]);
-    }
-    ?>
+    } ?>
 </div>
 	</form>
-<?php 
+<?php
 } else {
-    ?>
+        ?>
 <div class="grid_12 col">
 		<h3>Update Disabled</h3>
 		<div class="error">Upgrade/Upload function
 			are disabled for security reasons</div>
 	</div>
-<?php 
-}?>
+<?php
+    }?>
 </div>
 <div class="container_12">
 	<div class="grid_12 subtitle">
 		<span>Run Magmi</span>
 <?php if (!$conf_ok) {
-    ?>
+        ?>
 <span class="saveinfo log_warning"><b>No Profile saved yet, Run
 				disabled!!</b></span>
-<?php 
-}?>
+<?php
+    }?>
 </div>
 </div>
 <form method="POST" id="runmagmi"
 	action="magmi.php?ts=<?php echo time()?>" <?php if (!$conf_ok) {
-    ?>
-	style="display: none" <?php 
-}?>>
+        ?>
+	style="display: none" <?php
+    }?>>
 	<input type="hidden" name="run" value="import"></input> <input
 		type="hidden" name="logfile"
 		value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
@@ -118,21 +112,20 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 			<h3>Directly run magmi with existing profile</h3>
 			<div class="formline">
 				<span class="label">Run Magmi With Profile:</span>
-				<?php $profilelist=$conf->getProfileList(); ?>
+				<?php $profilelist = $conf->getProfileList(); ?>
 				<select name="profile" id="runprofile">
-					<option <?php if (null==$profile) {
-    ?> selected="selected" <?php 
-}?>
+					<option <?php if (null == $profile) {
+        ?> selected="selected" <?php
+    }?>
 						value="default">Default</option>
 					<?php foreach ($profilelist as $profilename) {
-    ?>
-					<option <?php if ($profilename==$profile) {
-    ?> selected="selected"
-						<?php 
-}
-    ?> value="<?php echo $profilename?>"><?php echo $profilename?></option>
-					<?php 
-}?>
+        ?>
+					<option <?php if ($profilename == $profile) {
+            ?> selected="selected"
+						<?php
+        } ?> value="<?php echo $profilename?>"><?php echo $profilename?></option>
+					<?php
+    }?>
 				</select> <span>using mode:</span> <select name="mode" id="mode">
 					<option value="update">Update existing items only,skip new ones</option>
 					<option value="create">create new items &amp; update existing ones</option>
@@ -140,8 +133,8 @@ if (!$eplconf->hasSection("PLUGINS_DATASOURCES")) {
 
 				</select> <input type="submit" value="Run Import"
 					<?php if (!$conf_ok) {
-    ?> disabled="disabled" <?php 
-}?>></input>
+        ?> disabled="disabled" <?php
+    }?>></input>
 			</div>
 		</div>
 	</div>
@@ -169,31 +162,30 @@ $cansock = !($dmysqlsock === false);
 	<div class="container_12" id="common_config">
 		<div class="grid_4 col">
 			<h3>Database</h3>
-	<?php $curconn=$conf->get("DATABASE", "connectivity", "net");?>
+	<?php $curconn = $conf->get("DATABASE", "connectivity", "net");?>
 			<ul class="formline">
 				<li class="label">Connectivity</li>
 				<li class="value"><select name="DATABASE:connectivity" id="DATABASE:connectivity">
-					<option value="net" <?php if ($curconn=="net") {
+					<option value="net" <?php if ($curconn == "net") {
     ?>
-						selected="selected" <?php 
+						selected="selected" <?php
 } ?>>Using host/port</option>
 					<?php if ($cansock) {
-    ?>
-					<option value="socket" <?php if ($curconn=="socket") {
-    ?>
-						selected="selected" <?php 
-}
-    ?>>Using local socket</option>
-					<?php 
-}?>
+        ?>
+					<option value="socket" <?php if ($curconn == "socket") {
+            ?>
+						selected="selected" <?php
+        } ?>>Using local socket</option>
+					<?php
+    }?>
 					<option value="localxml" <?php echo $curconn == "localxml" ? 'selected="selected"' : '' ?>>Using magento.xml</option>
 				</select></li>
 			</ul>
 
 			<div id="connectivity:net" class="connectivity"
 				<?php if ($curconn != "net") {
-    ?> style="display: none" <?php 
-}?>>
+        ?> style="display: none" <?php
+    }?>>
 				<ul class="formline">
 					<li class="label">Host:</li>
 					<li class="value"><input type="text" name="DATABASE:host"
@@ -214,27 +206,25 @@ $cansock = !($dmysqlsock === false);
 				</ul>
 			</div>
 			<?php if ($cansock) {
-    ?>
+        ?>
 				<div id="connectivity:socket" class="connectivity"
 							<?php if ($curconn != "socket") {
-    ?> style="display: none" <?php 
-}
-    ?>>
+            ?> style="display: none" <?php
+        } ?>>
 							<ul class="formline">
 								<li class="label">Unix Socket:</li>
 
 					<?php
                         $mysqlsock = $conf->get("DATABASE", "unix_socket", $dmysqlsock);
-    if (!file_exists($mysqlsock)) {
-        $mysqlsock = $dmysqlsock;
-    }
-    ?>
+        if (!file_exists($mysqlsock)) {
+            $mysqlsock = $dmysqlsock;
+        } ?>
 					<li class="value"><input type="text" name="DATABASE:unix_socket"
 									value="<?php echo $mysqlsock?>"></input></li>
 					</ul>
 			</div>
-			<?php 
-}?>
+			<?php
+    }?>
 			<div id="connectivity_extra" <?php echo $curconn == 'localxml' ? 'style="display: none;"' : ''; ?>>
 				<hr />
 				<ul class="formline">
@@ -266,15 +256,14 @@ $cansock = !($dmysqlsock === false);
 				<li class="label">Version:</li>
 				<li class="value"><select name="MAGENTO:version">
 			<?php foreach (array("1.9.x", "1.8.x", "1.7.x", "1.6.x", "1.5.x", "1.4.x", "1.3.x") as $ver) {
-    ?>
+        ?>
 				<option value="<?php echo $ver?>"
-							<?php if ($conf->get("MAGENTO", "version")==$ver) {
-    ?>
-							selected=selected <?php 
-}
-    ?>><?php echo $ver?></option>
-			<?php 
-}?>
+							<?php if ($conf->get("MAGENTO", "version") == $ver) {
+            ?>
+							selected=selected <?php
+        } ?>><?php echo $ver?></option>
+			<?php
+    }?>
 		</select></li>
 			</ul>
 			<ul class="formline" style="height: 40px">
@@ -312,10 +301,10 @@ $cansock = !($dmysqlsock === false);
 				<li class="label">Disable attribute set update:</li>
 				<li class="value">
 					<input type="checkbox" id="noattsetupdate_cb"
-						<?php if ($conf->get("GLOBAL", "noattsetupdate", "off")=="on") {
-    ?>
-						checked="checked" <?php 
-}?>>
+						<?php if ($conf->get("GLOBAL", "noattsetupdate", "off") == "on") {
+        ?>
+						checked="checked" <?php
+    }?>>
 						<input type="hidden" id="noattsetupdate_hf" name="GLOBAL:noattsetupdate" value="<?php echo $conf->get("GLOBAL", "noattsetupdate", "off") ?>"/>
 						<script type="text/javascript">
 						$('noattsetupdate_cb').observe('click',function(){
@@ -340,13 +329,12 @@ $cansock = !($dmysqlsock === false);
 			</div>
 		</div>
 	</div>
-	<?php if ($conf->get("USE_ALTERNATE", "file", "")!="") {
-    ?>
+	<?php if ($conf->get("USE_ALTERNATE", "file", "") != "") {
+        ?>
 	<input type="hidden" name="USE_ALTERNATE:file"
-		value="<?php echo $conf->get("USE_ALTERNATE", "file");
-    ?>">
-	<?php 
-}?>
+		value="<?php echo $conf->get("USE_ALTERNATE", "file"); ?>">
+	<?php
+    }?>
 </form>
 
 <div class="clear"></div>
@@ -361,13 +349,13 @@ $('save_commonconf').observe('click',function()
 	  			});
 });
 <?php if ($conf_ok) {
-    ?>
+        ?>
 $('runprofile').observe('change',function(ev)
 		{
 			document.location='magmi.php?profile='+Event.element(ev).value;
 		});
-<?php 
-}?>
+<?php
+    }?>
 
 $('DATABASE:connectivity').observe('change',function(ev)
 		{

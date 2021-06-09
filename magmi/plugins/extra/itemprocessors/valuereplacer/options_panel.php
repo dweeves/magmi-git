@@ -3,7 +3,7 @@
 	attributes to set new value for in replaced attributes field, separated
 	by commas (,) when leaving the field, new fields will be inserted for
 	filling new column names.</div>
-<?php $clist=$this->fixListParam($this->getParam("VREP:columnlist"))?>
+<?php $clist = $this->fixListParam($this->getParam("VREP:columnlist"))?>
 
 <ul class="formline">
 	<li class="label">Replaced attributes</li>

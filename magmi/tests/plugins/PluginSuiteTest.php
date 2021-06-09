@@ -12,7 +12,7 @@ require_once(__DIR__."/../../integration/inc/magmi_datapump.php");
  * Will use datapump for testing specific cases
  */
 
-class PluginSuiteTest extends  PHPUnit_Framework_TestCase
+class PluginSuiteTest extends PHPUnit_Framework_TestCase
 {
     public static function setupBeforeClass()
     {
@@ -28,17 +28,17 @@ class PluginSuiteTest extends  PHPUnit_Framework_TestCase
 
     public function testBundle()
     {
-        $conf=Magmi_Config::getInstance();
+        $conf = Magmi_Config::getInstance();
         $conf->load(__DIR__."/test.ini");
-        $dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
-        $reader=new Magmi_CSVReader();
-        $reader->initialize(array("CSV:filename"=>__DIR__.'/bundle/test_bundle_product.csv'));
+        $dp = Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+        $reader = new Magmi_CSVReader();
+        $reader->initialize(array("CSV:filename" => __DIR__.'/bundle/test_bundle_product.csv'));
         $reader->openCSV();
         $reader->getColumnNames();
-        $eng=$dp->getEngine();
+        $eng = $dp->getEngine();
         $dp->beginImportSession("bundleconf", "create", new FileLogger(__DIR__.'/test.log'));
-        while ($item=$reader->getNextRecord()) {
-            $item["category_ids"]=2;
+        while ($item = $reader->getNextRecord()) {
+            $item["category_ids"] = 2;
             $dp->ingest($item);
         }
         $dp->endImportSession();
@@ -47,15 +47,15 @@ class PluginSuiteTest extends  PHPUnit_Framework_TestCase
 
     public function testCatMultiRoot()
     {
-        $conf=Magmi_Config::getInstance();
+        $conf = Magmi_Config::getInstance();
         $conf->load(__DIR__."/test.ini");
-        $dp=Magmi_DataPumpFactory::getDataPumpInstance("productimport");
-        $reader=new Magmi_CSVReader();
-        $reader->initialize(array("CSV:filename"=>__DIR__.'/categories/category_multiroot.csv'));
+        $dp = Magmi_DataPumpFactory::getDataPumpInstance("productimport");
+        $reader = new Magmi_CSVReader();
+        $reader->initialize(array("CSV:filename" => __DIR__.'/categories/category_multiroot.csv'));
         $reader->openCSV();
         $reader->getColumnNames();
         $dp->beginImportSession("catconf", "create", new FileLogger(__DIR__.'/test.log'));
-        while ($item=$reader->getNextRecord()) {
+        while ($item = $reader->getNextRecord()) {
             $dp->ingest($item);
         }
         $dp->endImportSession();

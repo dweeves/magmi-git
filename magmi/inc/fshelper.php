@@ -1,4 +1,5 @@
 <?php
+
 require_once('remotefilegetter.php');
 
 /**
@@ -443,7 +444,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
         }
 
         if ($out == null) {
-            $this->_lasterror = array("type"=>" execution error","message"=>error_get_last());
+            $this->_lasterror = array("type" => " execution error","message" => error_get_last());
             return false;
         }
         return $out;

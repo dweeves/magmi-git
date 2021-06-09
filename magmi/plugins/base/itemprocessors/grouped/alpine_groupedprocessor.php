@@ -48,12 +48,18 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
         $this->_link_type_id = $this->selectone($sql, array("super"), "link_type_id");
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_pos_attr_id = $this->selectone($sql, array($this->_link_type_id, 'position'),
-            'product_link_attribute_id');
+        $this->_super_pos_attr_id = $this->selectone(
+            $sql,
+            array($this->_link_type_id, 'position'),
+            'product_link_attribute_id'
+        );
         $sql = "SELECT product_link_attribute_id FROM " . $this->tablename("catalog_product_link_attribute") .
              " WHERE link_type_id=? AND product_link_attribute_code=?";
-        $this->_super_qty_attr_id = $this->selectone($sql, array($this->_link_type_id, 'qty'),
-            'product_link_attribute_id');
+        $this->_super_qty_attr_id = $this->selectone(
+            $sql,
+            array($this->_link_type_id, 'qty'),
+            'product_link_attribute_id'
+        );
     }
 
     public function getPluginUrl()
@@ -231,7 +237,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             }
             //fix for empty grouped skus support => no link
             if (isset($item["grouped_skus"])) {
-                $matchmode = (trim($item["grouped_skus"]) != "")?"fixed":"none";
+                $matchmode = (trim($item["grouped_skus"]) != "") ? "fixed" : "none";
             }
         }
         return $matchmode;

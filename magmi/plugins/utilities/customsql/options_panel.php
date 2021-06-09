@@ -5,30 +5,28 @@
 <?php
 $dr = $this->getParam("UTCSQL:queryfile");
 ?>
-<?php $sqlfiles=$this->getRequestFileList();?>
+<?php $sqlfiles = $this->getRequestFileList();?>
 
 <?php
 
 if (count($sqlfiles) > 0) {
     if (!isset($dr)) {
         $dr = $sqlfiles[0];
-    }
-    ?>
+    } ?>
 <select name="UTCSQL:queryfile" id="UTCSQL:queryfile">
 	<?php foreach ($sqlfiles as $curfile):?>
-	<option <?php if ($curfile==$dr) {
-    ?> selected=selected <?php 
-}
-    ?>
+	<option <?php if ($curfile == $dr) {
+        ?> selected=selected <?php
+    } ?>
 				value="<?php echo $curfile?>"><?php echo $this->getRequestInfo($curfile)?></option>
 	<?php endforeach?>
 </select>
-<?php 
+<?php
 } else {
-    ?>
+        ?>
 	<span class="error">No SQL files detected in <?php echo $this->getPluginDir()."/prequests"?></span>
-<?php 
-}?>
+<?php
+    }?>
 </li>
 </ul>
 <div id="fileoptions">

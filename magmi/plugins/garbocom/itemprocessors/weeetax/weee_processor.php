@@ -10,7 +10,7 @@ class WeeetaxItemProcessor extends Magmi_ItemProcessor
 {
     public function getPluginInfo()
     {
-        return array("name"=>"Weee Tax importer","author"=>"Garbocom & Dweeves","version"=>"0.0.5");
+        return array("name" => "Weee Tax importer","author" => "Garbocom & Dweeves","version" => "0.0.5");
     }
 
     /**
@@ -54,9 +54,11 @@ class WeeetaxItemProcessor extends Magmi_ItemProcessor
                     // handle wee tax value for all defined websites in import row
                     foreach ($wsids as $wsid) {
                         $inserts[] = "(?,?,?,?,?,?,?)";
-                        $data = array_merge($data,
+                        $data = array_merge(
+                            $data,
                             array($wsid, $pid, $country, $item[$wattr], '*', $attrinfo["attribute_id"],
-                                $this->getProductEntityType()));
+                                $this->getProductEntityType())
+                        );
                     }
                 }
             }

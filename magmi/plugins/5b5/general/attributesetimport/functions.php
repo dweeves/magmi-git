@@ -24,19 +24,15 @@ function javascript($self, $prefix, $withCsvOptions, $plugin)
     require('javascript.php');
 }
 
-function startDiv($self, $prefix, $name, $show=true)
+function startDiv($self, $prefix, $name, $show = true)
 {
-    $fullName = "$prefix:$name";
-    ?><div id="<?php echo $fullName ?>"<?php if (!$show) {
-    ?>style="display:none;"<?php 
-}
-    ?>><?php
-
+    $fullName = "$prefix:$name"; ?><div id="<?php echo $fullName ?>"<?php if (!$show) {
+        ?>style="display:none;"<?php
+    } ?>><?php
 }
 function endDiv($self)
 {
     ?></div><?php
-
 }
 
 function options($self, $title, $prefix, $entityName, $withCsvOptions, $withMagmiDelete, $withEnable, $withDefaults, $pruneKeepDefaultValue, $sourceText, $plugin)
@@ -85,16 +81,14 @@ function options($self, $title, $prefix, $entityName, $withCsvOptions, $withMagm
 
     if (isset($title)) {
         ?><h3><?php echo $title ?></h3><?php
-
     }
     if ($withEnable) {
         checkbox($self, $prefix, 'enable', true, "Enable ${entityName} import");
-        startDiv($self, $prefix, 'enabled', $self->getParam($prefix.":enable", "on")=="on");
+        startDiv($self, $prefix, 'enabled', $self->getParam($prefix.":enable", "on") == "on");
     }
     if ($withCsvOptions) {
         csvOptions($self, $prefix);
-    }
-    ?>
+    } ?>
     <h4>Import behavior</h4>
     <?php
     if ($withDefaults) {
@@ -108,7 +102,7 @@ function options($self, $title, $prefix, $entityName, $withCsvOptions, $withMagm
     if ($prefix == '5B5ATI' || $prefix == '5B5AAI') {
         checkbox($self, $prefix, 'prune_keep_system_attributes', true, "Dont touch non-user attributes when pruning.");
     }
-    text($self,$prefix,'prune_only','',"prune only ${entityName}s matching regexp");
+    text($self, $prefix, 'prune_only', '', "prune only ${entityName}s matching regexp");
     text($self, $prefix, 'prune_keep', $pruneKeepDefaultValue, "additionally, keep following ${entityName}s when pruning, even if not given in $sourceText (comma-separated)");
     endDiv($self);
     if ($withMagmiDelete) {

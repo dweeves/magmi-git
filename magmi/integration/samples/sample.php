@@ -1,4 +1,5 @@
 <?php
+
 require_once("../../inc/magmi_defs.php");
 require_once("../inc/magmi_datapump.php");
 
@@ -58,8 +59,8 @@ for ($sku = 0; $sku < 5000; $sku++) {
     // description : testXXXXX
     // price : random between $1 & $500
     // categories : the ones built above
-    $item = array("sku"=>str_pad($sku, 5, "0", STR_PAD_LEFT),"name"=>"item" . $sku,"description"=>"test" . $sku,
-        "price"=>rand(1, 500),"categories"=>implode("/", $cats));
+    $item = array("sku" => str_pad($sku, 5, "0", STR_PAD_LEFT),"name" => "item" . $sku,"description" => "test" . $sku,
+        "price" => rand(1, 500),"categories" => implode("/", $cats));
     // now some fun, every 100 items, create some relations
     if ($sku > 99 && $sku % 100 == 0) {
         // first, we'll remove all existing relations (upsell/cross sell / related)

@@ -1,4 +1,5 @@
 <?php
+
 require_once("magmi_csvreader.php");
 
 class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
@@ -9,8 +10,8 @@ class MassOptionAttributeValImporter extends Magmi_UtilityPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Mass Select/Multiselect Attribute value translater","author"=>"Dweeves",
-            "version"=>"1.0.1");
+        return array("name" => "Mass Select/Multiselect Attribute value translater","author" => "Dweeves",
+            "version" => "1.0.1");
     }
 
     public function getStoreId($sc)

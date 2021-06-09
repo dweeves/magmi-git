@@ -9,9 +9,9 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $item = array("sku"=>"123","description"=>"toto","name"=>"titi de test");
-        $params = array("imagename"=>"test.jpg","new"=>"1");
-        $this->_dictarray = array("item"=>$item,"meta"=>$params);
+        $item = array("sku" => "123","description" => "toto","name" => "titi de test");
+        $params = array("imagename" => "test.jpg","new" => "1");
+        $this->_dictarray = array("item" => $item,"meta" => $params);
     }
 
     public function testBasicReplace()

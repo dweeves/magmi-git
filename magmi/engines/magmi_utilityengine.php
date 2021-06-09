@@ -35,7 +35,7 @@ class Magmi_UtilityEngine extends Magmi_Engine
 
     public function getEngineInfo()
     {
-        return array("name"=>"Magmi Utilities Engine","version"=>"1.0.1","author"=>"dweeves");
+        return array("name" => "Magmi Utilities Engine","version" => "1.0.1","author" => "dweeves");
     }
 
     /**
@@ -60,7 +60,7 @@ class Magmi_UtilityEngine extends Magmi_Engine
         // initialize db connectivity
         Magmi_StateManager::setState("running");
         // force only one class to run
-        $this->_pluginclasses = array("utilities"=>array($params["pluginclass"]));
+        $this->_pluginclasses = array("utilities" => array($params["pluginclass"]));
 
         $this->createPlugins("__utilities__", $params);
         foreach ($this->_activeplugins["utilities"] as $pinst) {

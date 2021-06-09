@@ -4,8 +4,8 @@ class productdeleter extends Magmi_ItemProcessor
 {
     public function getPluginInfo()
     {
-        return array("name"=>"Product Deleter","author"=>"Dweeves","version"=>"0.0.2",
-            "url"=>$this->pluginDocUrl("Product_Deleter"));
+        return array("name" => "Product Deleter","author" => "Dweeves","version" => "0.0.2",
+            "url" => $this->pluginDocUrl("Product_Deleter"));
     }
 
     public function getPluginParamNames()

@@ -8,15 +8,15 @@
  */
 class CustomOptionsItemProcessor extends Magmi_ItemProcessor
 {
-    private $_containerMap = array("Product Info Column"=>"container1","Block after Info Column"=>"container2");
+    private $_containerMap = array("Product Info Column" => "container1","Block after Info Column" => "container2");
     protected $_optids = array();
     protected $_opttypeids = array();
     protected $_multivals = array('drop_down','multiple','radio','checkbox');
 
     public function getPluginInfo()
     {
-        return array("name"=>"Custom Options","author"=>"Pablo & Dweeves","version"=>"0.0.7a",
-            "url"=>$this->pluginDocUrl("Custom_Options"));
+        return array("name" => "Custom Options","author" => "Pablo & Dweeves","version" => "0.0.7a",
+            "url" => $this->pluginDocUrl("Custom_Options"));
     }
 
     public function processItemBeforeId(&$item, $params = null)
@@ -171,8 +171,8 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
         $sort_order = isset($fieldParts[3]) ? $fieldParts[3] : 0;
         // @list($title,$type,$is_required,$sort_order) = $fieldParts;
         $title = ucfirst(str_replace('_', ' ', $title));
-        $opt = array('__field'=>$field,'is_delete'=>0,'title'=>$title,'previous_group'=>'','previous_type'=>'',
-            'type'=>$type,'is_require'=>$is_required,'sort_order'=>$sort_order,'values'=>array());
+        $opt = array('__field' => $field,'is_delete' => 0,'title' => $title,'previous_group' => '','previous_type' => '',
+            'type' => $type,'is_require' => $is_required,'sort_order' => $sort_order,'values' => array());
 
         $values = explode('|', $value);
 
@@ -215,6 +215,7 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                 case 'field':
                 case 'area':
                     $opt['max_characters'] = $sort_order;
+                    // no break
                 case 'date':
                 case 'date_time':
                 case 'time':
@@ -222,7 +223,6 @@ class CustomOptionsItemProcessor extends Magmi_ItemProcessor
                     $opt['price'] = $price;
                     $opt['sku'] = $sku;
                     break;
-                /* NO BREAK */
                 case 'drop_down':
                 case 'radio':
                 case 'checkbox':

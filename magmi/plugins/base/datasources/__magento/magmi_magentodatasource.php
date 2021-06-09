@@ -1,4 +1,5 @@
 <?php
+
 require_once("magmi_engine.php");
 
 class Magmi_DSEngine extends Magmi_Engine
@@ -26,7 +27,7 @@ class Magmi_MagentoDatasource extends Magmi_Datasource
 
     public function getPluginInfo()
     {
-        return array("name"=>"Magento Products Datasource","author"=>"Dweeves","version"=>"1.0.0");
+        return array("name" => "Magento Products Datasource","author" => "Dweeves","version" => "1.0.0");
     }
 
     public function getPluginParamNames()

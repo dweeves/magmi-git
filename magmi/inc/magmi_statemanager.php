@@ -1,4 +1,5 @@
 <?php
+
 if (!defined("DIRSEP")) {
     define("DIRSEP", DIRECTORY_SEPARATOR);
 }

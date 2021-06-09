@@ -2,14 +2,12 @@
 
 class IdxEng extends Magmi_Engine
 {
-     public function engineInit($params)
+    public function engineInit($params)
     {
-
     }
 
-     public function engineRun($params)
+    public function engineRun($params)
     {
-
     }
 }
 
@@ -22,32 +20,27 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
     public function getPluginInfo()
     {
-        return array("name"=>"Magmi Magento Reindexer","author"=>"Dweeves","version"=>"1.0.4",
-            "url"=>$this->pluginDocUrl("Magmi_Magento_Reindexer"));
+        return array("name" => "Magmi Magento Reindexer","author" => "Dweeves","version" => "1.0.4",
+            "url" => $this->pluginDocUrl("Magmi_Magento_Reindexer"));
     }
 
     public function initIndexList()
     {
-        if($this->_eng==null)
-        {
-            $this->_eng=new IdxEng();
+        if ($this->_eng == null) {
+            $this->_eng = new IdxEng();
             $this->_eng->initialize();
             $this->_eng->connectToMagento();
         }
 
-        $sql="SELECT indexer_code FROM ".$this->_eng->tablename('index_process');
-        $result=$this->_eng->selectAll($sql);
-        $idxlist=array();
-        if(count($result))
-        {
-            foreach($result as $row)
-            {
-                $idxlist[]=$row["indexer_code"];
+        $sql = "SELECT indexer_code FROM ".$this->_eng->tablename('index_process');
+        $result = $this->_eng->selectAll($sql);
+        $idxlist = array();
+        if (count($result)) {
+            foreach ($result as $row) {
+                $idxlist[] = $row["indexer_code"];
             }
             return implode(',', $idxlist);
-        }
-        else
-        {
+        } else {
             return array();
         }
     }
@@ -100,9 +93,8 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 
     public function getIndexList()
     {
-        if($this->_indexlist==null)
-        {
-            $this->_indexlist=$this->initIndexList();
+        if ($this->_indexlist == null) {
+            $this->_indexlist = $this->initIndexList();
         }
         return $this->_indexlist;
     }
