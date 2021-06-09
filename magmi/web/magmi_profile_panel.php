@@ -21,14 +21,16 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 	<div class="card">
 		<h3 class="card-header subtitle">
 			<span>Profile (<?php echo $profilename; ?>)</span>
-			<span class="float-right saveinfo<?php if (!$conf_ok) { echo 'log_warning'; } ?>" id="profileconf_msg">
+			<span class="float-right saveinfo<?php if (!$conf_ok) {
+    echo 'log_warning';
+} ?>" id="profileconf_msg">
 			<?php
-			if ($conf_ok) {
-				echo 'Saved:' . $eplconf->getLastSaved('%c');
-			} else {
-				echo $profilename . 'Profile config not saved yet';
-			}
-			?>
+            if ($conf_ok) {
+                echo 'Saved:' . $eplconf->getLastSaved('%c');
+            } else {
+                echo $profilename . 'Profile config not saved yet';
+            }
+            ?>
 			</span>
 		</h3>
 		<div class="card-body">
@@ -38,9 +40,13 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 					<div class="col-12 col-md-6">
 						<label>Current profile:</label>
 						<select name="profile" onchange="$('chooseprofile').submit();">
-							<option <?php if (null==$profile) { echo 'selected="selected"'; } ?> value="default">Default</option>
+							<option <?php if (null == $profile) {
+                echo 'selected="selected"';
+            } ?> value="default">Default</option>
 							<?php foreach ($profilelist as $profname) { ?>
-							<option <?php if ($profname==$profile) { echo 'selected="selected"'; } ?> value="<?php echo $profname; ?>"><?php echo $profname; ?></option>
+							<option <?php if ($profname == $profile) {
+                echo 'selected="selected"';
+            } ?> value="<?php echo $profname; ?>"><?php echo $profname; ?></option>
 							<?php } ?>
 						</select>
 					</div>
@@ -51,21 +57,21 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 				</div>
 				<input type="submit" class="btn btn-primary float-right mt-2" value="Copy profile & switch">
 			<?php
-			require_once('magmi_pluginhelper.php');
-			$order = array('datasources','general','itemprocessors');
-			$plugins = Magmi_PluginHelper::getInstance('main')->getPluginClasses($order);
-			$pcats = array();
-			foreach ($plugins as $k => $pclasslist) {
-			    foreach ($pclasslist as $pclass) {
-			        // Invoke static method, using call_user_func (5.2 compat mode)
-			        $pcat = call_user_func(array($pclass, 'getCategory'));
-			        if (!isset($pcats[$pcat])) {
-			            $pcats[$pcat] = array();
-			        }
-			        $pcats[$pcat][] = $pclass;
-			    }
-			}
-			?>
+            require_once('magmi_pluginhelper.php');
+            $order = array('datasources','general','itemprocessors');
+            $plugins = Magmi_PluginHelper::getInstance('main')->getPluginClasses($order);
+            $pcats = array();
+            foreach ($plugins as $k => $pclasslist) {
+                foreach ($pclasslist as $pclass) {
+                    // Invoke static method, using call_user_func (5.2 compat mode)
+                    $pcat = call_user_func(array($pclass, 'getCategory'));
+                    if (!isset($pcats[$pcat])) {
+                        $pcats[$pcat] = array();
+                    }
+                    $pcats[$pcat][] = $pclass;
+                }
+            }
+            ?>
 			</form>
 		</div>
 	</div>
@@ -85,24 +91,27 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 						<span><?php echo ucfirst($k); ?></span>
 					</h3>
 					<?php if ($k == 'datasources') { ?>
-					<?php $pinf=$plugins[$k]; ?>
-					<?php if (count($pinf)>0) { ?>
+					<?php $pinf = $plugins[$k]; ?>
+					<?php if (count($pinf) > 0) { ?>
 	    			<div class="card-body">
 						<div class="pluginselect">
 							<select name="PLUGINS_DATASOURCES:class" class="mb-2 pl_<?php echo $k; ?>">
 							<?php
-			            	$sinst = null;
-			    			foreach ($pinf as $pclass) {
-								$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-					        	if ($sinst == null) {
-					        	    $sinst = $pinst;
-					        	}
-					        	$pinfo = $pinst->getPluginInfo();
-					        	if ($eplconf->isPluginEnabled($k, $pclass)) {
-					         	   $sinst = $pinst;
-					    		} ?>
-								<option value="<?php echo $pclass; ?>" <?php if ($sinst==$pinst) { echo 'selected="selected"'; } ?>><?php echo $pinfo['name'] . 'v' . $pinfo['version']; ?></option>
-							<?php } ?>
+                            $sinst = null;
+                            foreach ($pinf as $pclass) {
+                                $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+                                if ($sinst == null) {
+                                    $sinst = $pinst;
+                                }
+                                $pinfo = $pinst->getPluginInfo();
+                                if ($eplconf->isPluginEnabled($k, $pclass)) {
+                                    $sinst = $pinst;
+                                } ?>
+								<option value="<?php echo $pclass; ?>" <?php if ($sinst == $pinst) {
+                                    echo 'selected="selected"';
+                                } ?>><?php echo $pinfo['name'] . 'v' . $pinfo['version']; ?></option>
+							<?php
+                            } ?>
 							</select>
 						</div>
 						<?php if (isset($pinfo["url"])) { ?>
@@ -113,27 +122,31 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 						<div class="pluginconfpanel selected"><?php echo $sinst->getOptionsPanel()->getHtml(); ?></div>
 					</div>
 					<?php } else {
-						$conf_ok = 0;
-						echo 'Magmi needs a datasource plugin, please install one';
-					} ?>
+                                $conf_ok = 0;
+                                echo 'Magmi needs a datasource plugin, please install one';
+                            } ?>
 					<?php } else {
-						foreach ($pcats as $pcat => $pclasslist) { ?>
+                                foreach ($pcats as $pcat => $pclasslist) { ?>
 							<?php
-		            		$catopen = false;
-		            		$pinf = $plugins[$k];
-		            		?>
+                            $catopen = false;
+                                $pinf = $plugins[$k]; ?>
 							<?php
-							foreach ($pinf as $pclass) { if (!in_array($pclass, $pclasslist)) { continue; } else { ?> <?php if (!$catopen) { $catopen = true; ?>
+                            foreach ($pinf as $pclass) {
+                                if (!in_array($pclass, $pclasslist)) {
+                                    continue;
+                                } else { ?> <?php if (!$catopen) {
+                                    $catopen = true; ?>
 					<div class="card-body">
 						<h5><?php echo $pcat; ?></h5>
-						<ul class="list-group"><?php } ?>
+						<ul class="list-group"><?php
+                                } ?>
 						<?php
-						$pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
-						$pinfo = $pinst->getPluginInfo();
-						$info = $pinst->getShortDescription();
-						$plrunnable = $pinst->isRunnable();
-						$enabled = $eplconf->isPluginEnabled($k, $pclass);
-						?>
+                        $pinst = Magmi_PluginHelper::getInstance($profile)->createInstance($k, $pclass);
+                        $pinfo = $pinst->getPluginInfo();
+                        $info = $pinst->getShortDescription();
+                        $plrunnable = $pinst->isRunnable();
+                        $enabled = $eplconf->isPluginEnabled($k, $pclass);
+                        ?>
 							<li class="list-group-item">
 								<label class="form-check-label pluginselect">
 									<?php if ($plrunnable[0]) { ?>
@@ -145,19 +158,23 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 									<?php echo $pinfo["name"]; ?> <i>(v<?php echo $pinfo["version"]; ?>)</i>
 								</label>
 
-								<span class="badge badge-secondary" data-toggle="modal" data-target="#<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>">Info</span>
+								<span class="badge badge-secondary" data-toggle="modal" data-target="#<?php echo preg_replace('#([^a-z0-9-])#', '-', strtolower(str_replace(' ', '-', $pinfo["name"]))); ?>">Info</span>
 
-								<div class="plugininfo modal fade" id="<?php echo preg_replace('#([^a-z0-9-])#','-',strtolower(str_replace(' ','-',$pinfo["name"]))); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+								<div class="plugininfo modal fade" id="<?php echo preg_replace('#([^a-z0-9-])#', '-', strtolower(str_replace(' ', '-', $pinfo["name"]))); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 									<div class="plugininfohover modal-dialog" role="document">
 										<div class="plugindata modal-content">
 											<div class="modal-header">
 												<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
-												<h5 class="modal-title" id="exampleModalLongTitle"><?php if ($pik == 'name') { echo $piv; } ?></h5>
+												<h5 class="modal-title" id="exampleModalLongTitle"><?php if ($pik == 'name') {
+                            echo $piv;
+                        } ?></h5>
 												<?php } ?>
 											</div>
 											<div class="modal-body">
 												<?php $sp = isset($pinfo["sponsorinfo"]); foreach ($pinfo as $pik => $piv) { ?>
-												<div class="<?php if (isset($sp)) { echo 'sponsored'; } ?>">
+												<div class="<?php if (isset($sp)) {
+                            echo 'sponsored';
+                        } ?>">
 													<?php if ($pik == 'url') { ?>
 													<span><b class="title"><?php echo $pik; ?>: </b>
 														<a href="<?php echo $piv; ?>" target="_blank">Wiki entry</a>
@@ -193,23 +210,31 @@ $conf_ok = $eplconf->hasSection("PLUGINS_DATASOURCES");
 									<a href="<?php echo $pinfo['url']; ?>" class="btn btn-outline-secondary btn-sm" target="magmi_doc"><i class="fa fa-book" aria-hidden="true"></i> <span>Documentation</span></a>
 								</div>
 								<?php } ?>
-								<div class="pluginconf float-right mr-1" <?php if (!$enabled) { echo 'style="display: none;"'; } ?>>
+								<div class="pluginconf float-right mr-1" <?php if (!$enabled) {
+                            echo 'style="display: none;"';
+                        } ?>>
 									<a href="javascript:void(0)" class="btn btn-outline-primary btn-sm"><i class="fa fa-gear" aria-hidden="true"></i> <span>Configure</span></a>
 								</div>
-								<div class="pluginconfpanel"><?php if ($enabled) { echo $pinst->getOptionsPanel()->getHtml(); } ?></div>
+								<div class="pluginconfpanel"><?php if ($enabled) {
+                            echo $pinst->getOptionsPanel()->getHtml();
+                        } ?></div>
 							</li>
 							<?php } ?>
-							<?php } ?>
+							<?php
+                            } ?>
 						</ul>
 						<?php if ($catopen) { ?>
 					</div>
 					<?php } ?>
-					<?php }} ?>
+					<?php }
+                            } ?>
 				</div>
 			</div>
 		<?php } ?>
 		<div class="col-12">
-			<a id="saveprofile" class="actionbutton btn btn-primary float-right" href="javascript:void(0)"<?php if (!$conf_ok) { echo 'disabled="disabled"'; } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename; ?>)
+			<a id="saveprofile" class="actionbutton btn btn-primary float-right" href="javascript:void(0)"<?php if (!$conf_ok) {
+                                echo 'disabled="disabled"';
+                            } ?>><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Profile (<?php echo $profilename; ?>)
 			</a>
 		</div>
 	</form>

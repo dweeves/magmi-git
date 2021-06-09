@@ -69,9 +69,9 @@ foreach ($plist as $pinst) {
 		<h4 class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"]; ?></h4>
 		<?php ?>
 			<p class="plugindescription">
-			<?php if ($info!==null) { ?>
+			<?php if ($info !== null) { ?>
 				<?php echo $info?>
-			<?php} ?>
+			<?php } ?>
 			</p>
 			<div class="plugininfo mb-2 clearfix">
 				<a href="javascript:togglePanel('<?php echo $pclass?>')" class="btn btn-primary btn-sm float-right">Options</a>

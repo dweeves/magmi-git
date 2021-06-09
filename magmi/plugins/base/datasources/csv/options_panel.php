@@ -41,16 +41,16 @@
 	</div>
 
 	<div id="remotecsv"
-		<?php if ($this->getParam("CSV:importmode", "local")=="local") {
-    ?>
+		<?php if ($this->getParam("CSV:importmode", "local") == "local") {
+        ?>
 		style="display: none" <?php
-}?>>
+    }?>>
 
 			<label for="CSV:remoteurl">Remote CSV url</label>
 			<input type="text" name="CSV:remoteurl" id="CSV:remoteurl" class="form-control" value="<?php echo $this->getParam("CSV:remoteurl", "")?>">
 
 			<label class="form-check-label">
-				<input type="checkbox" id="CSV:forcedl" class="form-check-input" name="CSV:forcedl" <?php if ($this->getParam("CSV:forcedl", false)==true) {?> checked="checked" <?php }?>>Force Download
+				<input type="checkbox" id="CSV:forcedl" class="form-check-input" name="CSV:forcedl" <?php if ($this->getParam("CSV:forcedl", false) == true) {?> checked="checked" <?php }?>>Force Download
 			</label>
 
 		<div id="remotecookie">
@@ -60,7 +60,7 @@
 
 		<label class="form-check-label">
 			<input type="checkbox" id="CSV:remoteauth" class="form-check-input" name="CSV:remoteauth"
-			<?php if ($this->getParam("CSV:remoteauth", false)==true) { ?> checked="checked" <?php }?>>Authentication needed
+			<?php if ($this->getParam("CSV:remoteauth", false) == true) { ?> checked="checked" <?php }?>>Authentication needed
  		</label>
 		<div id="remoteauth"
 			<?php  if ($this->getParam("CSV:remoteauth", false) == false) {

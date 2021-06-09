@@ -135,8 +135,9 @@ if (file_exists($logfile)) {
 	<?php echo count($arr)." $gtype(s) found" ?>
 	<a href="javascript:loadDetails('<?php echo $gtype ?>');" class="alert-link" id="<?php echo $gtype ?>_link">Show details</a>
 </div>
-<div id="log_<?php echo $gtype?>_details"></div>
-<?php} ?>
+<div id="log_<?php echo $gtype ?>_details"></div>
+<?php
+    } ?>
 <?php endforeach ?>
 
 <?php $info = $parser->getData("info");

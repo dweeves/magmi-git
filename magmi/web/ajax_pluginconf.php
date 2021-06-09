@@ -22,7 +22,6 @@ if (isset($_REQUEST['engine'])) {
     require_once('../engines/$engine_name.php');
     $enginst = new $engine_class();
     $enginst->initialize();
-
 } else {
     $enginst = null;
 }

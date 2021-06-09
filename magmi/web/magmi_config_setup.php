@@ -27,7 +27,7 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 }
 ?>
 
-<?php $zipok=class_exists('ZipArchive'); ?>
+<?php $zipok = class_exists('ZipArchive'); ?>
 <div class="container mb-4">
 <div class="row">
 <div id="magmi-update" class="magmi-update col-12 mb-4">
@@ -42,15 +42,15 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 		<h3>Update Magmi Release</h3>
 		<input type="file" name="magmi_package"></input> <input type="submit" value="Upload Magmi release"></input>
 		<?php
-    	if (isset($_SESSION['magmi_install'])) {
-        	$type = $_SESSION['magmi_install'][0];
-        	$msg = $_SESSION['magmi_install'][1]; ?>
+        if (isset($_SESSION['magmi_install'])) {
+            $type = $_SESSION['magmi_install'][0];
+            $msg = $_SESSION['magmi_install'][1]; ?>
 		<div class="mgupload_<?php echo $type?>">
 				<?php echo $msg; ?>
 		</div>
 		<?php
         unset($_SESSION["magmi_install"]);
-    } ?>
+        } ?>
 	</div>
 	</form>
 </div>
@@ -108,11 +108,11 @@ if (!$eplconf->hasSection('PLUGINS_DATASOURCES')) {
 		<div class="formline row">
 			<div class="col-12 col-md-6">
 				<label for="profile">Profile:</label>
-				<?php $profilelist=$conf->getProfileList(); ?>
+				<?php $profilelist = $conf->getProfileList(); ?>
 				<select name="profile" id="runprofile">
-					<option <?php if (null==$profile) { ?> selected="selected" <?php }?> value="default">Default</option>
+					<option <?php if (null == $profile) { ?> selected="selected" <?php }?> value="default">Default</option>
 					<?php foreach ($profilelist as $profilename) { ?>
-					<option <?php if ($profilename==$profile) { ?> selected="selected" <?php } ?> value="<?php echo $profilename; ?>"><?php echo $profilename; ?></option><?php } ?>
+					<option <?php if ($profilename == $profile) { ?> selected="selected" <?php } ?> value="<?php echo $profilename; ?>"><?php echo $profilename; ?></option><?php } ?>
 				</select>
 			</div>
 			<div class="col-12 col-md-6">
