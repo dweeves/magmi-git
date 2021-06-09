@@ -48,7 +48,7 @@ class Name2IdDecoder
     /**
      * <p>Perform decoding of values in given array.<p>
      * <p>Returns the mapped record, which means that mapped keys are removed and resulting keys will be added to result. Unmapped keys stay the same and retain their value.</p>
-     * @param unknown $record
+     * @param array $record
      */
     public function decode($record)
     {

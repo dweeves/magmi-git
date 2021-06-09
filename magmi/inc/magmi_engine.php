@@ -373,7 +373,7 @@ abstract class Magmi_Engine extends DbHelper
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param string $type
      * @param null|Magmi_Logger $logger
      */

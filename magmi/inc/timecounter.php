@@ -50,7 +50,7 @@ class timecounter
     /**
      * Initializes default timing categories to use
      *
-     * @param unknown $tcats
+     * @param array $tcats
      *            array of timing categories
      */
     public function initTimingCats($tcats)
@@ -75,7 +75,7 @@ class timecounter
     /**
      * return all timers
      *
-     * @return all timers info by category
+     * @return array all timers info by category
      */
     public function getTimers()
     {
@@ -89,7 +89,7 @@ class timecounter
     /**
      * return all counters
      *
-     * @return all counters info by category
+     * @return array all counters info by category
      */
     public function getCounters()
     {

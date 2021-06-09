@@ -29,6 +29,11 @@ class Magmi_ValueParser
         return $parseinfo;
     }
 
+    /**
+     * @param string $pvalue
+     * @param array $dictarray
+     * @return string
+     */
     public static function parseValue($pvalue, $dictarray)
     {
         $matches = array();

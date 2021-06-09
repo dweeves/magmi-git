@@ -36,7 +36,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * callback for column list processing
      *
-     * @param unknown $cols
+     * @param array $cols
      */
     public function processColumnList(&$cols)
     {
@@ -58,7 +58,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * initializes extra columns if needed
      *
-     * @param unknown $item
+     * @param array $item
      */
     public function initializeBaseCols(&$item)
     {
@@ -70,7 +70,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
     /**
      * Initialized base attributes to retrieve from a given item description
      *
-     * @param unknown $item
+     * @param array $item
      */
     public function initializeBaseAttrs(&$item)
     {

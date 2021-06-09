@@ -115,9 +115,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
     /**
      * Override of log to add sku reference
-     * @param $data raw log data
+     * @param string $data raw log data
      * @param string $type log type (may be modified by plugin)
-     * @param null $logger logger to use (null = defaul logger)
+     * @param null|Magmi_Logger $logger logger to use (null = default logger)
      */
     public function log($data, $type = "info", $logger = null)
     {
@@ -542,7 +542,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     /**
      * return cached option definition rows for a given attribute id
      *
-     * @param unknown $attid
+     * @param string $attid
      *            attribute id
      * @return NULL or option definition rows found
      */
@@ -690,7 +690,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     /**
      * parses a calculated value with tokens like {{ }} or {}
      *
-     * @param unknown $pvalue
+     * @param string $pvalue
      *            parsing value
      * @param unknown $item
      *            item for resolving {item.xxx} tokens

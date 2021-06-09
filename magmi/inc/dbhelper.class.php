@@ -74,7 +74,7 @@ class DBHelper
     /**
      * store output in some debug file
      *
-     * @param unknown_type $data
+     * @param string $data
      */
     public function logdebug($data)
     {
@@ -335,9 +335,9 @@ class DBHelper
     /**
      * Selects all values from a statement into a php array
      *
-     * @param unknown_type $sql
+     * @param string $sql
      *            sql select to execute
-     * @param unknown_type $params
+     * @param array $params
      *            placeholder replacements (can be null)
      */
     public function selectAll($sql, $params = null)
@@ -463,8 +463,8 @@ class DBHelper
     /**
      * Filters a key value array over a list of keys , replacing __NULL__ magic value with true null
      *
-     * @param unknown_type $kvarr
-     * @param unknown_type $keys
+     * @param array $kvarr
+     * @param array $keys
      */
     public function filterkvarr($kvarr, $keys)
     {
@@ -533,8 +533,8 @@ class DBHelper
      * - NameSpaces:
      * tn : tablename, this namespace ensures replacement of given name with defined DB prefix so, parameterized request can use generic names to define their ops
      *
-     * @param unknown_type $stmt
-     * @param unknown_type $rparams
+     * @param string $stmt
+     * @param array $rparams
      */
     public function replaceParams(&$stmt, &$rparams)
     {
