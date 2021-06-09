@@ -72,7 +72,7 @@ class MultiDimArray extends ArrayIterator
     }
 
     /**
-     * (non-PHPdoc)
+     *
      * @see ArrayIterator::offsetSet()
      */
     public function offsetSet($name, $value)
@@ -116,7 +116,7 @@ class MultiDimArray extends ArrayIterator
      * <code>
      * offsetExistsPartly(array(1,2,3,4),true) will additionally return true if one of the following offsets exists: array(1), array(1,2), array(1,2,3)<br/></code>
      *
-     * @param unknown $name
+     * @param array|string $name
      * @param string $partlyOk
      * @return void|boolean|string
      */
@@ -143,6 +143,9 @@ class MultiDimArray extends ArrayIterator
         }
     }
 
+    /**
+     * @param string $name
+     */
     public function offsetUnset($name)
     {
         if (!is_array($name)) {

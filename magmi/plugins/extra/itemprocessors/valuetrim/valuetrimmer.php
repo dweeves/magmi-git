@@ -22,7 +22,7 @@ class ValueTrimItemProcessor extends Magmi_ItemProcessor
      *
      * @param Magmi_Engine $mmi
      *            : reference to magmi engine instance (convenient to perform database operations)
-     * @param unknown_type $item
+     * @param array $item
      *            : modifiable reference to item before import
      *            the $item is a key/value array with column names as keys and values as read from csv file.
      * @return bool :

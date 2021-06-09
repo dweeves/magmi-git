@@ -2,6 +2,11 @@
 
 abstract class Magmi_Logger
 {
+    /**
+     * @param string $data
+     * @param null|string $type
+     * @return void
+     */
     abstract public function log($data, $type = null);
 }
 

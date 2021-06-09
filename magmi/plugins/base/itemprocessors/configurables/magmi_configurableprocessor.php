@@ -20,7 +20,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     /**
      *
      * @param unknown $asid
-     * @return multitype:
+     * @return mixed
      */
     public function getConfigurableOptsFromAsId($asid)
     {
