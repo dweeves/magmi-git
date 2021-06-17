@@ -11,7 +11,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     {
         $conf = Magmi_Config::getInstance();
         $conf->load(__DIR__."/test.ini");
-        $this->assertEquals($conf->getMagentoDir(), "/data/mag_18");
+        $this->assertEquals("/data/mag_18", $conf->getMagentoDir());
     }
 
 

@@ -1,0 +1,10 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/4.4/phpunit.xsd"
+         backupGlobals="true">
+<testsuites>
+  <testsuite name="Magmi">
+    <directory>magmi/tests/</directory>
+    <exclude>magmi/tests/base/RemotefileGetterTest.php</exclude>
+  </testsuite>
+</testsuites>
+</phpunit>
