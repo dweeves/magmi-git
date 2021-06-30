@@ -207,6 +207,15 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         $ins_sal = array();
         $data_sal = array();
         $idx = 0;
+        
+        
+        
+        if ($this->getParam("CFGR:onupdate") == 1) {
+            $sql = "DELETE FROM `$cpsa` where product_id = ?";
+        	$this->delete($sql, array($pid));     
+        }
+        
+
         foreach ($confopts as $confopt) {
             $attrinfo = $this->getAttrInfo($confopt);
             $attrid = $attrinfo["attribute_id"];
@@ -336,7 +345,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 
     public function getPluginParamNames()
     {
-        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink");
+        return array("CFGR:simplesbeforeconf","CFGR:updsimplevis","CFGR:nolink","CFGR:onupdate");
     }
 
     public static function getCategory()
