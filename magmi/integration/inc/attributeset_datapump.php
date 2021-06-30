@@ -19,7 +19,7 @@ class Magmi_AttributeSet_DataPump extends Magmi_ProductImport_DataPump
         $this->_engine->callPlugins("general", "importAttributeSets", $reader);
     }
 
-    public function ingestAttributeAsociations($items = array())
+    public function ingestAttributeAssociations($items = array())
     {
         $reader = new ArrayReader();
         $reader->initialize($items);
