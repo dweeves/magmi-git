@@ -107,6 +107,14 @@ class Magmi_PluginHelper
         }
     }
 
+    /**
+     * @template T
+     * @param $ptype
+     * @param class-string<T>|Magmi_Plugin $pclass
+     * @param null $params
+     * @param null $mmi
+     * @return mixed
+     */
     public function createInstance($ptype, $pclass, $params = null, $mmi = null)
     {
         if (!isset(self::$_plugins_cache[$ptype])) {

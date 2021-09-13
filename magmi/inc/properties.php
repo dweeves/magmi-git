@@ -78,6 +78,12 @@ class Properties
         return $this->write_ini_file($this->_props, $fname, true);
     }
 
+    /**
+     * @param $assoc_arr
+     * @param $path
+     * @param bool $has_sections
+     * @return bool
+     */
     public function write_ini_file($assoc_arr, $path, $has_sections = false)
     {
         $content = "";
