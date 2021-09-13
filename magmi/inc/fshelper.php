@@ -411,7 +411,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
      */
     public function exec_cmd($cmd, $params, $working_dir = null)
     {
-        $full_cmd = $cmd . " " . $params;
+        $full_cmd = escapeshellcmd($cmd . " " . $params);
         $curdir = false;
         $precmd = "";
         // If a working directory has been specified, switch to it

@@ -325,7 +325,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
     public function exec_cmd($cmd, $params)
     {
         $mp = str_replace("//", "/", $this->_magdir . "/" . str_replace($this->_magdir, '', $cmd));
-        $full_cmd = $cmd . " " . $params;
+        $full_cmd = escapeshellcmd($cmd . " " . $params);
         switch ($this->_exec_mode) {
             case "popen":
                 $x = popen($full_cmd, "r");
