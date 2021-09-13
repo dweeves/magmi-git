@@ -110,7 +110,7 @@ class Magmi_PluginHelper
     public function createInstance($ptype, $pclass, $params = null, $mmi = null)
     {
         if (!isset(self::$_plugins_cache[$ptype])) {
-            self::scanPlugins($ptype);
+            $this->scanPlugins($ptype);
         }
         $plinst = new $pclass();
 
@@ -124,10 +124,14 @@ class Magmi_PluginHelper
         return $mt["dir"];
     }
 
+    /**
+     * @param Magmi_Plugin $pinst plugin instance
+     * @return array
+     */
     public function getPluginMeta($pinst)
     {
         if (self::$_plugins_cache == null) {
-            self::scanPlugins();
+            $this->scanPlugins();
         }
 
         foreach (self::$_plugins_cache as $t => $l) {

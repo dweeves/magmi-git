@@ -15,7 +15,14 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
 {
     protected $_reindex;
     protected $_indexlist = null;
+
+    /**
+     * @var MagentoDirHandler
+     */
     protected $_mdh;
+    /**
+     * @var IdxEng
+     */
     protected $_eng;
 
     public function getPluginInfo()
@@ -32,7 +39,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             $this->_eng->connectToMagento();
         }
 
-        $sql = "SELECT indexer_code FROM ".$this->_eng->tablename('index_process');
+        $sql = "SELECT indexer_code FROM " . $this->_eng->tablename('index_process');
         $result = $this->_eng->selectAll($sql);
         $idxlist = array();
         if (count($result)) {
@@ -121,7 +128,7 @@ class Magmi_ReindexingPlugin extends Magmi_GeneralImportPlugin
             $this->log($out, "info");
             $tend = microtime(true);
             $this->log("done in " . round($tend - $tstart, 2) . " secs", "info");
-            if (Magmi_StateManager::getState() == "canceled") {
+            if (Magmi_StateManager::getState() === "canceled") {
                 exit();
             }
             flush();

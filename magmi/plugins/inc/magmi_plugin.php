@@ -108,11 +108,26 @@ class Magmi_PluginOptionsPanel
 
 abstract class Magmi_Plugin extends Magmi_Mixin
 {
+    /**
+     * @var string
+     */
     protected $_class;
     protected $_plugintype;
     protected $_plugindir;
+
+    /**
+     * @var Magmi_PluginConfig
+     */
     protected $_config;
+
+    /**
+     * @var Magmi_Config
+     */
     protected $_magmiconfig;
+
+    /**
+     * @var array
+     */
     protected $_pluginmeta;
     protected $_params;
 
@@ -222,6 +237,13 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         return $this->_magmiconfig;
     }
 
+    /**
+     * @param $mmi
+     * @param array $meta
+     * @param null $params
+     * @param bool $doinit
+     * @param null $profile
+     */
     final public function pluginInit($mmi, $meta, $params = null, $doinit = true, $profile = null)
     {
         $this->bind($mmi);

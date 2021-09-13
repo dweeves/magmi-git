@@ -499,9 +499,9 @@ abstract class Magmi_Engine extends DbHelper
             $conn = $this->getProp("DATABASE", "connectivity", "net");
             $debug = $this->getProp("DATABASE", "debug", false);
             $socket = $this->getProp("DATABASE", "unix_socket");
-            if ($conn == 'localxml') {
+            if ($conn === 'localxml') {
                 $baseDir = $this->getProp('MAGENTO', 'basedir');
-                $xmlPath = $baseDir.'/app/etc/local.xml';
+                $xmlPath = $baseDir . '/app/etc/local.xml';
                 if (!file_exists($xmlPath)) {
                     throw new Exception("Cannot load xml from path '$xmlPath'");
                 }

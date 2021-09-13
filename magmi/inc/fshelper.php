@@ -65,6 +65,9 @@ class FSHelper
  */
 class MagentoDirHandlerFactory
 {
+    /**
+     * @var array<MagentoDirHandler>
+     */
     protected $_handlers = array();
     protected static $_instance;
 
@@ -102,12 +105,12 @@ class MagentoDirHandlerFactory
      * Return a handler for a given url
      *
      * @param string $url
-     * @return unknown
+     * @return MagentoDirHandler
      */
     public function getHandler($url)
     {
         // Iterates on declared handlers , return first matching url
-        foreach ($this->_handlers as $cls => $handler) {
+        foreach ($this->_handlers as $handler) {
             if ($handler->canHandle($url)) {
                 return $handler;
             }
@@ -343,7 +346,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
     /**
      * Returns last error
      *
-     * @return Ambigous <multitype:, multitype:string multitype: >
+     * @return array|null see https://php.net/manual/en/function.error-get-last.php
      */
     public function getLastError()
     {

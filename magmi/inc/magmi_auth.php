@@ -41,13 +41,19 @@ class Magmi_Auth extends Magmi_Engine
         return $this->validatePass($result['password'], $this->pass);
     }
 
-    private function validatePass($hash, $pass)
+    /**
+     * @param string $dbHash from magento db
+     * @param string $pass provided by user
+     * @return bool
+     */
+    private function validatePass($dbHash, $pass)
     {
         #first try : standard CE magento hash
 
-        $hash = explode(":", $hash);
-        $cecheck = md5($hash[1] . $pass);
-        $eecheck = hash('sha256', $hash[1] . $pass);
+        $hash = explode(":", $dbHash);
+        $hashSuffix = $hash[1] ?? '';
+        $cecheck = md5($hashSuffix . $pass);
+        $eecheck = hash('sha256', $hashSuffix . $pass);
         $valid = ($cecheck == $hash[0] || $eecheck == $hash[0]);
 
         return $valid;

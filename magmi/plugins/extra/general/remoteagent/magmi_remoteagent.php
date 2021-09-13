@@ -352,6 +352,9 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 class Magmi_RemoteAgent
 {
     private static $_instance;
+    /**
+     * @var MRA_LocalMagentoDirHandler
+     */
     private $_mdh;
     private $_lasterror;
     public static $apidesc = array("getVersion" => null,"copy" => array("src","dest"),"mkdir" => array("path","mask"),

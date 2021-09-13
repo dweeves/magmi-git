@@ -593,6 +593,7 @@ class DBHelper
         // ensure windows/mac compatibility for user made requests
         $sql = str_replace("\r\n", "\n", $sql);
         $sqllines = explode("--", $sql);
+        $stmts = [];
         foreach ($sqllines as $sqlline) {
             if ($sqlline != "") {
                 $subs = explode(";\n", "--" . $sqlline);
