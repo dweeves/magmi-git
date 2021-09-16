@@ -51,7 +51,7 @@ class Magmi_PluginHelper
         $pluginclasses = array();
         foreach ($candidates as $pcfile) {
             $dirname = dirname(substr($pcfile, strlen($this->plugin_dir)));
-            if (substr(basename($dirname), 0, 2) != '__') {
+            if (substr(basename($dirname), 0, 2) !== '__') {
                 $content = file_get_contents($pcfile);
                 if (preg_match_all("/class\s+(.*?)\s+extends\s+$baseclass/mi", $content, $matches, PREG_SET_ORDER)) {
                     require_once($pcfile);
@@ -66,13 +66,13 @@ class Magmi_PluginHelper
 
     public function getPluginClasses($pltypes)
     {
-        return self::getPluginsInfo($pltypes, "class");
+        return $this->getPluginsInfo($pltypes, "class");
     }
 
     public function getPluginsInfo($pltypes, $filter = null)
     {
         if (self::$_plugins_cache == null) {
-            self::scanPlugins($pltypes);
+            $this->scanPlugins($pltypes);
         }
 
         if (isset($filter)) {
@@ -99,7 +99,7 @@ class Magmi_PluginHelper
         }
         foreach ($pltypes as $pltype) {
             if (!isset(self::$_plugins_cache[$pltype])) {
-                self::$_plugins_cache[$pltype] = self::initPluginInfos(
+                self::$_plugins_cache[$pltype] = $this->initPluginInfos(
                     $this->_plmeta[$pltype][0],
                     $this->_plmeta[$pltype][1]
                 );

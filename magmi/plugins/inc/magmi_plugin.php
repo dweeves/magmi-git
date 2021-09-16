@@ -54,6 +54,9 @@ class Magmi_PluginConfig extends ProfileBasedConfig
 
 class Magmi_PluginOptionsPanel
 {
+    /**
+     * @var Magmi_Plugin
+     */
     private $_plugin;
     private $_defaulthtml = "";
     private $_file = null;
@@ -264,6 +267,10 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         }
     }
 
+    /**
+     * @param array $params
+     * @return array
+     */
     public function getPluginParamsNoCurrent($params)
     {
         $arr = array();
@@ -278,6 +285,10 @@ abstract class Magmi_Plugin extends Magmi_Mixin
         return $arr;
     }
 
+    /**
+     * @param array $params $_REQUEST array
+     * @return array parameters which are related to given plugin
+     */
     public function getPluginParams($params)
     {
         $arr = array();

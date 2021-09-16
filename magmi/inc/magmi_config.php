@@ -90,7 +90,7 @@ class ProfileBasedConfig extends DirbasedConfig
 
     public function getProfileDir()
     {
-        $subdir = ($this->_profile == "default" ? "" : DIRSEP . $this->_profile);
+        $subdir = ($this->_profile === "default" ? "" : DIRSEP . $this->_profile);
         $confdir = Magmi_Config::getInstance()->getConfDir()."$subdir";
         if (!file_exists($confdir)) {
             @mkdir($confdir, Magmi_Config::getInstance()->getDirMask());
