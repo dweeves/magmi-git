@@ -118,7 +118,7 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
     public function processItemBeforeId(&$item, $params = null)
     {
         // if item is not configurable, nothing to do
-        if ($item["type"] !== "configurable") {
+        if (@$item["type"] !== "configurable") {
             return true;
         }
         if ($this->_use_defaultopc ||
