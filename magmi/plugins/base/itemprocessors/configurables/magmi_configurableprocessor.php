@@ -64,12 +64,12 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
         // recreate associations
         $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id
 				  FROM $cpe as cpec
-				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
+				  JOIN $cpe as cpes ON cpes.sku $cond
 			  	  WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
         $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id
 				  FROM $cpe as cpec
-				  JOIN $cpe as cpes ON cpes.type_id IN ('simple','virtual') AND cpes.sku $cond
+				  JOIN $cpe as cpes ON cpes.sku $cond
 			  	  WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge($conddata, array($pid)));
         unset($conddata);
