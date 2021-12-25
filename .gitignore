@@ -3,3 +3,4 @@
 !/magmi/state/dummy.txt
 .php-cs-fixer.cache
 .php_cs.cache
+/vendor

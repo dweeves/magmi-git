@@ -10,5 +10,11 @@
     ],
     "bin": [
         "magmi/cli/magmi.cli.php"
-    ]
+    ],
+    "require": {
+      "ext-mysql":"*"
+    },
+  "require-dev": {
+        "phpunit/phpunit": "^4.4.0"
+    }
 }
