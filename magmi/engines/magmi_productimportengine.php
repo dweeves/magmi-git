@@ -887,7 +887,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
         } else {
             $this->log("No Records returned by datasource", "warning");
         }
-        $this->callPlugins("datasources,general,itemprocessors", "afterImport");
+        //$this->callPlugins("datasources,general,itemprocessors", "afterImport");
         $this->log("Import Ended", "end");
         Magmi_StateManager::setState("idle");
 
