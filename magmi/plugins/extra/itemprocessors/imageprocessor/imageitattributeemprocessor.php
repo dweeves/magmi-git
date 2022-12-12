@@ -232,12 +232,15 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
     }
 
     /**
-     * imageInGallery
+     * Creates or updates image and returns its id.
      *
      * @param int $pid
      *            : product id to test image existence in gallery
      * @param string $imgname
      *            : image file name (relative to /products/media in magento dir)
+     * @param int $refid
+     *            : A reference to an attribute type, typically of image,
+     *            small_image or thumbnail
      * @return bool : if image is already present in gallery for a given product id
      */
     public function getImageId($pid, $attid, $imgname, $refid = null, $store_id = 0)
@@ -245,16 +248,22 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
         $t = $this->tablename('catalog_product_entity_media_gallery');
 
         $sql = "SELECT $t.value_id FROM $t ";
+
+        // Try finding matching refid
         if ($refid != null) {
             $vc = $this->tablename('catalog_product_entity_varchar');
-            $sql .= " JOIN $vc ON $t.entity_id=$vc.entity_id AND $t.value=$vc.value AND $vc.attribute_id=?
+            $full_sql = $sql . " JOIN $vc ON $t.entity_id=$vc.entity_id AND $t.value=$vc.value AND $vc.attribute_id=?
 					WHERE $t.entity_id=? AND $vc.store_id=?";
-            $imgid = $this->selectone($sql, array($refid, $pid, $store_id), 'value_id');
-        } else {
-            $sql .= " WHERE value=? AND entity_id=? AND attribute_id=?";
-            $imgid = $this->selectone($sql, array($imgname, $pid, $attid), 'value_id');
+            $imgid = $this->selectone($full_sql, array($refid, $pid, $store_id), 'value_id');
         }
 
+        // If not found just match on type and value
+        if ($imgid == null) {
+            $full_sql = $sql . " WHERE value=? AND entity_id=? AND attribute_id=?";
+            $imgid = $this->selectone($full_sql, array($imgname, $pid, $attid), 'value_id');
+        }
+
+        // If still not found, create it
         if ($imgid == null) {
             // insert image in media_gallery
             $sql = "INSERT INTO $t
